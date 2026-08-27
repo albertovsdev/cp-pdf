@@ -1,0 +1,2261 @@
+{
+ "source_pages_total": 2,
+ "pages_sampled": [
+  1,
+  2
+ ],
+ "mask_mode": "synthetic",
+ "salted": false,
+ "pages": [
+  {
+   "page": 1,
+   "width": 595.3,
+   "height": 841.9,
+   "has_text_layer": true,
+   "ruling_lines": 10,
+   "rects": 0,
+   "words": [
+    {
+     "text": "EMPRESA",
+     "x0": 20.0,
+     "x1": 41.8,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "DEMO",
+     "x0": 102.8,
+     "x1": 115.2,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "SA",
+     "x0": 130.3,
+     "x1": 136.5,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 160.3,
+     "x1": 166.5,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "CV",
+     "x0": 190.3,
+     "x1": 196.5,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "BALANZA",
+     "x0": 414.0,
+     "x1": 435.8,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 444.0,
+     "x1": 450.2,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "COMPROBACION",
+     "x0": 474.0,
+     "x1": 511.3,
+     "top": 47.9,
+     "bottom": 59.9,
+     "size": 12.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "DEM010101ABC",
+     "x0": 20.0,
+     "x1": 57.3,
+     "top": 64.2,
+     "bottom": 72.2,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Fecha",
+     "x0": 451.0,
+     "x1": 466.6,
+     "top": 64.2,
+     "bottom": 72.2,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 481.0,
+     "x1": 487.2,
+     "top": 64.2,
+     "bottom": 72.2,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "impresion:",
+     "x0": 511.0,
+     "x1": 542.1,
+     "top": 64.2,
+     "bottom": 72.2,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "31/01/2026",
+     "x0": 541.0,
+     "x1": 572.1,
+     "top": 64.2,
+     "bottom": 72.2,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Tipo",
+     "x0": 28.0,
+     "x1": 40.4,
+     "top": 111.6,
+     "bottom": 119.6,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Moneda",
+     "x0": 58.0,
+     "x1": 76.7,
+     "top": 111.6,
+     "bottom": 119.6,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Periodo",
+     "x0": 311.0,
+     "x1": 332.8,
+     "top": 111.6,
+     "bottom": 119.6,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "MXN",
+     "x0": 28.0,
+     "x1": 37.3,
+     "top": 124.1,
+     "bottom": 132.1,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "01-01-2026",
+     "x0": 311.0,
+     "x1": 342.1,
+     "top": 124.1,
+     "bottom": 132.1,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "-",
+     "x0": 341.0,
+     "x1": 344.1,
+     "top": 124.1,
+     "bottom": 132.1,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "31-01-2026",
+     "x0": 371.0,
+     "x1": 402.1,
+     "top": 124.1,
+     "bottom": 132.1,
+     "size": 8.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "No.",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Cuenta",
+     "x0": 37.0,
+     "x1": 55.7,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Naturaleza",
+     "x0": 82.7,
+     "x1": 113.8,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Cuenta",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Saldo",
+     "x0": 252.4,
+     "x1": 268.0,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Inicial",
+     "x0": 265.2,
+     "x1": 287.0,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Saldo",
+     "x0": 309.4,
+     "x1": 325.0,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Inicial",
+     "x0": 321.8,
+     "x1": 343.6,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Debe",
+     "x0": 387.9,
+     "x1": 400.3,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Haber",
+     "x0": 441.4,
+     "x1": 457.0,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Saldo",
+     "x0": 482.4,
+     "x1": 498.0,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Final",
+     "x0": 498.1,
+     "x1": 513.6,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Saldo",
+     "x0": 539.5,
+     "x1": 555.0,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Final",
+     "x0": 554.8,
+     "x1": 570.3,
+     "top": 172.8,
+     "bottom": 178.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Deudor",
+     "x0": 268.3,
+     "x1": 287.0,
+     "top": 179.3,
+     "bottom": 185.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Acreedor",
+     "x0": 318.7,
+     "x1": 343.6,
+     "top": 179.3,
+     "bottom": 185.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Deudor",
+     "x0": 494.9,
+     "x1": 513.6,
+     "top": 179.3,
+     "bottom": 185.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Acreedor",
+     "x0": 545.4,
+     "x1": 570.3,
+     "top": 179.3,
+     "bottom": 185.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "101",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Caja",
+     "x0": 128.0,
+     "x1": 140.4,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "10,000.00",
+     "x0": 259.0,
+     "x1": 287.0,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "5,000.00",
+     "x0": 375.4,
+     "x1": 400.3,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "1,250.25",
+     "x0": 432.1,
+     "x1": 457.0,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "13,749.75",
+     "x0": 485.6,
+     "x1": 513.6,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 189.8,
+     "bottom": 195.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "101-01",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Caja",
+     "x0": 128.0,
+     "x1": 140.4,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "chica",
+     "x0": 142.1,
+     "x1": 157.7,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "4,000.00",
+     "x0": 262.1,
+     "x1": 287.0,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "2,000.00",
+     "x0": 375.4,
+     "x1": 400.3,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "1,250.25",
+     "x0": 432.1,
+     "x1": 457.0,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "4,749.75",
+     "x0": 488.7,
+     "x1": 513.6,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 200.3,
+     "bottom": 206.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "101-02",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Caja",
+     "x0": 128.0,
+     "x1": 140.4,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "general",
+     "x0": 142.1,
+     "x1": 163.9,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "6,000.00",
+     "x0": 262.1,
+     "x1": 287.0,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "3,000.00",
+     "x0": 375.4,
+     "x1": 400.3,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 444.6,
+     "x1": 457.0,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "9,000.00",
+     "x0": 488.7,
+     "x1": 513.6,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 210.8,
+     "bottom": 216.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "102",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Bancos",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "250,000.00",
+     "x0": 255.9,
+     "x1": 287.0,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "150,000.00",
+     "x0": 369.2,
+     "x1": 400.3,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "70,500.75",
+     "x0": 429.0,
+     "x1": 457.0,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "329,499.25",
+     "x0": 482.5,
+     "x1": 513.6,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 221.3,
+     "bottom": 227.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "102-01",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Banco",
+     "x0": 128.0,
+     "x1": 143.6,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "del",
+     "x0": 145.3,
+     "x1": 154.6,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Centro",
+     "x0": 156.3,
+     "x1": 175.0,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "200,500.00",
+     "x0": 255.9,
+     "x1": 287.0,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "150,000.00",
+     "x0": 369.2,
+     "x1": 400.3,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "61,750.25",
+     "x0": 429.0,
+     "x1": 457.0,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "288,749.75",
+     "x0": 482.5,
+     "x1": 513.6,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 231.8,
+     "bottom": 237.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "102-01-0001",
+     "x0": 26.0,
+     "x1": 60.2,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Cuenta",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 148.4,
+     "x1": 154.6,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "cheques",
+     "x0": 156.3,
+     "x1": 178.1,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "200,000.00",
+     "x0": 255.9,
+     "x1": 287.0,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "150,000.00",
+     "x0": 369.2,
+     "x1": 400.3,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "60,000.00",
+     "x0": 429.0,
+     "x1": 457.0,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "290,000.00",
+     "x0": 482.5,
+     "x1": 513.6,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 242.3,
+     "bottom": 248.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "moneda",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 248.8,
+     "bottom": 254.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "nacional",
+     "x0": 148.4,
+     "x1": 173.3,
+     "top": 248.8,
+     "bottom": 254.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "102-01-0002",
+     "x0": 26.0,
+     "x1": 60.2,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Cuenta",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 148.4,
+     "x1": 154.6,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "inversion",
+     "x0": 156.3,
+     "x1": 184.3,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "500.00",
+     "x0": 268.3,
+     "x1": 287.0,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 387.9,
+     "x1": 400.3,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "1,750.25",
+     "x0": 432.1,
+     "x1": 457.0,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "-1,250.25",
+     "x0": 485.6,
+     "x1": 513.6,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 259.3,
+     "bottom": 265.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "102-02",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Banco",
+     "x0": 128.0,
+     "x1": 143.6,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "del",
+     "x0": 145.3,
+     "x1": 154.6,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Norte",
+     "x0": 156.3,
+     "x1": 171.8,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "49,500.00",
+     "x0": 259.0,
+     "x1": 287.0,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 387.9,
+     "x1": 400.3,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "8,750.50",
+     "x0": 432.1,
+     "x1": 457.0,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "40,749.50",
+     "x0": 485.6,
+     "x1": 513.6,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 269.8,
+     "bottom": 275.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 1
+    }
+   ]
+  },
+  {
+   "page": 2,
+   "width": 595.3,
+   "height": 841.9,
+   "has_text_layer": true,
+   "ruling_lines": 10,
+   "rects": 0,
+   "words": [
+    {
+     "text": "No.",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Cuenta",
+     "x0": 37.0,
+     "x1": 55.7,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Naturaleza",
+     "x0": 82.7,
+     "x1": 113.8,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Cuenta",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Saldo",
+     "x0": 252.4,
+     "x1": 268.0,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Inicial",
+     "x0": 265.2,
+     "x1": 287.0,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Saldo",
+     "x0": 309.4,
+     "x1": 325.0,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Inicial",
+     "x0": 321.8,
+     "x1": 343.6,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Debe",
+     "x0": 387.9,
+     "x1": 400.3,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Haber",
+     "x0": 441.4,
+     "x1": 457.0,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Saldo",
+     "x0": 482.4,
+     "x1": 498.0,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Final",
+     "x0": 498.1,
+     "x1": 513.6,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Saldo",
+     "x0": 539.5,
+     "x1": 555.0,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Final",
+     "x0": 554.8,
+     "x1": 570.3,
+     "top": 39.8,
+     "bottom": 45.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Deudor",
+     "x0": 268.3,
+     "x1": 287.0,
+     "top": 46.3,
+     "bottom": 52.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Acreedor",
+     "x0": 318.7,
+     "x1": 343.6,
+     "top": 46.3,
+     "bottom": 52.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Deudor",
+     "x0": 494.9,
+     "x1": 513.6,
+     "top": 46.3,
+     "bottom": 52.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Acreedor",
+     "x0": 545.4,
+     "x1": 570.3,
+     "top": 46.3,
+     "bottom": 52.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "201",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "A",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Proveedores",
+     "x0": 128.0,
+     "x1": 162.2,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "60,000.00",
+     "x0": 315.6,
+     "x1": 343.6,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "40,000.00",
+     "x0": 372.3,
+     "x1": 400.3,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "8,000.00",
+     "x0": 432.1,
+     "x1": 457.0,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 501.2,
+     "x1": 513.6,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "28,000.00",
+     "x0": 542.3,
+     "x1": 570.3,
+     "top": 56.8,
+     "bottom": 62.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "201-01",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "A",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Proveedores",
+     "x0": 128.0,
+     "x1": 162.2,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "nacionales",
+     "x0": 163.9,
+     "x1": 195.0,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "45,000.00",
+     "x0": 315.6,
+     "x1": 343.6,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "30,000.00",
+     "x0": 372.3,
+     "x1": 400.3,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "5,000.00",
+     "x0": 432.1,
+     "x1": 457.0,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 501.2,
+     "x1": 513.6,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "20,000.00",
+     "x0": 542.3,
+     "x1": 570.3,
+     "top": 67.3,
+     "bottom": 73.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "201-02",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "A",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Proveedores",
+     "x0": 128.0,
+     "x1": 162.2,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "extranjeros",
+     "x0": 163.9,
+     "x1": 198.1,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "15,000.00",
+     "x0": 315.6,
+     "x1": 343.6,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "10,000.00",
+     "x0": 372.3,
+     "x1": 400.3,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "3,000.00",
+     "x0": 432.1,
+     "x1": 457.0,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 501.2,
+     "x1": 513.6,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "8,000.00",
+     "x0": 545.4,
+     "x1": 570.3,
+     "top": 77.8,
+     "bottom": 83.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "301",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "A",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Capital",
+     "x0": 128.0,
+     "x1": 149.8,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "social",
+     "x0": 151.5,
+     "x1": 170.2,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "200,000.00",
+     "x0": 312.5,
+     "x1": 343.6,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 387.9,
+     "x1": 400.3,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 444.6,
+     "x1": 457.0,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 501.2,
+     "x1": 513.6,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "200,000.00",
+     "x0": 539.2,
+     "x1": 570.3,
+     "top": 88.3,
+     "bottom": 94.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "401",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "A",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Ventas",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 387.9,
+     "x1": 400.3,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "150,000.00",
+     "x0": 425.9,
+     "x1": 457.0,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 501.2,
+     "x1": 513.6,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "150,000.00",
+     "x0": 539.2,
+     "x1": 570.3,
+     "top": 98.8,
+     "bottom": 104.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "601",
+     "x0": 26.0,
+     "x1": 35.3,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Gastos",
+     "x0": 128.0,
+     "x1": 146.7,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "generales",
+     "x0": 148.4,
+     "x1": 176.4,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "34,751.00",
+     "x0": 372.3,
+     "x1": 400.3,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 444.6,
+     "x1": 457.0,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "34,751.00",
+     "x0": 485.6,
+     "x1": 513.6,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 109.3,
+     "bottom": 115.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "601-01",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Servicios",
+     "x0": 128.0,
+     "x1": 156.0,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "25,500.75",
+     "x0": 372.3,
+     "x1": 400.3,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 444.6,
+     "x1": 457.0,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "25,500.75",
+     "x0": 485.6,
+     "x1": 513.6,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 119.8,
+     "bottom": 125.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "601-02",
+     "x0": 26.0,
+     "x1": 44.7,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "D",
+     "x0": 82.7,
+     "x1": 85.8,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Papeleria",
+     "x0": 128.0,
+     "x1": 156.0,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 274.6,
+     "x1": 287.0,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 331.2,
+     "x1": 343.6,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "9,250.25",
+     "x0": 375.4,
+     "x1": 400.3,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 444.6,
+     "x1": 457.0,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "9,250.25",
+     "x0": 488.7,
+     "x1": 513.6,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "0.00",
+     "x0": 557.9,
+     "x1": 570.3,
+     "top": 130.3,
+     "bottom": 136.3,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Totales",
+     "x0": 128.0,
+     "x1": 149.8,
+     "top": 140.8,
+     "bottom": 146.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "229,751.00",
+     "x0": 369.2,
+     "x1": 400.3,
+     "top": 140.8,
+     "bottom": 146.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "229,751.00",
+     "x0": 425.9,
+     "x1": 457.0,
+     "top": 140.8,
+     "bottom": 146.8,
+     "size": 6.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Pagina",
+     "x0": 273.0,
+     "x1": 291.7,
+     "top": 805.4,
+     "bottom": 813.4,
+     "size": 8.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "2",
+     "x0": 285.0,
+     "x1": 288.1,
+     "top": 805.4,
+     "bottom": 813.4,
+     "size": 8.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 297.0,
+     "x1": 303.2,
+     "top": 805.4,
+     "bottom": 813.4,
+     "size": 8.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "2",
+     "x0": 309.0,
+     "x1": 312.1,
+     "top": 805.4,
+     "bottom": 813.4,
+     "size": 8.0,
+     "bold": true,
+     "page": 2
+    }
+   ]
+  }
+ ]
+}

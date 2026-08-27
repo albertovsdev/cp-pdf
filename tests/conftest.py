@@ -12,11 +12,13 @@ from typing import Any
 
 import pytest
 
-from contapdf.ir import Page, Word
+from contapdf.ir import Document, Page, Word
 
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 LAYOUTS = FIXTURES / "layouts"
 REAL = FIXTURES / "real"
+SYNTHETIC = FIXTURES / "synthetic"
+GOLDEN = FIXTURES / "golden"
 
 REAL_PDFS = {
     "balanza": REAL / "1-Balanza" / "balanza.pdf",
@@ -81,3 +83,50 @@ def requires_real_pdf(name: str) -> Path:
     if not path.exists():
         pytest.skip(f"fixture real ausente (gitignored): {path}")
     return path
+
+
+def _pages_from(raw: dict[str, Any]) -> list[Page]:
+    return [
+        Page(
+            number=page["page"],
+            width=page["width"],
+            height=page["height"],
+            ruling_lines=page["ruling_lines"],
+            words=tuple(
+                Word(text=w["text"], x0=w["x0"], x1=w["x1"], top=w["top"],
+                     bottom=w["bottom"], size=w["size"], bold=w["bold"],
+                     page=page["page"])
+                for w in page["words"]
+            ),
+        )
+        for page in raw["pages"]
+    ]
+
+
+def synthetic_document(name: str) -> Document:
+    """Document armado desde un fixture sintetico, sin abrir ningun PDF."""
+    doc, _ = counted_document(name)
+    return doc
+
+
+def counted_document(name: str) -> tuple[Document, list[int]]:
+    """Igual que synthetic_document, pero anota cada recorrido de paginas.
+
+    Sirve para verificar PLAN 0: una sola pasada completa por documento.
+    """
+    raw = json.loads((SYNTHETIC / f"{name}.json").read_text(encoding="utf-8"))
+    paginas = _pages_from(raw)
+    pasadas: list[int] = []
+
+    def abrir():
+        pasadas.append(len(pasadas) + 1)
+        yield from paginas
+
+    return Document(source=f"{name}.json", page_count=len(paginas),
+                    open_pages=abrir), pasadas
+
+
+def golden_rows(name: str) -> list[dict[str, str]]:
+    import csv
+    with (GOLDEN / f"{name}.csv").open(encoding="utf-8", newline="") as fh:
+        return list(csv.DictReader(fh))
