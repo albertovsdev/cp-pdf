@@ -1,0 +1,4147 @@
+{
+ "source_pages_total": 968,
+ "pages_sampled": [
+  1,
+  2,
+  500
+ ],
+ "mask_mode": "values",
+ "salted": true,
+ "pages": [
+  {
+   "page": 1,
+   "width": 595,
+   "height": 842,
+   "has_text_layer": true,
+   "ruling_lines": 36,
+   "rects": 26,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 22.6,
+     "x_min": 20.0,
+     "x_max": 109.7,
+     "support": 20,
+     "header": ""
+    },
+    {
+     "index": 1,
+     "align": "left",
+     "anchor": 160.3,
+     "x_min": 131.0,
+     "x_max": 383.1,
+     "support": 47,
+     "header": ""
+    },
+    {
+     "index": 2,
+     "align": "right",
+     "anchor": 406.5,
+     "x_min": 405.0,
+     "x_max": 487.0,
+     "support": 12,
+     "header": ""
+    },
+    {
+     "index": 3,
+     "align": "left",
+     "anchor": 491.5,
+     "x_min": 490.0,
+     "x_max": 526.1,
+     "support": 4,
+     "header": ""
+    },
+    {
+     "index": 4,
+     "align": "right",
+     "anchor": 572.0,
+     "x_min": 527.5,
+     "x_max": 572.0,
+     "support": 8,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "IMPRESO",
+     "x0": 243.0,
+     "x1": 289.2,
+     "top": 42.5,
+     "bottom": 52.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 291.9,
+     "x1": 305.8,
+     "top": 42.5,
+     "bottom": 52.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "PÓLIZAS",
+     "x0": 308.6,
+     "x1": 351.9,
+     "top": 42.5,
+     "bottom": 52.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Desde:",
+     "x0": 211.9,
+     "x1": 243.6,
+     "top": 59.5,
+     "bottom": 69.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99-99-9999",
+     "x0": 246.4,
+     "x1": 297.5,
+     "top": 59.5,
+     "bottom": 69.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Hasta:",
+     "x0": 300.3,
+     "x1": 329.2,
+     "top": 59.5,
+     "bottom": 69.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99-99-9999",
+     "x0": 332.0,
+     "x1": 383.1,
+     "top": 59.5,
+     "bottom": 69.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXX",
+     "x0": 226.9,
+     "x1": 293.6,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 296.4,
+     "x1": 316.9,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 319.7,
+     "x1": 368.1,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Tipo",
+     "x0": 23.0,
+     "x1": 44.1,
+     "top": 81.5,
+     "bottom": 91.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 46.9,
+     "x1": 58.6,
+     "top": 81.5,
+     "bottom": 91.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "póliza",
+     "x0": 61.3,
+     "x1": 89.7,
+     "top": 81.5,
+     "bottom": 91.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Venta",
+     "x0": 134.0,
+     "x1": 161.2,
+     "top": 81.5,
+     "bottom": 91.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "(",
+     "x0": 164.0,
+     "x1": 167.3,
+     "top": 81.5,
+     "bottom": 91.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Ingreso",
+     "x0": 170.1,
+     "x1": 206.2,
+     "top": 81.5,
+     "bottom": 91.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": ")",
+     "x0": 209.0,
+     "x1": 212.4,
+     "top": 81.5,
+     "bottom": 91.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 101.5,
+     "bottom": 111.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 134.0,
+     "x1": 184.0,
+     "top": 101.5,
+     "bottom": 111.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Descripción",
+     "x0": 23.0,
+     "x1": 80.2,
+     "top": 121.5,
+     "bottom": 131.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99999",
+     "x0": 134.0,
+     "x1": 161.8,
+     "top": 121.5,
+     "bottom": 131.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Folio",
+     "x0": 23.0,
+     "x1": 46.9,
+     "top": 141.5,
+     "bottom": 151.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Cuenta",
+     "x0": 134.0,
+     "x1": 167.9,
+     "top": 141.5,
+     "bottom": 151.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Contable",
+     "x0": 170.7,
+     "x1": 213.4,
+     "top": 141.5,
+     "bottom": 151.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Debe",
+     "x0": 462.6,
+     "x1": 487.0,
+     "top": 141.5,
+     "bottom": 151.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Haber",
+     "x0": 543.7,
+     "x1": 572.0,
+     "top": 141.5,
+     "bottom": 151.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "401-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxx",
+     "x0": 167.9,
+     "x1": 199.0,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 201.8,
+     "x1": 212.9,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxxxxx",
+     "x0": 215.7,
+     "x1": 274.1,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 276.9,
+     "x1": 318.0,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "a",
+     "x0": 320.8,
+     "x1": 326.3,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "la",
+     "x0": 329.1,
+     "x1": 336.9,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "tasa",
+     "x0": 339.7,
+     "x1": 358.6,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "general",
+     "x0": 361.3,
+     "x1": 394.7,
+     "top": 157.2,
+     "bottom": 167.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 163.0,
+     "bottom": 173.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 163.0,
+     "bottom": 173.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "105-01-081",
+     "x0": 134.0,
+     "x1": 185.1,
+     "top": 182.0,
+     "bottom": 192.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 187.9,
+     "x1": 227.9,
+     "top": 182.0,
+     "bottom": 192.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 230.7,
+     "x1": 277.4,
+     "top": 182.0,
+     "bottom": 192.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 280.1,
+     "x1": 331.3,
+     "top": 182.0,
+     "bottom": 192.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 182.0,
+     "bottom": 192.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 547.0,
+     "x1": 572.0,
+     "top": 182.0,
+     "bottom": 192.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "209-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 197.0,
+     "bottom": 207.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "IVA",
+     "x0": 167.9,
+     "x1": 184.0,
+     "top": 197.0,
+     "bottom": 207.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxxx",
+     "x0": 186.8,
+     "x1": 233.5,
+     "top": 197.0,
+     "bottom": 207.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "no",
+     "x0": 236.3,
+     "x1": 247.4,
+     "top": 197.0,
+     "bottom": 207.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 250.2,
+     "x1": 286.3,
+     "top": 197.0,
+     "bottom": 207.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 197.0,
+     "bottom": 207.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$99.99",
+     "x0": 541.4,
+     "x1": 572.0,
+     "top": 197.0,
+     "bottom": 207.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Totales",
+     "x0": 134.0,
+     "x1": 166.8,
+     "top": 212.0,
+     "bottom": 222.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 212.0,
+     "bottom": 222.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 212.0,
+     "bottom": 222.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Notas",
+     "x0": 23.0,
+     "x1": 50.8,
+     "top": 236.5,
+     "bottom": 246.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Adicionales",
+     "x0": 53.6,
+     "x1": 109.7,
+     "top": 236.5,
+     "bottom": 246.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "CFDI",
+     "x0": 23.0,
+     "x1": 46.3,
+     "top": 258.5,
+     "bottom": 268.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Asociados",
+     "x0": 49.1,
+     "x1": 99.7,
+     "top": 258.5,
+     "bottom": 268.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "a",
+     "x0": 102.5,
+     "x1": 108.0,
+     "top": 258.5,
+     "bottom": 268.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "la",
+     "x0": 110.8,
+     "x1": 119.1,
+     "top": 258.5,
+     "bottom": 268.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "póliza",
+     "x0": 121.9,
+     "x1": 150.3,
+     "top": 258.5,
+     "bottom": 268.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 278.5,
+     "bottom": 288.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Documento",
+     "x0": 134.0,
+     "x1": 189.0,
+     "top": 278.5,
+     "bottom": 288.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "UUID",
+     "x0": 210.0,
+     "x1": 234.4,
+     "top": 278.5,
+     "bottom": 288.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "RFC",
+     "x0": 408.0,
+     "x1": 428.6,
+     "top": 278.5,
+     "bottom": 288.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Tipo",
+     "x0": 493.0,
+     "x1": 514.1,
+     "top": 278.5,
+     "bottom": 288.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 20.0,
+     "x1": 70.0,
+     "top": 297.4,
+     "bottom": 307.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99999",
+     "x0": 131.0,
+     "x1": 158.8,
+     "top": 297.4,
+     "bottom": 307.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "UUID-81D0F7BEC9C7",
+     "x0": 207.0,
+     "x1": 345.4,
+     "top": 297.4,
+     "bottom": 307.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "RFC243D472B9",
+     "x0": 405.0,
+     "x1": 484.5,
+     "top": 297.4,
+     "bottom": 307.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Ingreso",
+     "x0": 490.0,
+     "x1": 526.1,
+     "top": 297.4,
+     "bottom": 307.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99X9XXXXXX99",
+     "x0": 207.0,
+     "x1": 282.6,
+     "top": 309.0,
+     "bottom": 319.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Tipo",
+     "x0": 23.0,
+     "x1": 44.1,
+     "top": 350.5,
+     "bottom": 360.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 46.9,
+     "x1": 58.6,
+     "top": 350.5,
+     "bottom": 360.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "póliza",
+     "x0": 61.3,
+     "x1": 89.7,
+     "top": 350.5,
+     "bottom": 360.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Venta",
+     "x0": 134.0,
+     "x1": 161.2,
+     "top": 350.5,
+     "bottom": 360.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "(",
+     "x0": 164.0,
+     "x1": 167.3,
+     "top": 350.5,
+     "bottom": 360.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Ingreso",
+     "x0": 170.1,
+     "x1": 206.2,
+     "top": 350.5,
+     "bottom": 360.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": ")",
+     "x0": 209.0,
+     "x1": 212.4,
+     "top": 350.5,
+     "bottom": 360.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 370.5,
+     "bottom": 380.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 134.0,
+     "x1": 184.0,
+     "top": 370.5,
+     "bottom": 380.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Descripción",
+     "x0": 23.0,
+     "x1": 80.2,
+     "top": 390.5,
+     "bottom": 400.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99999",
+     "x0": 134.0,
+     "x1": 161.8,
+     "top": 390.5,
+     "bottom": 400.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Folio",
+     "x0": 23.0,
+     "x1": 46.9,
+     "top": 410.5,
+     "bottom": 420.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Cuenta",
+     "x0": 134.0,
+     "x1": 167.9,
+     "top": 410.5,
+     "bottom": 420.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Contable",
+     "x0": 170.7,
+     "x1": 213.4,
+     "top": 410.5,
+     "bottom": 420.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Debe",
+     "x0": 462.6,
+     "x1": 487.0,
+     "top": 410.5,
+     "bottom": 420.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Haber",
+     "x0": 543.7,
+     "x1": 572.0,
+     "top": 410.5,
+     "bottom": 420.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "105-01-081",
+     "x0": 134.0,
+     "x1": 185.1,
+     "top": 428.0,
+     "bottom": 438.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 187.9,
+     "x1": 227.9,
+     "top": 428.0,
+     "bottom": 438.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 230.7,
+     "x1": 277.4,
+     "top": 428.0,
+     "bottom": 438.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 280.1,
+     "x1": 331.3,
+     "top": 428.0,
+     "bottom": 438.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9,999.99",
+     "x0": 442.5,
+     "x1": 487.0,
+     "top": 428.0,
+     "bottom": 438.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 547.0,
+     "x1": 572.0,
+     "top": 428.0,
+     "bottom": 438.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "209-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 443.0,
+     "bottom": 453.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "IVA",
+     "x0": 167.9,
+     "x1": 184.0,
+     "top": 443.0,
+     "bottom": 453.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxxx",
+     "x0": 186.8,
+     "x1": 233.5,
+     "top": 443.0,
+     "bottom": 453.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "no",
+     "x0": 236.3,
+     "x1": 247.4,
+     "top": 443.0,
+     "bottom": 453.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 250.2,
+     "x1": 286.3,
+     "top": 443.0,
+     "bottom": 453.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 443.0,
+     "bottom": 453.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 443.0,
+     "bottom": 453.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "401-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxx",
+     "x0": 167.9,
+     "x1": 199.0,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 201.8,
+     "x1": 212.9,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxxxxx",
+     "x0": 215.7,
+     "x1": 274.1,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 276.9,
+     "x1": 318.0,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "a",
+     "x0": 320.8,
+     "x1": 326.3,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "la",
+     "x0": 329.1,
+     "x1": 336.9,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "tasa",
+     "x0": 339.7,
+     "x1": 358.6,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "general",
+     "x0": 361.3,
+     "x1": 394.7,
+     "top": 456.2,
+     "bottom": 466.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 462.0,
+     "bottom": 472.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 462.0,
+     "bottom": 472.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Totales",
+     "x0": 134.0,
+     "x1": 166.8,
+     "top": 481.0,
+     "bottom": 491.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9,999.99",
+     "x0": 442.5,
+     "x1": 487.0,
+     "top": 481.0,
+     "bottom": 491.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9,999.99",
+     "x0": 527.5,
+     "x1": 572.0,
+     "top": 481.0,
+     "bottom": 491.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Notas",
+     "x0": 23.0,
+     "x1": 50.8,
+     "top": 505.5,
+     "bottom": 515.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Adicionales",
+     "x0": 53.6,
+     "x1": 109.7,
+     "top": 505.5,
+     "bottom": 515.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "CFDI",
+     "x0": 23.0,
+     "x1": 46.3,
+     "top": 527.5,
+     "bottom": 537.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Asociados",
+     "x0": 49.1,
+     "x1": 99.7,
+     "top": 527.5,
+     "bottom": 537.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "a",
+     "x0": 102.5,
+     "x1": 108.0,
+     "top": 527.5,
+     "bottom": 537.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "la",
+     "x0": 110.8,
+     "x1": 119.1,
+     "top": 527.5,
+     "bottom": 537.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "póliza",
+     "x0": 121.9,
+     "x1": 150.3,
+     "top": 527.5,
+     "bottom": 537.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 547.5,
+     "bottom": 557.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Documento",
+     "x0": 134.0,
+     "x1": 189.0,
+     "top": 547.5,
+     "bottom": 557.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "UUID",
+     "x0": 210.0,
+     "x1": 234.4,
+     "top": 547.5,
+     "bottom": 557.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "RFC",
+     "x0": 408.0,
+     "x1": 428.6,
+     "top": 547.5,
+     "bottom": 557.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Tipo",
+     "x0": 493.0,
+     "x1": 514.1,
+     "top": 547.5,
+     "bottom": 557.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 20.0,
+     "x1": 70.0,
+     "top": 566.3,
+     "bottom": 576.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "99999",
+     "x0": 131.0,
+     "x1": 158.8,
+     "top": 566.3,
+     "bottom": 576.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "UUID-EABE917D84F4",
+     "x0": 207.0,
+     "x1": 339.3,
+     "top": 566.3,
+     "bottom": 576.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "RFC243D472B9",
+     "x0": 405.0,
+     "x1": 484.5,
+     "top": 566.3,
+     "bottom": 576.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "Ingreso",
+     "x0": 490.0,
+     "x1": 526.1,
+     "top": 566.3,
+     "bottom": 576.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    },
+    {
+     "text": "X99XX999X99X",
+     "x0": 207.0,
+     "x1": 281.5,
+     "top": 578.0,
+     "bottom": 588.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 1
+    }
+   ]
+  },
+  {
+   "page": 2,
+   "width": 595,
+   "height": 842,
+   "has_text_layer": true,
+   "ruling_lines": 36,
+   "rects": 26,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 22.6,
+     "x_min": 20.0,
+     "x_max": 109.7,
+     "support": 20,
+     "header": ""
+    },
+    {
+     "index": 1,
+     "align": "left",
+     "anchor": 160.3,
+     "x_min": 131.0,
+     "x_max": 368.1,
+     "support": 55,
+     "header": ""
+    },
+    {
+     "index": 2,
+     "align": "right",
+     "anchor": 406.5,
+     "x_min": 405.0,
+     "x_max": 487.0,
+     "support": 12,
+     "header": ""
+    },
+    {
+     "index": 3,
+     "align": "left",
+     "anchor": 491.5,
+     "x_min": 490.0,
+     "x_max": 526.1,
+     "support": 4,
+     "header": ""
+    },
+    {
+     "index": 4,
+     "align": "right",
+     "anchor": 572.0,
+     "x_min": 535.9,
+     "x_max": 572.0,
+     "support": 8,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "IMPRESO",
+     "x0": 237.6,
+     "x1": 288.3,
+     "top": 43.1,
+     "bottom": 54.1,
+     "size": 11.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "DE",
+     "x0": 291.4,
+     "x1": 306.7,
+     "top": 43.1,
+     "bottom": 54.1,
+     "size": 11.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "PÓLIZAS",
+     "x0": 309.7,
+     "x1": 357.4,
+     "top": 43.1,
+     "bottom": 54.1,
+     "size": 11.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Desde:",
+     "x0": 213.4,
+     "x1": 245.1,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "99-99-9999",
+     "x0": 247.9,
+     "x1": 299.0,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Hasta:",
+     "x0": 301.8,
+     "x1": 330.7,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "99-99-9999",
+     "x0": 333.5,
+     "x1": 384.6,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXX",
+     "x0": 226.9,
+     "x1": 293.6,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 296.4,
+     "x1": 316.9,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 319.7,
+     "x1": 368.1,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Tipo",
+     "x0": 23.0,
+     "x1": 44.1,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 46.9,
+     "x1": 58.6,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "póliza",
+     "x0": 61.3,
+     "x1": 89.7,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Venta",
+     "x0": 134.0,
+     "x1": 161.2,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "(",
+     "x0": 164.0,
+     "x1": 167.3,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Ingreso",
+     "x0": 170.1,
+     "x1": 206.2,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": ")",
+     "x0": 209.0,
+     "x1": 212.4,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 103.5,
+     "bottom": 113.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 134.0,
+     "x1": 184.0,
+     "top": 103.5,
+     "bottom": 113.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Descripción",
+     "x0": 23.0,
+     "x1": 80.2,
+     "top": 123.5,
+     "bottom": 133.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99999",
+     "x0": 134.0,
+     "x1": 161.8,
+     "top": 123.5,
+     "bottom": 133.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Folio",
+     "x0": 23.0,
+     "x1": 46.9,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Cuenta",
+     "x0": 134.0,
+     "x1": 167.9,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Contable",
+     "x0": 170.7,
+     "x1": 213.4,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Debe",
+     "x0": 462.6,
+     "x1": 487.0,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Haber",
+     "x0": 543.7,
+     "x1": 572.0,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "105-01-303",
+     "x0": 134.0,
+     "x1": 185.1,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 187.9,
+     "x1": 222.4,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 225.2,
+     "x1": 246.8,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 249.6,
+     "x1": 288.5,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$9.99",
+     "x0": 547.0,
+     "x1": 572.0,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "401-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxx",
+     "x0": 167.9,
+     "x1": 199.0,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 201.8,
+     "x1": 212.9,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxxxx",
+     "x0": 215.7,
+     "x1": 274.1,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 276.9,
+     "x1": 318.0,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "a",
+     "x0": 320.8,
+     "x1": 326.3,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "la",
+     "x0": 329.1,
+     "x1": 336.9,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "tasa",
+     "x0": 339.7,
+     "x1": 358.6,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "general",
+     "x0": 361.3,
+     "x1": 394.7,
+     "top": 174.2,
+     "bottom": 184.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 180.0,
+     "bottom": 190.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 180.0,
+     "bottom": 190.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "209-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 199.0,
+     "bottom": 209.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "IVA",
+     "x0": 167.9,
+     "x1": 184.0,
+     "top": 199.0,
+     "bottom": 209.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxx",
+     "x0": 186.8,
+     "x1": 233.5,
+     "top": 199.0,
+     "bottom": 209.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "no",
+     "x0": 236.3,
+     "x1": 247.4,
+     "top": 199.0,
+     "bottom": 209.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 250.2,
+     "x1": 286.3,
+     "top": 199.0,
+     "bottom": 209.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 199.0,
+     "bottom": 209.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 199.0,
+     "bottom": 209.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Totales",
+     "x0": 134.0,
+     "x1": 166.8,
+     "top": 214.0,
+     "bottom": 224.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 214.0,
+     "bottom": 224.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 214.0,
+     "bottom": 224.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Notas",
+     "x0": 23.0,
+     "x1": 50.8,
+     "top": 238.5,
+     "bottom": 248.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Adicionales",
+     "x0": 53.6,
+     "x1": 109.7,
+     "top": 238.5,
+     "bottom": 248.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "CFDI",
+     "x0": 23.0,
+     "x1": 46.3,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Asociados",
+     "x0": 49.1,
+     "x1": 99.7,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "a",
+     "x0": 102.5,
+     "x1": 108.0,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "la",
+     "x0": 110.8,
+     "x1": 119.1,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "póliza",
+     "x0": 121.9,
+     "x1": 150.3,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Documento",
+     "x0": 134.0,
+     "x1": 189.0,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "UUID",
+     "x0": 210.0,
+     "x1": 234.4,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "RFC",
+     "x0": 408.0,
+     "x1": 428.6,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Tipo",
+     "x0": 493.0,
+     "x1": 514.1,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 20.0,
+     "x1": 70.0,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99999",
+     "x0": 131.0,
+     "x1": 158.8,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "UUID-C4FC60448837",
+     "x0": 207.0,
+     "x1": 343.7,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "RFC6453DA5B1",
+     "x0": 405.0,
+     "x1": 485.6,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Ingreso",
+     "x0": 490.0,
+     "x1": 526.1,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99X999999999",
+     "x0": 207.0,
+     "x1": 275.4,
+     "top": 311.0,
+     "bottom": 321.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Tipo",
+     "x0": 23.0,
+     "x1": 44.1,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 46.9,
+     "x1": 58.6,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "póliza",
+     "x0": 61.3,
+     "x1": 89.7,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Venta",
+     "x0": 134.0,
+     "x1": 161.2,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "(",
+     "x0": 164.0,
+     "x1": 167.3,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Ingreso",
+     "x0": 170.1,
+     "x1": 206.2,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": ")",
+     "x0": 209.0,
+     "x1": 212.4,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 372.5,
+     "bottom": 382.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 134.0,
+     "x1": 184.0,
+     "top": 372.5,
+     "bottom": 382.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Descripción",
+     "x0": 23.0,
+     "x1": 80.2,
+     "top": 392.5,
+     "bottom": 402.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99999",
+     "x0": 134.0,
+     "x1": 161.8,
+     "top": 392.5,
+     "bottom": 402.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Folio",
+     "x0": 23.0,
+     "x1": 46.9,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Cuenta",
+     "x0": 134.0,
+     "x1": 167.9,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Contable",
+     "x0": 170.7,
+     "x1": 213.4,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Debe",
+     "x0": 462.6,
+     "x1": 487.0,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Haber",
+     "x0": 543.7,
+     "x1": 572.0,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "209-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 430.0,
+     "bottom": 440.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "IVA",
+     "x0": 167.9,
+     "x1": 184.0,
+     "top": 430.0,
+     "bottom": 440.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxx",
+     "x0": 186.8,
+     "x1": 233.5,
+     "top": 430.0,
+     "bottom": 440.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "no",
+     "x0": 236.3,
+     "x1": 247.4,
+     "top": 430.0,
+     "bottom": 440.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 250.2,
+     "x1": 286.3,
+     "top": 430.0,
+     "bottom": 440.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 430.0,
+     "bottom": 440.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$99.99",
+     "x0": 541.4,
+     "x1": 572.0,
+     "top": 430.0,
+     "bottom": 440.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "105-01-2932",
+     "x0": 134.0,
+     "x1": 190.7,
+     "top": 445.0,
+     "bottom": 455.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXX",
+     "x0": 193.5,
+     "x1": 226.8,
+     "top": 445.0,
+     "bottom": 455.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 229.6,
+     "x1": 260.7,
+     "top": 445.0,
+     "bottom": 455.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 263.5,
+     "x1": 304.6,
+     "top": 445.0,
+     "bottom": 455.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXX",
+     "x0": 307.4,
+     "x1": 367.4,
+     "top": 445.0,
+     "bottom": 455.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 445.0,
+     "bottom": 455.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$9.99",
+     "x0": 547.0,
+     "x1": 572.0,
+     "top": 445.0,
+     "bottom": 455.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "401-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxx",
+     "x0": 167.9,
+     "x1": 199.0,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 201.8,
+     "x1": 212.9,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxxxx",
+     "x0": 215.7,
+     "x1": 274.1,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 276.9,
+     "x1": 318.0,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "a",
+     "x0": 320.8,
+     "x1": 326.3,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "la",
+     "x0": 329.1,
+     "x1": 336.9,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "tasa",
+     "x0": 339.7,
+     "x1": 358.6,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "general",
+     "x0": 361.3,
+     "x1": 394.7,
+     "top": 458.2,
+     "bottom": 468.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 464.0,
+     "bottom": 474.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 464.0,
+     "bottom": 474.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Totales",
+     "x0": 134.0,
+     "x1": 166.8,
+     "top": 483.0,
+     "bottom": 493.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 483.0,
+     "bottom": 493.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 483.0,
+     "bottom": 493.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Notas",
+     "x0": 23.0,
+     "x1": 50.8,
+     "top": 507.5,
+     "bottom": 517.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Adicionales",
+     "x0": 53.6,
+     "x1": 109.7,
+     "top": 507.5,
+     "bottom": 517.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "CFDI",
+     "x0": 23.0,
+     "x1": 46.3,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Asociados",
+     "x0": 49.1,
+     "x1": 99.7,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "a",
+     "x0": 102.5,
+     "x1": 108.0,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "la",
+     "x0": 110.8,
+     "x1": 119.1,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "póliza",
+     "x0": 121.9,
+     "x1": 150.3,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Documento",
+     "x0": 134.0,
+     "x1": 189.0,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "UUID",
+     "x0": 210.0,
+     "x1": 234.4,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "RFC",
+     "x0": 408.0,
+     "x1": 428.6,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Tipo",
+     "x0": 493.0,
+     "x1": 514.1,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 20.0,
+     "x1": 70.0,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "99999",
+     "x0": 131.0,
+     "x1": 158.8,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "UUID-5221F34A3956",
+     "x0": 207.0,
+     "x1": 344.8,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "X9X9XX9XX9X9",
+     "x0": 207.0,
+     "x1": 283.7,
+     "top": 580.0,
+     "bottom": 590.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "RFC118AA1269",
+     "x0": 405.0,
+     "x1": 485.0,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    },
+    {
+     "text": "Ingreso",
+     "x0": 490.0,
+     "x1": 526.1,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 2
+    }
+   ]
+  },
+  {
+   "page": 500,
+   "width": 595,
+   "height": 842,
+   "has_text_layer": true,
+   "ruling_lines": 36,
+   "rects": 26,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 22.6,
+     "x_min": 20.0,
+     "x_max": 109.7,
+     "support": 20,
+     "header": ""
+    },
+    {
+     "index": 1,
+     "align": "left",
+     "anchor": 154.7,
+     "x_min": 131.0,
+     "x_max": 368.1,
+     "support": 54,
+     "header": ""
+    },
+    {
+     "index": 2,
+     "align": "right",
+     "anchor": 406.5,
+     "x_min": 405.0,
+     "x_max": 526.1,
+     "support": 15,
+     "header": ""
+    },
+    {
+     "index": 3,
+     "align": "right",
+     "anchor": 572.0,
+     "x_min": 527.5,
+     "x_max": 572.0,
+     "support": 8,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "IMPRESO",
+     "x0": 237.6,
+     "x1": 288.3,
+     "top": 43.1,
+     "bottom": 54.1,
+     "size": 11.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "DE",
+     "x0": 291.4,
+     "x1": 306.7,
+     "top": 43.1,
+     "bottom": 54.1,
+     "size": 11.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "PÓLIZAS",
+     "x0": 309.7,
+     "x1": 357.4,
+     "top": 43.1,
+     "bottom": 54.1,
+     "size": 11.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Desde:",
+     "x0": 213.4,
+     "x1": 245.1,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "99-99-9999",
+     "x0": 247.9,
+     "x1": 299.0,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "Hasta:",
+     "x0": 301.8,
+     "x1": 330.7,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "99-99-9999",
+     "x0": 333.5,
+     "x1": 384.6,
+     "top": 61.5,
+     "bottom": 71.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXXXXXXXX",
+     "x0": 226.9,
+     "x1": 293.6,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "XXX",
+     "x0": 296.4,
+     "x1": 316.9,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 319.7,
+     "x1": 368.1,
+     "top": 25.0,
+     "bottom": 35.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Tipo",
+     "x0": 23.0,
+     "x1": 44.1,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "de",
+     "x0": 46.9,
+     "x1": 58.6,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "póliza",
+     "x0": 61.3,
+     "x1": 89.7,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Venta",
+     "x0": 134.0,
+     "x1": 161.2,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "(",
+     "x0": 164.0,
+     "x1": 167.3,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Ingreso",
+     "x0": 170.1,
+     "x1": 206.2,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": ")",
+     "x0": 209.0,
+     "x1": 212.4,
+     "top": 83.5,
+     "bottom": 93.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 103.5,
+     "bottom": 113.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 134.0,
+     "x1": 184.0,
+     "top": 103.5,
+     "bottom": 113.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Descripción",
+     "x0": 23.0,
+     "x1": 80.2,
+     "top": 123.5,
+     "bottom": 133.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "9999",
+     "x0": 134.0,
+     "x1": 156.2,
+     "top": 123.5,
+     "bottom": 133.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Folio",
+     "x0": 23.0,
+     "x1": 46.9,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Cuenta",
+     "x0": 134.0,
+     "x1": 167.9,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Contable",
+     "x0": 170.7,
+     "x1": 213.4,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Debe",
+     "x0": 462.6,
+     "x1": 487.0,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Haber",
+     "x0": 543.7,
+     "x1": 572.0,
+     "top": 143.5,
+     "bottom": 153.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "105-01-904",
+     "x0": 134.0,
+     "x1": 185.1,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 187.9,
+     "x1": 226.3,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXX",
+     "x0": 229.0,
+     "x1": 256.8,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXXXXXXX",
+     "x0": 259.6,
+     "x1": 324.0,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9,999.99",
+     "x0": 442.5,
+     "x1": 487.0,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9.99",
+     "x0": 547.0,
+     "x1": 572.0,
+     "top": 161.0,
+     "bottom": 171.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "209-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 176.0,
+     "bottom": 186.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "IVA",
+     "x0": 167.9,
+     "x1": 184.0,
+     "top": 176.0,
+     "bottom": 186.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxxxxx",
+     "x0": 186.8,
+     "x1": 233.5,
+     "top": 176.0,
+     "bottom": 186.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "no",
+     "x0": 236.3,
+     "x1": 247.4,
+     "top": 176.0,
+     "bottom": 186.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 250.2,
+     "x1": 286.3,
+     "top": 176.0,
+     "bottom": 186.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 176.0,
+     "bottom": 186.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 176.0,
+     "bottom": 186.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "401-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "Xxxxxx",
+     "x0": 167.9,
+     "x1": 199.0,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "de",
+     "x0": 201.8,
+     "x1": 212.9,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxxxxxxx",
+     "x0": 215.7,
+     "x1": 274.1,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 276.9,
+     "x1": 318.0,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "a",
+     "x0": 320.8,
+     "x1": 326.3,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "la",
+     "x0": 329.1,
+     "x1": 336.9,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "tasa",
+     "x0": 339.7,
+     "x1": 358.6,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "general",
+     "x0": 361.3,
+     "x1": 394.7,
+     "top": 189.2,
+     "bottom": 199.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 195.0,
+     "bottom": 205.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9,999.99",
+     "x0": 527.5,
+     "x1": 572.0,
+     "top": 195.0,
+     "bottom": 205.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "Totales",
+     "x0": 134.0,
+     "x1": 166.8,
+     "top": 214.0,
+     "bottom": 224.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9,999.99",
+     "x0": 442.5,
+     "x1": 487.0,
+     "top": 214.0,
+     "bottom": 224.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9,999.99",
+     "x0": 527.5,
+     "x1": 572.0,
+     "top": 214.0,
+     "bottom": 224.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "Notas",
+     "x0": 23.0,
+     "x1": 50.8,
+     "top": 238.5,
+     "bottom": 248.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Adicionales",
+     "x0": 53.6,
+     "x1": 109.7,
+     "top": 238.5,
+     "bottom": 248.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "CFDI",
+     "x0": 23.0,
+     "x1": 46.3,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Asociados",
+     "x0": 49.1,
+     "x1": 99.7,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "a",
+     "x0": 102.5,
+     "x1": 108.0,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "la",
+     "x0": 110.8,
+     "x1": 119.1,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "póliza",
+     "x0": 121.9,
+     "x1": 150.3,
+     "top": 260.5,
+     "bottom": 270.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Documento",
+     "x0": 134.0,
+     "x1": 189.0,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "UUID",
+     "x0": 210.0,
+     "x1": 234.4,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "RFC",
+     "x0": 408.0,
+     "x1": 428.6,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Tipo",
+     "x0": 493.0,
+     "x1": 514.1,
+     "top": 280.5,
+     "bottom": 290.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 20.0,
+     "x1": 70.0,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "9999",
+     "x0": 131.0,
+     "x1": 153.2,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "UUID-9AF36111A3C5",
+     "x0": 207.0,
+     "x1": 344.2,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "RFC97D8CE118",
+     "x0": 405.0,
+     "x1": 486.1,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Ingreso",
+     "x0": 490.0,
+     "x1": 526.1,
+     "top": 299.4,
+     "bottom": 309.4,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "9XX999X9X9X9",
+     "x0": 207.0,
+     "x1": 278.7,
+     "top": 311.0,
+     "bottom": 321.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Tipo",
+     "x0": 23.0,
+     "x1": 44.1,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "de",
+     "x0": 46.9,
+     "x1": 58.6,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "póliza",
+     "x0": 61.3,
+     "x1": 89.7,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Venta",
+     "x0": 134.0,
+     "x1": 161.2,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "(",
+     "x0": 164.0,
+     "x1": 167.3,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Ingreso",
+     "x0": 170.1,
+     "x1": 206.2,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": ")",
+     "x0": 209.0,
+     "x1": 212.4,
+     "top": 352.5,
+     "bottom": 362.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 372.5,
+     "bottom": 382.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 134.0,
+     "x1": 184.0,
+     "top": 372.5,
+     "bottom": 382.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Descripción",
+     "x0": 23.0,
+     "x1": 80.2,
+     "top": 392.5,
+     "bottom": 402.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "9999",
+     "x0": 134.0,
+     "x1": 156.2,
+     "top": 392.5,
+     "bottom": 402.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Folio",
+     "x0": 23.0,
+     "x1": 46.9,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Cuenta",
+     "x0": 134.0,
+     "x1": 167.9,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Contable",
+     "x0": 170.7,
+     "x1": 213.4,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Debe",
+     "x0": 462.6,
+     "x1": 487.0,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Haber",
+     "x0": 543.7,
+     "x1": 572.0,
+     "top": 412.5,
+     "bottom": 422.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "401-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "Xxxxxx",
+     "x0": 167.9,
+     "x1": 199.0,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "de",
+     "x0": 201.8,
+     "x1": 212.9,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxxxxxxx",
+     "x0": 215.7,
+     "x1": 274.1,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 276.9,
+     "x1": 318.0,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "a",
+     "x0": 320.8,
+     "x1": 326.3,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "la",
+     "x0": 329.1,
+     "x1": 336.9,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "tasa",
+     "x0": 339.7,
+     "x1": 358.6,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "general",
+     "x0": 361.3,
+     "x1": 394.7,
+     "top": 428.2,
+     "bottom": 438.2,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 434.0,
+     "bottom": 444.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 434.0,
+     "bottom": 444.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "209-01",
+     "x0": 134.0,
+     "x1": 165.1,
+     "top": 453.0,
+     "bottom": 463.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "IVA",
+     "x0": 167.9,
+     "x1": 184.0,
+     "top": 453.0,
+     "bottom": 463.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxxxxx",
+     "x0": 186.8,
+     "x1": 233.5,
+     "top": 453.0,
+     "bottom": 463.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "no",
+     "x0": 236.3,
+     "x1": 247.4,
+     "top": 453.0,
+     "bottom": 463.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 250.2,
+     "x1": 286.3,
+     "top": 453.0,
+     "bottom": 463.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9.99",
+     "x0": 462.0,
+     "x1": 487.0,
+     "top": 453.0,
+     "bottom": 463.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$99.99",
+     "x0": 541.4,
+     "x1": 572.0,
+     "top": 453.0,
+     "bottom": 463.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "105-01-903",
+     "x0": 134.0,
+     "x1": 185.1,
+     "top": 468.0,
+     "bottom": 478.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXX",
+     "x0": 187.9,
+     "x1": 214.0,
+     "top": 468.0,
+     "bottom": 478.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 216.8,
+     "x1": 257.9,
+     "top": 468.0,
+     "bottom": 478.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 260.7,
+     "x1": 314.1,
+     "top": 468.0,
+     "bottom": 478.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "XXXX",
+     "x0": 316.8,
+     "x1": 341.3,
+     "top": 468.0,
+     "bottom": 478.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 468.0,
+     "bottom": 478.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$9.99",
+     "x0": 547.0,
+     "x1": 572.0,
+     "top": 468.0,
+     "bottom": 478.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "Totales",
+     "x0": 134.0,
+     "x1": 166.8,
+     "top": 483.0,
+     "bottom": 493.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$999.99",
+     "x0": 450.9,
+     "x1": 487.0,
+     "top": 483.0,
+     "bottom": 493.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "$999.99",
+     "x0": 535.9,
+     "x1": 572.0,
+     "top": 483.0,
+     "bottom": 493.0,
+     "size": 10.0,
+     "bold": false,
+     "page": 500
+    },
+    {
+     "text": "Notas",
+     "x0": 23.0,
+     "x1": 50.8,
+     "top": 507.5,
+     "bottom": 517.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Adicionales",
+     "x0": 53.6,
+     "x1": 109.7,
+     "top": 507.5,
+     "bottom": 517.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "CFDI",
+     "x0": 23.0,
+     "x1": 46.3,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Asociados",
+     "x0": 49.1,
+     "x1": 99.7,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "a",
+     "x0": 102.5,
+     "x1": 108.0,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "la",
+     "x0": 110.8,
+     "x1": 119.1,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "póliza",
+     "x0": 121.9,
+     "x1": 150.3,
+     "top": 529.5,
+     "bottom": 539.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Fecha",
+     "x0": 23.0,
+     "x1": 51.9,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Documento",
+     "x0": 134.0,
+     "x1": 189.0,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "UUID",
+     "x0": 210.0,
+     "x1": 234.4,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "RFC",
+     "x0": 408.0,
+     "x1": 428.6,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "Tipo",
+     "x0": 493.0,
+     "x1": 514.1,
+     "top": 549.5,
+     "bottom": 559.5,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "99/99/9999",
+     "x0": 20.0,
+     "x1": 70.0,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "9999",
+     "x0": 131.0,
+     "x1": 153.2,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "UUID-ADD674A00ED8",
+     "x0": 207.0,
+     "x1": 348.1,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "XXX9XX99X999",
+     "x0": 207.0,
+     "x1": 281.5,
+     "top": 580.0,
+     "bottom": 590.0,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    },
+    {
+     "text": "XXXX999999XXXXxxxxxx",
+     "x0": 405.0,
+     "x1": 526.1,
+     "top": 568.3,
+     "bottom": 578.3,
+     "size": 10.0,
+     "bold": true,
+     "page": 500
+    }
+   ]
+  }
+ ]
+}
