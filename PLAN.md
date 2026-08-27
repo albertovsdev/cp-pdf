@@ -6,7 +6,7 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fases 0 y 1 completadas** (2026-08). Siguiente: fase 2.
+Estado: **fases 0, 1 y 2 completadas** (2026-08). Siguiente: fase 3.
 
 ---
 
@@ -102,6 +102,11 @@ de OCR. Se pueden testear sin instalar Tesseract.
 
 `nivel` y `cuenta_padre` se derivan del número de cuenta, no vienen del PDF.
 
+`BalanzaParser.parse()` devuelve un objeto `Balanza` con `.filas` y
+`.totales`, no una lista. La fila «Totales» no cabe en una `FilaBalanza`
+(no tiene cuenta ni naturaleza) y el validador la necesita. `Balanza` es
+iterable, así que `list(parse(doc))` sí entrega `list[FilaBalanza]`.
+
 **Libro diario / pólizas** — tres tablas relacionadas, NO una tabla plana:
 
 ```
@@ -129,6 +134,16 @@ movimientos: dia, fecha, descripcion, referencia, deposito, retiro, saldo
 ```
 
 ### 1.3 Validación: cada documento trae su propio checksum
+
+**Contra qué suma cuadra la fila «Totales» (medido, fase 2):** contra la
+suma del **nivel 1 únicamente**. Ni todas las filas ni solo las hojas
+cuadran. Sumar todas contaría dos veces a las cuentas padre, que ya
+agregan a sus hijas.
+
+No se validan las identidades `Σ ini_deudor == Σ ini_acreedor` ni su
+equivalente de saldos finales, aunque el documento real las cumple: una
+balanza filtrada por rango de cuentas las rompe legítimamente y
+generarían falsos positivos.
 
 ```
 balanza:   saldo_ini + debe - haber == saldo_fin  (por renglón, con signo
@@ -246,8 +261,8 @@ cp-pdf/
 |---|---|---|---|
 | 0 | Reconocimiento | layouts enmascarados + auditoría | **hecho** |
 | 1 | IR + layout | `ir.py`, `pdf_text.py`, `lines.py`, `columns.py`, `region.py` | **hecho** (71 tests) |
-| 2 | Balanza E2E | `headers.py` + parser balanza + validación + Excel | siguiente |
-| 3 | Auxiliar | Parser con arrastre de sección y bloques | |
+| 2 | Balanza E2E | parser balanza + validación + Excel | **hecho** (153 tests) |
+| 3 | Auxiliar | Parser con arrastre de sección y bloques | siguiente |
 | 4 | Plantillas | Fingerprint + store + wizard de mapeo | |
 | 5 | Pólizas | Parser de bloques usando las líneas del PDF | |
 | 6 | OCR | `ocr.py` + preprocesado | |
@@ -318,6 +333,23 @@ RESTRICCIONES
   - Comentarios solo donde el POR QUE no sea obvio.
   - Si un fixture no alcanza para decidir algo, PREGUNTA en vez de asumir.
 ```
+
+---
+
+## 5.1 Deuda técnica conocida
+
+Registrada a propósito, con la fase en que toca resolverla.
+
+- **`headers.py` fusiona `'FOLIO FECHA'` en el auxiliar.** En esas páginas
+  FOLIO no trae datos, así que no genera columna propia y su etiqueta cae
+  en la vecina. Es una lectura honesta del documento, pero el parser de la
+  fase 3 necesita `folio` y `fecha` separados. **Resolver en fase 3.**
+- **`pitch_factor=1.3` en `headers.py`** distingue una etiqueta partida en
+  dos renglones de un título de sección, midiendo si el interlineado es
+  más apretado que el de los datos. Está afinado sobre cuatro documentos.
+  Debe seguir siendo parámetro configurable, nunca constante enterrada.
+- **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
+  Aplica a todo parser nuevo.
 
 ---
 
