@@ -1,0 +1,333 @@
+# cp-pdf — Plan de construcción
+
+Sistema de conversión de PDFs contables a Excel, con mapeo por plantillas y
+validación aritmética.
+
+**Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
+primero. Fixture → test que falla → parser → test que pasa.
+
+Estado: **fases 0 y 1 completadas** (2026-08). Siguiente: fase 2.
+
+---
+
+## 0. Restricciones de arquitectura
+
+El sistema terminará en un servidor compartido, con varios usuarios y
+documentos de **varias empresas distintas**. Estas reglas aplican a todo el
+código bajo `src/contapdf/` desde la primera línea. Son baratas ahora y muy
+caras de meter después.
+
+- **Sin estado global mutable.** Nada de variables a nivel de módulo que
+  guarden configuración o resultados; nada de leer `os.environ` al importar.
+  Toda configuración se pasa como parámetro explícito. Con varios trabajos
+  en paralelo, un global se contamina entre peticiones y mezcla datos de
+  empresas distintas.
+- **Sin efectos secundarios en el núcleo.** Las funciones no imprimen a
+  stdout, no escriben archivos, no leen rutas fijas y no dependen del
+  directorio actual. Devuelven datos. Para mensajes, `logging`, nunca `print`.
+- **Procesamiento por página.** `extract()` entrega página por página
+  (generador). Un PDF de 968 páginas no puede cargarse entero en memoria en
+  un servidor compartido.
+- **Funciones puras y deterministas.** Misma entrada, misma salida. Es lo
+  que hace posible testear, cachear y paralelizar.
+- **Una sola pasada completa por documento.** `Document.open_pages` reabre
+  el PDF en cada recorrido, así que cada pasada cuesta un parseo entero.
+  Los parsers detectan columnas sobre una MUESTRA de páginas (la primera
+  con tabla más un par al azar) y luego hacen una única pasada aplicando
+  ese layout. Nunca un recorrido para detectar y otro para extraer: en un
+  PDF de 968 páginas eso duplica el costo.
+- **Aislamiento por tenant.** Cada trabajo con su directorio temporal
+  propio, borrado al terminar. Las rutas de salida se derivan del ID de
+  usuario, nunca del nombre del archivo subido. Las plantillas de mapeo
+  (fase 4) van ligadas a la empresa, no son globales.
+
+`scripts/dump_layout.py` **no** cumple estas reglas (usa `SALT` como global
+de módulo e imprime a stdout). Está bien: es un script de una sola corrida,
+no forma parte del núcleo. No copiar ese patrón a `src/`.
+
+---
+
+## 1. Contratos de datos
+
+### 1.1 Representación intermedia (IR)
+
+Toda extracción — texto nativo u OCR — produce lo mismo:
+
+```python
+@dataclass(frozen=True)
+class Word:
+    text: str
+    x0: float; x1: float
+    top: float; bottom: float
+    size: float
+    bold: bool
+    page: int
+
+@dataclass
+class Line:
+    words: list[Word]
+    top: float
+    bottom: float
+    page: int
+
+@dataclass
+class ColumnSpec:
+    index: int
+    align: str          # 'left' | 'right'
+    x_min: float
+    x_max: float
+    support: int
+    header: str = ""
+```
+
+Consecuencia: los parsers **no saben** si el texto vino de un PDF nativo o
+de OCR. Se pueden testear sin instalar Tesseract.
+
+**Dos reglas que ya validamos con datos reales y que el núcleo debe respetar:**
+
+1. **Agrupar renglones por solapamiento vertical, no por `top`.** En las
+   pólizas el importe está centrado en una celda alta y su `top` difiere
+   ~6pt del de la etiqueta, pero es el mismo renglón lógico.
+2. **Detectar columnas de montos por `x1`, no por `x0`.** Los montos van
+   alineados a la derecha; agrupar todo por `x0` genera decenas de falsas
+   columnas.
+
+### 1.2 Salidas canónicas por tipo de documento
+
+**Balanza de comprobación** — una tabla:
+
+`cuenta`, `nivel`, `cuenta_padre`, `naturaleza`, `nombre`,
+`saldo_ini_deudor`, `saldo_ini_acreedor`, `debe`, `haber`,
+`saldo_fin_deudor`, `saldo_fin_acreedor`
+
+`nivel` y `cuenta_padre` se derivan del número de cuenta, no vienen del PDF.
+
+**Libro diario / pólizas** — tres tablas relacionadas, NO una tabla plana:
+
+```
+polizas(poliza_id, tipo, naturaleza, fecha, descripcion, folio,
+        total_debe, total_haber)
+movimientos(poliza_id, orden, cuenta, nombre_cuenta, debe, haber)
+cfdi(poliza_id, fecha, documento, uuid, rfc, tipo)
+```
+
+Al Excel salen como 3 hojas + una hoja plana denormalizada (encabezado
+repetido en cada movimiento), que es la que el contador va a filtrar.
+
+**Auxiliar de cuentas** — tabla con la cuenta arrastrada desde el
+encabezado de sección:
+
+`cuenta`, `nombre_cuenta`, `saldo_inicial_cuenta`, `folio`, `fecha`,
+`tipo_movimiento`, `documento`, `tercero`, `debe`, `haber`, `saldo`
+
+**Estado de cuenta** — metadata + movimientos:
+
+```
+meta: banco, rfc, num_cuenta, clabe, periodo_ini, periodo_fin,
+      saldo_inicial, depositos, retiros, saldo_corte
+movimientos: dia, fecha, descripcion, referencia, deposito, retiro, saldo
+```
+
+### 1.3 Validación: cada documento trae su propio checksum
+
+```
+balanza:   saldo_ini + debe - haber == saldo_fin  (por renglón, con signo
+           según naturaleza)
+           Σ debe == Σ haber
+poliza:    Σ debe == Σ haber  (por póliza)
+auxiliar:  saldo[n] == saldo[n-1] + debe[n] - haber[n]
+edocta:    saldo_inicial + Σ depositos - Σ retiros == saldo_corte
+           saldo[n] == saldo[n-1] ± movimiento[n]
+```
+
+**Si la validación falla, no se entrega el Excel limpio**: se entrega con
+las filas sospechosas marcadas y un reporte de discrepancias. Con OCR de
+por medio esto no es opcional.
+
+---
+
+## 2. Hallazgos de la fase 0
+
+Medidos sobre los fixtures reales. **Son los números de referencia**: si el
+código nuevo da otra cosa, hay que investigar por qué, no ajustar el test.
+
+| Documento | Páginas | Columnas (página completa) | Columnas (región) | Bordes |
+|---|---|---|---|---|
+| Balanza | 1, 2, 9 | 9, 9, 9 | 9, 9 | pág 9 sí |
+| Pólizas | 1, 2, 500 | 5, 5, 4 | — | sí |
+| Auxiliar | 1, 2, 398 | 6, 7, 3 | **7**, —, sin tabla | no |
+| Estado cta | 1, 2 | 1, 5 | 5, **6** | no |
+
+Los números de "página completa" son mediciones de la fase 0 y quedan
+pinneados como test de regresión de `detect`. **No son la verdad del
+documento**: las palabras del metadato superior tienden un puente entre
+columnas contiguas y el merge por solapamiento las funde. En el auxiliar
+p1 fusionan FOLIO/FECHA con TIPO; en edocta p2 fusionan Día con
+Descripción. Ambas separaciones son correctas y coinciden con la salida
+canónica de la sección 1.2.
+
+**El pipeline correcto de la fase 2 en adelante es
+`group → find_table_region → detect`.** Detectar sobre la página completa
+solo sirve como regresión histórica.
+
+Tres conclusiones que condicionan el diseño:
+
+1. **La detección de columnas debe correr solo sobre la región de la
+   tabla.** La página 1 del estado de cuenta reportó 1 sola columna porque
+   el algoritmo analizó encabezados, domicilio y sello digital. De ahí sale
+   `layout/region.py`.
+2. **Las pólizas traen líneas de tabla dibujadas** (`lines=36`). Para su
+   parser, usar esas líneas como frontera de fila es exacto; el
+   solapamiento vertical es la solución general para los otros tres.
+3. **El auxiliar cambia de estructura dentro del mismo documento.** El
+   parser tiene que detectar bloques, no asumir un layout único.
+
+### Anonimización
+
+`scripts/dump_layout.py` produce los fixtures enmascarados. Requiere
+`CONTAPDF_SALT` en el entorno (vive en `~/.bashrc`, **fuera del repo**).
+Trae auditoría automática: si un token conserva dígitos reales, escribe un
+`.LEAKS.txt` y avisa. **No commitear fixtures con fugas pendientes.**
+
+Cuentas contables (`101-01`) se conservan legibles a propósito: son
+estructurales, no PII. RFC, UUID y CLABE se reemplazan por pseudónimos
+estables con sal, para poder probar cruces entre documentos.
+
+---
+
+## 3. Estructura del repo
+
+```
+cp-pdf/
+├── src/contapdf/
+│   ├── ir.py                  # Word, Line, Document, ColumnSpec
+│   ├── extract/
+│   │   ├── pdf_text.py        # pdfplumber -> IR (generador por pagina)
+│   │   └── ocr.py             # (fase 6)
+│   ├── layout/
+│   │   ├── lines.py           # words -> lines por solapamiento vertical
+│   │   ├── columns.py         # clustering x1 (montos) / x0 (texto)
+│   │   ├── region.py          # acota el analisis a la zona de tabla
+│   │   └── headers.py         # etiqueta columnas (encabezados multilinea)
+│   ├── parsers/
+│   │   ├── base.py
+│   │   ├── balanza.py
+│   │   ├── auxiliar.py
+│   │   ├── polizas.py
+│   │   └── estado_cuenta.py
+│   ├── templates/
+│   │   ├── fingerprint.py     # huella del formato (ligada al tenant)
+│   │   └── store.py
+│   ├── validate/rules.py
+│   └── export/excel.py
+├── tests/
+├── fixtures/
+│   ├── layouts/               # JSON enmascarados — SI se versionan
+│   ├── synthetic/             # PDFs sinteticos — SI se versionan
+│   ├── real/                  # PDFs reales — GITIGNORED
+│   │   ├── 1-Balanza/
+│   │   ├── 2-Libro-Diario/
+│   │   ├── 3-Auxiliares/
+│   │   └── 4-Estados-Cuenta/
+│   └── golden/                # CSV esperado por fixture
+├── scripts/
+│   ├── dump_layout.py         # herramienta de anonimizacion — NO tocar
+│   └── dump_all.sh
+└── PLAN.md
+```
+
+`.gitignore` incluye `fixtures/real/` desde el primer commit.
+
+---
+
+## 4. Fases
+
+| # | Fase | Entregable | Estado |
+|---|---|---|---|
+| 0 | Reconocimiento | layouts enmascarados + auditoría | **hecho** |
+| 1 | IR + layout | `ir.py`, `pdf_text.py`, `lines.py`, `columns.py`, `region.py` | **hecho** (71 tests) |
+| 2 | Balanza E2E | `headers.py` + parser balanza + validación + Excel | siguiente |
+| 3 | Auxiliar | Parser con arrastre de sección y bloques | |
+| 4 | Plantillas | Fingerprint + store + wizard de mapeo | |
+| 5 | Pólizas | Parser de bloques usando las líneas del PDF | |
+| 6 | OCR | `ocr.py` + preprocesado | |
+| 7 | Estado de cuenta | Multilínea + variación por banco | |
+| 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
+
+**No construir la fase 4 antes de la 3.** Abstraer el sistema de plantillas
+con un solo parser de referencia garantiza rediseño.
+
+---
+
+## 5. Cómo orquestar Claude Code
+
+Una sesión por fase. El prompt siempre lleva: contexto, objetivo, contrato,
+fixtures, criterios de aceptación verificables, y restricciones.
+
+La restricción que más ahorra: *"si el fixture no alcanza para decidir algo,
+PREGUNTA en vez de asumir"*. Sin ella, se inventa un caso de borde plausible
+y lo descubres tres fases después.
+
+Dos cosas que no debe tocar Claude Code:
+
+- `scripts/dump_layout.py` — ya cumplió su función y es la herramienta de
+  privacidad. Si se refactoriza y se rompe el enmascarado, se nota tarde.
+- Los números de la sección 2 — son mediciones, no metas ajustables.
+
+### Prompt de la fase 1
+
+```
+CONTEXTO
+  Proyecto nuevo en Python para convertir PDFs contables a Excel.
+  Lee PLAN.md secciones 0, 1 y 2 antes de escribir codigo.
+  Hay fixtures enmascarados en fixtures/layouts/*.layout.json con la
+  estructura real de 4 tipos de documento. Los montos son 9s y los
+  nombres X: la ESTRUCTURA y las COORDENADAS son reales.
+
+OBJETIVO
+  src/contapdf/ir.py               -> Word, Line, Document, ColumnSpec
+  src/contapdf/extract/pdf_text.py -> extract(path) -> Iterator[Page]
+  src/contapdf/layout/lines.py     -> group(words, tol) -> list[Line]
+  src/contapdf/layout/columns.py   -> detect(lines) -> list[ColumnSpec]
+  src/contapdf/layout/region.py    -> find_table_region(lines) -> (top, bottom)
+
+CONTRATOS
+  Los dataclasses de PLAN.md 1.1, literales.
+  Respeta las dos reglas de PLAN.md 1.1 (solapamiento vertical para
+  renglones; x1 para montos, x0 para texto).
+  scripts/dump_layout.py sirve de referencia: ahi ya estan resueltos el
+  agrupamiento y el clustering, pero de forma monolitica y con estado
+  global. NO lo copies tal cual ni lo modifiques.
+
+CRITERIOS DE ACEPTACION
+  1. balanza paginas 1 y 2 -> 9 columnas
+  2. edocta pagina 2       -> 5 columnas
+  3. auxiliar pagina 1     -> 6 columnas
+  4. edocta pagina 1: find_table_region acota a la zona de movimientos
+     (abajo de 'DETALLE DE OPERACIONES') y ahi detecta >= 4 columnas,
+     no 1 como sale al analizar la pagina completa
+  5. En polizas, la etiqueta '401-01 ...' y sus dos importes quedan
+     en UN solo Line
+  6. pytest tests/ pasa
+
+RESTRICCIONES
+  - Aplica las restricciones de arquitectura de PLAN.md seccion 0.
+  - Escribe los tests PRIMERO y muestrame que fallan antes de implementar.
+  - Solo pdfplumber como dependencia nueva.
+  - snake_case, type hints en firmas publicas.
+  - Comentarios solo donde el POR QUE no sea obvio.
+  - Si un fixture no alcanza para decidir algo, PREGUNTA en vez de asumir.
+```
+
+---
+
+## 6. Pendiente de infraestructura
+
+Sin resolver, bloquea la fase 8. Conviene ir cerrándolo en paralelo:
+
+- ¿Qué es la máquina servidor? SO, y si hay acceso root para instalar
+  Python, Tesseract y un servicio en segundo plano.
+- Hosting compartido con panel **no sirve** para esto: hace falta ejecución
+  de Python, binarios de OCR y procesos largos con cola de trabajos.
+- Límite de trabajos concurrentes, o varios usuarios subiendo a la vez
+  tiran el servidor.
