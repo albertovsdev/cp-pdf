@@ -128,7 +128,14 @@ repetido en cada movimiento), que es la que el contador va a filtrar.
 encabezado de sección:
 
 `cuenta`, `nombre_cuenta`, `saldo_inicial_cuenta`, `folio`, `fecha`,
-`tipo_movimiento`, `documento`, `tercero`, `debe`, `haber`, `saldo`
+`tipo_movimiento`, `documento`, `tercero`, `concepto`, `debe`, `haber`,
+`saldo`
+
+`concepto` es texto crudo, para fuentes que no separan referencia y
+contraparte (GUME imprime `PAGO F-6287 DESARROLLO HUMANO PROFESIONAL AMT
+SA DE CV` en una sola columna). Cuando la fuente no los separa,
+`documento` y `tercero` van vacíos: no se fabrica una división que la
+fuente no da. `saldo` puede ser `None` si el documento no lo trae legible.
 
 **Estado de cuenta** — metadata + movimientos:
 
@@ -325,6 +332,30 @@ largos de cuenta se extienden sobre las columnas numéricas y encadenan la
 fusión (x=148 a x=301). La medición válida viene de `find_table_region` +
 `detect`, no del dumper.
 
+### Hallazgo: la capa de texto puede estar incompleta
+
+Medido en `auxiliar-gume`: la página 3 imprime el saldo como `-` sin
+dígitos y la página 4 lo corta (`1,892,606.3`). Verificado a nivel de
+carácter con pdfplumber: **los caracteres no están en el archivo.**
+
+Rompe la clasificación binaria que traíamos desde la fase 0. Hay tres
+casos, no dos:
+
+1. Texto nativo completo → `pdf_text` / `pdf_chars`
+2. Sin capa de texto (escaneo) → OCR
+3. **Texto nativo mutilado** → ninguna estrategia de extracción lo
+   recupera; hay que rasterizar la página y pasarla por OCR
+
+**El detector del caso 3 es la aritmética**: un saldo corrido que se rompe
+sin explicación es la señal de reintentar esa página por otra vía. Esto
+convierte a la validación en el disparador del OCR, no solo en su control
+de calidad. **Consecuencia para la fase 6: el OCR no es solo para
+escaneos.**
+
+Regla mientras tanto: un dato ilegible queda en `None`, la cadena se corta
+ahí, y la cobertura lo declara. Nunca rellenar con lo que «debería» valer
+(inventa dato) ni descartar el renglón completo (pierde el movimiento).
+
 ### Principio: nunca reportar un resultado sin su cobertura
 
 Medido sobre `balanza-gume`: el parser reportó `734 filas, 0 discrepancias`
@@ -474,10 +505,10 @@ cp-pdf/
 | 1 | IR + layout | `ir.py`, `pdf_text.py`, `lines.py`, `columns.py`, `region.py` | **hecho** (71 tests) |
 | 2 | Balanza E2E | parser balanza + validación + Excel | **hecho** (153 tests) |
 | 3 | Balanza variante | Generalizar balanza a «Business Pro»: sinónimos de encabezado + validación que varía por formato | siguiente |
-| 3b | Auxiliar | Parser con arrastre de sección y bloques, contra las DOS variantes | siguiente |
+| 3b | Auxiliar | Parser con arrastre de sección y bloques, contra las DOS variantes | **hecho** (357 tests) |
 | 4a | Cobertura de validación | Tres estados por regla, `verificado_por`, jerarquía y totales parametrizados por formato | **hecho** (275 tests) |
 | 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | **hecho** (327 tests) |
-| 5 | Pólizas | Parser de bloques usando las líneas del PDF | |
+| 5 | Pólizas | Parser de bloques, contra las DOS variantes (poliza + diario-general) | siguiente |
 | 6 | OCR | `ocr.py` + preprocesado | |
 | 7 | Estado de cuenta | Multilínea + variación por banco | |
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | |
@@ -576,12 +607,16 @@ Registrada a propósito, con la fase en que toca resolverla.
   esté al inicio de la celda de nombre.** En GUME el renglón es
   `734 | Cuentas reportadas | Totales: | ...` y nunca se detectó. **Fase 4a.**
 - **La colocación del saldo sigue apoyada en la convención que se quitó de
-  `naturaleza`.** Un renglón sin determinar tiene `debe == haber`, y su
-  saldo se sigue colocando en la columna deudora por default. La celda de
-  naturaleza ya no miente; la de saldo sí. La alternativa honesta es
-  colocar por el **signo que imprime el documento** (dato, no inferencia),
-  pero la evidencia de que «positivo → deudora» son solo 2 renglones.
-  **Medir antes de implementar.**
+  `naturaleza`.** La hipótesis «positivo → deudora» se **midió y se
+  descartó**: falla en 56 de 236 renglones determinados (24%). Tanto
+  deudoras como acreedoras se imprimen en positivo — en Business Pro, 35 de
+  36 acreedoras derivadas tienen saldo positivo, y de los 6 saldos
+  negativos 3 son A y 3 son D.
+  **El signo no dice la naturaleza de la cuenta; dice que ese saldo va
+  contra su naturaleza.** Es propiedad del saldo, no de la cuenta.
+  Opción honesta pendiente: cuando la forma es `saldo_con_signo`, exportar
+  las columnas con signo **tal como las presenta el documento** y llenar
+  deudor/acreedor solo donde la naturaleza está fundamentada.
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
 
