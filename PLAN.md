@@ -103,7 +103,7 @@ de OCR. Se pueden testear sin instalar Tesseract.
 
 `cuenta`, `nivel`, `cuenta_padre`, `naturaleza`, `nombre`,
 `saldo_ini_deudor`, `saldo_ini_acreedor`, `debe`, `haber`,
-`saldo_fin_deudor`, `saldo_fin_acreedor`
+`saldo_fin_deudor`, `saldo_fin_acreedor`, `es_acumulativa`
 
 `nivel` y `cuenta_padre` se derivan del número de cuenta, no vienen del PDF.
 
@@ -211,7 +211,10 @@ formatos, de empresas distintas, cambian vocabulario, semántica y estructura.
 - Cuentas de **21 dígitos sin separadores**: `112000100100000000003`.
   Estructura medida sobre 734 renglones: posiciones 1–6 cuenta de mayor,
   7–9 subcuenta, 10–12 sub-subcuenta, 13–18 relleno constante, **19–21
-  marcador de nivel** (001/002/003).
+  marcador de nivel** (001/002/003). El ancho de prefijo por nivel se
+  **deriva de los datos** (última posición con dígito distinto de cero),
+  no se fija por tamaño de grupo: sale 4/7/10 y reconstruye las 734 sin
+  huérfanas.
 - **El nivel viene declarado, y el marcador NO es redundante.** Contra la
   indentación: 734/734 (con 2pt de tolerancia). Contra deducirlo de los
   ceros finales: 680/734, **fallan 54** — existe el sub-subnivel numerado
@@ -353,6 +356,24 @@ solo 45 de 734 renglones tienen `debe != haber`, y al invertir el mapeo los
 fila de totales tampoco orienta (Debe = Haber). Lo único que orienta es el
 vocabulario del encabezado.
 
+Corrección medida en fase 4a: invertir el mapeo cambia **96 filas**, no 725
+(45 que la aritmética determina + 51 que heredan). La cifra anterior salía
+de una medición hecha con la jerarquía perdida.
+
+**Lo mismo aplica a los valores del resultado, no solo a las reglas.**
+`naturaleza` tiene cuatro procedencias: explícita (el documento la declara,
+como la columna `Naturaleza` de la balanza original), derivada (aritmética),
+heredada (de un ancestro determinado) y sin determinar. En GUME 626 de 734
+no tienen nada que las sostenga.
+- En el Excel, `naturaleza` va **vacía** cuando no está determinada. Un `D`
+  por default es indistinguible de uno fundamentado: la misma mentira que
+  el `0 discrepancias`.
+- La cobertura lo reporta: «naturaleza: 12 explícitas, 45 derivadas, 51
+  heredadas, 626 sin determinar».
+- La procedencia se guarda en el dataclass pero **no se exporta**: duplica
+  el ancho de la hoja y el contador la ignora. La fase 4b la necesita para
+  decidir qué confirma el humano.
+
 Por eso cada mapeo registra **sobre qué se apoya**: `verificado_por:
 aritmetica` o `verificado_por: vocabulario`. Un mapeo aceptado solo por
 vocabulario es el que el asistente de la fase 4 hace confirmar al humano una
@@ -449,8 +470,8 @@ cp-pdf/
 | 2 | Balanza E2E | parser balanza + validación + Excel | **hecho** (153 tests) |
 | 3 | Balanza variante | Generalizar balanza a «Business Pro»: sinónimos de encabezado + validación que varía por formato | siguiente |
 | 3b | Auxiliar | Parser con arrastre de sección y bloques | |
-| 4a | Cobertura de validación | Tres estados por regla, `verificado_por`, jerarquía y totales parametrizados por formato | siguiente |
-| 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | |
+| 4a | Cobertura de validación | Tres estados por regla, `verificado_por`, jerarquía y totales parametrizados por formato | **hecho** (275 tests) |
+| 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | siguiente |
 | 5 | Pólizas | Parser de bloques usando las líneas del PDF | |
 | 6 | OCR | `ocr.py` + preprocesado | |
 | 7 | Estado de cuenta | Multilínea + variación por banco | |
@@ -554,13 +575,78 @@ Registrada a propósito, con la fase en que toca resolverla.
 
 ---
 
-## 6. Pendiente de infraestructura
+## 6. Infraestructura y despliegue
 
-Sin resolver, bloquea la fase 8. Conviene ir cerrándolo en paralelo:
+### Máquina objetivo: SERVIDORSIST
 
-- ¿Qué es la máquina servidor? SO, y si hay acceso root para instalar
-  Python, Tesseract y un servicio en segundo plano.
-- Hosting compartido con panel **no sirve** para esto: hace falta ejecución
-  de Python, binarios de OCR y procesos largos con cola de trabajos.
-- Límite de trabajos concurrentes, o varios usuarios subiendo a la vez
-  tiran el servidor.
+Dell OptiPlex 7010 · Windows 10 Pro 22H2 · i5-3470 (4 núcleos, 2012) ·
+8 GB RAM · HDD mecánico 466 GB · Python 3.12.2 · encendida 8:00–21:00.
+
+**Solo red local. Regla fija, sin excepción.** Eso simplifica el diseño:
+sin HTTPS público, sin exposición a internet, sin superficie de ataque
+externa.
+
+Se descartaron las alternativas: la laptop del desarrollador es más rápida
+(i5-1335U, 16 GB) pero solo está disponible cuando él está presente, tiene
+45 GB libres y es CPU de 15 W que baja frecuencia en carga sostenida. Un
+servicio compartido intermitente entrena a la gente a no usarlo.
+
+### La restricción que manda: coexistencia con producción
+
+SERVIDORSIST **ya corre Apache + MySQL todo el día** con sistemas en
+producción (jurídico, fiscalización, conversores CFDI). Los ~4.5 GB
+ocupados en reposo son ellos. Un worker que se dispare a 2–3 GB con 3.4 GB
+libres hace paginar a Windows contra un disco mecánico y **deja inusable
+MySQL**.
+
+**Requisitos previos a la fase 8:**
+
+| Acción | Costo aprox. | Por qué |
+|---|---|---|
+| RAM 8 → 16 GB DDR3 | $500–800 MXN | **Obligatorio.** Sin esto el worker compite con producción. |
+| SSD SATA 500 GB | $600–900 MXN | Recomendado. El HDD es el cuello de botella del OCR y de la paginación. |
+
+El 7010 admite hasta 32 GB, así que hay margen futuro.
+
+### Concurrencia: un worker, cola secuencial
+
+Medido: ~0.1 s por página con capa de texto (balanza de 9 páginas en
+0.96 s). Carga esperada: 15 personas × 5 documentos = 75 al día. Procesados
+de uno en uno caben de sobra en la ventana de 13 horas.
+
+**No hace falta limitar al personal por política.** La cola es el límite y
+es automática: quien sube se forma y ve su turno. Una política que la gente
+debe recordar es peor que un mecanismo que no pueden saltarse.
+
+La excepción es el OCR: Tesseract en este CPU anda en 2–5 s/página, así que
+un escaneo de 900 páginas puede pasar de una hora. Esos van en carril
+aparte, con tiempo estimado visible.
+
+### OCR: sin AVX2
+
+El i5-3470 es Ivy Bridge y **no tiene AVX2** (llegó con Haswell, 2013).
+PaddleOCR, Surya y PyTorch reciente lo asumen y fallan con errores
+crípticos. **La fase 6 se planea con Tesseract**, que funciona sin AVX2.
+
+Si la calidad de Tesseract no alcanza, la alternativa es OCR en la nube, y
+esa decisión tiene implicaciones de privacidad que debe aprobar el cliente
+antes de implementarse.
+
+### Puntos abiertos
+
+- **Puerto**: Apache ya ocupa el 80. El servicio Python va en otro puerto o
+  detrás de un proxy de Apache. Decidir antes de la fase 8.
+- **Apagado diario a las 21:00**: la cola debe persistir en disco y los
+  trabajos a medias reanudarse o marcarse como fallidos al arrancar. Nada
+  puede vivir solo en memoria.
+- **Servicio de Windows**: el worker corre como servicio (NSSM o Programador
+  de tareas), no como una ventana de consola que alguien puede cerrar.
+- **Respaldo**: un solo disco mecánico de 2012, sin redundancia, con
+  documentos contables de varios clientes. Si muere, se pierde todo. Falta
+  definir respaldo — es el riesgo más grande del despliegue.
+- **Sin antivirus, sin firewall, Windows 10 sin actualizaciones de
+  seguridad desde octubre 2025.** La red local acotada lo mitiga bastante,
+  pero conviene que el cliente lo conozca por escrito antes de que la
+  máquina reciba documentos fiscales de terceros.
+- **Espacio libre en disco del servidor**: sin medir. Necesario antes de
+  dimensionar el almacenamiento de subidas y temporales.
