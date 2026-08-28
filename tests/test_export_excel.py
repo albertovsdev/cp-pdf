@@ -9,14 +9,15 @@ from conftest import synthetic_document
 
 from contapdf.export.excel import exportar_balanza
 from contapdf.parsers.balanza import BalanzaParser
-from contapdf.validate.rules import validar_balanza
+from contapdf.validate.rules import evaluar_balanza
 
 
 def _exportar(tmp_path, name="balanza_sintetica"):
     balanza = BalanzaParser().parse(synthetic_document(name))
-    discrepancias = validar_balanza(balanza)
+    cobertura = evaluar_balanza(balanza)
     destino = tmp_path / "salida.xlsx"
-    return balanza, discrepancias, exportar_balanza(balanza, discrepancias, destino)
+    return (balanza, list(cobertura.discrepancias),
+            exportar_balanza(balanza, cobertura, destino))
 
 
 def test_genera_el_archivo_en_la_ruta_pedida(tmp_path):
@@ -73,21 +74,24 @@ def test_conserva_negativos(tmp_path):
     assert negativos == [-1250.25]
 
 
-def test_sin_discrepancias_no_hay_hoja_de_validacion(tmp_path):
+def test_sin_discrepancias_la_hoja_no_lista_ninguna(tmp_path):
     _, discrepancias, destino = _exportar(tmp_path)
     assert discrepancias == []
-    assert openpyxl.load_workbook(destino).sheetnames == ["Balanza"]
+    ws = openpyxl.load_workbook(destino)["Validacion"]
+    filas = [[c.value for c in f] for f in ws.iter_rows()]
+    encabezado = next(i for i, f in enumerate(filas) if f[0] == "fila")
+    assert filas[encabezado + 1:] == []
 
 
-def test_con_discrepancias_agrega_la_hoja_validacion(tmp_path):
+def test_con_discrepancias_las_lista_bajo_la_cobertura(tmp_path):
     _, discrepancias, destino = _exportar(tmp_path, "balanza_descuadrada")
     assert len(discrepancias) == 1
-    wb = openpyxl.load_workbook(destino)
-    assert "Validacion" in wb.sheetnames
-    ws = wb["Validacion"]
-    assert [c.value for c in ws[1]] == ["fila", "regla", "esperado", "obtenido"]
-    assert ws.cell(row=2, column=1).value == "102-02"
-    assert ws.cell(row=2, column=2).value == "renglon"
+    ws = openpyxl.load_workbook(destino)["Validacion"]
+    filas = [[c.value for c in f] for f in ws.iter_rows()]
+    assert filas[0][:3] == ["regla", "estado", "detalle"]
+    encabezado = next(i for i, f in enumerate(filas) if f[0] == "fila")
+    assert filas[encabezado][:4] == ["fila", "regla", "esperado", "obtenido"]
+    assert filas[encabezado + 1][:2] == ["102-02", "renglon"]
 
 
 def test_marca_la_fila_afectada(tmp_path):
@@ -104,3 +108,50 @@ def test_no_imprime(tmp_path, capsys):
     _exportar(tmp_path)
     salida = capsys.readouterr()
     assert salida.out == "" and salida.err == ""
+
+
+def test_la_hoja_validacion_existe_aunque_no_haya_discrepancias(tmp_path):
+    # PLAN 2: nunca reportar un resultado sin su cobertura.
+    _, discrepancias, destino = _exportar(tmp_path)
+    assert discrepancias == []
+    wb = openpyxl.load_workbook(destino)
+    assert "Validacion" in wb.sheetnames
+    filas = [[c.value for c in fila] for fila in wb["Validacion"].iter_rows()]
+    texto = " ".join(str(v) for f in filas for v in f if v is not None)
+    assert "renglon" in texto and "cuadra" in texto
+
+
+def test_la_hoja_validacion_lista_las_cuatro_reglas_y_las_discrepancias(tmp_path):
+    _, discrepancias, destino = _exportar(tmp_path, "balanza_descuadrada")
+    ws = openpyxl.load_workbook(destino)["Validacion"]
+    texto = " ".join(str(c.value) for fila in ws.iter_rows() for c in fila
+                     if c.value is not None)
+    for regla in ("renglon", "jerarquia", "totales", "partida_doble"):
+        assert regla in texto
+    assert "102-02" in texto
+
+
+def test_la_naturaleza_sin_determinar_sale_vacia_en_el_excel(tmp_path):
+    from contapdf.ir import Word
+    from contapdf.parsers.balanza import BalanzaParser
+    from contapdf.validate.rules import evaluar_balanza
+    import dataclasses
+
+    balanza = BalanzaParser().parse(synthetic_document("balanza_sintetica"))
+    filas = list(balanza.filas)
+    filas[0] = dataclasses.replace(filas[0], naturaleza="",
+                                   naturaleza_origen="sin_determinar")
+    balanza = dataclasses.replace(balanza, filas=tuple(filas))
+    destino = tmp_path / "n.xlsx"
+    exportar_balanza(balanza, evaluar_balanza(balanza), destino)
+
+    ws = openpyxl.load_workbook(destino)["Balanza"]
+    assert ws.cell(row=2, column=4).value in (None, "")
+
+
+def test_el_excel_no_exporta_la_procedencia(tmp_path):
+    # Duplica el ancho de la hoja y el contador la ignora.
+    _, _, destino = _exportar(tmp_path)
+    encabezados = [c.value for c in openpyxl.load_workbook(destino)["Balanza"][1]]
+    assert "naturaleza" in encabezados
+    assert not any("origen" in str(h) for h in encabezados)

@@ -26,6 +26,7 @@ REAL_PDFS = {
     "auxiliar": REAL / "3-Auxiliares" / "auxiliar.pdf",
     "edocta": REAL / "4-Estados-Cuenta" / "edocta.pdf",
     "balanza-businesspro": REAL / "1-Balanza" / "balanza-businesspro.pdf",
+    "balanza-gume": REAL / "1-Balanza" / "balanza-gume.pdf",
     "auxiliar-gume": REAL / "3-Auxiliares" / "auxiliar-gume.pdf",
     "mayor-gume": REAL / "5-Libro-Mayor" / "mayor-gume.pdf",
     "diario-general": REAL / "2-Libro-Diario" / "diario-general.pdf",

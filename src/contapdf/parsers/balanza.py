@@ -17,6 +17,7 @@ from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, replace
 from decimal import Decimal
 
+from contapdf.cuentas import EsquemaCuenta, inferir_esquema, nivel_y_padre
 from contapdf.ir import Document, Page
 from contapdf.parsers.base import (
     Layout,
@@ -32,6 +33,14 @@ _LOG = logging.getLogger(__name__)
 
 _CERO = Decimal("0.00")
 _TOLERANCIA = Decimal("0.01")
+# De donde salio la naturaleza de un renglon. Un 'D' por default es
+# indistinguible de uno fundamentado: la misma mentira que un '0
+# discrepancias' sin cobertura.
+EXPLICITA = "explicita"
+DERIVADA = "derivada"
+HEREDADA = "heredada"
+SIN_DETERMINAR = "sin_determinar"
+
 _MARCAS_ACUMULATIVA = ("acum", "acumulativa", "acumulativo")
 _MARCAS_DETALLE = ("deta", "detalle")
 _NOMBRES_TOTALES = ("totales", "total", "sumas", "suma")
@@ -110,6 +119,25 @@ class FilaBalanza:
     saldo_fin_deudor: Decimal
     saldo_fin_acreedor: Decimal
     es_acumulativa: bool = False
+    naturaleza_origen: str = SIN_DETERMINAR
+
+
+@dataclass(frozen=True)
+class Mapeo:
+    """El mapeo aceptado y SOBRE QUE SE APOYA.
+
+    Un mapeo aceptado solo por vocabulario no esta mal, pero tampoco esta
+    comprobado. La orientacion debe/haber es el caso: hay formatos donde
+    invertirla vuelve a cuadrar la aritmetica, asi que solo el encabezado
+    la sostiene. Como invertirla cambia la naturaleza de las cuentas, el
+    dato viaja al reporte en vez de quedarse en un log.
+    """
+
+    campos: dict[str, int]
+    forma: str
+    verificado_por: str  # 'aritmetica' | 'vocabulario'
+    orientacion_verificada: bool
+    filas_afectadas: int = 0
 
 
 @dataclass(frozen=True)
@@ -125,6 +153,7 @@ class Balanza:
     filas: tuple[FilaBalanza, ...]
     totales: Totales | None
     forma: str = ""
+    mapeo: Mapeo | None = None
 
     def __iter__(self) -> Iterator[FilaBalanza]:
         return iter(self.filas)
@@ -219,32 +248,6 @@ def _faltantes(layout: Layout) -> list[str]:
     return mejor
 
 
-def _significativos(cuenta: str) -> tuple[list[str], int]:
-    """Segmentos de la cuenta y cuantos son significativos.
-
-    Hay catalogos que rellenan a lo ancho: 0400-0001-0000-0000 es una
-    cuenta de nivel 2, no de nivel 4. Los segmentos finales todo-ceros son
-    relleno. Ninguna cuenta de los documentos medidos usa un segmento
-    todo-ceros con significado.
-    """
-    partes = cuenta.split("-")
-    fin = len(partes)
-    while fin > 1 and set(partes[fin - 1]) == {"0"}:
-        fin -= 1
-    return partes, fin
-
-
-def _derivar(cuenta: str) -> tuple[int, str]:
-    partes, fin = _significativos(cuenta)
-    if fin <= 1:
-        return 1, ""
-    cabeza = partes[:fin - 1]
-    if fin == len(partes):
-        return fin, "-".join(cabeza)  # sin relleno: el padre es el prefijo
-    relleno = ["0" * len(p) for p in partes[fin - 1:]]
-    return fin, "-".join(cabeza + relleno)
-
-
 def _naturaleza_derivada(inicial: Decimal, final: Decimal,
                          debe: Decimal, haber: Decimal) -> str:
     """D, A o '' segun cual identidad sostiene el renglon.
@@ -277,6 +280,18 @@ class _Cruda:
 def _celda(datos: dict[int, str], mapeo: dict[str, int], campo: str) -> str:
     indice = mapeo.get(campo)
     return "" if indice is None else datos.get(indice, "").strip()
+
+
+def _es_totales(datos: dict[int, str]) -> bool:
+    """True si alguna celda del renglon anuncia la fila de totales.
+
+    Se busca en todas las celdas y como palabra suelta: hay formatos donde
+    la etiqueta no abre la celda ('734 | Cuentas reportadas | Totales:').
+    """
+    for texto in datos.values():
+        if any(p in _NOMBRES_TOTALES for p in normalizar(texto).split()):
+            return True
+    return False
 
 
 def _marca_de(texto: Sequence[str]) -> str:
@@ -321,11 +336,11 @@ class BalanzaParser:
                     marca=_marca_de([w.text for w in line.words]),
                     montos=montos,
                 ))
-            elif cuenta:
-                continue  # el encabezado se repite en cada pagina
-            elif any(normalizar(nombre).startswith(t) for t in _NOMBRES_TOTALES):
+            elif _es_totales(datos):
                 if "debe" in montos and "haber" in montos:
                     totales = Totales(debe=montos["debe"], haber=montos["haber"])
+            elif cuenta:
+                continue  # el encabezado se repite en cada pagina
             elif nombre and filas:
                 # Nombre partido en dos renglones: el segundo no trae ni
                 # numero de cuenta ni importes.
@@ -372,8 +387,9 @@ class BalanzaParser:
         return buenas >= len(crudas) * proporcion
 
     # --- armado de filas -------------------------------------------------
-    def _fila(self, cruda: _Cruda, naturaleza: str) -> FilaBalanza:
-        nivel, padre = _derivar(cruda.cuenta)
+    def _fila(self, cruda: _Cruda, naturaleza: str, origen: str,
+              esquema: EsquemaCuenta) -> FilaBalanza:
+        nivel, padre = nivel_y_padre(cruda.cuenta, esquema)
         m = cruda.montos
         if "saldo_ini_deudor" in m:
             montos = {c: m.get(c, _CERO) for c in _MONTOS_SPLIT}
@@ -390,31 +406,54 @@ class BalanzaParser:
             }
         return FilaBalanza(cuenta=cruda.cuenta, nivel=nivel, cuenta_padre=padre,
                            naturaleza=naturaleza, nombre=cruda.nombre,
-                           es_acumulativa=cruda.marca == "acumulativa", **montos)
+                           es_acumulativa=cruda.marca == "acumulativa",
+                           naturaleza_origen=origen, **montos)
 
-    def _resolver(self, crudas: Sequence[_Cruda]) -> tuple[FilaBalanza, ...]:
-        """Deriva lo que el documento no declara: naturaleza y jerarquia."""
-        naturaleza: dict[str, str] = {}
+    def _naturalezas(self, crudas: Sequence[_Cruda], esquema: EsquemaCuenta, *,
+                     invertido: bool = False) -> dict[str, tuple[str, str]]:
+        """(naturaleza, procedencia) de cada cuenta.
+
+        Cuatro procedencias: la declara el documento, la deduce la
+        aritmetica, la hereda de un ancestro que si la revelo, o no hay
+        nada que la sostenga. La ultima queda VACIA a proposito.
+        """
+        naturaleza: dict[str, tuple[str, str]] = {}
         for cruda in crudas:
             m = cruda.montos
             if cruda.naturaleza in ("D", "A"):
-                naturaleza[cruda.cuenta] = cruda.naturaleza
-            else:
-                naturaleza[cruda.cuenta] = _naturaleza_derivada(
-                    m.get("saldo_inicial", _CERO), m.get("saldo_final", _CERO),
-                    m.get("debe", _CERO), m.get("haber", _CERO))
+                naturaleza[cruda.cuenta] = (cruda.naturaleza, EXPLICITA)
+                continue
+            debe, haber = m.get("debe", _CERO), m.get("haber", _CERO)
+            if invertido:
+                debe, haber = haber, debe
+            derivada = _naturaleza_derivada(m.get("saldo_inicial", _CERO),
+                                            m.get("saldo_final", _CERO), debe, haber)
+            naturaleza[cruda.cuenta] = ((derivada, DERIVADA) if derivada
+                                        else ("", SIN_DETERMINAR))
 
         # Sin movimiento neto el renglon no revela su naturaleza: la hereda
-        # de la cuenta padre, que si la revelo.
-        for cruda in sorted(crudas, key=lambda c: _derivar(c.cuenta)[0]):
-            if naturaleza[cruda.cuenta]:
+        # de la cuenta padre, cuando esa si la revelo.
+        for cruda in sorted(crudas, key=lambda c: nivel_y_padre(c.cuenta, esquema)[0]):
+            if naturaleza[cruda.cuenta][0]:
                 continue
-            padre = _derivar(cruda.cuenta)[1]
-            while padre and not naturaleza.get(padre):
-                padre = _derivar(padre)[1]
-            naturaleza[cruda.cuenta] = naturaleza.get(padre, "") or "D"
+            padre = nivel_y_padre(cruda.cuenta, esquema)[1]
+            while padre and not naturaleza.get(padre, ("", ""))[0]:
+                padre = nivel_y_padre(padre, esquema)[1]
+            heredada = naturaleza.get(padre, ("", ""))[0]
+            if heredada:
+                naturaleza[cruda.cuenta] = (heredada, HEREDADA)
+        return naturaleza
 
-        filas = [self._fila(c, naturaleza[c.cuenta]) for c in crudas]
+    def _resolver(self, crudas: Sequence[_Cruda]) -> tuple[FilaBalanza, ...]:
+        """Deriva lo que el documento no declara: naturaleza y jerarquia.
+
+        El esquema de cuenta sale del catalogo completo: hay formatos que
+        declaran el nivel en el propio numero y otros donde hay que leerlo
+        de los separadores.
+        """
+        esquema = inferir_esquema([c.cuenta for c in crudas])
+        naturaleza = self._naturalezas(crudas, esquema)
+        filas = [self._fila(c, *naturaleza[c.cuenta], esquema) for c in crudas]
 
         # El marcador explicito manda; si el documento no lo trae, es
         # acumulativa la cuenta que tenga hijas presentes.
@@ -423,13 +462,34 @@ class BalanzaParser:
             filas = [replace(f, es_acumulativa=f.cuenta in padres) for f in filas]
         return tuple(filas)
 
+    def _filas_afectadas(self, crudas: Sequence[_Cruda]) -> int:
+        """Cuantas naturalezas cambiarian si debe y haber estuvieran al reves.
+
+        Se comparan las naturalezas FINALES, con la herencia ya aplicada:
+        un renglon sin movimiento tambien cambia si cambia su cuenta padre.
+        Convierte un 'no se pudo verificar' en un numero, que es la
+        diferencia entre un Excel incompleto y uno incorrecto.
+        """
+        esquema = inferir_esquema([c.cuenta for c in crudas])
+        derecho = self._naturalezas(crudas, esquema)
+        reves = self._naturalezas(crudas, esquema, invertido=True)
+        return sum(1 for c in derecho if derecho[c][0] != reves[c][0])
+
     # --- API --------------------------------------------------------------
     def parse(self, document: Document, *, layout: Layout | None = None,
-              mapeo: dict[str, int] | None = None) -> Balanza:
-        """Lee el documento en UNA sola pasada y devuelve filas validables."""
+              mapeo: "dict[str, int] | Mapeo | None" = None) -> Balanza:
+        """Lee el documento en UNA sola pasada y devuelve filas validables.
+
+        Con un Mapeo ya resuelto (el que guarda una plantilla) no vuelve a
+        proponer ni a verificar nada: ese es el punto de aprenderlo.
+        """
+        conocido = mapeo if isinstance(mapeo, Mapeo) else None
+        if conocido is not None:
+            mapeo = dict(conocido.campos)
         muestra: list[Page] = []
         crudas: list[_Cruda] = []
         totales: Totales | None = None
+        orientada = True if conocido is None else conocido.orientacion_verificada
         listo = layout is not None and mapeo is not None
 
         for page in document.open_pages():
@@ -437,7 +497,8 @@ class BalanzaParser:
                 muestra.append(page)
                 if len(muestra) < self.paginas_muestra:
                     continue
-                layout, mapeo = self._resolver_layout(muestra, layout, mapeo)
+                layout, mapeo, orientada = self._resolver_layout(
+                    muestra, layout, mapeo)
                 if layout is None:
                     muestra.pop(0)  # ninguna de estas paginas trae tabla
                     continue
@@ -453,7 +514,7 @@ class BalanzaParser:
                 totales = tot or totales
 
         if muestra:
-            layout, mapeo = self._resolver_layout(muestra, layout, mapeo)
+            layout, mapeo, orientada = self._resolver_layout(muestra, layout, mapeo)
             if layout is not None:
                 for pendiente in muestra:
                     nuevas, tot = self._crudas(pendiente, layout, mapeo)
@@ -462,24 +523,49 @@ class BalanzaParser:
 
         if layout is None or mapeo is None:
             raise LayoutDesconocido("no se encontro ninguna tabla de balanza")
+
+        descripcion = conocido or Mapeo(
+            campos=dict(mapeo),
+            forma=_forma_de(mapeo).nombre,
+            verificado_por="aritmetica" if orientada else "vocabulario",
+            orientacion_verificada=orientada,
+            filas_afectadas=0 if orientada else self._filas_afectadas(crudas),
+        )
         return Balanza(filas=self._resolver(crudas), totales=totales,
-                       forma=_forma_de(mapeo).nombre)
+                       forma=descripcion.forma, mapeo=descripcion)
+
+    def _orientada(self, layout: Layout, muestra: Sequence[Page],
+                   mapeo: dict[str, int]) -> bool:
+        """True si la aritmetica sostiene cual columna es debe y cual haber.
+
+        Se comprueba invirtiendolas: si el documento vuelve a cuadrar al
+        reves, la orientacion no la decide la aritmetica sino el
+        encabezado, y eso hay que decirlo.
+        """
+        if "debe" not in mapeo or "haber" not in mapeo:
+            return False
+        invertido = dict(mapeo)
+        invertido["debe"], invertido["haber"] = mapeo["haber"], mapeo["debe"]
+        return not self.verifica(layout, muestra, invertido)
 
     def _resolver_layout(self, muestra: Sequence[Page], layout: Layout | None,
                          mapeo: dict[str, int] | None
-                         ) -> tuple[Layout | None, dict[str, int] | None]:
+                         ) -> tuple[Layout | None, dict[str, int] | None, bool]:
         layout = layout or detectar_layout(muestra)
         if layout is None:
-            return None, None
+            return None, None, True
         if mapeo is not None:
-            return layout, mapeo
+            return layout, mapeo, self._orientada(layout, muestra, mapeo)
 
         propuestas = proponer_mapeos(layout)
         for propuesta in propuestas:
             if self.verifica(layout, muestra, propuesta):
-                _LOG.info("mapeo aceptado (%s): %s", _forma_de(propuesta).nombre,
+                orientada = self._orientada(layout, muestra, propuesta)
+                _LOG.info("mapeo aceptado (%s, orientacion %s): %s",
+                          _forma_de(propuesta).nombre,
+                          "verificada" if orientada else "solo por vocabulario",
                           sorted(propuesta))
-                return layout, propuesta
+                return layout, propuesta, orientada
 
         faltan = _faltantes(layout)
         if faltan:
