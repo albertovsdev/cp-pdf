@@ -14,7 +14,13 @@ from dataclasses import dataclass
 from contapdf.ir import ColumnSpec, Line, Word
 
 _RE_NUMERIC = re.compile(r"^[\d.,\-$()%/:]+$")
-_RE_CUENTA = re.compile(r"^\d{3}(-\d{1,6})*$")
+# Base de 3 digitos o mas y cualquier numero de segmentos: hay
+# catalogos reales con 0400-0000-0000-0000 y 1110-000-000. La regla
+# estrecha de scripts/dump_layout.py existe por PRIVACIDAD (con base
+# de 4 hacia match con folios y fechas, y se filtraban sin enmascarar)
+# y ahi se queda. Aqui no hay dato que proteger: una cuenta tomada
+# por monto se agrupa por x1 y degrada la deteccion en silencio.
+_RE_CUENTA = re.compile(r"^\d{3,}(-\d+)*$")
 _RE_FECHA = re.compile(r"^\d{1,2}[-/]\d{1,2}[-/]\d{2,4}$")
 
 
