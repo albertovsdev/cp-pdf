@@ -207,6 +207,26 @@ Tres conclusiones que condicionan el diseño:
 Los cuatro fixtures originales resultaron ser un solo dialecto. Estos
 formatos, de empresas distintas, cambian vocabulario, semántica y estructura.
 
+**Balanza GUME** (tercera variante, misma empresa que mayor-gume)
+- Cuentas de **21 dígitos sin separadores**: `112000100100000000003`.
+  Estructura medida sobre 734 renglones: posiciones 1–6 cuenta de mayor,
+  7–9 subcuenta, 10–12 sub-subcuenta, 13–18 relleno constante, **19–21
+  marcador de nivel** (001/002/003).
+- **El nivel viene declarado, y el marcador NO es redundante.** Contra la
+  indentación: 734/734 (con 2pt de tolerancia). Contra deducirlo de los
+  ceros finales: 680/734, **fallan 54** — existe el sub-subnivel numerado
+  `000`. Sin el marcador, 54 cuentas quedarían en el nivel equivocado.
+- Cuarta forma de columnas: `Saldo inicial | Debe | Haber | Saldo final`.
+  Estructuralmente es `saldo_con_signo` sin la columna SALDO MES.
+- Jerarquía por prefijo: 71 cuentas con hijas, 71/71 cuadran.
+- **Normalización de cuentas entre reportes** (verificado, no supuesto):
+  la misma cuenta es `1120-001-001` en mayor-gume y `112000100100000000003`
+  aquí. Los cortes de segmento no coinciden (4-3-3 vs 6-3-3) pero la cadena
+  de dígitos sí. `canon(t, ancho=18) = re.sub(r"\D","",t)[:ancho].ljust(ancho,"0")`,
+  **quitando antes el marcador de nivel (posiciones 19–21)**. Cruzan 49/49
+  de mayor-gume y 7/7 de la muestra de auxiliar-gume; las 734 canónicas son
+  734 distintas, sin colisiones.
+
 **Balanza «Business Pro»**
 - Cuentas `0400-0000-0000-0000`: base de 4 dígitos, **cuatro** segmentos.
 - Vocabulario: `CARGOS`/`CREDITOS` en vez de Debe/Haber;
@@ -302,6 +322,43 @@ largos de cuenta se extienden sobre las columnas numéricas y encadenan la
 fusión (x=148 a x=301). La medición válida viene de `find_table_region` +
 `detect`, no del dumper.
 
+### Principio: nunca reportar un resultado sin su cobertura
+
+Medido sobre `balanza-gume`: el parser reportó `734 filas, 0 discrepancias`
+cuando en realidad **casi ninguna regla llegó a correr** (jerarquía perdida
+por falta de guiones, fila de totales no detectada, partida doble pasando
+trivialmente por doble conteo simétrico, checksum por renglón cumpliéndose
+de gracia en 687 filas en ceros).
+
+Un `0 discrepancias` sin cobertura es el peor resultado posible: un Excel
+con cara de validado que nadie comprobó.
+
+**Tres estados por regla, no dos:**
+
+| Estado | Significado | Acción |
+|---|---|---|
+| `cuadra` | La regla corrió y pasó | Entrega |
+| `falla` | La regla corrió y no pasó | No entrega limpio (§1.3) |
+| `no_verificable` | La regla no pudo correr | Entrega **con cobertura visible** |
+
+Toda salida incluye la cobertura: «4 reglas, 1 corrió, 3 no comprobables».
+Y distingue «cuadró exacto» de «cuadró dentro de tolerancia»: cuando la
+tolerancia de ±0.01 se consume, hay que decirlo.
+
+**Caso aparte: la orientación debe/haber.** No es solo no verificable, es
+*consecuente*: si estuviera invertida, la naturaleza pasa de D=725/A=9 a
+D=9/A=725 — un Excel incorrecto, no incompleto. Medido en `balanza-gume`:
+solo 45 de 734 renglones tienen `debe != haber`, y al invertir el mapeo los
+45 siguen cuadrando porque la naturaleza derivada se invierte con ellos. La
+fila de totales tampoco orienta (Debe = Haber). Lo único que orienta es el
+vocabulario del encabezado.
+
+Por eso cada mapeo registra **sobre qué se apoya**: `verificado_por:
+aritmetica` o `verificado_por: vocabulario`. Un mapeo aceptado solo por
+vocabulario es el que el asistente de la fase 4 hace confirmar al humano una
+vez; la plantilla guarda esa confirmación y las cargas siguientes del mismo
+formato ya no preguntan.
+
 ### Principio: la aritmética manda sobre el vocabulario
 
 Un diccionario de sinónimos de encabezado (`CARGOS`↔Debe,
@@ -392,7 +449,8 @@ cp-pdf/
 | 2 | Balanza E2E | parser balanza + validación + Excel | **hecho** (153 tests) |
 | 3 | Balanza variante | Generalizar balanza a «Business Pro»: sinónimos de encabezado + validación que varía por formato | siguiente |
 | 3b | Auxiliar | Parser con arrastre de sección y bloques | |
-| 4 | Plantillas | Fingerprint + store + wizard de mapeo | |
+| 4a | Cobertura de validación | Tres estados por regla, `verificado_por`, jerarquía y totales parametrizados por formato | siguiente |
+| 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | |
 | 5 | Pólizas | Parser de bloques usando las líneas del PDF | |
 | 6 | OCR | `ocr.py` + preprocesado | |
 | 7 | Estado de cuenta | Multilínea + variación por banco | |
@@ -486,6 +544,11 @@ Registrada a propósito, con la fase en que toca resolverla.
   Debe seguir siendo parámetro configurable, nunca constante enterrada.
 - **`headers.py` no maneja encabezados agrupados** (`Acumulados` abarcando
   dos columnas, en el Libro Mayor). **Resolver en fase 7b.**
+- **La jerarquía necesita el ancho de segmento por nivel** (6/9/12 en
+  GUME, guiones en los otros). Es parámetro del formato. **Fase 4a.**
+- **La detección de la fila de totales no puede depender de que la etiqueta
+  esté al inicio de la celda de nombre.** En GUME el renglón es
+  `734 | Cuentas reportadas | Totales: | ...` y nunca se detectó. **Fase 4a.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
 
