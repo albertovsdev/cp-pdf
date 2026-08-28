@@ -17,11 +17,11 @@ from contapdf.validate.rules import Discrepancia
 
 _ENCABEZADOS = ("cuenta", "nivel", "cuenta_padre", "naturaleza", "nombre",
                 "saldo_ini_deudor", "saldo_ini_acreedor", "debe", "haber",
-                "saldo_fin_deudor", "saldo_fin_acreedor")
+                "saldo_fin_deudor", "saldo_fin_acreedor", "es_acumulativa")
 _MONTOS = ("saldo_ini_deudor", "saldo_ini_acreedor", "debe", "haber",
            "saldo_fin_deudor", "saldo_fin_acreedor")
 _FORMATO_MONTO = "#,##0.00"
-_ANCHOS = (14, 6, 14, 5, 42, 16, 18, 16, 16, 18, 18)
+_ANCHOS = (14, 6, 14, 5, 42, 16, 18, 16, 16, 18, 18, 14)
 
 
 def exportar_balanza(balanza: Balanza, discrepancias: Sequence[Discrepancia],

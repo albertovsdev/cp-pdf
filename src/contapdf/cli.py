@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import TextIO
 
 from contapdf.export.excel import exportar_balanza
-from contapdf.extract.pdf_text import extract
+from contapdf.extract.strategy import extraer
 from contapdf.parsers.balanza import Balanza, BalanzaParser, LayoutDesconocido
 from contapdf.validate.rules import Discrepancia, validar_balanza
 
@@ -33,13 +33,15 @@ def codigo_de_salida(discrepancias: Sequence[Discrepancia]) -> int:
     return 1 if discrepancias else 0
 
 
-def reportar(fuente: str, paginas: int, balanza: Balanza,
+def reportar(fuente: str, paginas: int, estrategia: str, balanza: Balanza,
              discrepancias: Sequence[Discrepancia], destino: Path | None,
              salida: TextIO) -> None:
     """Escribe el resumen que se compara contra el documento fisico."""
     escribir = salida.write
     escribir(f"{fuente}\n")
     escribir(f"  paginas   : {paginas}\n")
+    escribir(f"  extraccion: {estrategia}"
+             + (f"   forma: {balanza.forma}\n" if balanza.forma else "\n"))
     escribir(f"  filas     : {len(balanza.filas)}\n")
 
     if balanza.totales is None:
@@ -74,7 +76,7 @@ def ejecutar_balanza(pdf: Path, destino: Path | None, *, paginas_muestra: int,
         salida.write(f"no existe: {pdf}\n")
         return 2
 
-    documento = extract(pdf)
+    documento, estrategia = extraer(pdf)
     try:
         balanza = BalanzaParser(paginas_muestra=paginas_muestra).parse(documento)
     except LayoutDesconocido as exc:
@@ -88,7 +90,8 @@ def ejecutar_balanza(pdf: Path, destino: Path | None, *, paginas_muestra: int,
     discrepancias = validar_balanza(balanza)
     if destino is not None:
         exportar_balanza(balanza, discrepancias, destino)
-    reportar(str(pdf), documento.page_count, balanza, discrepancias, destino, salida)
+    reportar(str(pdf), documento.page_count, estrategia, balanza, discrepancias,
+             destino, salida)
     return codigo_de_salida(discrepancias)
 
 

@@ -33,8 +33,18 @@ def test_la_hoja_se_llama_balanza_y_trae_encabezados(tmp_path):
     assert [c.value for c in ws[1]] == [
         "cuenta", "nivel", "cuenta_padre", "naturaleza", "nombre",
         "saldo_ini_deudor", "saldo_ini_acreedor", "debe", "haber",
-        "saldo_fin_deudor", "saldo_fin_acreedor",
+        "saldo_fin_deudor", "saldo_fin_acreedor", "es_acumulativa",
     ]
+
+
+def test_marca_las_filas_acumulativas(tmp_path):
+    # El contador filtra la hoja plana: sin esta columna no puede saber
+    # cuales son subtotales y sumaria dos veces.
+    balanza, _, destino = _exportar(tmp_path)
+    ws = openpyxl.load_workbook(destino)["Balanza"]
+    columna = [c.value for c in ws["L"][1:]]
+    assert columna == [f.es_acumulativa for f in balanza.filas]
+    assert any(columna)
 
 
 def test_el_encabezado_queda_congelado(tmp_path):

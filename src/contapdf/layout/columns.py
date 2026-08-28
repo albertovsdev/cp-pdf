@@ -140,6 +140,26 @@ def detect(lines: Sequence[Line], *, tol: float = 3.0,
     return _merge_overlapping(_candidates(_words_of(lines), tol, min_support))
 
 
+def amount_columns(lines: Sequence[Line], *, tol: float = 3.0,
+                   min_support: int = 3) -> list[ColumnSpec]:
+    """Las columnas de monto solas, SIN fundir con las de texto.
+
+    detect() funde columnas que se traslapan, y hay documentos donde la
+    descripcion se imprime encima de los importes: ahi el merge se traga
+    las columnas numericas. Estas se sostienen igual, porque el borde
+    derecho de un monto no depende de que haya texto encima.
+    """
+    columnas = [
+        ColumnSpec(index=0, align="right", x_min=c.x_min, x_max=c.x_max,
+                   support=c.support)
+        for c in _candidates(_words_of(lines), tol, min_support)
+        if c.align == "right"
+    ]
+    for i, col in enumerate(columnas):
+        col.index = i
+    return columnas
+
+
 def amount_anchors(lines: Sequence[Line], *, tol: float = 3.0,
                    min_support: int = 3) -> list[float]:
     """Los x1 donde se apilan los montos, sin fundir columnas.

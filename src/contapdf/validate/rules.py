@@ -1,5 +1,9 @@
 """Reglas aritmeticas: cada documento trae su propio checksum.
 
+Las reglas se DECLARAN por formato. Un documento con columnas deudor y
+acreedor separadas y otro con una sola columna con signo no se validan
+igual, y cablear uno de los dos deja al otro fuera.
+
 Devuelve discrepancias. No lanza excepciones y no imprime: quien llama
 decide si entrega el Excel marcado o rechaza el documento.
 """
@@ -26,6 +30,29 @@ class Discrepancia:
     obtenido: Decimal
 
 
+@dataclass(frozen=True)
+class ReglasBalanza:
+    """Que se le exige a una balanza. La fase 4 guardara esto por formato."""
+
+    tolerancia: Decimal = TOLERANCIA
+    subconjunto_totales: str = "nivel_1"  # 'nivel_1' | 'no_acumulativas'
+    exige_partida_doble: bool = True
+
+    @classmethod
+    def para(cls, balanza: Balanza, *,
+             tolerancia: Decimal = TOLERANCIA) -> "ReglasBalanza":
+        """Deduce del propio documento que reglas le aplican.
+
+        La partida doble solo se exige si el documento la declara en su
+        fila de totales. Business Pro imprime unicamente la seccion de
+        resultados: sus sumas no cuadran entre si por diseño, y exigirsela
+        seria reportar una discrepancia que el documento no tiene.
+        """
+        declara = (balanza.totales is None
+                   or abs(balanza.totales.debe - balanza.totales.haber) <= tolerancia)
+        return cls(tolerancia=tolerancia, exige_partida_doble=declara)
+
+
 def _saldo(deudor: Decimal, acreedor: Decimal) -> Decimal:
     """Saldo con signo, independiente de la naturaleza de la cuenta."""
     return deudor - acreedor
@@ -41,13 +68,29 @@ def _hijas_directas(filas: Sequence[FilaBalanza],
             if f.cuenta_padre == padre.cuenta and f.nivel == padre.nivel + 1]
 
 
+def _subconjunto(filas: Sequence[FilaBalanza], nombre: str) -> list[FilaBalanza]:
+    """Las filas contra las que cuadra la fila de totales del PDF.
+
+    Medido: la balanza original cuadra contra el NIVEL 1 (26.9M) y no
+    contra las hojas (48.9M), porque trae dos subarboles cuya cuenta padre
+    no esta impresa. Business Pro cuadra contra las dos, porque ahi el
+    arbol descompone completo. Por eso el default es 'nivel_1': es el
+    unico que sirve para los dos.
+    """
+    if nombre == "no_acumulativas":
+        return [f for f in filas if not f.es_acumulativa]
+    return [f for f in filas if f.nivel == 1]
+
+
 def validar_balanza(balanza: Balanza, *,
-                    tolerancia: Decimal = TOLERANCIA) -> list[Discrepancia]:
+                    reglas: ReglasBalanza | None = None) -> list[Discrepancia]:
     """Aplica los checksums de PLAN 1.3 a una balanza ya parseada.
 
-    Cuatro reglas: el saldo de cada renglon, la suma de las hijas contra su
-    cuenta padre, la fila 'Totales' del PDF y la identidad de partida doble.
+    Sin reglas explicitas se deducen del propio documento; la fase 4 las
+    guardara en la plantilla para no volver a deducirlas.
     """
+    reglas = reglas or ReglasBalanza.para(balanza)
+    tolerancia = reglas.tolerancia
     discrepancias: list[Discrepancia] = []
     filas = balanza.filas
 
@@ -74,22 +117,19 @@ def validar_balanza(balanza: Balanza, *,
                     fila=padre.cuenta, indice=indice, regla=f"jerarquia_{campo}",
                     esperado=suma, obtenido=propio))
 
-    # Verificado contra el documento real: la fila 'Totales' suma las
-    # cuentas de NIVEL 1, no todas las filas ni solo las hojas. Sumar todas
-    # contaria dos veces a las cuentas padre, que ya agregan a sus hijas.
-    nivel_1 = [f for f in filas if f.nivel == 1]
-    if balanza.totales is not None and nivel_1:
+    base = _subconjunto(filas, reglas.subconjunto_totales)
+    if balanza.totales is not None and base:
         for campo in ("debe", "haber"):
-            suma = sum((getattr(f, campo) for f in nivel_1), Decimal(0))
+            suma = sum((getattr(f, campo) for f in base), Decimal(0))
             declarado = getattr(balanza.totales, campo)
             if _difieren(suma, declarado, tolerancia):
                 discrepancias.append(Discrepancia(
                     fila="Totales", indice=-1, regla=f"totales_{campo}",
                     esperado=suma, obtenido=declarado))
 
-    if nivel_1:
-        debe = sum((f.debe for f in nivel_1), Decimal(0))
-        haber = sum((f.haber for f in nivel_1), Decimal(0))
+    if reglas.exige_partida_doble and base:
+        debe = sum((f.debe for f in base), Decimal(0))
+        haber = sum((f.haber for f in base), Decimal(0))
         if _difieren(debe, haber, tolerancia):
             # Los dos lados vienen del documento: aqui 'esperado' es el debe.
             discrepancias.append(Discrepancia(

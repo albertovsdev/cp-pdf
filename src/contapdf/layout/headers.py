@@ -78,11 +78,15 @@ def assign(lines: Sequence[Line], region: Region | None,
     for ln in _header_block(lines_within(lines, region), max_header_lines,
                             pitch_factor):
         for w in ln.words:
-            elegida, menor = None, float("inf")
+            elegida, menor, ancho = None, float("inf"), float("inf")
             for col in etiquetadas:
                 d = _distance(w, col, pad=6.0)
-                if d < menor:
-                    elegida, menor = col, d
+                # Cuando varias columnas contienen la etiqueta gana la mas
+                # angosta: hay documentos donde una columna de texto ancha
+                # se imprime encima de las numericas y las contiene a todas,
+                # y si gana ella las de monto se quedan sin nombre.
+                if d < menor or (d == menor and col.x_max - col.x_min < ancho):
+                    elegida, menor, ancho = col, d, col.x_max - col.x_min
             if elegida is not None and menor < max_distance:
                 partes.setdefault(elegida.index, []).append((w.top, w.x0, w.text))
 

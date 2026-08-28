@@ -16,7 +16,7 @@ from decimal import Decimal, InvalidOperation
 from typing import Protocol
 
 from contapdf.ir import ColumnSpec, Document, Line, Page, Word
-from contapdf.layout.columns import detect
+from contapdf.layout.columns import amount_columns, detect, is_amount
 from contapdf.layout.headers import assign
 from contapdf.layout.lines import group
 from contapdf.layout.region import find_table_region, lines_within
@@ -90,10 +90,27 @@ class Layout:
     def headers(self) -> tuple[str, ...]:
         return tuple(c.header for c in self.columns)
 
+    @property
+    def montos(self) -> tuple[ColumnSpec, ...]:
+        return tuple(c for c in self.columns if c.align == "right")
+
+    @property
+    def textos(self) -> tuple[ColumnSpec, ...]:
+        return tuple(c for c in self.columns if c.align != "right")
+
     def indice_de(self, word: Word, *, max_distance: float = 40.0) -> int | None:
+        """La columna de esta palabra.
+
+        Los montos se ubican por su BORDE DERECHO contra el de la columna,
+        no por su centro: es lo que los mantiene en su sitio aunque encima
+        pase un texto que se traslapa. El resto va por cercania del centro.
+        """
+        if is_amount(word.text) and self.montos:
+            return self._monto_mas_cercano(word)
+
         centro = (word.x0 + word.x1) / 2
         elegida, menor = None, math.inf
-        for col in self.columns:
+        for col in self.textos or self.columns:
             if col.x_min - 6 <= centro <= col.x_max + 6:
                 distancia = 0.0
             else:
@@ -101,6 +118,25 @@ class Layout:
             if distancia < menor:
                 elegida, menor = col, distancia
         return elegida.index if elegida is not None and menor < max_distance else None
+
+    def _monto_mas_cercano(self, word: Word) -> int | None:
+        """El monto va a la columna cuyo borde derecho tiene mas cerca.
+
+        La tolerancia es la mitad de la separacion entre columnas: alcanza
+        para una fila de totales impresa con otra fuente (Business Pro la
+        corre hasta 24pt) sin llegar nunca a la columna vecina.
+        """
+        bordes = sorted(c.x_max for c in self.montos)
+        if len(bordes) > 1:
+            limite = min(b - a for a, b in zip(bordes, bordes[1:])) / 2
+        else:
+            limite = 40.0
+        elegida, menor = None, math.inf
+        for col in self.montos:
+            distancia = abs(word.x1 - col.x_max)
+            if distancia < menor:
+                elegida, menor = col, distancia
+        return elegida.index if elegida is not None and menor < limite else None
 
 
 def detectar_layout(paginas: Sequence[Page], *, tol: float = 3.0,
@@ -118,20 +154,26 @@ def detectar_layout(paginas: Sequence[Page], *, tol: float = 3.0,
         region = find_table_region(lines)
         if region is None:
             continue
+        dentro = lines_within(lines, region)
         columnas = assign(lines, region,
-                          detect(lines_within(lines, region), tol=tol,
-                                 min_support=min_support))
+                          _texto_y_montos(dentro, tol=tol, min_support=min_support))
         if columnas:
             detectadas.append(columnas)
 
     if not detectadas:
         return None
 
-    union = [replace(c) for c in detectadas[0]]
-    for otras in detectadas[1:]:
+    # La base es la deteccion con MAS columnas de la muestra: fundir dos
+    # columnas pierde informacion, pero ninguna pagina inventa una columna
+    # que no exista, asi que la mas detallada es la mas fiel.
+    base = max(detectadas, key=len)
+    union = [replace(c) for c in base]
+    for otras in detectadas:
+        if otras is base:
+            continue
         if len(otras) != len(union):
-            _LOG.warning("la muestra no coincide: %s columnas contra %s; "
-                         "me quedo con la primera", len(otras), len(union))
+            _LOG.info("la muestra no coincide: %s columnas contra %s; "
+                      "me quedo con la mas detallada", len(otras), len(union))
             continue
         for acumulada, otra in zip(union, otras):
             acumulada.x_min = min(acumulada.x_min, otra.x_min)
@@ -142,24 +184,66 @@ def detectar_layout(paginas: Sequence[Page], *, tol: float = 3.0,
     return Layout(columns=tuple(union))
 
 
+def _texto_y_montos(lines: Sequence[Line], *, tol: float,
+                    min_support: int) -> list[ColumnSpec]:
+    """Columnas de texto de detect() + columnas de monto sin fundir.
+
+    detect() funde por traslape, que es lo correcto cuando una columna de
+    texto ancha se parte en varios anclajes. Pero cuando la descripcion se
+    imprime ENCIMA de los importes, ese mismo merge se traga las columnas
+    numericas. Tomarlas aparte las conserva en los dos casos.
+    """
+    montos = amount_columns(lines, tol=tol, min_support=min_support)
+    bordes = {round(c.x_max, 1) for c in montos}
+    textos = [c for c in detect(lines, tol=tol, min_support=min_support)
+              if round(c.x_max, 1) not in bordes]
+
+    columnas = sorted(textos + montos, key=lambda c: c.x_min)
+    for i, col in enumerate(columnas):
+        col.index = i
+    return columnas
+
+
 def celdas(line: Line, layout: Layout) -> dict[int, str]:
-    """Reparte las palabras del renglon entre las columnas del layout."""
-    partes: dict[int, list[tuple[float, str]]] = {}
+    """Reparte las palabras del renglon entre las columnas del layout.
+
+    Una columna alineada a la derecha lleva UN valor por renglon, asi que
+    si le tocan varias palabras se queda con la que mejor cierra contra su
+    borde. Es lo que descarta el texto que se imprime encima: un '15%' de
+    la descripcion tambien parece numero, pero no termina donde termina la
+    columna.
+    """
+    partes: dict[int, list[Word]] = {}
     for word in line.words:
         indice = layout.indice_de(word)
         if indice is not None:
-            partes.setdefault(indice, []).append((word.x0, word.text))
-    return {i: " ".join(t for _, t in sorted(trozos))
-            for i, trozos in partes.items()}
+            partes.setdefault(indice, []).append(word)
+
+    montos = {c.index: c for c in layout.montos}
+    salida: dict[int, str] = {}
+    for indice, palabras in partes.items():
+        columna = montos.get(indice)
+        if columna is not None and len(palabras) > 1:
+            mejor = min(palabras, key=lambda w: abs(w.x1 - columna.x_max))
+            salida[indice] = mejor.text
+        else:
+            salida[indice] = " ".join(w.text for w in sorted(palabras,
+                                                             key=lambda w: w.x0))
+    return salida
 
 
-def renglones_de_tabla(page: Page, layout: Layout) -> list[dict[int, str]]:
-    """Los renglones de la zona de tabla de una pagina, ya en celdas."""
+def lineas_de_tabla(page: Page) -> list[Line]:
+    """Los renglones que caen dentro de la zona de tabla de la pagina."""
     lines = group(page.words)
     region = find_table_region(lines)
     if region is None:
         return []
-    return [celdas(ln, layout) for ln in lines_within(lines, region)]
+    return lines_within(lines, region)
+
+
+def renglones_de_tabla(page: Page, layout: Layout) -> list[dict[int, str]]:
+    """Los renglones de la zona de tabla de una pagina, ya en celdas."""
+    return [celdas(ln, layout) for ln in lineas_de_tabla(page)]
 
 
 class Parser(Protocol):

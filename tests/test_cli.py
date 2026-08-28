@@ -25,7 +25,7 @@ def _fila(cuenta: str) -> FilaBalanza:
 def _reporte(discrepancias=(), totales=Totales(Decimal("1234.56"), Decimal("1234.56"))):
     salida = io.StringIO()
     balanza = Balanza(filas=(_fila("101"), _fila("102")), totales=totales)
-    reportar("balanza.pdf", 9, balanza, discrepancias, None, salida)
+    reportar("balanza.pdf", 9, "pdf_text", balanza, discrepancias, None, salida)
     return salida.getvalue()
 
 
@@ -91,3 +91,23 @@ def test_el_codigo_de_salida_distingue_documento_descuadrado():
     assert codigo_de_salida([]) == 0
     assert codigo_de_salida([Discrepancia("101", 0, "renglon",
                                           Decimal(1), Decimal(2))]) == 1
+
+
+def test_main_sobre_business_pro_elige_la_extraccion_por_corridas(tmp_path):
+    pdf = requires_real_pdf("balanza-businesspro")
+    destino = tmp_path / "bp.xlsx"
+    salida = io.StringIO()
+
+    codigo = main(["balanza", str(pdf), "-o", str(destino)], salida=salida)
+
+    texto = salida.getvalue()
+    assert codigo == 0
+    assert "225" in texto
+    assert "pdf_chars" in texto
+    assert "sin discrepancias" in texto.lower()
+    assert openpyxl.load_workbook(destino).sheetnames == ["Balanza"]
+
+
+def test_reporta_la_estrategia_de_extraccion():
+    texto = _reporte()
+    assert "extraccion" in texto.lower()
