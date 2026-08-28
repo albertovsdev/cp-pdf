@@ -368,8 +368,13 @@ no tienen nada que las sostenga.
 - En el Excel, `naturaleza` va **vacía** cuando no está determinada. Un `D`
   por default es indistinguible de uno fundamentado: la misma mentira que
   el `0 discrepancias`.
-- La cobertura lo reporta: «naturaleza: 12 explícitas, 45 derivadas, 51
-  heredadas, 626 sin determinar».
+- La cobertura lo reporta. Cifras **medidas** (fase 4b), no de ejemplo:
+
+  | Documento | explícitas | derivadas | heredadas | sin determinar |
+  |---|---|---|---|---|
+  | balanza | 475 | 0 | 0 | 0 |
+  | businesspro | 0 | 157 | 35 | 33 |
+  | GUME | 0 | 45 | 51 | 638 |
 - La procedencia se guarda en el dataclass pero **no se exporta**: duplica
   el ancho de la hoja y el contador la ignora. La fase 4b la necesita para
   decidir qué confirma el humano.
@@ -469,9 +474,9 @@ cp-pdf/
 | 1 | IR + layout | `ir.py`, `pdf_text.py`, `lines.py`, `columns.py`, `region.py` | **hecho** (71 tests) |
 | 2 | Balanza E2E | parser balanza + validación + Excel | **hecho** (153 tests) |
 | 3 | Balanza variante | Generalizar balanza a «Business Pro»: sinónimos de encabezado + validación que varía por formato | siguiente |
-| 3b | Auxiliar | Parser con arrastre de sección y bloques | |
+| 3b | Auxiliar | Parser con arrastre de sección y bloques, contra las DOS variantes | siguiente |
 | 4a | Cobertura de validación | Tres estados por regla, `verificado_por`, jerarquía y totales parametrizados por formato | **hecho** (275 tests) |
-| 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | siguiente |
+| 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | **hecho** (327 tests) |
 | 5 | Pólizas | Parser de bloques usando las líneas del PDF | |
 | 6 | OCR | `ocr.py` + preprocesado | |
 | 7 | Estado de cuenta | Multilínea + variación por banco | |
@@ -570,6 +575,13 @@ Registrada a propósito, con la fase en que toca resolverla.
 - **La detección de la fila de totales no puede depender de que la etiqueta
   esté al inicio de la celda de nombre.** En GUME el renglón es
   `734 | Cuentas reportadas | Totales: | ...` y nunca se detectó. **Fase 4a.**
+- **La colocación del saldo sigue apoyada en la convención que se quitó de
+  `naturaleza`.** Un renglón sin determinar tiene `debe == haber`, y su
+  saldo se sigue colocando en la columna deudora por default. La celda de
+  naturaleza ya no miente; la de saldo sí. La alternativa honesta es
+  colocar por el **signo que imprime el documento** (dato, no inferencia),
+  pero la evidencia de que «positivo → deudora» son solo 2 renglones.
+  **Medir antes de implementar.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
 
@@ -648,5 +660,4 @@ antes de implementarse.
   seguridad desde octubre 2025.** La red local acotada lo mitiga bastante,
   pero conviene que el cliente lo conozca por escrito antes de que la
   máquina reciba documentos fiscales de terceros.
-- **Espacio libre en disco del servidor**: sin medir. Necesario antes de
-  dimensionar el almacenamiento de subidas y temporales.
+- **Espacio libre en disco del servidor**: 331 GB de 466. Suficiente.
