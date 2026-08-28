@@ -11,7 +11,7 @@ decide si entrega el Excel marcado o rechaza el documento.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from decimal import Decimal
 
 from contapdf.parsers.balanza import (
@@ -271,6 +271,111 @@ def _partida_doble(reglas: ReglasBalanza,
             esperado=debe, obtenido=haber)])
     return _resultado("partida_doble", 1, 1 if veredicto == "exacto" else 0,
                       () if veredicto == "exacto" else ("Totales",), [])
+
+
+def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
+    """saldo[n] == saldo[n-1] + debe - haber, dentro de cada seccion.
+
+    El saldo arranca en el saldo inicial que declara la seccion, y los
+    subtotales no participan: son un resumen de los movimientos, no uno
+    mas.
+    """
+    movimientos = [f for f in auxiliar.filas if not f.es_subtotal]
+    if not movimientos:
+        return ResultadoRegla(regla="saldo_corrido", estado=NO_VERIFICABLE,
+                              motivo="el documento no trajo movimientos")
+    exactas, rozando, malas = 0, [], []
+    anterior: Decimal | None = None
+    cuenta = ""
+    ilegibles = 0
+    for indice, fila in enumerate(movimientos):
+        if fila.cuenta != cuenta:
+            cuenta, anterior = fila.cuenta, fila.saldo_inicial_cuenta
+        if fila.saldo is None:
+            # El documento no dejo leer este saldo: se corta la cadena en
+            # vez de encadenar sobre un numero que no existe.
+            ilegibles += 1
+            anterior = None
+            continue
+        if anterior is None:
+            anterior = fila.saldo
+            continue
+        esperado = anterior + fila.debe - fila.haber
+        veredicto = _comparar(esperado, fila.saldo, tolerancia)
+        if veredicto == "exacto":
+            exactas += 1
+        elif veredicto == "tolerancia":
+            rozando.append(f"{fila.cuenta} {fila.fecha}")
+        else:
+            malas.append(Discrepancia(fila=f"{fila.cuenta} {fila.fecha}",
+                                      indice=indice, regla="saldo_corrido",
+                                      esperado=esperado, obtenido=fila.saldo))
+        anterior = fila.saldo
+
+    comprobadas = exactas + len(rozando) + len(malas)
+    if not comprobadas:
+        return ResultadoRegla(
+            regla="saldo_corrido", estado=NO_VERIFICABLE,
+            motivo=(f"ningun saldo legible: {ilegibles} de {len(movimientos)} "
+                    "movimientos no traen saldo en la capa de texto"))
+    resultado = _resultado("saldo_corrido", comprobadas, exactas, rozando, malas)
+    if ilegibles:
+        resultado = replace(resultado, motivo=(
+            f"{ilegibles} de {len(movimientos)} movimientos no traen saldo "
+            "legible y quedaron sin encadenar"))
+    return resultado
+
+
+def _subtotales(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
+    """Cada subtotal contra los movimientos de su seccion.
+
+    Misma trampa que las cuentas acumulativas de la balanza: sumar los
+    subtotales junto con los movimientos cuenta dos veces.
+    """
+    subtotales = [f for f in auxiliar.filas if f.es_subtotal]
+    if not subtotales:
+        return ResultadoRegla(
+            regla="subtotales", estado=NO_VERIFICABLE,
+            motivo="el documento no imprime filas de subtotal")
+
+    por_cuenta: dict[str, list] = {}
+    for fila in auxiliar.filas:
+        if not fila.es_subtotal:
+            por_cuenta.setdefault(fila.cuenta, []).append(fila)
+
+    exactas, rozando, malas = 0, [], []
+    for indice, subtotal in enumerate(subtotales):
+        movimientos = por_cuenta.get(subtotal.cuenta, [])
+        if not movimientos:
+            continue
+        for campo in ("debe", "haber"):
+            suma = sum((getattr(m, campo) for m in movimientos), Decimal(0))
+            declarado = getattr(subtotal, campo)
+            veredicto = _comparar(suma, declarado, tolerancia)
+            if veredicto == "exacto":
+                exactas += 1
+            elif veredicto == "tolerancia":
+                rozando.append(subtotal.cuenta)
+            else:
+                malas.append(Discrepancia(
+                    fila=subtotal.cuenta, indice=indice, regla=f"subtotal_{campo}",
+                    esperado=suma, obtenido=declarado))
+    if not exactas and not rozando and not malas:
+        return ResultadoRegla(
+            regla="subtotales", estado=NO_VERIFICABLE,
+            motivo="los subtotales no corresponden a ninguna seccion leida")
+    return _resultado("subtotales", exactas + len(rozando) + len(malas),
+                      exactas, rozando, malas)
+
+
+def evaluar_auxiliar(auxiliar, *,
+                     reglas: ReglasBalanza | None = None) -> Cobertura:
+    """Corre los checksums del auxiliar y devuelve QUE se pudo comprobar."""
+    reglas = reglas or ReglasBalanza()
+    return Cobertura(reglas=(
+        _saldo_corrido(auxiliar, reglas.tolerancia),
+        _subtotales(auxiliar, reglas.tolerancia),
+    ))
 
 
 def evaluar_balanza(balanza: Balanza, *,

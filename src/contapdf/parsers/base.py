@@ -85,6 +85,10 @@ class Layout:
     """Las columnas de la tabla, ya detectadas y etiquetadas."""
 
     columns: tuple[ColumnSpec, ...]
+    # Deja que una columna alineada a la derecha reciba texto. Hace falta
+    # en el auxiliar, donde el numero de movimiento vive en una; en la
+    # balanza sobra y le meteria los encabezados a las celdas de monto.
+    texto_en_montos: bool = False
 
     @property
     def headers(self) -> tuple[str, ...]:
@@ -109,8 +113,19 @@ class Layout:
             return self._monto_mas_cercano(word)
 
         centro = (word.x0 + word.x1) / 2
+        candidatas = self.textos or self.columns
+        # La contencion le gana a la cercania solo cuando el formato lo
+        # pide: si ninguna columna de texto contiene la palabra, se
+        # consideran todas y gana la mas angosta.
+        if self.texto_en_montos and not any(
+                c.x_min - 6 <= centro <= c.x_max + 6 for c in candidatas):
+            contienen = [c for c in self.columns
+                         if c.x_min - 6 <= centro <= c.x_max + 6]
+            if contienen:
+                return min(contienen, key=lambda c: c.x_max - c.x_min).index
+
         elegida, menor = None, math.inf
-        for col in self.textos or self.columns:
+        for col in candidatas:
             if col.x_min - 6 <= centro <= col.x_max + 6:
                 distancia = 0.0
             else:
