@@ -8,6 +8,11 @@ primero. Fixture → test que falla → parser → test que pasa.
 
 Estado: **fases 0, 1 y 2 completadas** (2026-08). Siguiente: fase 3.
 
+**Alcance: 5 tipos de documento.** El Libro Mayor se agregó tras confirmarlo
+con el cliente. Y cada tipo tiene variantes fuertes entre empresas: no basta
+un parser por tipo, hace falta un parser por tipo capaz de absorber
+variantes vía plantilla (fase 4).
+
 ---
 
 ## 0. Restricciones de arquitectura
@@ -197,6 +202,59 @@ Tres conclusiones que condicionan el diseño:
 3. **El auxiliar cambia de estructura dentro del mismo documento.** El
    parser tiene que detectar bloques, no asumir un layout único.
 
+### Variantes descubiertas (documentos de otras empresas)
+
+Los cuatro fixtures originales resultaron ser un solo dialecto. Estos
+formatos, de empresas distintas, cambian vocabulario, semántica y estructura.
+
+**Balanza «Business Pro»**
+- Cuentas `0400-0000-0000-0000`: base de 4 dígitos, **cuatro** segmentos.
+- Vocabulario: `CARGOS`/`CREDITOS` en vez de Debe/Haber;
+  `SALDO ANTERIOR`/`SALDO ACTUAL` en vez de Inicial/Final.
+- **Semántica distinta**: no hay columnas deudor/acreedor separadas, hay una
+  sola columna con signo (`-25,142,979.83`).
+- Medido en la cuenta 0400 (acreedora):
+  `303,278,641.10 − (−25,142,979.83) = 328,421,620.93`, es decir
+  `saldo_actual = saldo_anterior − saldo_mes`. **El signo del checksum
+  depende de la naturaleza de la cuenta.** Confirmar empíricamente.
+- Columna `N` con valores `ACUM`/`DETA`: parece marcar cuenta acumulativa
+  vs de detalle. Sin confirmar.
+
+**Diario General**
+- Bloques por póliza cerrados con `TOTAL POLIZA:`.
+- Columnas: POLIZA / CUENTA / DESCRIPCION / CONCEPTO / CARGOS / ABONOS.
+- La columna DESCRIPCION **se ve recortada visualmente**. Averiguar si el
+  texto completo sigue en el PDF o se perdió al generarlo.
+
+**Auxiliar GUME**
+- Cuentas `1110-000-000`. Filas `Total de CARGOS, ABONOS Y SALDO`
+  intercaladas entre secciones. Columna `Tipo` con `Eg`/`Ig`.
+- Bloques anidados, más complejos que el auxiliar original.
+
+**Libro Mayor GUME** (tipo nuevo)
+- Bloques: `cuenta + nombre` → `Inicial <monto>` → encabezado → 12 filas
+  (ENERO..DICIEMBRE). Varios bloques por página.
+- **Las secciones se parten entre páginas**: la pág 2 arranca con `Inicial`
+  sin número de cuenta, porque quedó en el último renglón de la pág 1
+  (y=718.7). Hay que arrastrar la identidad de la cuenta a través del salto
+  de página. Ningún otro documento tiene esto.
+- **Encabezado agrupado**: `Acumulados` está en su propio renglón (y=119.4,
+  x=481) y abarca dos columnas del renglón de abajo. `headers.py` no lo
+  maneja.
+- 6 columnas: Periodo, Cargos, Abonos, Saldo, Acum-Cargos, Acum-Abonos.
+- `lines=0, rects=323`: usa rectángulos, no líneas. Otra estrategia de borde.
+- Checksum verificado con datos reales:
+  ```
+  saldo[mes]       = saldo[mes-1] + cargos - abonos   (saldo[0] = Inicial)
+  acum_cargos[mes] = acum_cargos[mes-1] + cargos
+  ```
+
+**Los conteos de columnas del dumper no son fiables en documentos con
+secciones.** El Libro Mayor reporta 4 en pág 1-2 y 6 en la 17: los nombres
+largos de cuenta se extienden sobre las columnas numéricas y encadenan la
+fusión (x=148 a x=301). La medición válida viene de `find_table_region` +
+`detect`, no del dumper.
+
 ### Anonimización
 
 `scripts/dump_layout.py` produce los fixtures enmascarados. Requiere
@@ -262,12 +320,20 @@ cp-pdf/
 | 0 | Reconocimiento | layouts enmascarados + auditoría | **hecho** |
 | 1 | IR + layout | `ir.py`, `pdf_text.py`, `lines.py`, `columns.py`, `region.py` | **hecho** (71 tests) |
 | 2 | Balanza E2E | parser balanza + validación + Excel | **hecho** (153 tests) |
-| 3 | Auxiliar | Parser con arrastre de sección y bloques | siguiente |
+| 3 | Balanza variante | Generalizar balanza a «Business Pro»: sinónimos de encabezado + validación que varía por formato | siguiente |
+| 3b | Auxiliar | Parser con arrastre de sección y bloques | |
 | 4 | Plantillas | Fingerprint + store + wizard de mapeo | |
 | 5 | Pólizas | Parser de bloques usando las líneas del PDF | |
 | 6 | OCR | `ocr.py` + preprocesado | |
 | 7 | Estado de cuenta | Multilínea + variación por banco | |
+| 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
+
+La fase 3 es la balanza variante y no el auxiliar **a propósito**:
+generalizar un parser que ya funciona para cubrir una segunda variante real
+del mismo tipo es la forma más barata de descubrir qué debe abstraer el
+sistema de plantillas. Ir al auxiliar cambiaría dos variables a la vez
+(esquema de salida nuevo y layout nuevo) y se aprende menos.
 
 **No construir la fase 4 antes de la 3.** Abstraer el sistema de plantillas
 con un solo parser de referencia garantiza rediseño.
@@ -348,6 +414,8 @@ Registrada a propósito, con la fase en que toca resolverla.
   dos renglones de un título de sección, midiendo si el interlineado es
   más apretado que el de los datos. Está afinado sobre cuatro documentos.
   Debe seguir siendo parámetro configurable, nunca constante enterrada.
+- **`headers.py` no maneja encabezados agrupados** (`Acumulados` abarcando
+  dos columnas, en el Libro Mayor). **Resolver en fase 7b.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
 
