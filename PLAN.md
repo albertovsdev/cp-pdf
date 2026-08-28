@@ -213,14 +213,47 @@ formatos, de empresas distintas, cambian vocabulario, semántica y estructura.
   `SALDO ANTERIOR`/`SALDO ACTUAL` en vez de Inicial/Final.
 - **Semántica distinta**: no hay columnas deudor/acreedor separadas, hay una
   sola columna con signo (`-25,142,979.83`).
-- **Verificado** en 7 renglones de la cuenta 0400 (ingresos, acreedora):
-  `saldo_actual = saldo_anterior + creditos − cargos`. 7 de 7 cuadran.
-- **NO verificado**: que en una cuenta deudora el signo se invierta. Todos
-  los renglones disponibles son acreedores. Es una inferencia por
-  convención contable, no una medición. **Medir sobre el documento
-  completo antes de implementarla.**
-- Columna `N` con valores `ACUM`/`DETA`: parece marcar cuenta acumulativa
-  vs de detalle. Sin confirmar.
+- **Medido sobre el documento completo (224 renglones, 0 contradicciones):**
+  el signo sí se invierte entre familias de cuenta.
+  - `0400,0401,0402,0410,0430` → `actual = anterior + creditos − cargos` (35)
+  - `0500..0880` → `actual = anterior + cargos − creditos` (120)
+  - `0850..0951` → indeterminados (`cargos == creditos`, casi todos 0.00) (68)
+- **La regla que se implementa NO es la agrupación por prefijo.** Se midió
+  también que `saldo_mes = cargos − creditos` en **224 de 224**, sin
+  depender de la naturaleza. De ahí la naturaleza se deriva por renglón:
+  ```
+  actual == anterior + saldo_mes  -> deudora
+  actual == anterior - saldo_mes  -> acreedora
+  cargos == creditos              -> indeterminado (hereda del padre)
+  ```
+  Esto se transfiere a documentos nuevos; «04xx es acreedora» es
+  conocimiento de este catálogo y no se transfiere.
+- Lo medido es que la identidad se invierte entre familias, **no** el
+  nombre contable de cada familia. Eso sigue siendo convención y lo debe
+  confirmar un contador.
+- **Columna `N` = ACUM/DETA: confirmado**, correlación 224/224. ACUM (24
+  renglones) son exactamente los que tienen hijas; DETA (200) ninguno.
+  No marca nivel: ACUM aparece en niveles 0, 1 y 2. 21 de 24 cuentas ACUM
+  son la suma exacta de sus hijas directas (las 3 restantes trazan a
+  errores del extractor, no del documento).
+  **Las filas ACUM son subtotales**: sumarlas junto con las DETA cuenta
+  doble. Aquí el documento lo declara explícitamente, a diferencia de la
+  balanza original donde había que inferirlo del número de cuenta.
+
+**Regla general que sale de esto: preferir el marcador explícito cuando
+exista, derivarlo cuando no.** `es_acumulativa` pasa a ser campo del
+contrato `FilaBalanza`, porque de él depende contra qué suma cuadran los
+totales.
+
+**La geometría sola no puede separar las columnas de este documento.** La
+descripción se encima físicamente sobre las columnas numéricas en 142 de
+224 renglones, y `extract_words` pega glifos de corridas de texto distintas
+(`A4N1,608,185.15` = descripción `AN` intercalada con `41,608,185.15`).
+`region+detect` reporta 5 columnas cuando el documento tiene 8. Requiere un
+extractor **a nivel de carácter**, que corte por corrida del content stream
+y valide contra el ancla derecha. Medido: ventanas-x sola 224/225,
+corridas sola 213/225, ambas combinadas 224/225. Las dos fallas son
+ortogonales.
 
 **Diario General**
 - Bloques por póliza cerrados con `TOTAL POLIZA:`.
@@ -251,6 +284,18 @@ formatos, de empresas distintas, cambian vocabulario, semántica y estructura.
   acum_cargos[mes] = acum_cargos[mes-1] + cargos
   ```
 
+**Conteos medidos con `find_table_region` + `detect`** (vs. el dumper):
+
+| Documento | Páginas | Dumper | region+detect | Real |
+|---|---|---|---|---|
+| balanza-businesspro | 1, 2, 4 | 5, 6, 5 | 5, 6, 5 | **8** |
+| diario-general | 1, 2, 200 | 4, 4, 3 | 6, 6, 4 | |
+| auxiliar-gume | 1, 2, 400 | 4, 5, 5 | 7, 6, 7 | |
+| mayor-gume | 1, 2, 17 | 4, 4, 6 | **6, 6, 6** | 6 |
+
+Business Pro es el caso donde ni la región salva la detección: ahí el
+problema no son las secciones sino el texto encimado (ver arriba).
+
 **Los conteos de columnas del dumper no son fiables en documentos con
 secciones.** El Libro Mayor reporta 4 en pág 1-2 y 6 en la 17: los nombres
 largos de cuenta se extienden sobre las columnas numéricas y encadenan la
@@ -269,6 +314,12 @@ cuadra, el mapeo está mal: avisar, no entregar.
 
 Esto es lo que hace seguro el aprendizaje de formatos nuevos (fase 4): una
 plantilla solo se guarda si su aritmética cuadró.
+
+**La plantilla guarda también qué extractor usar.** Business Pro demostró
+que el extractor no es una constante del sistema: hay documentos donde
+`extract_words` no alcanza y hace falta extracción a nivel de carácter. La
+estrategia de extracción es parte de lo que se aprende por formato, junto
+con el mapeo de columnas y las reglas de validación.
 
 **Las reglas de validación contable deben ser confirmadas por un contador
 antes de darse por buenas.** Medir que cuadran no prueba que signifiquen lo
