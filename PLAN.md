@@ -213,10 +213,12 @@ formatos, de empresas distintas, cambian vocabulario, semántica y estructura.
   `SALDO ANTERIOR`/`SALDO ACTUAL` en vez de Inicial/Final.
 - **Semántica distinta**: no hay columnas deudor/acreedor separadas, hay una
   sola columna con signo (`-25,142,979.83`).
-- Medido en la cuenta 0400 (acreedora):
-  `303,278,641.10 − (−25,142,979.83) = 328,421,620.93`, es decir
-  `saldo_actual = saldo_anterior − saldo_mes`. **El signo del checksum
-  depende de la naturaleza de la cuenta.** Confirmar empíricamente.
+- **Verificado** en 7 renglones de la cuenta 0400 (ingresos, acreedora):
+  `saldo_actual = saldo_anterior + creditos − cargos`. 7 de 7 cuadran.
+- **NO verificado**: que en una cuenta deudora el signo se invierta. Todos
+  los renglones disponibles son acreedores. Es una inferencia por
+  convención contable, no una medición. **Medir sobre el documento
+  completo antes de implementarla.**
 - Columna `N` con valores `ACUM`/`DETA`: parece marcar cuenta acumulativa
   vs de detalle. Sin confirmar.
 
@@ -254,6 +256,23 @@ secciones.** El Libro Mayor reporta 4 en pág 1-2 y 6 en la 17: los nombres
 largos de cuenta se extienden sobre las columnas numéricas y encadenan la
 fusión (x=148 a x=301). La medición válida viene de `find_table_region` +
 `detect`, no del dumper.
+
+### Principio: la aritmética manda sobre el vocabulario
+
+Un diccionario de sinónimos de encabezado (`CARGOS`↔Debe,
+`CREDITOS`/`ABONOS`↔Haber, `SALDO ANTERIOR`↔Saldo Inicial) sirve como
+**pista**, nunca como fuente de verdad.
+
+El flujo correcto es: proponer el mapeo por vocabulario → **verificarlo con
+el checksum del documento** → aceptarlo solo si la aritmética cuadra. Si no
+cuadra, el mapeo está mal: avisar, no entregar.
+
+Esto es lo que hace seguro el aprendizaje de formatos nuevos (fase 4): una
+plantilla solo se guarda si su aritmética cuadró.
+
+**Las reglas de validación contable deben ser confirmadas por un contador
+antes de darse por buenas.** Medir que cuadran no prueba que signifiquen lo
+correcto, y estos documentos tienen uso fiscal.
 
 ### Anonimización
 
