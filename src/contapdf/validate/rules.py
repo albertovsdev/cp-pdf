@@ -466,6 +466,41 @@ def _cfdi_atados(libro) -> ResultadoRegla:
     return _resultado("cfdi", len(libro.cfdi), len(libro.cfdi), (), [])
 
 
+def _cfdi_cruzado(libro) -> ResultadoRegla:
+    """El CFDI contra el DATO de su poliza, no contra su posicion.
+
+    Que cada poliza reciba un CFDI no prueba que sea el suyo: ocho
+    cruzados dan el mismo resultado. Lo que lo prueba es que el numero de
+    documento del CFDI sea el que la poliza declara.
+    """
+    if not libro.cfdi:
+        return ResultadoRegla(regla="cfdi_cruzado", estado=NO_VERIFICABLE,
+                              motivo="el documento no trae tabla de CFDI")
+    por_id = {p.poliza_id: p for p in libro.polizas}
+    comparables = [c for c in libro.cfdi
+                   if c.documento and por_id.get(c.poliza_id)
+                   and por_id[c.poliza_id].descripcion]
+    if not comparables:
+        return ResultadoRegla(
+            regla="cfdi_cruzado", estado=NO_VERIFICABLE,
+            motivo=("ni el CFDI ni la poliza traen un numero de documento "
+                    "con el que cruzarlos"))
+
+    malos = [
+        Discrepancia(fila=c.poliza_id, indice=-1, regla="cfdi_cruzado",
+                     esperado=Decimal(0), obtenido=Decimal(0))
+        for c in comparables
+        if c.documento != por_id[c.poliza_id].descripcion
+    ]
+    resultado = _resultado("cfdi_cruzado", len(comparables),
+                           len(comparables) - len(malos), (), malos)
+    sin_cruzar = len(libro.cfdi) - len(comparables)
+    if sin_cruzar:
+        resultado = replace(resultado, motivo=(
+            f"{sin_cruzar} CFDI sin numero de documento con el que cruzar"))
+    return resultado
+
+
 def evaluar_polizas(libro, *,
                     reglas: ReglasBalanza | None = None) -> Cobertura:
     """Corre los checksums del libro diario y devuelve QUE se comprobo."""
@@ -474,6 +509,7 @@ def evaluar_polizas(libro, *,
         _partida_doble_por_poliza(libro, reglas.tolerancia),
         _totales_declarados(libro, reglas.tolerancia),
         _cfdi_atados(libro),
+        _cfdi_cruzado(libro),
     ))
 
 

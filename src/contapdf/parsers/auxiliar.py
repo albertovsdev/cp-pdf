@@ -90,6 +90,10 @@ class FilaAuxiliar:
     # movimiento. Se emite el renglon y la cobertura lo declara.
     saldo: Decimal | None
     es_subtotal: bool = False
+    # De que pagina salio y a que altura. Sin esto el reintento por OCR
+    # seria por documento entero, y sin poder volver a la celda que fallo.
+    pagina: int = 0
+    top: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -338,7 +342,8 @@ class AuxiliarParser:
 
                 if self._es_subtotal(datos, line):
                     if seccion is not None:
-                        filas.append(self._fila(seccion, datos, mapeo, subtotal=True))
+                        filas.append(self._fila(seccion, datos, mapeo, subtotal=True,
+                                                pagina=page.number, top=line.top))
                     continue
 
                 fecha = datos.get(mapeo["fecha"], "").strip()
@@ -350,7 +355,8 @@ class AuxiliarParser:
                 if _es_fecha(fecha) and montos_ok:
                     if seccion is None:
                         continue  # movimiento sin seccion: no se sabe de que cuenta
-                    filas.append(self._fila(seccion, datos, mapeo))
+                    filas.append(self._fila(seccion, datos, mapeo,
+                                            pagina=page.number, top=line.top))
                     continue
 
                 en_fila = self._seccion_en_fila(line, mapeo, datos)
@@ -369,7 +375,8 @@ class AuxiliarParser:
         return filas, secciones
 
     def _fila(self, seccion: _Seccion, datos: dict[int, str], mapeo: dict[str, int],
-              *, subtotal: bool = False) -> FilaAuxiliar:
+              *, subtotal: bool = False, pagina: int = 0,
+              top: float = 0.0) -> FilaAuxiliar:
         def celda(campo: str) -> str:
             indice = mapeo.get(campo)
             return "" if indice is None else datos.get(indice, "").strip()
@@ -388,6 +395,8 @@ class AuxiliarParser:
             haber=parse_monto(celda("haber")),
             saldo=parse_monto(celda("saldo")) if _es_monto(celda("saldo")) else None,
             es_subtotal=subtotal,
+            pagina=pagina,
+            top=top,
         )
 
     def _continuar(self, fila: FilaAuxiliar, datos: dict[int, str],

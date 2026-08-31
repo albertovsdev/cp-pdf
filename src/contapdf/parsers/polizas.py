@@ -44,6 +44,16 @@ _MARCA_TOTALES = ("totales", "total poliza", "total")
 
 @dataclass(frozen=True)
 class Poliza:
+    """Una poliza del libro diario.
+
+    'poliza_id' NO identifica a la poliza: identifica su POSICION en esta
+    lectura. Cambia si se procesa el documento completo o solo un rango de
+    paginas, y no se puede comparar entre lecturas ni entre documentos.
+    Sirve para unir las tres tablas de una misma corrida y para nada mas.
+    La poliza se identifica de verdad por 'tipo', 'fecha' y
+    'descripcion'/'folio', que son los campos que el contador reconoce.
+    """
+
     poliza_id: str
     tipo: str
     naturaleza: str

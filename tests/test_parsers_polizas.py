@@ -118,3 +118,29 @@ def test_cada_movimiento_apunta_a_una_poliza_existente(diario):
 
 def test_es_determinista(bloques):
     assert bloques.movimientos == _libro("poliza", [1, 2, 3, 4]).movimientos
+
+
+# --- Criterio 2: poliza_id identifica POSICION, no poliza ---------------
+def test_poliza_id_cambia_con_el_rango_de_paginas():
+    """Documenta que poliza_id NO es estable entre lecturas.
+
+    Sirve para unir las tres tablas de UNA lectura y para nada mas. La
+    poliza se identifica de verdad por tipo, fecha y descripcion.
+    """
+    completo = _libro("poliza", [1, 2, 3, 4])
+    parcial = _libro("poliza", [3, 4])
+
+    primera_del_parcial = parcial.polizas[0]
+    misma_en_completo = next(p for p in completo.polizas
+                             if p.descripcion == primera_del_parcial.descripcion)
+
+    # Misma poliza, distinto id: depende de por donde se empezo a leer.
+    assert primera_del_parcial.poliza_id == "P00001"
+    assert misma_en_completo.poliza_id != "P00001"
+    assert misma_en_completo.fecha == primera_del_parcial.fecha
+
+
+def test_la_poliza_se_identifica_por_sus_campos_no_por_el_id(bloques):
+    identidades = {(p.tipo, p.fecha, p.descripcion) for p in bloques.polizas}
+    assert len(identidades) == len(bloques.polizas)
+    assert all(p.descripcion for p in bloques.polizas)

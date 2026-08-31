@@ -88,3 +88,37 @@ def test_no_imprime(bloques, capsys):
     evaluar_polizas(bloques)
     salida = capsys.readouterr()
     assert salida.out == "" and salida.err == ""
+
+
+# --- Criterio 1: el CFDI se ata por DATO, no por posicion ---------------
+def test_el_cfdi_se_verifica_contra_el_dato_de_su_poliza(bloques):
+    # Que cada poliza reciba un CFDI no prueba que sea el suyo: ocho
+    # cruzados dan el mismo 8/8. Lo que lo prueba es que el numero de
+    # documento del CFDI sea el de la poliza.
+    regla = _regla(evaluar_polizas(bloques), "cfdi_cruzado")
+    assert regla.estado == CUADRA
+    assert regla.comprobaciones == 8
+    assert regla.exactas == 8
+
+
+def test_un_cfdi_asignado_a_la_poliza_equivocada_se_detecta(bloques):
+    import dataclasses
+
+    cfdis = list(bloques.cfdi)
+    # Se intercambian dos: la comprobacion por posicion seguiria dando 8/8.
+    cfdis[0], cfdis[1] = (dataclasses.replace(cfdis[0], poliza_id=cfdis[1].poliza_id),
+                          dataclasses.replace(cfdis[1], poliza_id=cfdis[0].poliza_id))
+    roto = dataclasses.replace(bloques, cfdi=tuple(cfdis))
+
+    cobertura = evaluar_polizas(roto)
+    assert _regla(cobertura, "cfdi").estado == CUADRA        # posicion: pasa
+    assert _regla(cobertura, "cfdi_cruzado").estado == FALLA  # dato: no
+    assert len(_regla(cobertura, "cfdi_cruzado").discrepancias) == 2
+
+
+def test_sin_cruce_disponible_la_regla_lo_declara(diario):
+    # El diario general no trae tabla de CFDI: la regla no se omite, sale
+    # no_verificable con su motivo.
+    regla = _regla(evaluar_polizas(diario), "cfdi_cruzado")
+    assert regla.estado == NO_VERIFICABLE
+    assert regla.motivo

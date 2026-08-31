@@ -180,3 +180,25 @@ def test_el_libro_diario_sale_en_cuatro_hojas(tmp_path):
     encabezados = [c.value for c in plana[1]]
     assert "poliza_id" in encabezados and "cuenta" in encabezados
     assert "total_debe" in encabezados
+
+
+def test_las_hojas_exportan_los_campos_con_los_que_se_identifica_la_poliza(tmp_path):
+    from conftest import requires_real_pdf
+
+    from contapdf.export.excel import exportar_polizas
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.polizas import PolizasParser
+    from contapdf.validate.rules import evaluar_polizas
+
+    doc, _ = extraer(requires_real_pdf("poliza"), page_numbers=[1, 2])
+    libro = PolizasParser().parse(doc)
+    destino = tmp_path / "id.xlsx"
+    exportar_polizas(libro, evaluar_polizas(libro), destino)
+
+    wb = openpyxl.load_workbook(destino)
+    for hoja in ("Polizas", "Plana"):
+        encabezados = [c.value for c in wb[hoja][1]]
+        assert {"tipo", "fecha", "descripcion", "folio"} <= set(encabezados)
+    # Y el valor llega, no solo la columna.
+    fila = [c.value for c in wb["Polizas"][2]]
+    assert "18243" in [str(v) for v in fila]
