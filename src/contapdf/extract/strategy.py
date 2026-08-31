@@ -42,7 +42,27 @@ def tokens_contaminados(words: Sequence[Word]) -> list[Word]:
     return sucias
 
 
-def esta_contaminada(path: str | Path, *, paginas_muestra: int = 2) -> bool:
+def palabras_traslapadas(words: Sequence[Word]) -> int:
+    """Palabras que se pisan en x dentro del mismo renglon.
+
+    Es la firma de una columna impresa ENCIMA de otra: al ordenar por x
+    las dos se intercalan y ninguna queda legible. Distinto de los glifos
+    pegados, que producen una sola palabra invalida.
+    """
+    por_renglon: dict[int, list[Word]] = {}
+    for w in words:
+        por_renglon.setdefault(round(w.top), []).append(w)
+    traslapadas = 0
+    for renglon in por_renglon.values():
+        ordenadas = sorted(renglon, key=lambda w: w.x0)
+        for a, b in zip(ordenadas, ordenadas[1:]):
+            if b.x0 < a.x1 - 0.5:
+                traslapadas += 1
+    return traslapadas
+
+
+def esta_contaminada(path: str | Path, *, paginas_muestra: int = 2,
+                     umbral_traslape: float = 0.02) -> bool:
     """True si conviene extraer por corridas en vez de por palabras.
 
     Medido sobre seis documentos reales: Business Pro da 27 tokens
@@ -54,6 +74,11 @@ def esta_contaminada(path: str | Path, *, paginas_muestra: int = 2) -> bool:
     try:
         for numero, page in enumerate(paginas, start=1):
             if tokens_contaminados(page.words):
+                return True
+            # Medido: el libro diario da 0.219 de palabras traslapadas y
+            # los otros cinco documentos dan exactamente 0.
+            if page.words and (palabras_traslapadas(page.words)
+                               / len(page.words)) > umbral_traslape:
                 return True
             if numero >= paginas_muestra:
                 break

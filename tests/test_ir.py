@@ -19,7 +19,15 @@ def _word(**kw) -> Word:
 def test_word_tiene_los_campos_del_contrato():
     w = _word()
     campos = [f.name for f in dataclasses.fields(w)]
-    assert campos == ["text", "x0", "x1", "top", "bottom", "size", "bold", "page"]
+    assert campos == ["text", "x0", "x1", "top", "bottom", "size", "bold",
+                      "page", "run"]
+
+
+def test_run_marca_de_que_corrida_de_texto_vino_la_palabra():
+    # Hay documentos que imprimen una columna encima de otra: al ordenar
+    # por x las palabras se intercalan y solo la corrida las separa.
+    assert _word().run == 0
+    assert _word(run=3).run == 3
 
 
 def test_word_es_inmutable():

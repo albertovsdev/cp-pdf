@@ -103,3 +103,34 @@ def test_no_imprime_ni_lanza(gume, capsys):
     evaluar_auxiliar(gume)
     salida = capsys.readouterr()
     assert salida.out == "" and salida.err == ""
+
+
+@pytest.mark.lento
+def test_el_subtotal_de_gume_cuadra_leyendo_la_seccion_completa():
+    """Verificacion cara pero necesaria: la seccion abarca 118 paginas.
+
+    Medido una vez: 7762 movimientos suman exactamente el subtotal que el
+    documento declara. Queda marcado 'lento' para no cobrar 25s en cada
+    ciclo, y se corre antes de cada entrega con 'pytest -m lento'.
+    """
+    aux = _aux("auxiliar-gume", list(range(1, 119)))
+    movimientos = [f for f in aux.filas if not f.es_subtotal]
+    subtotal = next(f for f in aux.filas
+                    if f.es_subtotal and f.cuenta == "1120-001-003")
+
+    assert len(movimientos) == 7762
+    assert sum(f.debe for f in movimientos) == subtotal.debe == Decimal("277632036.19")
+    assert sum(f.haber for f in movimientos) == subtotal.haber == Decimal("277575967.07")
+
+    regla = _regla(evaluar_auxiliar(aux), "subtotales")
+    assert regla.estado == CUADRA
+    assert regla.exactas == 2
+
+
+@pytest.mark.lento
+def test_la_seccion_completa_declara_sus_saldos_ilegibles():
+    aux = _aux("auxiliar-gume", list(range(1, 119)))
+    regla = _regla(evaluar_auxiliar(aux), "saldo_corrido")
+    assert regla.estado == CUADRA
+    assert regla.exactas == 5172
+    assert "2509 de 7762" in regla.motivo

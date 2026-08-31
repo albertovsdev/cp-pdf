@@ -91,7 +91,7 @@ def _palabras(corrida: Sequence[dict], hueco: float) -> list[list[dict]]:
     return [g for g in salida if g]
 
 
-def _to_word(grupo: Sequence[dict], page_number: int) -> Word:
+def _to_word(grupo: Sequence[dict], page_number: int, run: int = 0) -> Word:
     fontname = str(grupo[0].get("fontname", ""))
     return Word(
         text="".join(c["text"] for c in grupo),
@@ -102,6 +102,7 @@ def _to_word(grupo: Sequence[dict], page_number: int) -> Word:
         size=float(grupo[0].get("size") or 0.0),
         bold="bold" in fontname.lower(),
         page=page_number,
+        run=run,
     )
 
 
@@ -115,8 +116,8 @@ def _iter_pages(path: Path, page_numbers: tuple[int, ...] | None,
             page = pdf.pages[number - 1]
             try:
                 palabras = [
-                    _to_word(g, number)
-                    for corrida in _corridas(page.chars)
+                    _to_word(g, number, indice)
+                    for indice, corrida in enumerate(_corridas(page.chars), start=1)
                     for g in _palabras(corrida, hueco)
                 ]
                 palabras.sort(key=lambda w: (w.top, w.x0))

@@ -22,6 +22,11 @@ class Word:
     size: float
     bold: bool
     page: int
+    # De que corrida de texto del PDF salio. Hay documentos que imprimen
+    # una columna ENCIMA de otra: sus palabras se intercalan al ordenar por
+    # x y solo la corrida dice cual pertenece a cual. 0 cuando el extractor
+    # no lo sabe.
+    run: int = 0
 
 
 @dataclass

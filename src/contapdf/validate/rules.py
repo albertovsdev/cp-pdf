@@ -368,6 +368,115 @@ def _subtotales(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
                       exactas, rozando, malas)
 
 
+def _partida_doble_por_poliza(libro, tolerancia: Decimal) -> ResultadoRegla:
+    """Suma debe == suma haber, por poliza. El checksum mas limpio.
+
+    Solo sobre las polizas completas: un bloque cortado por el borde de lo
+    leido tiene sus movimientos a medias y reportaria un descuadre que el
+    documento no tiene.
+    """
+    completas = [p for p in libro.polizas if p.completa]
+    if not completas:
+        return ResultadoRegla(
+            regla="partida_doble", estado=NO_VERIFICABLE,
+            motivo="ninguna poliza cerro dentro de lo leido")
+
+    por_poliza: dict[str, list] = {}
+    for m in libro.movimientos:
+        por_poliza.setdefault(m.poliza_id, []).append(m)
+
+    exactas, rozando, malas = 0, [], []
+    for indice, poliza in enumerate(completas):
+        grupo = por_poliza.get(poliza.poliza_id, [])
+        if not grupo:
+            continue
+        debe = sum((m.debe for m in grupo), Decimal(0))
+        haber = sum((m.haber for m in grupo), Decimal(0))
+        veredicto = _comparar(debe, haber, tolerancia)
+        if veredicto == "exacto":
+            exactas += 1
+        elif veredicto == "tolerancia":
+            rozando.append(poliza.poliza_id)
+        else:
+            malas.append(Discrepancia(fila=poliza.poliza_id, indice=indice,
+                                      regla="partida_doble", esperado=debe,
+                                      obtenido=haber))
+    resultado = _resultado("partida_doble", exactas + len(rozando) + len(malas),
+                           exactas, rozando, malas)
+    incompletas = len(libro.polizas) - len(completas)
+    if incompletas:
+        resultado = replace(resultado, motivo=(
+            f"{incompletas} poliza(s) no cerraron dentro de lo leido y "
+            "quedaron sin comprobar"))
+    return resultado
+
+
+def _totales_declarados(libro, tolerancia: Decimal) -> ResultadoRegla:
+    """Los totales que imprime la poliza contra la suma de sus movimientos."""
+    con_totales = [p for p in libro.polizas
+                   if p.completa and p.total_debe is not None]
+    if not con_totales:
+        return ResultadoRegla(
+            regla="totales", estado=NO_VERIFICABLE,
+            motivo="ninguna poliza declara totales dentro de lo leido")
+
+    por_poliza: dict[str, list] = {}
+    for m in libro.movimientos:
+        por_poliza.setdefault(m.poliza_id, []).append(m)
+
+    exactas, rozando, malas = 0, [], []
+    for indice, poliza in enumerate(con_totales):
+        grupo = por_poliza.get(poliza.poliza_id, [])
+        if not grupo:
+            continue
+        for campo, declarado in (("debe", poliza.total_debe),
+                                 ("haber", poliza.total_haber)):
+            suma = sum((getattr(m, campo) for m in grupo), Decimal(0))
+            veredicto = _comparar(suma, declarado, tolerancia)
+            if veredicto == "exacto":
+                exactas += 1
+            elif veredicto == "tolerancia":
+                rozando.append(poliza.poliza_id)
+            else:
+                malas.append(Discrepancia(
+                    fila=poliza.poliza_id, indice=indice, regla=f"totales_{campo}",
+                    esperado=suma, obtenido=declarado))
+    if not (exactas or rozando or malas):
+        return ResultadoRegla(regla="totales", estado=NO_VERIFICABLE,
+                              motivo="ninguna poliza con totales trajo movimientos")
+    return _resultado("totales", exactas + len(rozando) + len(malas),
+                      exactas, rozando, malas)
+
+
+def _cfdi_atados(libro) -> ResultadoRegla:
+    """Todo CFDI apunta a una poliza que existe."""
+    if not libro.cfdi:
+        return ResultadoRegla(regla="cfdi", estado=NO_VERIFICABLE,
+                              motivo="el documento no trae tabla de CFDI")
+    ids = {p.poliza_id for p in libro.polizas}
+    huerfanos = [c for c in libro.cfdi if c.poliza_id not in ids]
+    if huerfanos:
+        return ResultadoRegla(
+            regla="cfdi", estado=FALLA, comprobaciones=len(libro.cfdi),
+            exactas=len(libro.cfdi) - len(huerfanos),
+            discrepancias=tuple(
+                Discrepancia(fila=c.uuid or c.documento, indice=-1, regla="cfdi",
+                             esperado=Decimal(0), obtenido=Decimal(0))
+                for c in huerfanos))
+    return _resultado("cfdi", len(libro.cfdi), len(libro.cfdi), (), [])
+
+
+def evaluar_polizas(libro, *,
+                    reglas: ReglasBalanza | None = None) -> Cobertura:
+    """Corre los checksums del libro diario y devuelve QUE se comprobo."""
+    reglas = reglas or ReglasBalanza()
+    return Cobertura(reglas=(
+        _partida_doble_por_poliza(libro, reglas.tolerancia),
+        _totales_declarados(libro, reglas.tolerancia),
+        _cfdi_atados(libro),
+    ))
+
+
 def evaluar_auxiliar(auxiliar, *,
                      reglas: ReglasBalanza | None = None) -> Cobertura:
     """Corre los checksums del auxiliar y devuelve QUE se pudo comprobar."""

@@ -39,11 +39,24 @@ def test_no_confunde_un_token_sano_con_uno_contaminado(texto):
     assert tokens_contaminados([_w(texto)]) == []
 
 
-def test_business_pro_esta_contaminado_y_los_demas_no():
-    limpios = ["balanza", "auxiliar", "auxiliar-gume", "mayor-gume", "diario-general"]
-    assert esta_contaminada(requires_real_pdf("balanza-businesspro")) is True
-    for nombre in limpios:
-        assert esta_contaminada(requires_real_pdf(nombre)) is False, nombre
+def test_reconoce_los_dos_documentos_que_necesitan_extraccion_por_corridas():
+    # Dos firmas distintas: Business Pro pega glifos de corridas distintas
+    # en una palabra; el diario general imprime una columna ENCIMA de otra
+    # y sus palabras se intercalan al ordenar por x.
+    for sucio in ("balanza-businesspro", "diario-general"):
+        assert esta_contaminada(requires_real_pdf(sucio)) is True, sucio
+    for limpio in ("balanza", "poliza", "auxiliar", "auxiliar-gume", "mayor-gume"):
+        assert esta_contaminada(requires_real_pdf(limpio)) is False, limpio
+
+
+def test_la_sobreimpresion_se_mide_aparte_de_los_glifos_pegados():
+    from contapdf.extract import pdf_text
+    from contapdf.extract.strategy import palabras_traslapadas
+
+    pagina = next(pdf_text.extract(requires_real_pdf("diario-general"),
+                                   page_numbers=[1]).open_pages())
+    assert tokens_contaminados(pagina.words) == []      # no hay glifos pegados
+    assert palabras_traslapadas(pagina.words) > 100     # si hay sobreimpresion
 
 
 def test_extraer_elige_y_reporta_la_estrategia():

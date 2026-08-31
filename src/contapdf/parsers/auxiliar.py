@@ -55,9 +55,14 @@ _CAMPOS = (
     ("folio", ("folio", "numero", "num", "no", "numerofecha", "folio fecha"),
      False, "entero"),
     ("tipo_movimiento", ("tipo", "tipo de movimiento"), False, "texto"),
-    ("documento", ("documento", "referencia", "concepto"), False, "texto"),
-    ("tercero", ("tercero", "concepto del movimiento", "beneficiario",
-                 "descripcion", "concepto"), False, "texto"),
+    ("documento", ("documento", "referencia"), False, "texto"),
+    ("tercero", ("tercero", "beneficiario"), False, "texto"),
+    # Texto crudo, para fuentes que imprimen referencia y contraparte en
+    # una sola columna. Partirlas seria fabricar una division que la
+    # fuente no da: 'PAGO F-6287 DESARROLLO HUMANO' se parte bien y
+    # 'PAGO NR FINANCE' no, y acertar a veces es peor que no intentarlo.
+    ("concepto", ("concepto", "concepto del movimiento", "descripcion"),
+     False, "texto"),
     ("debe", ("debe", "cargos", "cargo"), True, "monto"),
     ("haber", ("haber", "abonos", "abono"), True, "monto"),
     ("saldo", ("saldo", "saldos", "saldo final"), True, "monto"),
@@ -77,6 +82,7 @@ class FilaAuxiliar:
     tipo_movimiento: str
     documento: str
     tercero: str
+    concepto: str
     debe: Decimal
     haber: Decimal
     # None cuando el documento no lo dejo leer. Rellenarlo con lo que
@@ -377,6 +383,7 @@ class AuxiliarParser:
             tipo_movimiento=celda("tipo_movimiento"),
             documento=celda("documento"),
             tercero=celda("tercero"),
+            concepto=celda("concepto"),
             debe=parse_monto(celda("debe")),
             haber=parse_monto(celda("haber")),
             saldo=parse_monto(celda("saldo")) if _es_monto(celda("saldo")) else None,
@@ -387,7 +394,7 @@ class AuxiliarParser:
                    mapeo: dict[str, int]) -> FilaAuxiliar:
         """El tercero y el tipo se envuelven en varios renglones."""
         cambios: dict[str, str] = {}
-        for campo in ("tipo_movimiento", "documento", "tercero"):
+        for campo in ("tipo_movimiento", "documento", "tercero", "concepto"):
             indice = mapeo.get(campo)
             cola = "" if indice is None else datos.get(indice, "").strip()
             if cola:

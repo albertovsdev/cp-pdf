@@ -18,6 +18,7 @@ from contapdf.extract.strategy import extraer
 from contapdf.ir import Page
 from contapdf.parsers.auxiliar import Auxiliar, AuxiliarParser
 from contapdf.parsers.balanza import Balanza, BalanzaParser, Mapeo
+from contapdf.parsers.polizas import LibroDiario, PolizasParser
 from contapdf.parsers.base import Layout, detectar_layout, lineas_de_tabla
 from contapdf.templates.fingerprint import Huella, huella_de
 from contapdf.templates.store import AlmacenPlantillas, Plantilla
@@ -26,6 +27,7 @@ from contapdf.validate.rules import (
     ReglasBalanza,
     evaluar_auxiliar,
     evaluar_balanza,
+    evaluar_polizas,
 )
 
 _LOG = logging.getLogger(__name__)
@@ -209,6 +211,73 @@ def _plantilla_de_auxiliar(tenant_id: str, huella: Huella, estrategia: str,
                  "largo": esquema.largo},
         reglas={"tolerancia": "0.01", "subconjunto_totales": "nivel_1",
                 "exige_partida_doble": False},
+        cobertura={"cuadran": cobertura.cuadran, "fallan": cobertura.fallan,
+                   "no_verificables": cobertura.no_verificables,
+                   "sin_comprobar": [r.regla for r in cobertura.reglas if r.motivo]},
+        pendiente_de_confirmacion=not mapeo.orientacion_verificada,
+    )
+
+
+@dataclass(frozen=True)
+class ResultadoPolizas:
+    libro: LibroDiario
+    cobertura: Cobertura
+    estrategia: str
+    huella: Huella | None
+    plantilla: Plantilla | None
+    reutilizada: bool
+
+
+def procesar_polizas(pdf: str | Path, *, tenant_id: str | None = None,
+                     almacen: AlmacenPlantillas | None = None,
+                     page_numbers: Sequence[int] | None = None,
+                     paginas_muestra: int = 3,
+                     estrategia: str | None = None) -> ResultadoPolizas:
+    """Procesa un libro diario reutilizando la plantilla del tenant si la hay."""
+    documento, estrategia = extraer(pdf, estrategia=estrategia,
+                                    page_numbers=page_numbers)
+    muestra = _muestra(documento, paginas_muestra)
+    layout = detectar_layout(muestra)
+    huella = huella_de(layout, _cuentas_de(muestra))
+
+    plantilla = None
+    if almacen is not None and tenant_id and huella is not None:
+        plantilla = almacen.buscar(tenant_id, huella.valor)
+
+    libro = PolizasParser(paginas_muestra=paginas_muestra).parse(
+        documento, layout=layout,
+        mapeo=_mapeo_de(plantilla) if plantilla is not None else None)
+    cobertura = evaluar_polizas(libro)
+
+    aprendida = plantilla
+    if (plantilla is None and almacen is not None and tenant_id
+            and huella is not None and not cobertura.fallan):
+        aprendida = _plantilla_simple(tenant_id, huella, estrategia, "polizas",
+                                      libro.mapeo, cobertura,
+                                      [m.cuenta for m in libro.movimientos])
+        almacen.guardar(aprendida)
+
+    return ResultadoPolizas(libro=libro, cobertura=cobertura,
+                            estrategia=estrategia, huella=huella,
+                            plantilla=aprendida,
+                            reutilizada=plantilla is not None)
+
+
+def _plantilla_simple(tenant_id: str, huella: Huella, estrategia: str, tipo: str,
+                      mapeo: Mapeo, cobertura: Cobertura,
+                      cuentas: Sequence[str]) -> Plantilla:
+    esquema = inferir_esquema(list(cuentas))
+    return Plantilla(
+        tenant_id=tenant_id, huella=huella.valor, tipo=tipo,
+        estrategia=estrategia, mapeo=dict(mapeo.campos), forma=mapeo.forma,
+        verificado_por=mapeo.verificado_por,
+        orientacion_verificada=mapeo.orientacion_verificada,
+        filas_afectadas=mapeo.filas_afectadas,
+        esquema={"separador": esquema.separador, "anchos": list(esquema.anchos),
+                 "marcador": list(esquema.marcador) if esquema.marcador else None,
+                 "largo": esquema.largo},
+        reglas={"tolerancia": "0.01", "subconjunto_totales": "nivel_1",
+                "exige_partida_doble": True},
         cobertura={"cuadran": cobertura.cuadran, "fallan": cobertura.fallan,
                    "no_verificables": cobertura.no_verificables,
                    "sin_comprobar": [r.regla for r in cobertura.reglas if r.motivo]},

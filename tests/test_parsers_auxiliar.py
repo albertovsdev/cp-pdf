@@ -130,3 +130,19 @@ def test_el_tipo_de_movimiento_de_gume(gume):
 
 def test_es_determinista(original):
     assert original.filas == _auxiliar("auxiliar", [1, 2, 3, 4, 5, 6]).filas
+
+
+def test_gume_usa_concepto_y_deja_vacios_documento_y_tercero(gume):
+    # La fuente imprime referencia y contraparte en una sola columna: se
+    # entrega cruda en 'concepto' en vez de inventar la division.
+    movimiento = next(f for f in gume.filas if not f.es_subtotal)
+    assert movimiento.concepto.startswith("PAGO")
+    assert movimiento.documento == ""
+    assert movimiento.tercero == ""
+
+
+def test_el_auxiliar_original_si_separa_documento_y_tercero(original):
+    movimiento = next(f for f in original.filas if not f.es_subtotal)
+    assert movimiento.documento == "18243"
+    assert movimiento.tercero == "NOHEMI FUENTES MARTINEZ"
+    assert movimiento.concepto == ""

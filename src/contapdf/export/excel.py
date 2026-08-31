@@ -13,6 +13,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
 from contapdf.parsers.balanza import Balanza
+from contapdf.parsers.polizas import LibroDiario
 from contapdf.validate.rules import NO_VERIFICABLE, Cobertura
 
 _ENCABEZADOS = ("cuenta", "nivel", "cuenta_padre", "naturaleza", "nombre",
@@ -95,3 +96,73 @@ def exportar_balanza(balanza: Balanza, cobertura: Cobertura,
 
     libro.save(str(destino))
     return destino
+
+
+_POLIZA = ("poliza_id", "tipo", "naturaleza", "fecha", "descripcion", "folio",
+           "total_debe", "total_haber", "completa")
+_MOVIMIENTO = ("poliza_id", "orden", "cuenta", "nombre_cuenta", "debe", "haber")
+_CFDI = ("poliza_id", "fecha", "documento", "uuid", "rfc", "tipo")
+_MONTOS_DIARIO = frozenset({"total_debe", "total_haber", "debe", "haber"})
+
+
+def _hoja(libro_excel, titulo: str, encabezados, filas, negrita) -> None:
+    hoja = libro_excel.create_sheet(titulo)
+    hoja.append(list(encabezados))
+    for celda in hoja[1]:
+        celda.font = negrita
+    for fila in filas:
+        hoja.append([getattr(fila, campo, None) if not isinstance(fila, dict)
+                     else fila.get(campo) for campo in encabezados])
+        for celda, campo in zip(hoja[hoja.max_row], encabezados):
+            if campo in _MONTOS_DIARIO:
+                celda.number_format = _FORMATO_MONTO
+    hoja.freeze_panes = "A2"
+
+
+def exportar_polizas(libro: LibroDiario, cobertura: Cobertura,
+                     destino: Path) -> Path:
+    """Tres hojas relacionadas, una plana y la cobertura.
+
+    La plana repite el encabezado de la poliza en cada movimiento: es la
+    que el contador filtra. Las otras tres conservan la relacion, que una
+    tabla plana pierde.
+    """
+    libro_excel = Workbook()
+    libro_excel.remove(libro_excel.active)
+    negrita = Font(bold=True)
+
+    _hoja(libro_excel, "Polizas", _POLIZA, libro.polizas, negrita)
+    _hoja(libro_excel, "Movimientos", _MOVIMIENTO, libro.movimientos, negrita)
+    _hoja(libro_excel, "CFDI", _CFDI, libro.cfdi, negrita)
+
+    por_id = {p.poliza_id: p for p in libro.polizas}
+    planas = []
+    for movimiento in libro.movimientos:
+        poliza = por_id.get(movimiento.poliza_id)
+        fila = {campo: getattr(poliza, campo, None) for campo in _POLIZA}
+        fila.update({campo: getattr(movimiento, campo)
+                     for campo in _MOVIMIENTO if campo != "poliza_id"})
+        planas.append(fila)
+    _hoja(libro_excel, "Plana", _POLIZA + _MOVIMIENTO[1:], planas, negrita)
+
+    _validacion(libro_excel, cobertura, negrita)
+    libro_excel.save(str(destino))
+    return destino
+
+
+def _validacion(libro_excel, cobertura: Cobertura, negrita) -> None:
+    detalle = libro_excel.create_sheet("Validacion")
+    detalle.append(["regla", "estado", "detalle"])
+    for celda in detalle[1]:
+        celda.font = negrita
+    for regla in cobertura.reglas:
+        detalle.append([regla.regla, regla.estado,
+                        regla.motivo if regla.estado == NO_VERIFICABLE
+                        else _detalle(regla)])
+    detalle.append([])
+    detalle.append(["fila", "regla", "esperado", "obtenido"])
+    for celda in detalle[detalle.max_row]:
+        celda.font = negrita
+    for d in cobertura.discrepancias:
+        detalle.append([d.fila, d.regla, d.esperado, d.obtenido])
+    detalle.freeze_panes = "A2"

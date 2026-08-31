@@ -18,3 +18,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+# Los tests 'lento' leen documentos completos (cientos de paginas). No se
+# corren en cada ciclo, pero si antes de cada entrega:  pytest -m lento
+addopts = "-m 'not lento'"
+markers = ["lento: lee documentos completos; excluido por defecto"]

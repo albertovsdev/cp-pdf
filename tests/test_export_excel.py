@@ -155,3 +155,28 @@ def test_el_excel_no_exporta_la_procedencia(tmp_path):
     encabezados = [c.value for c in openpyxl.load_workbook(destino)["Balanza"][1]]
     assert "naturaleza" in encabezados
     assert not any("origen" in str(h) for h in encabezados)
+
+
+def test_el_libro_diario_sale_en_cuatro_hojas(tmp_path):
+    from conftest import requires_real_pdf
+
+    from contapdf.export.excel import exportar_polizas
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.polizas import PolizasParser
+    from contapdf.validate.rules import evaluar_polizas
+
+    doc, _ = extraer(requires_real_pdf("poliza"), page_numbers=[1, 2])
+    libro = PolizasParser().parse(doc)
+    destino = tmp_path / "diario.xlsx"
+    exportar_polizas(libro, evaluar_polizas(libro), destino)
+
+    wb = openpyxl.load_workbook(destino)
+    assert wb.sheetnames == ["Polizas", "Movimientos", "CFDI", "Plana",
+                             "Validacion"]
+    plana = wb["Plana"]
+    # La hoja plana repite el encabezado en cada movimiento: es la que el
+    # contador filtra.
+    assert plana.max_row == len(libro.movimientos) + 1
+    encabezados = [c.value for c in plana[1]]
+    assert "poliza_id" in encabezados and "cuenta" in encabezados
+    assert "total_debe" in encabezados
