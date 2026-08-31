@@ -67,6 +67,7 @@ class Word:
     size: float
     bold: bool
     page: int
+    run: int = 0        # corrida del content stream
 
 @dataclass
 class Line:
@@ -84,6 +85,12 @@ class ColumnSpec:
     support: int
     header: str = ""
 ```
+
+`run` identifica la corrida del content stream. Se agregó en la fase 5 y es
+una corrección de la fase 1: `_iter_pages` ordenaba por `x` al final y
+volvía a intercalar corridas que `pdf_chars` sí había separado. **Sin `run`,
+ninguna columna sobreimpresa es legible en ningún documento.** `pdf_text`
+lo deja en 0; solo `pdf_chars` lo llena.
 
 Consecuencia: los parsers **no saben** si el texto vino de un PDF nativo o
 de OCR. Se pueden testear sin instalar Tesseract.
@@ -116,10 +123,29 @@ iterable, así que `list(parse(doc))` sí entrega `list[FilaBalanza]`.
 
 ```
 polizas(poliza_id, tipo, naturaleza, fecha, descripcion, folio,
-        total_debe, total_haber)
+        total_debe, total_haber, completa)
 movimientos(poliza_id, orden, cuenta, nombre_cuenta, debe, haber)
 cfdi(poliza_id, fecha, documento, uuid, rfc, tipo)
 ```
+
+**`poliza_id` es una clave de unión, NO un identificador de la póliza.**
+Ninguna de las variantes imprime un identificador único, así que se usa un
+consecutivo (`P00001…`) determinista dentro de una extracción. Cambia según
+el rango de páginas que se lea: la misma póliza sale con otro número si se
+procesa el documento completo o solo unas páginas. Sirve para unir las tres
+tablas y para nada más; quien compare dos corridas o deduplique debe usar
+los campos propios del documento (tipo, fecha, descripción/folio), que se
+exportan en las hojas.
+
+`completa` marca las pólizas que no cerraron dentro de lo leído: se excluyen
+de la partida doble y la cobertura lo declara. No se valida lo que no se
+leyó entero.
+
+**Verificación de la asociación CFDI→póliza.** Que cada póliza reciba un
+CFDI no prueba que sea el suyo: ocho cruzados dan el mismo conteo 8/8. La
+comprobación con datos existe — el `documento` del CFDI trae el mismo
+número que la `descripcion` de la póliza (`18243`) — y debe ser una regla
+de validación con su cobertura, no una verificación por posición.
 
 Al Excel salen como 3 hojas + una hoja plana denormalizada (encabezado
 repetido en cada movimiento), que es la que el contador va a filtrar.
@@ -343,8 +369,21 @@ casos, no dos:
 
 1. Texto nativo completo → `pdf_text` / `pdf_chars`
 2. Sin capa de texto (escaneo) → OCR
-3. **Texto nativo mutilado** → ninguna estrategia de extracción lo
-   recupera; hay que rasterizar la página y pasarla por OCR
+3. **Texto nativo mutilado**, en dos subcasos que se distinguen midiendo
+   la tinta del render:
+   - **3a — texto perdido, tinta presente**: el OCR sí lo recupera. Es el
+     caso para el que existe ese carril.
+   - **3b — tinta nunca dibujada**: el documento está defectuoso. Medido en
+     `auxiliar-gume`: una celda ilegible tiene **24 píxeles** (solo el
+     signo `-`) contra 1,153–2,619 en una legible. A 400 DPI el resultado
+     no mejora. **Ningún OCR —local, neuronal o en nube— recupera tinta
+     que no existe**; pedir aprobación de nube por privacidad aquí no
+     serviría de nada.
+4. **Texto sobreimpreso** → sí es recuperable, pero solo separando por
+   corrida del content stream. En `diario-general` el CONCEPTO se dibuja
+   encima de la cola de la DESCRIPCION. Se distingue del caso 3 por
+   medición: palabras que se pisan en `x` dentro del renglón — 0.219 en
+   `diario-general` contra 0.000 en los otros seis documentos.
 
 **El detector del caso 3 es la aritmética**: un saldo corrido que se rompe
 sin explicación es la señal de reintentar esa página por otra vía. Esto
@@ -352,9 +391,42 @@ convierte a la validación en el disparador del OCR, no solo en su control
 de calidad. **Consecuencia para la fase 6: el OCR no es solo para
 escaneos.**
 
-Regla mientras tanto: un dato ilegible queda en `None`, la cadena se corta
-ahí, y la cobertura lo declara. Nunca rellenar con lo que «debería» valer
-(inventa dato) ni descartar el renglón completo (pierde el movimiento).
+Escala medida en `auxiliar-gume`: **2,509 de 7,762 movimientos (32%) no
+traen saldo legible** en una sección de 118 páginas. El subtotal declarado
+cuadra exacto porque debe y haber sí son legibles; lo que queda sin cubrir
+es la cadena del saldo corrido, verificada solo en el 68% restante.
+
+Regla: un dato ilegible queda en `None`, la cadena se corta ahí, y la
+cobertura lo declara. Nunca descartar el renglón completo (pierde el
+movimiento) ni aceptar una lectura mal formada — el OCR devuelve
+`1,025,814.4` con un solo decimal en esas celdas, y **un monto truncado que
+parece válido es peor que una celda vacía**: la celda vacía se ve, el
+número equivocado no.
+
+**Excepción medida: el saldo corrido sí se puede recalcular, con ancla.**
+No es inferencia sino derivación verificable, y solo aplica si se cumplen
+las tres condiciones, comprobadas y no supuestas:
+
+1. el saldo inicial de la sección es legible,
+2. todos los `debe`/`haber` de la cadena son legibles,
+3. el encadenamiento recalculado coincide **exacto** con el subtotal
+   declarado del documento.
+
+En `auxiliar-gume` la (3) está medida: 7,762 movimientos suman
+`277,632,036.19 / 277,575,967.07`, idénticos al subtotal impreso. Con ancla
+en los dos extremos, el valor derivado queda comprobado contra un dato
+impreso.
+
+Si alguna condición falla, el saldo se queda en `None`. **Nunca recalcular
+en silencio**: `saldo_origen: impreso | recalculado` y línea de cobertura
+(«saldo: 176 impresos, 74 recalculados y verificados contra el subtotal
+declarado»). El contador debe poder distinguir lo que el documento imprimió
+de lo que nosotros derivamos.
+
+El recálculo hace utilizable la entrega, no arregla el origen: **hay que
+pedirle al cliente el archivo regenerado**. El defecto se midió en 118
+páginas de un documento de 886 y probablemente afecte a todo el archivo y a
+otros reportes del mismo sistema.
 
 ### Principio: nunca reportar un resultado sin su cobertura
 
@@ -508,9 +580,9 @@ cp-pdf/
 | 3b | Auxiliar | Parser con arrastre de sección y bloques, contra las DOS variantes | **hecho** (357 tests) |
 | 4a | Cobertura de validación | Tres estados por regla, `verificado_por`, jerarquía y totales parametrizados por formato | **hecho** (275 tests) |
 | 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | **hecho** (327 tests) |
-| 5 | Pólizas | Parser de bloques, contra las DOS variantes (poliza + diario-general) | siguiente |
-| 6 | OCR | `ocr.py` + preprocesado | |
-| 7 | Estado de cuenta | Multilínea + variación por banco | |
+| 5 | Pólizas | Parser de bloques, contra las DOS variantes (poliza + diario-general) | **hecho** (388 tests) |
+| 6 | OCR | `ocr.py` + preprocesado + fallback para texto mutilado | **hecho** (409 tests) |
+| 7 | Estado de cuenta | Multilínea + variación por banco | siguiente |
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
