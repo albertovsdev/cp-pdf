@@ -163,7 +163,29 @@ SA DE CV` en una sola columna). Cuando la fuente no los separa,
 `documento` y `tercero` van vacíos: no se fabrica una división que la
 fuente no da. `saldo` puede ser `None` si el documento no lo trae legible.
 
-**Estado de cuenta** — metadata + movimientos:
+**Estado de cuenta** — metadata + movimientos.
+
+Hallazgos medidos (fase 7, AFIRME):
+- El nombre del banco va **bajo el sello digital, sobreimpreso**, y sale
+  entrelazado con el domicilio. Se separa por `run` (fase 5).
+- **Las anclas de importe salen del encabezado, no de la posición.** Los
+  símbolos `$` forman columnas propias; tomar «las tres más a la derecha»
+  metía el retiro en la casilla de depósito.
+- **La continuación se pega sin separador**: el documento envuelve
+  partiendo palabras (`CON`+`CEPTO:`, `DESTINATARIO:HIL`+`ARIO`).
+  Concatenar con espacio produce `CON CEPTO:`.
+- Regla añadida: `resumen_movimientos`, que cuadra los totales declarados
+  contra los movimientos leídos. El resumen puede cuadrar consigo mismo y
+  faltar media tabla; esto prueba que se leyeron todos.
+
+**Declarado sin cubrir** (una sola muestra, AFIRME): otro banco puede
+nombrar distinto el resumen, la tabla y el bloque de identificación; el
+pegado sin separador está medido en este formato y un banco que envuelva
+por palabra saldría con las palabras pegadas; la fecha se deriva del
+período y solo cuando no cruza de mes.
+**Antes de poner esto en producción hacen falta muestras de otros bancos.**
+
+Contrato:
 
 ```
 meta: banco, rfc, num_cuenta, clabe, periodo_ini, periodo_fin,
@@ -412,10 +434,13 @@ las tres condiciones, comprobadas y no supuestas:
 3. el encadenamiento recalculado coincide **exacto** con el subtotal
    declarado del documento.
 
-En `auxiliar-gume` la (3) está medida: 7,762 movimientos suman
-`277,632,036.19 / 277,575,967.07`, idénticos al subtotal impreso. Con ancla
-en los dos extremos, el valor derivado queda comprobado contra un dato
-impreso.
+En `auxiliar-gume` está medido, y el resultado es más fuerte que la
+condición: los 7,762 movimientos suman `277,632,036.19 / 277,575,967.07`,
+idénticos al subtotal impreso, el encadenamiento aterriza en el saldo
+declarado (`92,100.11`), y **los 5,253 saldos que el documento sí imprime
+coinciden con el recálculo, 5,253 de 5,253, sin una discrepancia**. Los
+2,509 derivados salen del mismo mecanismo que acertó 5,253 veces contra
+dato impreso. Resultado: `5,253 impresos, 2,509 recalculados, 0 sin saldo`.
 
 Si alguna condición falla, el saldo se queda en `None`. **Nunca recalcular
 en silencio**: `saldo_origen: impreso | recalculado` y línea de cobertura
@@ -582,8 +607,8 @@ cp-pdf/
 | 4b | Plantillas | Fingerprint + store + asistente de mapeo, ligado al tenant | **hecho** (327 tests) |
 | 5 | Pólizas | Parser de bloques, contra las DOS variantes (poliza + diario-general) | **hecho** (388 tests) |
 | 6 | OCR | `ocr.py` + preprocesado + fallback para texto mutilado | **hecho** (409 tests) |
-| 7 | Estado de cuenta | Multilínea + variación por banco | siguiente |
-| 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | |
+| 7 | Estado de cuenta | Multilínea + variación por banco | **hecho** (436 tests) |
+| 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | siguiente |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
