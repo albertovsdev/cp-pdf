@@ -41,6 +41,13 @@ _RE_FECHA = re.compile(r"^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}$")
 _RE_MONTO = re.compile(r"^\$?-?[\d,]*\.\d{2}$")
 _RE_CUENTA = re.compile(r"^\d{2,}[-~][\d-]*\d")
 _RE_ENTERO = re.compile(r"^\d{1,8}$")
+
+# De donde salio el saldo del renglon. Un saldo recalculado es tan util
+# como uno impreso, pero no es lo mismo y la salida tiene que poder
+# distinguirlos: la misma regla que la naturaleza de la balanza.
+IMPRESO = "impreso"
+RECALCULADO = "recalculado"
+SIN_SALDO = "sin_saldo"
 _ETIQUETA_CUENTA = ("cuenta",)
 _ETIQUETA_SALDO = ("saldo inicial", "saldo anterior")
 _ETIQUETA_SUBTOTAL = ("total", "totales", "suma", "sumas")
@@ -83,8 +90,8 @@ class FilaAuxiliar:
     documento: str
     tercero: str
     concepto: str
-    debe: Decimal
-    haber: Decimal
+    debe: Decimal | None
+    haber: Decimal | None
     # None cuando el documento no lo dejo leer. Rellenarlo con lo que
     # deberia valer seria inventar dato; dejarlo fuera seria perder el
     # movimiento. Se emite el renglon y la cobertura lo declara.
@@ -94,6 +101,7 @@ class FilaAuxiliar:
     # seria por documento entero, y sin poder volver a la celda que fallo.
     pagina: int = 0
     top: float = 0.0
+    saldo_origen: str = SIN_SALDO
 
 
 @dataclass(frozen=True)
@@ -394,6 +402,7 @@ class AuxiliarParser:
             debe=parse_monto(celda("debe")),
             haber=parse_monto(celda("haber")),
             saldo=parse_monto(celda("saldo")) if _es_monto(celda("saldo")) else None,
+            saldo_origen=IMPRESO if _es_monto(celda("saldo")) else SIN_SALDO,
             es_subtotal=subtotal,
             pagina=pagina,
             top=top,

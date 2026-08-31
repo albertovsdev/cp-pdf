@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 from pathlib import Path
 
@@ -18,6 +18,7 @@ from contapdf.extract.strategy import extraer
 from contapdf.ir import Page
 from contapdf.parsers.auxiliar import Auxiliar, AuxiliarParser
 from contapdf.parsers.balanza import Balanza, BalanzaParser, Mapeo
+from contapdf.parsers.estado_cuenta import EstadoCuenta, EstadoCuentaParser
 from contapdf.parsers.polizas import LibroDiario, PolizasParser
 from contapdf.parsers.base import Layout, detectar_layout, lineas_de_tabla
 from contapdf.templates.fingerprint import Huella, huella_de
@@ -27,6 +28,7 @@ from contapdf.validate.rules import (
     ReglasBalanza,
     evaluar_auxiliar,
     evaluar_balanza,
+    evaluar_estado_cuenta,
     evaluar_polizas,
 )
 
@@ -283,3 +285,64 @@ def _plantilla_simple(tenant_id: str, huella: Huella, estrategia: str, tipo: str
                    "sin_comprobar": [r.regla for r in cobertura.reglas if r.motivo]},
         pendiente_de_confirmacion=not mapeo.orientacion_verificada,
     )
+
+
+# Lo que este formato NO cubre. Se declara en la plantilla en vez de
+# suponerse general: hay UN solo banco en los fixtures y generalizar "por
+# banco" con una sola muestra es el error que evitamos en la balanza
+# esperando a tener tres variantes.
+_SIN_CUBRIR_EDOCTA = (
+    "un solo banco medido (AFIRME): otro banco puede nombrar distinto el "
+    "resumen, la tabla y el bloque de identificacion",
+    "la continuacion se pega sin separador porque este formato parte las "
+    "palabras al envolver; un banco que envuelva por palabra saldria pegado",
+    "la fecha se deriva del periodo y solo cuando no cruza de mes",
+)
+
+
+@dataclass(frozen=True)
+class ResultadoEstadoCuenta:
+    estado: EstadoCuenta
+    cobertura: Cobertura
+    estrategia: str
+    huella: Huella | None
+    plantilla: Plantilla | None
+    reutilizada: bool
+
+
+def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
+                           almacen: AlmacenPlantillas | None = None,
+                           page_numbers: Sequence[int] | None = None,
+                           paginas_muestra: int = 2,
+                           estrategia: str | None = None) -> ResultadoEstadoCuenta:
+    """Procesa un estado de cuenta reutilizando la plantilla del tenant."""
+    documento, estrategia = extraer(pdf, estrategia=estrategia,
+                                    page_numbers=page_numbers)
+    muestra = _muestra(documento, paginas_muestra + 1)
+    layout = detectar_layout(muestra)
+    huella = huella_de(layout, _cuentas_de(muestra))
+
+    plantilla = None
+    if almacen is not None and tenant_id and huella is not None:
+        plantilla = almacen.buscar(tenant_id, huella.valor)
+
+    estado = EstadoCuentaParser(paginas_muestra=paginas_muestra).parse(
+        documento,
+        mapeo=_mapeo_de(plantilla) if plantilla is not None else None)
+    cobertura = evaluar_estado_cuenta(estado)
+
+    aprendida = plantilla
+    if (plantilla is None and almacen is not None and tenant_id
+            and huella is not None and not cobertura.fallan):
+        aprendida = _plantilla_simple(tenant_id, huella, estrategia,
+                                      "estado_cuenta", estado.mapeo, cobertura, [])
+        aprendida = replace(
+            aprendida,
+            cobertura={**aprendida.cobertura,
+                       "sin_cubrir": list(_SIN_CUBRIR_EDOCTA)})
+        almacen.guardar(aprendida)
+
+    return ResultadoEstadoCuenta(estado=estado, cobertura=cobertura,
+                                 estrategia=estrategia, huella=huella,
+                                 plantilla=aprendida,
+                                 reutilizada=plantilla is not None)

@@ -69,6 +69,7 @@ class Cobertura:
 
     reglas: tuple[ResultadoRegla, ...]
     naturalezas: dict[str, int] = field(default_factory=dict)
+    saldos: dict[str, int] = field(default_factory=dict)
 
     @property
     def discrepancias(self) -> tuple[Discrepancia, ...]:
@@ -90,6 +91,13 @@ class Cobertura:
         return (f"{len(self.reglas)} reglas: {self.cuadran} cuadran, "
                 f"{self.fallan} fallan, {self.no_verificables} no verificable"
                 + ("s" if self.no_verificables != 1 else ""))
+
+    def resumen_saldos(self) -> str:
+        """De donde salio el saldo de cada movimiento."""
+        etiquetas = (("impreso", "impresos"), ("recalculado", "recalculados"),
+                     ("sin_saldo", "sin saldo"))
+        return ", ".join(f"{self.saldos.get(clave, 0)} {texto}"
+                         for clave, texto in etiquetas)
 
     def resumen_naturaleza(self) -> str:
         """De donde salio la naturaleza de cada renglon."""
@@ -501,6 +509,109 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
     return resultado
 
 
+def _resumen_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
+    """saldo_inicial + depositos - retiros == saldo_al_corte.
+
+    Todo del resumen que el propio documento imprime: es su checksum, y no
+    depende de haber leido bien un solo movimiento.
+    """
+    meta = estado.meta
+    faltan = [n for n, v in (("saldo inicial", meta.saldo_inicial),
+                             ("depositos", meta.depositos),
+                             ("retiros", meta.retiros),
+                             ("saldo al corte", meta.saldo_corte)) if v is None]
+    if faltan:
+        return ResultadoRegla(
+            regla="resumen", estado=NO_VERIFICABLE,
+            motivo=f"el resumen no trae: {', '.join(faltan)}")
+
+    esperado = meta.saldo_inicial + meta.depositos - meta.retiros
+    veredicto = _comparar(esperado, meta.saldo_corte, tolerancia)
+    if veredicto == "falla":
+        return _resultado("resumen", 1, 0, (), [Discrepancia(
+            fila="resumen", indice=-1, regla="resumen", esperado=esperado,
+            obtenido=meta.saldo_corte)])
+    return _resultado("resumen", 1, 1 if veredicto == "exacto" else 0,
+                      () if veredicto == "exacto" else ("resumen",), [])
+
+
+def _resumen_contra_movimientos(estado, tolerancia: Decimal) -> ResultadoRegla:
+    """Los totales del resumen contra los movimientos que se leyeron.
+
+    Es lo que prueba que no se perdio ningun movimiento: el resumen puede
+    cuadrar consigo mismo y faltar la mitad de la tabla.
+    """
+    meta = estado.meta
+    if meta.depositos is None or meta.retiros is None:
+        return ResultadoRegla(regla="resumen_movimientos", estado=NO_VERIFICABLE,
+                              motivo="el resumen no declara depositos o retiros")
+    if not estado.movimientos:
+        return ResultadoRegla(regla="resumen_movimientos", estado=NO_VERIFICABLE,
+                              motivo="no se leyo ningun movimiento")
+
+    exactas, rozando, malas = 0, [], []
+    for campo, declarado in (("deposito", meta.depositos), ("retiro", meta.retiros)):
+        suma = sum((getattr(m, campo) for m in estado.movimientos), Decimal(0))
+        veredicto = _comparar(suma, declarado, tolerancia)
+        if veredicto == "exacto":
+            exactas += 1
+        elif veredicto == "tolerancia":
+            rozando.append(campo)
+        else:
+            malas.append(Discrepancia(fila="resumen", indice=-1,
+                                      regla=f"resumen_{campo}s",
+                                      esperado=suma, obtenido=declarado))
+    return _resultado("resumen_movimientos", 2, exactas, rozando, malas)
+
+
+def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
+    """saldo[n] == saldo[n-1] + deposito - retiro."""
+    movimientos = estado.movimientos
+    if not movimientos:
+        return ResultadoRegla(regla="saldo_corrido", estado=NO_VERIFICABLE,
+                              motivo="no se leyo ningun movimiento")
+
+    exactas, rozando, malas = 0, [], []
+    anterior = estado.meta.saldo_inicial
+    ilegibles = 0
+    for indice, movimiento in enumerate(movimientos):
+        if movimiento.saldo is None:
+            ilegibles += 1
+            anterior = None
+            continue
+        if anterior is None:
+            anterior = movimiento.saldo
+            continue
+        esperado = anterior + movimiento.deposito - movimiento.retiro
+        veredicto = _comparar(esperado, movimiento.saldo, tolerancia)
+        if veredicto == "exacto":
+            exactas += 1
+        elif veredicto == "tolerancia":
+            rozando.append(f"dia {movimiento.dia}")
+        else:
+            malas.append(Discrepancia(fila=f"dia {movimiento.dia}", indice=indice,
+                                      regla="saldo_corrido", esperado=esperado,
+                                      obtenido=movimiento.saldo))
+        anterior = movimiento.saldo
+
+    resultado = _resultado("saldo_corrido", len(movimientos), exactas, rozando, malas)
+    if ilegibles:
+        resultado = replace(resultado, motivo=(
+            f"{ilegibles} de {len(movimientos)} movimientos no traen saldo legible"))
+    return resultado
+
+
+def evaluar_estado_cuenta(estado, *,
+                          reglas: ReglasBalanza | None = None) -> Cobertura:
+    """Corre los checksums del estado de cuenta y devuelve QUE se comprobo."""
+    reglas = reglas or ReglasBalanza()
+    return Cobertura(reglas=(
+        _resumen_declarado(estado, reglas.tolerancia),
+        _resumen_contra_movimientos(estado, reglas.tolerancia),
+        _saldo_corrido_bancario(estado, reglas.tolerancia),
+    ))
+
+
 def evaluar_polizas(libro, *,
                     reglas: ReglasBalanza | None = None) -> Cobertura:
     """Corre los checksums del libro diario y devuelve QUE se comprobo."""
@@ -517,7 +628,10 @@ def evaluar_auxiliar(auxiliar, *,
                      reglas: ReglasBalanza | None = None) -> Cobertura:
     """Corre los checksums del auxiliar y devuelve QUE se pudo comprobar."""
     reglas = reglas or ReglasBalanza()
-    return Cobertura(reglas=(
+    saldos = {clave: sum(1 for f in auxiliar.filas
+                         if not f.es_subtotal and f.saldo_origen == clave)
+              for clave in ("impreso", "recalculado", "sin_saldo")}
+    return Cobertura(saldos=saldos, reglas=(
         _saldo_corrido(auxiliar, reglas.tolerancia),
         _subtotales(auxiliar, reglas.tolerancia),
     ))
