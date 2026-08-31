@@ -178,6 +178,25 @@ Hallazgos medidos (fase 7, AFIRME):
   contra los movimientos leídos. El resumen puede cuadrar consigo mismo y
   faltar media tabla; esto prueba que se leyeron todos.
 
+**Variantes medidas (3 documentos nuevos, fase 7 tardía):**
+
+- **Santander (abril)**: glifos duplicados (caso 5 arriba). Página 2 con
+  `lines=105` — primer estado de cuenta con líneas de tabla reales.
+- **Banorte (anual)**: **la fecha va pegada a la descripción sin
+  separador** (`99-XXX-99XXXXX` = `01-JUL-25DEPOSITO`). Hay que partir por
+  patrón de fecha. Vocabulario propio: `MONTO DEL DEPÓSITO` / `MONTO DEL
+  RETIRO` contra `Depósitos` / `Retiros` de AFIRME.
+- **Banorte (julio)**: **DOS cuentas en un mismo estado**, con bloque
+  RESUMEN que las lista y una fila TOTAL. Rompe el contrato de §1.2, que
+  asume una sola cuenta: `meta` debe volverse una lista y cada movimiento
+  saber a cuál pertenece.
+- **Los dos Banorte son distintos entre sí**: el anual arranca directo en
+  `DETALLE DE MOVIMIENTOS`, el de julio trae el resumen multi-cuenta antes.
+  **El eje de la plantilla no es el banco, es (banco, tipo de reporte).**
+- Continuaciones más pesadas que AFIRME: cada movimiento de Banorte
+  arrastra 4–5 líneas con CLABE, RFC, CONCEPTO, REFERENCIA e IVA — más
+  líneas de continuación que de movimiento.
+
 **Declarado sin cubrir** (una sola muestra, AFIRME): otro banco puede
 nombrar distinto el resumen, la tabla y el bloque de identificación; el
 pegado sin separador está medido en este formato y un banco que envuelva
@@ -401,6 +420,13 @@ casos, no dos:
      no mejora. **Ningún OCR —local, neuronal o en nube— recupera tinta
      que no existe**; pedir aprobación de nube por privacidad aquí no
      serviría de nada.
+5. **Glifos duplicados** → el documento dibuja cada carácter dos veces con
+   un desplazamiento mínimo, para simular negritas. Medido en Santander:
+   `999999,,999999..9999` es `999,999.99` y `9999--XXXXXX--99999999` es
+   `99-XXX-9999`. El mismo documento trae filas sin duplicar
+   (`[32-77]99-XXX-9999`), lo que confirma la lectura. **Sin deduplicar, no
+   se lee ningún monto de Santander.** Se detecta por caracteres de
+   contenido idéntico en coordenadas casi idénticas.
 4. **Texto sobreimpreso** → sí es recuperable, pero solo separando por
    corrida del content stream. En `diario-general` el CONCEPTO se dibuja
    encima de la cola de la DESCRIPCION. Se distingue del caso 3 por
@@ -609,6 +635,8 @@ cp-pdf/
 | 6 | OCR | `ocr.py` + preprocesado + fallback para texto mutilado | **hecho** (409 tests) |
 | 7 | Estado de cuenta | Multilínea + variación por banco | **hecho** (436 tests) |
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | siguiente |
+| 7c | Extracción de bancos | Deduplicar glifos duplicados (Santander) + separar fecha pegada (Banorte) | |
+| 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 4 formatos con el mismo parser | |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
