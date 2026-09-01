@@ -53,6 +53,11 @@ def parse_monto(texto: str) -> Decimal:
     if s.startswith("-"):
         negativo = True
         s = s[1:]
+    elif s.endswith("-"):
+        # Signo al final: asi imprime un banco la reversa de un cargo
+        # ('287,000.00-'), y el saldo corrido confirma que es negativo.
+        negativo = True
+        s = s[:-1]
     if not s:
         return Decimal(0)
     if not _RE_DECIMAL.match(s):

@@ -30,6 +30,10 @@ CUADRA = "cuadra"
 FALLA = "falla"
 NO_VERIFICABLE = "no_verificable"
 
+# Los cuatro saldos que el resumen de un estado de cuenta necesita para
+# poder comprobarse a si mismo.
+_CAMPOS_RESUMEN = ("saldo_inicial", "depositos", "retiros", "saldo_corte")
+
 
 @dataclass(frozen=True)
 class Discrepancia:
@@ -510,79 +514,161 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
     return resultado
 
 
+def _cuentas_con(estado, campos):
+    """Las cuentas que traen todos esos campos legibles."""
+    return [c for c in estado.cuentas
+            if all(getattr(c, campo) is not None for campo in campos)]
+
+
 def _resumen_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
-    """saldo_inicial + depositos - retiros == saldo_al_corte.
+    """saldo_inicial + depositos - retiros == saldo_al_corte, POR CUENTA.
 
     Todo del resumen que el propio documento imprime: es su checksum, y no
-    depende de haber leido bien un solo movimiento.
+    depende de haber leido bien un solo movimiento. Con varias cuentas hay
+    varios resumenes, y cada uno cuadra por su cuenta: sumarlos escondería
+    dos errores que se compensan.
     """
-    meta = estado.meta
-    faltan = [n for n, v in (("saldo inicial", meta.saldo_inicial),
-                             ("depositos", meta.depositos),
-                             ("retiros", meta.retiros),
-                             ("saldo al corte", meta.saldo_corte)) if v is None]
-    if faltan:
+    completas = _cuentas_con(estado, _CAMPOS_RESUMEN)
+    if not completas:
+        faltan = sorted({campo.replace("_", " ") for c in estado.cuentas
+                         for campo in _CAMPOS_RESUMEN
+                         if getattr(c, campo) is None})
         return ResultadoRegla(
             regla="resumen", estado=NO_VERIFICABLE,
-            motivo=f"el resumen no trae: {', '.join(faltan)}")
+            motivo=(f"ninguna de las {len(estado.cuentas)} cuenta(s) trae el "
+                    f"resumen completo; falta: {', '.join(faltan) or 'todo'}"))
 
-    esperado = meta.saldo_inicial + meta.depositos - meta.retiros
-    veredicto = _comparar(esperado, meta.saldo_corte, tolerancia)
-    if veredicto == "falla":
-        return _resultado("resumen", 1, 0, (), [Discrepancia(
-            fila="resumen", indice=-1, regla="resumen", esperado=esperado,
-            obtenido=meta.saldo_corte)])
-    return _resultado("resumen", 1, 1 if veredicto == "exacto" else 0,
-                      () if veredicto == "exacto" else ("resumen",), [])
+    exactas, rozando, malas = 0, [], []
+    for cuenta in completas:
+        esperado = cuenta.saldo_inicial + cuenta.depositos - cuenta.retiros
+        veredicto = _comparar(esperado, cuenta.saldo_corte, tolerancia)
+        if veredicto == "exacto":
+            exactas += 1
+        elif veredicto == "tolerancia":
+            rozando.append(cuenta.num_cuenta)
+        else:
+            malas.append(Discrepancia(
+                fila=f"resumen {cuenta.num_cuenta}".strip(), indice=-1,
+                regla="resumen", esperado=esperado, obtenido=cuenta.saldo_corte))
+    resultado = _resultado("resumen", len(completas), exactas, rozando, malas)
+    if len(completas) < len(estado.cuentas):
+        resultado = replace(resultado, motivo=(
+            f"{len(estado.cuentas) - len(completas)} de {len(estado.cuentas)} "
+            "cuenta(s) no traen el resumen completo y quedaron fuera"))
+    return resultado
 
 
 def _resumen_contra_movimientos(estado, tolerancia: Decimal) -> ResultadoRegla:
-    """Los totales del resumen contra los movimientos que se leyeron.
+    """Los totales declarados contra los movimientos leidos, POR CUENTA.
 
     Es lo que prueba que no se perdio ningun movimiento: el resumen puede
     cuadrar consigo mismo y faltar la mitad de la tabla.
     """
-    meta = estado.meta
-    if meta.depositos is None or meta.retiros is None:
-        return ResultadoRegla(regla="resumen_movimientos", estado=NO_VERIFICABLE,
-                              motivo="el resumen no declara depositos o retiros")
+    completas = _cuentas_con(estado, ("depositos", "retiros"))
+    if not completas:
+        return ResultadoRegla(
+            regla="resumen_movimientos", estado=NO_VERIFICABLE,
+            motivo=("ninguna cuenta declara depositos y retiros propios; con "
+                    "dos o mas cuentas el total del documento no se reparte"))
     if not estado.movimientos:
         return ResultadoRegla(regla="resumen_movimientos", estado=NO_VERIFICABLE,
                               motivo="no se leyo ningun movimiento")
 
     exactas, rozando, malas = 0, [], []
-    for campo, declarado in (("deposito", meta.depositos), ("retiro", meta.retiros)):
-        suma = sum((getattr(m, campo) for m in estado.movimientos), Decimal(0))
+    for cuenta in completas:
+        propios = estado.movimientos_de(cuenta.num_cuenta)
+        for campo, declarado in (("deposito", cuenta.depositos),
+                                 ("retiro", cuenta.retiros)):
+            suma = sum((getattr(m, campo) for m in propios), Decimal(0))
+            veredicto = _comparar(suma, declarado, tolerancia)
+            if veredicto == "exacto":
+                exactas += 1
+            elif veredicto == "tolerancia":
+                rozando.append(f"{cuenta.num_cuenta} {campo}")
+            else:
+                malas.append(Discrepancia(
+                    fila=f"resumen {cuenta.num_cuenta}".strip(), indice=-1,
+                    regla=f"resumen_{campo}s", esperado=suma, obtenido=declarado))
+    return _resultado("resumen_movimientos", len(completas) * 2, exactas,
+                      rozando, malas)
+
+
+def _total_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
+    """La fila TOTAL contra la suma de los saldos por cuenta.
+
+    Es un cruce con datos, de la misma clase que CFDI contra poliza: el
+    documento imprime la suma y nosotros la recalculamos desde las partes.
+    """
+    declarados = {"saldo_inicial": estado.meta.total_saldo_inicial,
+                  "saldo_corte": estado.meta.total_saldo_corte}
+    if all(v is None for v in declarados.values()):
+        return ResultadoRegla(
+            regla="total_declarado", estado=NO_VERIFICABLE,
+            motivo=("el documento no imprime una fila TOTAL con la que cruzar "
+                    "la suma de los saldos por cuenta"))
+
+    exactas, rozando, malas, comprobaciones = 0, [], [], 0
+    for campo, declarado in declarados.items():
+        propios = [getattr(c, campo) for c in estado.cuentas]
+        if declarado is None or any(v is None for v in propios) or not propios:
+            continue
+        comprobaciones += 1
+        suma = sum(propios, Decimal(0))
         veredicto = _comparar(suma, declarado, tolerancia)
         if veredicto == "exacto":
             exactas += 1
         elif veredicto == "tolerancia":
             rozando.append(campo)
         else:
-            malas.append(Discrepancia(fila="resumen", indice=-1,
-                                      regla=f"resumen_{campo}s",
+            malas.append(Discrepancia(fila="TOTAL", indice=-1,
+                                      regla=f"total_{campo}",
                                       esperado=suma, obtenido=declarado))
-    return _resultado("resumen_movimientos", 2, exactas, rozando, malas)
+    if not comprobaciones:
+        return ResultadoRegla(
+            regla="total_declarado", estado=NO_VERIFICABLE,
+            motivo=("el documento imprime una fila TOTAL pero alguna cuenta no "
+                    "trae el saldo con el que sumarla"))
+    return _resultado("total_declarado", comprobaciones, exactas, rozando, malas)
 
 
 def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
-    """saldo[n] == saldo[n-1] + deposito - retiro."""
-    movimientos = estado.movimientos
-    if not movimientos:
+    """saldo[n] == saldo[n-1] + deposito - retiro, dentro de CADA cuenta.
+
+    Encadenar el primer movimiento de una cuenta detras del ultimo de otra
+    produce una falla inventada: son dos saldos corridos distintos. Se
+    agrupa por los movimientos y no por las cuentas para no contar dos
+    veces cuando el documento no imprime el numero de cuenta y dos cuentas
+    comparten la clave vacia.
+    """
+    if not estado.movimientos:
         return ResultadoRegla(regla="saldo_corrido", estado=NO_VERIFICABLE,
                               motivo="no se leyo ningun movimiento")
 
+    inicial: dict[str, Decimal | None] = {}
+    for cuenta in estado.cuentas:
+        # Solo si la clave identifica a una sola cuenta: con dos cuentas sin
+        # numero, el saldo inicial de una no arranca los movimientos de la otra.
+        inicial[cuenta.num_cuenta] = (None if cuenta.num_cuenta in inicial
+                                      else cuenta.saldo_inicial)
+
     exactas, rozando, malas = 0, [], []
-    anterior = estado.meta.saldo_inicial
-    ilegibles = 0
-    for indice, movimiento in enumerate(movimientos):
+    comparados, ilegibles = 0, 0
+    anteriores: dict[str, Decimal | None] = {}
+    vistas: set[str] = set()
+    for indice, movimiento in enumerate(estado.movimientos):
+        clave = movimiento.num_cuenta
+        if clave not in vistas:
+            vistas.add(clave)
+            anteriores[clave] = inicial.get(clave)
         if movimiento.saldo is None:
             ilegibles += 1
-            anterior = None
+            anteriores[clave] = None
             continue
+        anterior = anteriores[clave]
         if anterior is None:
-            anterior = movimiento.saldo
+            anteriores[clave] = movimiento.saldo
             continue
+        comparados += 1
         esperado = anterior + movimiento.deposito - movimiento.retiro
         veredicto = _comparar(esperado, movimiento.saldo, tolerancia)
         if veredicto == "exacto":
@@ -590,15 +676,17 @@ def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
         elif veredicto == "tolerancia":
             rozando.append(f"dia {movimiento.dia}")
         else:
-            malas.append(Discrepancia(fila=f"dia {movimiento.dia}", indice=indice,
-                                      regla="saldo_corrido", esperado=esperado,
-                                      obtenido=movimiento.saldo))
-        anterior = movimiento.saldo
+            malas.append(Discrepancia(
+                fila=f"dia {movimiento.dia}", indice=indice,
+                regla="saldo_corrido", esperado=esperado,
+                obtenido=movimiento.saldo))
+        anteriores[clave] = movimiento.saldo
 
-    resultado = _resultado("saldo_corrido", len(movimientos), exactas, rozando, malas)
+    resultado = _resultado("saldo_corrido", comparados, exactas, rozando, malas)
     if ilegibles:
         resultado = replace(resultado, motivo=(
-            f"{ilegibles} de {len(movimientos)} movimientos no traen saldo legible"))
+            f"{ilegibles} de {len(estado.movimientos)} movimientos no traen "
+            "saldo legible y no se pudieron encadenar"))
     return resultado
 
 
@@ -746,6 +834,7 @@ def evaluar_estado_cuenta(estado, *,
         _resumen_declarado(estado, reglas.tolerancia),
         _resumen_contra_movimientos(estado, reglas.tolerancia),
         _saldo_corrido_bancario(estado, reglas.tolerancia),
+        _total_declarado(estado, reglas.tolerancia),
     ))
 
 

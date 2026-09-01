@@ -18,7 +18,11 @@ from contapdf.extract.strategy import extraer
 from contapdf.ir import Page
 from contapdf.parsers.auxiliar import Auxiliar, AuxiliarParser
 from contapdf.parsers.balanza import Balanza, BalanzaParser, Mapeo
-from contapdf.parsers.estado_cuenta import EstadoCuenta, EstadoCuentaParser
+from contapdf.parsers.estado_cuenta import (
+    EstadoCuenta,
+    EstadoCuentaParser,
+    detectar_cabecera,
+)
 from contapdf.parsers.mayor import Mayor, MayorParser
 from contapdf.parsers.polizas import LibroDiario, PolizasParser
 from contapdf.parsers.base import Layout, detectar_layout, lineas_de_tabla
@@ -289,16 +293,20 @@ def _plantilla_simple(tenant_id: str, huella: Huella, estrategia: str, tipo: str
     )
 
 
-# Lo que este formato NO cubre. Se declara en la plantilla en vez de
-# suponerse general: hay UN solo banco en los fixtures y generalizar "por
-# banco" con una sola muestra es el error que evitamos en la balanza
-# esperando a tener tres variantes.
+# Lo que este tipo de documento NO cubre. Se declara en la plantilla en vez
+# de suponerse general. Fase 7d: ya son seis formatos medidos, asi que lo
+# que queda fuera esta acotado y es concreto.
 _SIN_CUBRIR_EDOCTA = (
-    "un solo banco medido (AFIRME): otro banco puede nombrar distinto el "
-    "resumen, la tabla y el bloque de identificacion",
-    "la continuacion se pega sin separador porque este formato parte las "
-    "palabras al envolver; un banco que envuelva por palabra saldria pegado",
-    "la fecha se deriva del periodo y solo cuando no cruza de mes",
+    "seis formatos medidos: el vocabulario del encabezado y las etiquetas de "
+    "saldo son tablas de sinonimos, y un banco que nombre distinto sus "
+    "columnas necesita agregarlos antes de leerse",
+    "la union de continuaciones usa el separador del formato: la geometria no "
+    "distingue un documento que parte palabras al envolver de uno que envuelve "
+    "por palabra entera, y elegir mal pega o separa dentro de la descripcion",
+    "cuando el documento solo imprime el dia, la fecha se deriva del periodo y "
+    "solo si el periodo no cruza de mes",
+    "con dos o mas cuentas los depositos y retiros por cuenta se leen solo si "
+    "el documento los desglosa; el total del documento no se reparte",
 )
 
 
@@ -320,16 +328,19 @@ def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
     """Procesa un estado de cuenta reutilizando la plantilla del tenant."""
     documento, estrategia = extraer(pdf, estrategia=estrategia,
                                     page_numbers=page_numbers)
-    muestra = _muestra(documento, paginas_muestra + 1)
-    layout = detectar_layout(muestra)
-    huella = huella_de(layout, _cuentas_de(muestra))
+    # La huella sale de la fila de encabezado de la tabla de movimientos, no
+    # del clustering de columnas: es lo que distingue (banco, tipo de
+    # reporte), que es el eje real de la plantilla. Dos reportes del mismo
+    # banco con estructuras distintas no pueden compartir plantilla.
+    layout = detectar_cabecera(_muestra(documento, paginas_muestra + 1))
+    huella = huella_de(layout)
 
     plantilla = None
     if almacen is not None and tenant_id and huella is not None:
         plantilla = almacen.buscar(tenant_id, huella.valor)
 
     estado = EstadoCuentaParser(paginas_muestra=paginas_muestra).parse(
-        documento,
+        documento, layout=layout,
         mapeo=_mapeo_de(plantilla) if plantilla is not None else None)
     cobertura = evaluar_estado_cuenta(estado)
 

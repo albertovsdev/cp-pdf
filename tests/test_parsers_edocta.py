@@ -1,9 +1,13 @@
-"""Estado de cuenta bancario.
+"""Estado de cuenta bancario: el formato AFIRME, que abrio la fase 7.
 
 La pagina 1 es puro metadato y la tabla real empieza en DETALLE DE
 OPERACIONES: sin find_table_region no hay de donde leer. Un movimiento
 SPEI ocupa nueve renglones visuales; el criterio de fila nueva es que el
-renglon traiga dia en la primera columna.
+renglon traiga la fecha en su columna.
+
+Desde la fase 7d los saldos del resumen viven en CuentaBancaria y no en
+MetaEstadoCuenta: son propiedad de la cuenta. Un estado de una sola
+cuenta queda con `cuentas` de longitud 1, sin caso especial.
 
 Los tests NO afirman sobre numero de cuenta, CLABE ni RFC: el PDF real
 esta gitignored justamente porque trae datos del cliente.
@@ -34,11 +38,16 @@ def test_lee_el_banco_de_debajo_del_sello_digital(edocta):
     assert "JUÁREZ" not in edocta.meta.banco
 
 
+def test_una_sola_cuenta_no_es_un_caso_especial(edocta):
+    assert len(edocta.cuentas) == 1
+
+
 def test_lee_la_cuenta_y_la_clabe_sin_exponerlas(edocta):
-    assert edocta.meta.num_cuenta.isdigit()
-    assert len(edocta.meta.num_cuenta) >= 10
-    assert edocta.meta.clabe.isdigit()
-    assert len(edocta.meta.clabe) == 18
+    cuenta = edocta.cuentas[0]
+    assert cuenta.num_cuenta.isdigit()
+    assert len(cuenta.num_cuenta) >= 10
+    assert cuenta.clabe.isdigit()
+    assert len(cuenta.clabe) == 18
     assert edocta.meta.rfc
 
 
@@ -47,17 +56,23 @@ def test_lee_el_periodo(edocta):
     assert edocta.meta.periodo_fin == "30 ABR 2025"
 
 
-def test_lee_los_saldos_del_resumen(edocta):
-    meta = edocta.meta
-    assert meta.saldo_inicial == Decimal("32411.67")
-    assert meta.depositos == Decimal("118420.39")
-    assert meta.retiros == Decimal("118958.74")
-    assert meta.saldo_corte == Decimal("31873.32")
+def test_los_saldos_del_resumen_son_de_la_cuenta(edocta):
+    cuenta = edocta.cuentas[0]
+    assert cuenta.saldo_inicial == Decimal("32411.67")
+    assert cuenta.depositos == Decimal("118420.39")
+    assert cuenta.retiros == Decimal("118958.74")
+    assert cuenta.saldo_corte == Decimal("31873.32")
 
 
 # --- Criterio 2: movimientos multilinea ---------------------------------
 def test_cuenta_los_movimientos(edocta):
     assert len(edocta.movimientos) == 45
+
+
+def test_cada_movimiento_sabe_a_que_cuenta_pertenece(edocta):
+    unica = edocta.cuentas[0].num_cuenta
+    assert {m.num_cuenta for m in edocta.movimientos} == {unica}
+    assert edocta.movimientos_de(unica) == edocta.movimientos
 
 
 def test_reune_un_spei_de_nueve_renglones(edocta):

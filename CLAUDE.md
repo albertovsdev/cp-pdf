@@ -12,10 +12,12 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
-Estado: fases 0 a 7c2 completas (5 parsers: balanza, auxiliar, polizas,
-estado de cuenta, libro mayor). 513 tests verdes mas 7 marcados lento
-(pytest -m lento). Corre pytest tests/ antes de tocar nada.
-Siguiente: fase 7d (multi-cuenta en estados de cuenta), luego la 8 (web).
+Estado: fases 0 a 7d completas (5 parsers: balanza, auxiliar, polizas,
+estado de cuenta, libro mayor). El de estado de cuenta cubre 6 formatos de
+6 bancos con un solo parser, sin ramas por banco. 581 tests verdes mas 9
+marcados lento (pytest -m lento). Corre pytest tests/ antes de tocar nada.
+Siguiente: fase 8 (web). Pendiente heredado: no hay exportar_estado_cuenta
+ni comandos de CLI para los cuatro parsers que no son balanza.
 
 Como trabajamos:
   - Tests primero, siempre. Muestrame el rojo antes de implementar.

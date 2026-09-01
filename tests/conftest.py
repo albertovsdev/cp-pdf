@@ -42,6 +42,12 @@ REAL_PDFS = {
     "edocta-multiva": REAL / "4-Estados-Cuenta" / "edocta-multiva.pdf",
     "edocta-santander": REAL / "4-Estados-Cuenta" / "edocta-santander.pdf",
     "edocta-julio-banorte": REAL / "4-Estados-Cuenta" / "edocta-julio-banorte.pdf",
+    "edocta-abril-santander": REAL / "4-Estados-Cuenta" / "edocta-abril-santander.pdf",
+    "edocta-bajio": REAL / "4-Estados-Cuenta" / "edocta-bajio.pdf",
+    "edocta-bbva": REAL / "4-Estados-Cuenta" / "edocta-bbva.pdf",
+    "edocta-hsbc": REAL / "4-Estados-Cuenta" / "edocta-hsbc.pdf",
+    "edocta-monex": REAL / "4-Estados-Cuenta" / "edocta-monex.pdf",
+    "edocta-scotiabank": REAL / "4-Estados-Cuenta" / "edocta-scotiabank.pdf",
 }
 
 

@@ -150,6 +150,41 @@ class Parser(Protocol):
     def parse(self, document: Document) -> object: ...
 ```
 
+### `parsers/estado_cuenta.py`
+
+```python
+@dataclass(frozen=True)
+class MetaEstadoCuenta:  banco, rfc, periodo_ini, periodo_fin, anio,
+                         total_saldo_inicial, total_saldo_corte
+@dataclass(frozen=True)
+class CuentaBancaria:    num_cuenta, clabe, producto, moneda,
+                         saldo_inicial, depositos, retiros, saldo_corte
+@dataclass(frozen=True)
+class MovimientoBancario: num_cuenta, dia, fecha, descripcion, referencia,
+                          deposito, retiro, saldo, pagina
+@dataclass(frozen=True)
+class EstadoCuenta:      meta, cuentas, movimientos, mapeo
+                         cuenta(num) / movimientos_de(num)   # metodos
+@dataclass(frozen=True)
+class TipoDeReporte:     clave, etiqueta, evidencia, cuentas
+class ReporteNoEsperado(LayoutDesconocido):  .tipo -> TipoDeReporte
+
+detectar_cabecera(paginas) -> Layout | None
+EstadoCuentaParser(paginas_muestra=2, *, separador_continuacion="")
+```
+
+Los saldos son de la **cuenta**, no del documento. Un estado de una sola
+cuenta queda con `cuentas` de longitud 1, sin caso especial.
+
+`detectar_cabecera` lee la fila de encabezado de la tabla de movimientos y
+devuelve un `Layout` cuyos `header` son las etiquetas del banco. Devuelve
+`None` cuando ninguna pagina trae una; eso no es un error.
+
+`ReporteNoEsperado` es un `LayoutDesconocido` que ademas dice QUE es el
+documento (`clave`, `etiqueta` legible, `evidencia` del propio texto y las
+`cuentas` que si se pudieron leer). Quien ya atrapaba `LayoutDesconocido`
+no se entera del cambio.
+
 ### `cuentas.py`
 
 ```python
@@ -188,6 +223,8 @@ evaluar_balanza(balanza, *, reglas=None) -> Cobertura
 evaluar_auxiliar(auxiliar, *, reglas=None) -> Cobertura
 evaluar_polizas(libro, *, reglas=None) -> Cobertura
 evaluar_estado_cuenta(estado, *, reglas=None) -> Cobertura
+    # 4 reglas, todas POR CUENTA: resumen, resumen_movimientos,
+    # saldo_corrido y total_declarado (la fila TOTAL contra la suma)
 evaluar_mayor(mayor, *, balanza=None, reglas=None) -> Cobertura
 validar_balanza(balanza, *, reglas=None) -> list[Discrepancia]
 ```
@@ -259,6 +296,12 @@ PDF
      ├─ validate.evaluar_*()                    → Cobertura
      └─ AlmacenPlantillas.guardar()             solo si cobertura.fallan == 0
 
+`procesar_estado_cuenta` es la excepción del cuadro: su layout NO sale de
+`detectar_layout` sino de `estado_cuenta.detectar_cabecera`, que lee la fila
+de encabezado de la tabla. La huella se arma con ese vocabulario, que es lo
+que distingue **(banco, tipo de reporte)** —el eje real de la plantilla— y
+lo que impide que dos reportes distintos del mismo banco colisionen.
+
  └─ export.exportar_*(datos, cobertura, destino) → .xlsx
  └─ cli.reportar(..., cobertura, ...)            → texto
 ```
@@ -297,7 +340,7 @@ No son convenciones: el código no compila o no corre si se violan.
 | `BalanzaParser` | Balanza de comprobación | 3 formatos | `Balanza(filas, totales, mapeo)` | `pdf_text`, `pdf_chars` en Business Pro |
 | `AuxiliarParser` | Auxiliar de cuentas | 2 formatos | `Auxiliar(filas, secciones, mapeo)` | `pdf_text` |
 | `PolizasParser` | Libro diario | 2 formatos | `LibroDiario(polizas, movimientos, cfdi)` | `pdf_text`, `pdf_chars` en Diario General |
-| `EstadoCuentaParser` | Estado de cuenta | 1 banco | `EstadoCuenta(meta, movimientos)` | `pdf_chars` |
+| `EstadoCuentaParser` | Estado de cuenta | 6 formatos, 5 bancos | `EstadoCuenta(meta, cuentas, movimientos)` | `pdf_text`, `pdf_chars` segun el documento |
 | `MayorParser` | Libro mayor | 1 formato | `Mayor(cuentas, meses)` | `pdf_text` |
 
 Todos exponen la misma forma:
@@ -310,9 +353,33 @@ parse(document, *, layout=None, mapeo=None) -> <resultado>
 la detección. Todos lanzan `LayoutDesconocido` (en `parsers/balanza.py`)
 cuando no reconocen el documento.
 
-Los tres que devuelven tablas relacionadas —`polizas`, `mayor`— exportan
-además una hoja plana denormalizada. Los que devuelven una tabla —`balanza`,
-`auxiliar`, `estado_cuenta`— no la necesitan.
+Los que devuelven tablas relacionadas —`polizas`, `mayor`— exportan además
+una hoja plana denormalizada. Los que devuelven una tabla —`balanza`,
+`auxiliar`— no la necesitan. `estado_cuenta` devuelve dos tablas
+relacionadas (`cuentas` y `movimientos`) pero todavía **no tiene
+`exportar_estado_cuenta`**: solo se alcanza por API.
+
+### Cómo generaliza `EstadoCuentaParser` a seis formatos
+
+Sin una sola rama por banco; un test lo impone leyendo el módulo y
+prohibiendo que nombre a ninguno.
+
+| Mecanismo | Qué resuelve |
+|---|---|
+| `_CAMPOS_TABLA` | El vocabulario del encabezado: `Depósitos`/`Abonos`/`MONTO DEL DEPOSITO` son la misma columna. Se compara con y sin espacios, porque un formato imprime `F E C H A` letra por letra. |
+| Anclas del encabezado | El importe va a la columna cuyo **borde derecho** tiene más cerca, con tolerancia de media separación entre columnas. |
+| `_campo_heredado` | Encabezado agrupado: `SALDO` en el renglón de arriba abarcando `OPERACIÓN` y `LIQUIDACIÓN`, y se consulta **solo** si la subetiqueta no significa nada por sí sola. |
+| `_FECHAS` | Seis formatos de fecha (`03`, `01-ABR-2025`, `01-JUL-23`, `1 SEP`, `JUL. 03`, `01/DIC`) normalizados a `dd/mm/aaaa`. El año sale del período declarado. |
+| `_CAMPOS_CUENTAS` | El resumen que lista las cuentas del documento, con su fila `TOTAL`. |
+| `_CAMPOS_RESUMEN` | Las etiquetas de saldo, comparadas por el **final** de la etiqueta y sin espacios: un renglón puede traer dos parejas etiqueta-valor. |
+| `_secciones` / `_seccion_de` | La cuenta a la que pertenece un movimiento: la sección que lo contiene, reconocida por cómo abre el renglón. |
+| `_junta_signos` | El `$` y el `-` que vienen en su propio token. `-$` delante de un saldo es la única marca de que es negativo. |
+
+La tabla **no** se acota con `find_table_region`: en estos documentos deja
+páginas enteras fuera (BBVA página 2 devuelve `None` con 40 movimientos
+impresos). Se acota con lo que el documento garantiza —los seis formatos
+reimprimen el encabezado en cada página de tabla— y una continuación tiene
+que venir a menos de 12pt del renglón anterior.
 
 ---
 
@@ -356,8 +423,6 @@ más allá del tipo del parámetro.
 - **No hay capa web, cola ni workers.** El punto de entrada es
   `python -m contapdf.cli`, con dos comandos: `balanza` y `confirmar`.
   Los otros cuatro parsers solo se alcanzan por API.
-- **No procesa varias cuentas bancarias en un mismo estado de cuenta.**
-  `MetaEstadoCuenta` tiene un `num_cuenta` y una `clabe`, en singular.
 - **No cruza documentos automáticamente.** `evaluar_mayor(balanza=...)` es
   el único cruce y hay que pasarle el otro documento a mano; ningún módulo
   sale a buscar archivos.
@@ -372,7 +437,9 @@ más allá del tipo del parámetro.
 
 | Quiero… | Choca con |
 |---|---|
-| Varias cuentas en un estado de cuenta | `EstadoCuenta.meta` es un único `MetaEstadoCuenta` |
+| Depósitos y retiros por cuenta cuando el documento no los desglosa | Se quedan en `None`; repartir el total del documento sería inventarlo |
+| Distinguir una continuación partida a la mitad de una partida por palabra | La geometría es idéntica en los dos casos; `separador_continuacion` es un parámetro del formato, no una deducción |
+| Una cuenta de crédito, donde el saldo corre al revés | `_saldo_corrido_bancario` fija el signo `saldo + depósito − retiro`; una sección de crédito falla la regla y lo declara |
 | Un identificador de póliza estable entre lecturas | `Poliza.poliza_id` es la posición en esa lectura |
 | Procesar sin materializar el documento | `AuxiliarParser`, `PolizasParser`, `MayorParser` y `EstadoCuentaParser` hacen `list(document.open_pages())`. Solo `BalanzaParser` transmite página por página |
 | Reglas de validación por tenant | `ReglasBalanza` se deduce del documento o se pasa a mano; la plantilla la guarda pero `evaluar_*` no la lee del almacén |

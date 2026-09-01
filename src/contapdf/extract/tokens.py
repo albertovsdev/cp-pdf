@@ -20,9 +20,12 @@ from contapdf.ir import Word
 # dd-MMM-aa seguido de algo que no es separador: '01-JUL-23DEP.EFECTIVO'.
 _MES = r"[A-Za-zÁÉÍÓÚÑ]{3}"
 _RE_FECHA_SOLA = re.compile(rf"^\d{{1,2}}-{_MES}-(\d{{2}}|\d{{4}})$")
-# Cola que empieza con algo que no es digito: ahi el anio no es ambiguo,
-# porque los digitos se acaban donde empieza la descripcion.
-_RE_INEQUIVOCA = re.compile(rf"^\d{{1,2}}-{_MES}-(\d+)\D")
+# Cola que empieza con algo que no es digito JUSTO DESPUES de un anio de
+# largo posible: ahi el anio no es ambiguo porque los digitos se acaban
+# donde empieza la descripcion. La corrida de digitos tiene que medir 2 o 4;
+# con '\d+' suelto, '11-JUL-2320230711400140BET...' se leia como un anio de
+# dieciseis digitos y contaminaba lo aprendido para toda la pagina.
+_RE_INEQUIVOCA = re.compile(rf"^\d{{1,2}}-{_MES}-(\d{{2}}|\d{{4}})\D")
 
 
 def _ancho_del_anio(words: Sequence[Word]) -> int | None:
