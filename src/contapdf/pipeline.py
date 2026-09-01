@@ -14,7 +14,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from contapdf.cuentas import inferir_esquema
-from contapdf.extract.strategy import extraer
+from contapdf.extract.strategy import extraer_con_motivo
 from contapdf.ir import Page
 from contapdf.parsers.auxiliar import Auxiliar, AuxiliarParser
 from contapdf.parsers.balanza import Balanza, BalanzaParser, Mapeo
@@ -50,6 +50,10 @@ class ResultadoAuxiliar:
     huella: Huella | None
     plantilla: Plantilla | None
     reutilizada: bool
+    # Por que se eligio esa estrategia. Mandar un documento a OCR
+    # cuesta veinte veces mas que no mandarlo: la decision se
+    # reporta, no se esconde en un log.
+    motivo_estrategia: str = ""
 
 
 @dataclass(frozen=True)
@@ -60,6 +64,10 @@ class Resultado:
     huella: Huella | None
     plantilla: Plantilla | None
     reutilizada: bool
+    # Por que se eligio esa estrategia. Mandar un documento a OCR
+    # cuesta veinte veces mas que no mandarlo: la decision se
+    # reporta, no se esconde en un log.
+    motivo_estrategia: str = ""
 
 
 def _muestra(documento, cuantas: int) -> list[Page]:
@@ -134,7 +142,8 @@ def procesar_balanza(pdf: str | Path, *, tenant_id: str | None = None,
                      paginas_muestra: int = 3,
                      estrategia: str | None = None) -> Resultado:
     """Procesa una balanza, reutilizando la plantilla del tenant si la hay."""
-    documento, estrategia = extraer(pdf, estrategia=estrategia)
+    documento, decision = extraer_con_motivo(pdf, estrategia=estrategia)
+    estrategia = decision.estrategia
     muestra = _muestra(documento, paginas_muestra)
     layout: Layout | None = detectar_layout(muestra)
     huella = huella_de(layout, _cuentas_de(muestra))
@@ -146,7 +155,9 @@ def procesar_balanza(pdf: str | Path, *, tenant_id: str | None = None,
     parser = BalanzaParser(paginas_muestra=paginas_muestra)
     if plantilla is not None:
         if plantilla.estrategia != estrategia:
-            documento, estrategia = extraer(pdf, estrategia=plantilla.estrategia)
+            documento, decision = extraer_con_motivo(
+                pdf, estrategia=plantilla.estrategia)
+            estrategia = decision.estrategia
         balanza = parser.parse(documento, layout=layout,
                                mapeo=_mapeo_de(plantilla))
         reglas = _reglas_de(plantilla)
@@ -166,7 +177,8 @@ def procesar_balanza(pdf: str | Path, *, tenant_id: str | None = None,
 
     return Resultado(balanza=balanza, cobertura=cobertura, estrategia=estrategia,
                      huella=huella, plantilla=aprendida,
-                     reutilizada=plantilla is not None)
+                     reutilizada=plantilla is not None,
+                     motivo_estrategia=decision.motivo)
 
 
 def procesar_auxiliar(pdf: str | Path, *, tenant_id: str | None = None,
@@ -175,8 +187,9 @@ def procesar_auxiliar(pdf: str | Path, *, tenant_id: str | None = None,
                       paginas_muestra: int = 3,
                       estrategia: str | None = None) -> ResultadoAuxiliar:
     """Procesa un auxiliar reutilizando la plantilla del tenant si la hay."""
-    documento, estrategia = extraer(pdf, estrategia=estrategia,
-                                    page_numbers=page_numbers)
+    documento, decision = extraer_con_motivo(pdf, estrategia=estrategia,
+                                             page_numbers=page_numbers)
+    estrategia = decision.estrategia
     parser = AuxiliarParser(paginas_muestra=paginas_muestra)
     muestra = _muestra(documento, paginas_muestra)
     layout = parser._layout(muestra)
@@ -201,7 +214,8 @@ def procesar_auxiliar(pdf: str | Path, *, tenant_id: str | None = None,
     return ResultadoAuxiliar(auxiliar=auxiliar, cobertura=cobertura,
                              estrategia=estrategia, huella=huella,
                              plantilla=aprendida,
-                             reutilizada=plantilla is not None)
+                             reutilizada=plantilla is not None,
+                             motivo_estrategia=decision.motivo)
 
 
 def _plantilla_de_auxiliar(tenant_id: str, huella: Huella, estrategia: str,
@@ -234,6 +248,10 @@ class ResultadoPolizas:
     huella: Huella | None
     plantilla: Plantilla | None
     reutilizada: bool
+    # Por que se eligio esa estrategia. Mandar un documento a OCR
+    # cuesta veinte veces mas que no mandarlo: la decision se
+    # reporta, no se esconde en un log.
+    motivo_estrategia: str = ""
 
 
 def procesar_polizas(pdf: str | Path, *, tenant_id: str | None = None,
@@ -242,8 +260,9 @@ def procesar_polizas(pdf: str | Path, *, tenant_id: str | None = None,
                      paginas_muestra: int = 3,
                      estrategia: str | None = None) -> ResultadoPolizas:
     """Procesa un libro diario reutilizando la plantilla del tenant si la hay."""
-    documento, estrategia = extraer(pdf, estrategia=estrategia,
-                                    page_numbers=page_numbers)
+    documento, decision = extraer_con_motivo(pdf, estrategia=estrategia,
+                                             page_numbers=page_numbers)
+    estrategia = decision.estrategia
     muestra = _muestra(documento, paginas_muestra)
     layout = detectar_layout(muestra)
     huella = huella_de(layout, _cuentas_de(muestra))
@@ -268,7 +287,8 @@ def procesar_polizas(pdf: str | Path, *, tenant_id: str | None = None,
     return ResultadoPolizas(libro=libro, cobertura=cobertura,
                             estrategia=estrategia, huella=huella,
                             plantilla=aprendida,
-                            reutilizada=plantilla is not None)
+                            reutilizada=plantilla is not None,
+                            motivo_estrategia=decision.motivo)
 
 
 def _plantilla_simple(tenant_id: str, huella: Huella, estrategia: str, tipo: str,
@@ -318,6 +338,10 @@ class ResultadoEstadoCuenta:
     huella: Huella | None
     plantilla: Plantilla | None
     reutilizada: bool
+    # Por que se eligio esa estrategia. Mandar un documento a OCR
+    # cuesta veinte veces mas que no mandarlo: la decision se
+    # reporta, no se esconde en un log.
+    motivo_estrategia: str = ""
 
 
 def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
@@ -326,8 +350,9 @@ def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
                            paginas_muestra: int = 2,
                            estrategia: str | None = None) -> ResultadoEstadoCuenta:
     """Procesa un estado de cuenta reutilizando la plantilla del tenant."""
-    documento, estrategia = extraer(pdf, estrategia=estrategia,
-                                    page_numbers=page_numbers)
+    documento, decision = extraer_con_motivo(pdf, estrategia=estrategia,
+                                             page_numbers=page_numbers)
+    estrategia = decision.estrategia
     # La huella sale de la fila de encabezado de la tabla de movimientos, no
     # del clustering de columnas: es lo que distingue (banco, tipo de
     # reporte), que es el eje real de la plantilla. Dos reportes del mismo
@@ -339,7 +364,14 @@ def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
     if almacen is not None and tenant_id and huella is not None:
         plantilla = almacen.buscar(tenant_id, huella.valor)
 
-    estado = EstadoCuentaParser(paginas_muestra=paginas_muestra).parse(
+    # El separador de continuacion sale de la plantilla cuando la hay: es
+    # una propiedad del formato que nadie puede deducir de la geometria, asi
+    # que la respuesta del humano manda sobre el default (PLAN 2).
+    parser = EstadoCuentaParser(
+        paginas_muestra=paginas_muestra,
+        separador_continuacion=(plantilla.separador_continuacion
+                                if plantilla is not None else ""))
+    estado = parser.parse(
         documento, layout=layout,
         mapeo=_mapeo_de(plantilla) if plantilla is not None else None)
     cobertura = evaluar_estado_cuenta(estado)
@@ -351,6 +383,7 @@ def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
                                       "estado_cuenta", estado.mapeo, cobertura, [])
         aprendida = replace(
             aprendida,
+            pendiente_de_confirmacion=True,
             cobertura={**aprendida.cobertura,
                        "sin_cubrir": list(_SIN_CUBRIR_EDOCTA)})
         almacen.guardar(aprendida)
@@ -358,7 +391,8 @@ def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
     return ResultadoEstadoCuenta(estado=estado, cobertura=cobertura,
                                  estrategia=estrategia, huella=huella,
                                  plantilla=aprendida,
-                                 reutilizada=plantilla is not None)
+                                 reutilizada=plantilla is not None,
+                                 motivo_estrategia=decision.motivo)
 
 
 @dataclass(frozen=True)
@@ -369,6 +403,10 @@ class ResultadoMayor:
     huella: Huella | None
     plantilla: Plantilla | None
     reutilizada: bool
+    # Por que se eligio esa estrategia. Mandar un documento a OCR
+    # cuesta veinte veces mas que no mandarlo: la decision se
+    # reporta, no se esconde en un log.
+    motivo_estrategia: str = ""
 
 
 def procesar_mayor(pdf: str | Path, *, tenant_id: str | None = None,
@@ -381,8 +419,9 @@ def procesar_mayor(pdf: str | Path, *, tenant_id: str | None = None,
     Quien orquesta decide que balanza corresponde: el parser nunca va a
     buscar archivos por su cuenta.
     """
-    documento, estrategia = extraer(pdf, estrategia=estrategia,
-                                    page_numbers=page_numbers)
+    documento, decision = extraer_con_motivo(pdf, estrategia=estrategia,
+                                             page_numbers=page_numbers)
+    estrategia = decision.estrategia
     muestra = _muestra(documento, paginas_muestra)
     layout = detectar_layout(muestra)
     huella = huella_de(layout, _cuentas_de(muestra))
@@ -407,4 +446,5 @@ def procesar_mayor(pdf: str | Path, *, tenant_id: str | None = None,
     return ResultadoMayor(mayor=mayor, cobertura=cobertura,
                           estrategia=estrategia, huella=huella,
                           plantilla=aprendida,
-                          reutilizada=plantilla is not None)
+                          reutilizada=plantilla is not None,
+                          motivo_estrategia=decision.motivo)

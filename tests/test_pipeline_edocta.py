@@ -91,3 +91,53 @@ def test_ningun_banco_entrega_con_reglas_en_falla(nombre):
     for regla in r.cobertura.reglas:
         if regla.estado == "no_verificable":
             assert regla.motivo, (nombre, regla.regla)
+
+
+# --- Fase 7e: el separador de continuacion lo confirma un humano ---------
+def test_la_plantilla_pregunta_por_el_separador_sin_proponer(tmp_path):
+    """La geometria NO distingue los dos modos de envolver (PLAN 2).
+
+    Se midio la varianza de x1 del ultimo token de cada linea llena y el
+    discriminador no existe: el documento que SI parte palabras es el que
+    peor puntua. Asi que la plantilla pregunta, y no propone nada.
+    """
+    almacen = AlmacenPlantillas(tmp_path)
+    r = procesar_estado_cuenta(requires_real_pdf("edocta"), tenant_id="t",
+                               almacen=almacen)
+    pendientes = r.plantilla.pendientes()
+    separador = next(p for p in pendientes
+                     if p["campo"] == "separador de continuacion")
+    assert separador["se_propone"] is None
+    assert "geometr" in separador["se_apoya_en"].lower()
+    assert "descripcion" in separador["consecuencia"].lower()
+    assert r.plantilla.pendiente_de_confirmacion is True
+
+
+def test_el_separador_confirmado_se_aplica_en_la_carga_siguiente(tmp_path):
+    """Una vez contestado, el formato ya no vuelve a preguntar."""
+    import dataclasses
+
+    almacen = AlmacenPlantillas(tmp_path)
+    pdf = requires_real_pdf("edocta")
+    primera = procesar_estado_cuenta(pdf, tenant_id="t", almacen=almacen)
+    assert primera.plantilla.separador_continuacion == ""
+
+    elegido = dataclasses.replace(primera.plantilla, separador_continuacion=" ",
+                                  pendiente_de_confirmacion=False,
+                                  confirmada_por="contadora")
+    almacen.guardar(elegido)
+
+    segunda = procesar_estado_cuenta(pdf, tenant_id="t", almacen=almacen)
+    assert segunda.reutilizada is True
+    spei = next(m for m in segunda.estado.movimientos
+                if m.dia == "07" and "BANORTE" in m.descripcion)
+    # Con separador " " la palabra partida sale separada; es exactamente la
+    # decision que el humano tomo, y el sistema la respeta.
+    assert "CON CEPTO:FACTURA" in spei.descripcion
+
+
+def test_sin_plantilla_el_separador_es_el_medido_en_el_primer_formato():
+    r = procesar_estado_cuenta(requires_real_pdf("edocta"))
+    spei = next(m for m in r.estado.movimientos
+                if m.dia == "07" and "BANORTE" in m.descripcion)
+    assert "CONCEPTO:FACTURA 1766" in spei.descripcion

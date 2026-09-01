@@ -48,23 +48,48 @@ class Plantilla:
     confirmada_por: str = ""
     confirmada_en: str = ""
     version: int = 1
+    # Como se unen las lineas de continuacion de una descripcion. Es una
+    # propiedad del FORMATO que la geometria no permite deducir (PLAN 2), asi
+    # que se pregunta una vez y se guarda aqui.
+    separador_continuacion: str = ""
 
-    def que_confirmar(self) -> dict | None:
-        """Lo que un humano tiene que confirmar una vez, como datos.
+    def pendientes(self) -> list[dict]:
+        """Todo lo que un humano tiene que confirmar una vez, como datos.
 
         La interfaz llega en la fase 8: aqui solo se expone que se propone,
-        sobre que se apoya y que cambiaria si estuviera mal.
+        sobre que se apoya y que cambiaria si estuviera mal. `se_propone` en
+        None significa que el sistema NO tiene con que proponer y por eso
+        pregunta a secas; fingir una propuesta sin evidencia es la misma
+        mentira que un '0 discrepancias' sin cobertura.
         """
         if not self.pendiente_de_confirmacion:
-            return None
-        return {
+            return []
+        if self.tipo == "estado_cuenta":
+            return [{
+                "campo": "separador de continuacion",
+                "se_propone": None,
+                "se_apoya_en": ("nada: se midio la varianza del borde derecho "
+                                "y la geometria no distingue un documento que "
+                                "parte palabras al envolver de uno que envuelve "
+                                "por palabra entera"),
+                "opciones": ["", " "],
+                "consecuencia": ("elegir mal pega o separa palabras dentro de "
+                                 "la descripcion; no afecta ningun importe, "
+                                 "saldo ni checksum"),
+            }]
+        return [{
             "campo": "orientacion debe/haber",
             "se_propone": {"debe": self.mapeo.get("debe"),
                            "haber": self.mapeo.get("haber")},
             "se_apoya_en": self.verificado_por,
             "consecuencia": (f"invertirla cambia la naturaleza de "
                              f"{self.filas_afectadas} filas"),
-        }
+        }]
+
+    def que_confirmar(self) -> dict | None:
+        """Lo primero pendiente, o None. Para quien solo maneja uno."""
+        pendientes = self.pendientes()
+        return pendientes[0] if pendientes else None
 
     def a_dict(self) -> dict:
         return asdict(self)

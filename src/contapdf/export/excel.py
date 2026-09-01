@@ -12,7 +12,9 @@ from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
+from contapdf.parsers.auxiliar import Auxiliar
 from contapdf.parsers.balanza import Balanza
+from contapdf.parsers.estado_cuenta import EstadoCuenta
 from contapdf.parsers.mayor import Mayor
 from contapdf.parsers.polizas import LibroDiario
 from contapdf.validate.rules import NO_VERIFICABLE, Cobertura
@@ -106,16 +108,24 @@ _CFDI = ("poliza_id", "fecha", "documento", "uuid", "rfc", "tipo")
 _MONTOS_DIARIO = frozenset({"total_debe", "total_haber", "debe", "haber"})
 
 
-def _hoja(libro_excel, titulo: str, encabezados, filas, negrita) -> None:
+def _hoja(libro_excel, titulo: str, encabezados, filas, negrita,
+          montos=_MONTOS_DIARIO) -> None:
+    """Una hoja: encabezado en negrita, montos con formato, panel congelado.
+
+    `filas` puede traer objetos o diccionarios -- la hoja plana se arma como
+    diccionario porque mezcla campos de dos tablas. Un campo ausente o en
+    None sale VACIO, nunca como cero: un cero inventado es indistinguible de
+    uno leido (PLAN 2).
+    """
     hoja = libro_excel.create_sheet(titulo)
     hoja.append(list(encabezados))
     for celda in hoja[1]:
         celda.font = negrita
     for fila in filas:
-        hoja.append([getattr(fila, campo, None) if not isinstance(fila, dict)
-                     else fila.get(campo) for campo in encabezados])
+        hoja.append([fila.get(campo) if isinstance(fila, dict)
+                     else getattr(fila, campo, None) for campo in encabezados])
         for celda, campo in zip(hoja[hoja.max_row], encabezados):
-            if campo in _MONTOS_DIARIO:
+            if campo in montos:
                 celda.number_format = _FORMATO_MONTO
     hoja.freeze_panes = "A2"
 
@@ -184,8 +194,9 @@ def exportar_mayor(mayor: Mayor, cobertura: Cobertura, destino: Path) -> Path:
     libro.remove(libro.active)
     negrita = Font(bold=True)
 
-    _hoja_mayor(libro, "Cuentas", _CUENTA_MAYOR, mayor.cuentas, negrita)
-    _hoja_mayor(libro, "Meses", _MES_MAYOR, mayor.meses, negrita)
+    _hoja(libro, "Cuentas", _CUENTA_MAYOR, mayor.cuentas, negrita,
+          _MONTOS_MAYOR)
+    _hoja(libro, "Meses", _MES_MAYOR, mayor.meses, negrita, _MONTOS_MAYOR)
 
     por_cuenta = {c.cuenta: c for c in mayor.cuentas}
     planas = []
@@ -195,22 +206,81 @@ def exportar_mayor(mayor: Mayor, cobertura: Cobertura, destino: Path) -> Path:
         fila.update({campo: getattr(mes, campo) for campo in _MES_MAYOR
                      if campo != "cuenta"})
         planas.append(fila)
-    _hoja_mayor(libro, "Plana", _CUENTA_MAYOR + _MES_MAYOR[1:], planas, negrita)
+    _hoja(libro, "Plana", _CUENTA_MAYOR + _MES_MAYOR[1:], planas, negrita,
+          _MONTOS_MAYOR)
 
     _validacion(libro, cobertura, negrita)
     libro.save(str(destino))
     return destino
 
 
-def _hoja_mayor(libro_excel, titulo: str, encabezados, filas, negrita) -> None:
-    hoja = libro_excel.create_sheet(titulo)
-    hoja.append(list(encabezados))
-    for celda in hoja[1]:
-        celda.font = negrita
-    for fila in filas:
-        hoja.append([fila.get(campo) if isinstance(fila, dict)
-                     else getattr(fila, campo, None) for campo in encabezados])
-        for celda, campo in zip(hoja[hoja.max_row], encabezados):
-            if campo in _MONTOS_MAYOR:
-                celda.number_format = _FORMATO_MONTO
-    hoja.freeze_panes = "A2"
+# La metadata del documento va como columnas de la hoja Cuentas y no en una
+# quinta hoja: son de una a tres filas, repetirla no cuesta nada, y una hoja
+# de dos renglones que nadie abre es peor que una columna repetida.
+_META_EDOCTA = ("banco", "rfc", "periodo_ini", "periodo_fin")
+_CUENTA_BANCO = ("num_cuenta", "clabe", "producto", "moneda", "saldo_inicial",
+                 "depositos", "retiros", "saldo_corte")
+_MOVIMIENTO_BANCO = ("num_cuenta", "dia", "fecha", "descripcion", "referencia",
+                     "deposito", "retiro", "saldo", "pagina")
+_MONTOS_EDOCTA = frozenset({"saldo_inicial", "depositos", "retiros",
+                            "saldo_corte", "deposito", "retiro", "saldo"})
+
+
+def exportar_estado_cuenta(estado: EstadoCuenta, cobertura: Cobertura,
+                           destino: Path) -> Path:
+    """Dos hojas relacionadas, una plana y la cobertura.
+
+    Un estado puede traer varias cuentas, asi que la relacion importa: cada
+    movimiento apunta a la cuenta que lo contiene y ninguna fila queda
+    huerfana. La plana repite el encabezado de la cuenta en cada movimiento,
+    que es la que el contador filtra.
+    """
+    libro = Workbook()
+    libro.remove(libro.active)
+    negrita = Font(bold=True)
+
+    meta = {campo: getattr(estado.meta, campo) for campo in _META_EDOCTA}
+    cuentas = [{**meta, **{campo: getattr(c, campo) for campo in _CUENTA_BANCO}}
+               for c in estado.cuentas]
+    _hoja(libro, "Cuentas", _META_EDOCTA + _CUENTA_BANCO, cuentas,
+          negrita, _MONTOS_EDOCTA)
+    _hoja(libro, "Movimientos", _MOVIMIENTO_BANCO, estado.movimientos,
+          negrita, _MONTOS_EDOCTA)
+
+    por_cuenta = {c["num_cuenta"]: c for c in cuentas}
+    planas = []
+    for movimiento in estado.movimientos:
+        fila = dict(por_cuenta.get(movimiento.num_cuenta, {}))
+        fila.update({campo: getattr(movimiento, campo)
+                     for campo in _MOVIMIENTO_BANCO if campo != "num_cuenta"})
+        planas.append(fila)
+    _hoja(libro, "Plana", _META_EDOCTA + _CUENTA_BANCO
+          + _MOVIMIENTO_BANCO[1:], planas, negrita, _MONTOS_EDOCTA)
+
+    _validacion(libro, cobertura, negrita)
+    libro.save(str(destino))
+    return destino
+
+
+_FILA_AUXILIAR = ("cuenta", "nombre_cuenta", "saldo_inicial_cuenta", "folio",
+                  "fecha", "tipo_movimiento", "documento", "tercero",
+                  "concepto", "debe", "haber", "saldo", "es_subtotal",
+                  "pagina")
+_MONTOS_AUXILIAR = frozenset({"saldo_inicial_cuenta", "debe", "haber", "saldo"})
+
+
+def exportar_auxiliar(auxiliar: Auxiliar, cobertura: Cobertura,
+                      destino: Path) -> Path:
+    """Una tabla y la cobertura: el auxiliar ya viene plano.
+
+    La cuenta de la seccion va arrastrada en cada renglon, asi que no hay
+    una segunda tabla que relacionar ni una hoja plana que construir.
+    """
+    libro = Workbook()
+    libro.remove(libro.active)
+    negrita = Font(bold=True)
+    _hoja(libro, "Auxiliar", _FILA_AUXILIAR, auxiliar.filas, negrita,
+          _MONTOS_AUXILIAR)
+    _validacion(libro, cobertura, negrita)
+    libro.save(str(destino))
+    return destino
