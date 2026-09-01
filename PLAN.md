@@ -182,7 +182,28 @@ Que las dos tablas estén relacionadas hace verificable el corte entre
 páginas: «ninguna fila huérfana» se vuelve el invariante «todo mes apunta a
 una cuenta existente».
 
-**Estado de cuenta** — metadata + movimientos.
+**Estado de cuenta** — dos tablas relacionadas + metadata del documento
+(contrato de la fase 7d; el anterior asumía una sola cuenta):
+
+```
+MetaEstadoCuenta(banco, rfc, periodo_ini, periodo_fin)
+CuentaBancaria(num_cuenta, clabe, producto, moneda,
+               saldo_inicial, depositos, retiros, saldo_corte)
+MovimientoBancario(num_cuenta, dia, fecha, descripcion, referencia,
+                   deposito, retiro, saldo, pagina)
+EstadoCuenta(meta, cuentas, movimientos, mapeo)
+```
+
+Los saldos del resumen son propiedad de la **cuenta**, no del documento:
+tenerlos en `meta` es lo que forzaba el singular. Un estado de una cuenta
+queda con `cuentas` de longitud 1, sin caso especial.
+
+Checksums **por cuenta**, no por documento. Y una regla más: cuando el
+documento imprime una fila `TOTAL` (Banorte julio), `Σ saldos por cuenta ==
+TOTAL declarado` es un cruce verificable con datos.
+
+Con 2+ cuentas y sin desglose por cuenta, los saldos van a `None` y la
+cobertura lo declara. **No se reparte el total.**
 
 Hallazgos medidos (fase 7, AFIRME):
 - El nombre del banco va **bajo el sello digital, sobreimpreso**, y sale
@@ -237,6 +258,30 @@ Hallazgos que aplican a todo el sistema, no solo a estados de cuenta:
 - **Inbursa página 2 detecta 6 columnas limpias**
   (`FECHA | REFERENCIA | CONCEPTO | CARGO | ABONO | SALDO`): es el estado
   de cuenta mejor estructurado de los nueve.
+
+**Los 9 bancos, medidos (fase 7d).** De 11 fixtures:
+
+- **Con tabla de movimientos (6 documentos, 5 bancos)**: AFIRME,
+  Santander abril, Banorte julio, Bajío, Inbursa, BBVA. Todos comparten la
+  misma forma —fecha, descripción, uno de {depósito, retiro}, saldo
+  corrido, descripción envuelta, fila nueva marcada por la fecha— que es la
+  que ya resuelve `EstadoCuentaParser`.
+  Difieren en cuatro ejes absorbibles por vocabulario y anclas:
+  vocabulario (`Depósitos/Retiros` vs `Cargos/Abonos` vs una sola columna
+  `Depósito-Retiro` en Santander), formato de fecha (`01`, `01-ABR-2025`,
+  `01-JUL-23` pegada, `1 SEP`, `JUL. 03`, `05/DIC`), número de columnas de
+  fecha (BBVA trae dos: operación y liquidación) y presencia del símbolo
+  `$`.
+- **Sin tabla de movimientos (4)**: Santander inversión a plazo,
+  Scotiabank (crédito), Monex y Multiva (resúmenes). **No fallan: son otro
+  tipo de reporte.** El parser lanza `LayoutDesconocido` con motivo
+  consumible por la capa web, no un error genérico.
+- **Ilegible sin OCR (1)**: HSBC, con **97% de sus palabras en CID**
+  (590 de 609). Caso 6 en su forma extrema.
+
+Confirma que el eje de la plantilla es **(banco, tipo de reporte)**: los
+dos Santander son el mismo banco con estructuras incomparables, y los dos
+Banorte igual.
 
 **Declarado sin cubrir** (una sola muestra, AFIRME): otro banco puede
 nombrar distinto el resumen, la tabla y el bloque de identificación; el
@@ -756,7 +801,7 @@ cp-pdf/
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | **hecho** (460 tests) |
 | 7c | Extracción transversal | Deduplicar tokens repetidos, CID → OCR, fecha pegada, encabezado de balanza-fd | **hecho** (508 tests) |
 | 7c2 | Cuentas ambiguas + ARQUITECTURA.md | `is_amount` por posición + documento de arquitectura | **hecho** (513 tests) |
-| 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 9 bancos con el mismo parser | siguiente |
+| 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 5 bancos con tabla, mismo parser | en curso (contrato aprobado) |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
@@ -929,7 +974,16 @@ antes de implementarse.
 
 ### Puntos abiertos
 
-- **MEDIR ANTES DE LA FASE 8: memoria pico por documento.** Cuatro de los
+- **Memoria pico, MEDIDA (fase 7d).** Peor caso `auxiliar-gume` (886 págs,
+  57,759 filas): **543 MB**. Le siguen `diario-general` 259 MB, `poliza`
+  109 MB, el resto por debajo de 60 MB. Descomposición del peor caso:
+  190 MB es piso de pdfplumber (no baja con streaming), +317 MB por
+  `list(open_pages())`, +36 MB por las filas del resultado.
+  **Con ~11 GB libres y un trabajo a la vez, cabe con holgura: no hay que
+  convertir a streaming antes de la fase 8.** Convertirlo bajaría el pico
+  a ~225 MB. **Esta es la cifra que decide si la fase 8 puede correr dos
+  trabajos en paralelo**: 543 MB × N.
+- (histórico) **MEDIR ANTES DE LA FASE 8: memoria pico por documento.** Cuatro de los
   cinco parsers hacen `list(document.open_pages())` — solo `BalanzaParser`
   transmite página por página. Eso contradice §0. Con un solo trabajo a la
   vez probablemente aguante, pero hay que medir el pico real del auxiliar
