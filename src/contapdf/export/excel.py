@@ -13,6 +13,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
 from contapdf.parsers.balanza import Balanza
+from contapdf.parsers.mayor import Mayor
 from contapdf.parsers.polizas import LibroDiario
 from contapdf.validate.rules import NO_VERIFICABLE, Cobertura
 
@@ -166,3 +167,50 @@ def _validacion(libro_excel, cobertura: Cobertura, negrita) -> None:
     for d in cobertura.discrepancias:
         detalle.append([d.fila, d.regla, d.esperado, d.obtenido])
     detalle.freeze_panes = "A2"
+
+
+_CUENTA_MAYOR = ("cuenta", "nombre_cuenta", "naturaleza", "saldo_inicial",
+                 "saldo_final", "total_cargos", "total_abonos")
+_MES_MAYOR = ("cuenta", "orden", "periodo", "cargos", "abonos", "saldo",
+              "acum_cargos", "acum_abonos")
+_MONTOS_MAYOR = frozenset({"saldo_inicial", "saldo_final", "total_cargos",
+                           "total_abonos", "cargos", "abonos", "saldo",
+                           "acum_cargos", "acum_abonos"})
+
+
+def exportar_mayor(mayor: Mayor, cobertura: Cobertura, destino: Path) -> Path:
+    """Dos hojas relacionadas, una plana y la cobertura."""
+    libro = Workbook()
+    libro.remove(libro.active)
+    negrita = Font(bold=True)
+
+    _hoja_mayor(libro, "Cuentas", _CUENTA_MAYOR, mayor.cuentas, negrita)
+    _hoja_mayor(libro, "Meses", _MES_MAYOR, mayor.meses, negrita)
+
+    por_cuenta = {c.cuenta: c for c in mayor.cuentas}
+    planas = []
+    for mes in mayor.meses:
+        cuenta = por_cuenta.get(mes.cuenta)
+        fila = {campo: getattr(cuenta, campo, None) for campo in _CUENTA_MAYOR}
+        fila.update({campo: getattr(mes, campo) for campo in _MES_MAYOR
+                     if campo != "cuenta"})
+        planas.append(fila)
+    _hoja_mayor(libro, "Plana", _CUENTA_MAYOR + _MES_MAYOR[1:], planas, negrita)
+
+    _validacion(libro, cobertura, negrita)
+    libro.save(str(destino))
+    return destino
+
+
+def _hoja_mayor(libro_excel, titulo: str, encabezados, filas, negrita) -> None:
+    hoja = libro_excel.create_sheet(titulo)
+    hoja.append(list(encabezados))
+    for celda in hoja[1]:
+        celda.font = negrita
+    for fila in filas:
+        hoja.append([fila.get(campo) if isinstance(fila, dict)
+                     else getattr(fila, campo, None) for campo in encabezados])
+        for celda, campo in zip(hoja[hoja.max_row], encabezados):
+            if campo in _MONTOS_MAYOR:
+                celda.number_format = _FORMATO_MONTO
+    hoja.freeze_panes = "A2"

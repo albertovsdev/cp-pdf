@@ -19,6 +19,7 @@ from contapdf.ir import Page
 from contapdf.parsers.auxiliar import Auxiliar, AuxiliarParser
 from contapdf.parsers.balanza import Balanza, BalanzaParser, Mapeo
 from contapdf.parsers.estado_cuenta import EstadoCuenta, EstadoCuentaParser
+from contapdf.parsers.mayor import Mayor, MayorParser
 from contapdf.parsers.polizas import LibroDiario, PolizasParser
 from contapdf.parsers.base import Layout, detectar_layout, lineas_de_tabla
 from contapdf.templates.fingerprint import Huella, huella_de
@@ -29,6 +30,7 @@ from contapdf.validate.rules import (
     evaluar_auxiliar,
     evaluar_balanza,
     evaluar_estado_cuenta,
+    evaluar_mayor,
     evaluar_polizas,
 )
 
@@ -346,3 +348,52 @@ def procesar_estado_cuenta(pdf: str | Path, *, tenant_id: str | None = None,
                                  estrategia=estrategia, huella=huella,
                                  plantilla=aprendida,
                                  reutilizada=plantilla is not None)
+
+
+@dataclass(frozen=True)
+class ResultadoMayor:
+    mayor: Mayor
+    cobertura: Cobertura
+    estrategia: str
+    huella: Huella | None
+    plantilla: Plantilla | None
+    reutilizada: bool
+
+
+def procesar_mayor(pdf: str | Path, *, tenant_id: str | None = None,
+                   almacen: AlmacenPlantillas | None = None,
+                   page_numbers: Sequence[int] | None = None,
+                   paginas_muestra: int = 2, estrategia: str | None = None,
+                   balanza: Balanza | None = None) -> ResultadoMayor:
+    """Procesa un libro mayor. 'balanza' habilita el cruce entre documentos.
+
+    Quien orquesta decide que balanza corresponde: el parser nunca va a
+    buscar archivos por su cuenta.
+    """
+    documento, estrategia = extraer(pdf, estrategia=estrategia,
+                                    page_numbers=page_numbers)
+    muestra = _muestra(documento, paginas_muestra)
+    layout = detectar_layout(muestra)
+    huella = huella_de(layout, _cuentas_de(muestra))
+
+    plantilla = None
+    if almacen is not None and tenant_id and huella is not None:
+        plantilla = almacen.buscar(tenant_id, huella.valor)
+
+    mayor = MayorParser(paginas_muestra=paginas_muestra).parse(
+        documento, layout=layout,
+        mapeo=_mapeo_de(plantilla) if plantilla is not None else None)
+    cobertura = evaluar_mayor(mayor, balanza=balanza)
+
+    aprendida = plantilla
+    if (plantilla is None and almacen is not None and tenant_id
+            and huella is not None and not cobertura.fallan):
+        aprendida = _plantilla_simple(tenant_id, huella, estrategia, "mayor",
+                                      mayor.mapeo, cobertura,
+                                      [c.cuenta for c in mayor.cuentas])
+        almacen.guardar(aprendida)
+
+    return ResultadoMayor(mayor=mayor, cobertura=cobertura,
+                          estrategia=estrategia, huella=huella,
+                          plantilla=aprendida,
+                          reutilizada=plantilla is not None)

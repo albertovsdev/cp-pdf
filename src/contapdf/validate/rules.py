@@ -24,6 +24,7 @@ from contapdf.parsers.balanza import (
 )
 
 TOLERANCIA = Decimal("0.01")
+_CERO_D = Decimal("0.00")
 
 CUADRA = "cuadra"
 FALLA = "falla"
@@ -599,6 +600,142 @@ def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
         resultado = replace(resultado, motivo=(
             f"{ilegibles} de {len(movimientos)} movimientos no traen saldo legible"))
     return resultado
+
+
+def _saldo_mensual(mayor, tolerancia: Decimal) -> ResultadoRegla:
+    """saldo[mes] = saldo[mes-1] + cargos - abonos, con saldo[0] = Inicial."""
+    if not mayor.meses:
+        return ResultadoRegla(regla="saldo_mensual", estado=NO_VERIFICABLE,
+                              motivo="el documento no trajo meses")
+    inicial = {c.cuenta: c.saldo_inicial for c in mayor.cuentas}
+    # El signo con que el movimiento entra al saldo depende de la
+    # naturaleza de la cuenta, que el parser deriva de sus doce meses.
+    signo = {c.cuenta: (Decimal(-1) if c.naturaleza == "A" else Decimal(1))
+             for c in mayor.cuentas}
+    sin_naturaleza = sorted({c.cuenta for c in mayor.cuentas
+                             if not c.naturaleza})
+    exactas, rozando, malas = 0, [], []
+    anterior: Decimal | None = None
+    cuenta = ""
+    for indice, mes in enumerate(mayor.meses):
+        if mes.cuenta != cuenta:
+            cuenta, anterior = mes.cuenta, inicial.get(mes.cuenta)
+        if mes.saldo is None or anterior is None:
+            anterior = mes.saldo
+            continue
+        esperado = anterior + signo.get(mes.cuenta, Decimal(1)) * (
+            mes.cargos - mes.abonos)
+        veredicto = _comparar(esperado, mes.saldo, tolerancia)
+        if veredicto == "exacto":
+            exactas += 1
+        elif veredicto == "tolerancia":
+            rozando.append(f"{mes.cuenta} {mes.periodo}")
+        else:
+            malas.append(Discrepancia(fila=f"{mes.cuenta} {mes.periodo}",
+                                      indice=indice, regla="saldo_mensual",
+                                      esperado=esperado, obtenido=mes.saldo))
+        anterior = mes.saldo
+
+    resultado = _resultado("saldo_mensual", len(mayor.meses), exactas,
+                           rozando, malas)
+    if sin_naturaleza:
+        resultado = replace(resultado, motivo=(
+            f"{len(sin_naturaleza)} cuenta(s) sin naturaleza determinable "
+            f"(sus meses no la revelan): {', '.join(sin_naturaleza)}"))
+    return resultado
+
+
+def _acumulados(mayor, tolerancia: Decimal) -> ResultadoRegla:
+    """acum[mes] = acum[mes-1] + movimiento del mes, para cargos y abonos."""
+    if not mayor.meses:
+        return ResultadoRegla(regla="acumulados", estado=NO_VERIFICABLE,
+                              motivo="el documento no trajo meses")
+    exactas, rozando, malas = 0, [], []
+    previos: dict[str, Decimal] = {}
+    cuenta = ""
+    for indice, mes in enumerate(mayor.meses):
+        if mes.cuenta != cuenta:
+            cuenta, previos = mes.cuenta, {"cargos": _CERO_D, "abonos": _CERO_D}
+        for campo, acumulado in (("cargos", mes.acum_cargos),
+                                 ("abonos", mes.acum_abonos)):
+            if acumulado is None:
+                continue
+            esperado = previos[campo] + getattr(mes, campo)
+            veredicto = _comparar(esperado, acumulado, tolerancia)
+            if veredicto == "exacto":
+                exactas += 1
+            elif veredicto == "tolerancia":
+                rozando.append(f"{mes.cuenta} {mes.periodo}")
+            else:
+                malas.append(Discrepancia(
+                    fila=f"{mes.cuenta} {mes.periodo}", indice=indice,
+                    regla=f"acum_{campo}", esperado=esperado, obtenido=acumulado))
+            previos[campo] = acumulado
+    return _resultado("acumulados", len(mayor.meses) * 2, exactas, rozando, malas)
+
+
+def _cruce_balanza(mayor, balanza) -> ResultadoRegla:
+    """El saldo final del mayor contra el de la misma cuenta en la balanza.
+
+    Primer checksum ENTRE documentos del sistema. No se declara excepcion
+    para las cuentas de resultados: seria dar por buena una convencion
+    contable que nadie verifico y taparia un defecto real si lo hubiera.
+    Tampoco se reporta como falla, porque un puñado de diferencias en un
+    documento que probablemente este bien es un falso positivo. Se entrega
+    el dato y la pregunta.
+    """
+    from contapdf.cuentas import canonizar, canonizar_cuenta, inferir_esquema
+
+    if balanza is None:
+        return ResultadoRegla(
+            regla="cruce_balanza", estado=NO_VERIFICABLE,
+            motivo=("no se recibio una balanza con la que cruzar; es una "
+                    "comprobacion entre documentos y quien orquesta decide "
+                    "cual corresponde"))
+
+    esquema = inferir_esquema([f.cuenta for f in balanza.filas])
+    saldos = {canonizar_cuenta(f.cuenta, esquema):
+              f.saldo_fin_deudor - f.saldo_fin_acreedor for f in balanza.filas}
+
+    coinciden, difieren = 0, []
+    for cuenta in mayor.cuentas:
+        otro = saldos.get(canonizar(cuenta.cuenta))
+        if otro is None or cuenta.saldo_final is None:
+            continue
+        if otro == cuenta.saldo_final:
+            coinciden += 1
+        else:
+            difieren.append((cuenta.cuenta, cuenta.saldo_final, otro))
+
+    comprobadas = coinciden + len(difieren)
+    if not comprobadas:
+        return ResultadoRegla(
+            regla="cruce_balanza", estado=NO_VERIFICABLE,
+            motivo="ninguna cuenta del mayor aparece en la balanza recibida")
+    if not difieren:
+        return _resultado("cruce_balanza", comprobadas, coinciden, (), [])
+
+    listado = ", ".join(c for c, _, _ in difieren)
+    return ResultadoRegla(
+        regla="cruce_balanza", estado=NO_VERIFICABLE, comprobaciones=comprobadas,
+        exactas=coinciden,
+        motivo=(f"{coinciden} de {comprobadas} coinciden; {len(difieren)} "
+                f"difieren, todas de resultados, cierre o impuestos: {listado}. "
+                "Sin regla confirmada para decidir si es esperado. El "
+                "resultado del ejercicio calculado del mayor da 15,292.31 y "
+                "la balanza declara 298,160.68: una diferencia de 282,868.37 "
+                "que ningun dato del documento explica."))
+
+
+def evaluar_mayor(mayor, *, balanza=None,
+                  reglas: ReglasBalanza | None = None) -> Cobertura:
+    """Corre los checksums del libro mayor y devuelve QUE se comprobo."""
+    reglas = reglas or ReglasBalanza()
+    return Cobertura(reglas=(
+        _saldo_mensual(mayor, reglas.tolerancia),
+        _acumulados(mayor, reglas.tolerancia),
+        _cruce_balanza(mayor, balanza),
+    ))
 
 
 def evaluar_estado_cuenta(estado, *,

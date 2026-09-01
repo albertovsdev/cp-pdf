@@ -124,3 +124,64 @@ def test_toda_columna_conserva_su_geometria(name, page_number):
         assert (despues.index, despues.align) == (antes.index, antes.align)
         assert (despues.x_min, despues.x_max) == (antes.x_min, antes.x_max)
         assert despues.support == antes.support
+
+
+# --- Encabezados agrupados ----------------------------------------------
+def _layout_de(nombre: str, pagina: int):
+    from contapdf.layout.columns import detect
+    from contapdf.layout.region import find_table_region, lines_within
+
+    page = layout_page(nombre, pagina)
+    lines = group(page.words, tol=2.5)
+    region = find_table_region(lines)
+    return assign(lines, region, detect(lines_within(lines, region)))
+
+
+def test_una_etiqueta_que_abarca_dos_columnas_las_prefija():
+    # 'Acumulados' se imprime sobre 'Cargos' y 'Abonos', que ya existen
+    # como etiquetas de las columnas de movimiento. Sin el prefijo, las
+    # cuatro columnas se llaman igual de a dos.
+    from conftest import requires_real_pdf
+
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.base import detectar_layout
+
+    doc, _ = extraer(requires_real_pdf("mayor-gume"), page_numbers=[1, 2])
+    layout = detectar_layout(list(doc.open_pages()))
+    headers = [c.header for c in layout.columns]
+    assert headers[1] == "Cargos" and headers[2] == "Abonos"
+    assert headers[4] == "Acumulados Cargos"
+    assert headers[5] == "Acumulados Abonos"
+    assert len(set(headers)) == len(headers)
+
+
+# --- Criterio 8 ----------------------------------------------------------
+def test_el_agrupado_tambien_funciona_en_otra_balanza():
+    """La regla es general, no una excepcion para 'Acumulados'.
+
+    balanza-fd agrupa Deudor/Acreedor bajo SaldoAnterior y bajo
+    SaldoActual (enmascarados en el fixture). Lo que se verifica aqui es
+    que el prefijo se aplique y que sean grupos DISTINTOS; que ese
+    documento tenga seis subetiquetas sobre cuatro columnas detectadas es
+    un problema de deteccion suyo, de la fase que le toque.
+    """
+    cols = _layout_de("balanza-fd", 1)
+    prefijados = [c.header for c in cols if "Deudor" in c.header]
+    assert len(prefijados) == 2
+
+    grupos = {h.split(" Deudor")[0] for h in prefijados}
+    assert len(grupos) == 2               # SaldoAnterior y SaldoActual
+    assert all(g and not g.startswith("Deudor") for g in grupos)
+    # Y las subetiquetas nunca quedan sin su grupo.
+    assert all("Acreedor" not in h or h.index("Acreedor") > 0
+               for h in prefijados)
+
+
+def test_el_encabezado_de_dos_renglones_de_siempre_no_cambia():
+    # La balanza original parte 'Saldo Inicial' / 'Deudor' en dos
+    # renglones sin que ninguno abarque dos columnas: sigue igual.
+    assert _headers("balanza", 1) == [
+        "No. Cuenta", "Naturaleza", "Cuenta", "Saldo Inicial Deudor",
+        "Saldo Inicial Acreedor", "Debe", "Haber", "Saldo Final Deudor",
+        "Saldo Final Acreedor",
+    ]

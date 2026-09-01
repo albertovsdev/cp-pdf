@@ -60,6 +60,59 @@ def _header_block(lines: Sequence[Line], max_lines: int,
     return bloque
 
 
+def _renglon_de_grupo(lines: Sequence[Line], bloque: Sequence[Line],
+                      pitch_factor: float) -> Line | None:
+    """El renglon de arriba del encabezado, si esta lo bastante pegado.
+
+    Se usa el mismo criterio que para el encabezado partido en dos: mas
+    apretado que el interlineado de los datos. Sin el, un renglon de
+    metadatos que casualmente abarque dos etiquetas se colaria como grupo.
+    """
+    if not bloque:
+        return None
+    try:
+        indice = lines.index(bloque[0])
+    except ValueError:
+        return None
+    if indice == 0:
+        return None
+    datos = lines[indice + len(bloque):]
+    pitches = [b.top - a.top for a, b in zip(datos, datos[1:])]
+    if len(pitches) < 2:
+        return None
+    limite = statistics.median(pitches) * pitch_factor
+    anterior = lines[indice - 1]
+    return anterior if bloque[0].top - anterior.top <= limite else None
+
+
+def _agrupados(bloque: Sequence[Line]) -> dict[int, str]:
+    """Etiquetas que abarcan varias del renglon de abajo, y a quien prefijan.
+
+    Un encabezado agrupado no nombra una columna: nombra un grupo de
+    columnas y se imprime encima de sus etiquetas. 'Acumulados' sobre
+    'Cargos' y 'Abonos' en el libro mayor, 'SaldoAnterior' sobre
+    'Deudor' y 'Acreedor' en una balanza. Se reconoce porque se traslapa
+    horizontalmente con DOS o mas palabras del renglon siguiente; una
+    etiqueta partida en dos renglones se traslapa solo con una.
+
+    Devuelve, por cada palabra prefijada, el texto que la prefija. Se
+    identifica por id() porque dos columnas pueden traer la misma palabra.
+    """
+    prefijos: dict[int, str] = {}
+    for arriba, abajo in zip(bloque, bloque[1:]):
+        for palabra in arriba.words:
+            if is_amount(palabra.text):
+                continue  # un importe no agrupa columnas
+            cubiertas = [w for w in abajo.words
+                         if w.x0 < palabra.x1 and palabra.x0 < w.x1]
+            if len(cubiertas) < 2:
+                continue
+            for w in cubiertas:
+                prefijos[id(w)] = palabra.text
+            prefijos[id(palabra)] = ""  # el grupo no va a ninguna columna
+    return prefijos
+
+
 def assign(lines: Sequence[Line], region: Region | None,
            columns: Sequence[ColumnSpec], *, max_distance: float = 40.0,
            max_header_lines: int = 4, pitch_factor: float = 1.3) -> list[ColumnSpec]:
@@ -74,10 +127,23 @@ def assign(lines: Sequence[Line], region: Region | None,
     if region is None or not etiquetadas:
         return etiquetadas
 
+    bloque = _header_block(lines_within(lines, region), max_header_lines,
+                           pitch_factor)
+    # La etiqueta de grupo puede quedar fuera de la zona de tabla: en el
+    # libro mayor comparte renglon con el saldo inicial, que trae importe.
+    # Se mira el renglon de arriba SOLO para agrupar; sus otras palabras no
+    # nombran ninguna columna porque no abarcan dos etiquetas.
+    contexto = list(bloque)
+    anterior = _renglon_de_grupo(lines, bloque, pitch_factor)
+    if anterior is not None:
+        contexto.insert(0, anterior)
+    prefijos = _agrupados(contexto)
+
     partes: dict[int, list[tuple[float, float, str]]] = {}
-    for ln in _header_block(lines_within(lines, region), max_header_lines,
-                            pitch_factor):
+    for ln in bloque:
         for w in ln.words:
+            if id(w) in prefijos and not prefijos[id(w)]:
+                continue  # es la etiqueta del grupo: no nombra una columna
             elegida, menor, ancho = None, float("inf"), float("inf")
             for col in etiquetadas:
                 d = _distance(w, col, pad=6.0)
@@ -88,7 +154,11 @@ def assign(lines: Sequence[Line], region: Region | None,
                 if d < menor or (d == menor and col.x_max - col.x_min < ancho):
                     elegida, menor, ancho = col, d, col.x_max - col.x_min
             if elegida is not None and menor < max_distance:
-                partes.setdefault(elegida.index, []).append((w.top, w.x0, w.text))
+                texto = w.text
+                prefijo = prefijos.get(id(w), "")
+                if prefijo:
+                    texto = f"{prefijo} {texto}"
+                partes.setdefault(elegida.index, []).append((w.top, w.x0, texto))
 
     for col in etiquetadas:
         col.header = " ".join(t for _, _, t in sorted(partes.get(col.index, [])))

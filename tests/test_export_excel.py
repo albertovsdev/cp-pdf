@@ -202,3 +202,25 @@ def test_las_hojas_exportan_los_campos_con_los_que_se_identifica_la_poliza(tmp_p
     # Y el valor llega, no solo la columna.
     fila = [c.value for c in wb["Polizas"][2]]
     assert "18243" in [str(v) for v in fila]
+
+
+def test_el_libro_mayor_sale_en_dos_hojas_mas_la_plana(tmp_path):
+    from conftest import requires_real_pdf
+
+    from contapdf.export.excel import exportar_mayor
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.mayor import MayorParser
+    from contapdf.validate.rules import evaluar_mayor
+
+    doc, _ = extraer(requires_real_pdf("mayor-gume"))
+    mayor = MayorParser().parse(doc)
+    destino = tmp_path / "mayor.xlsx"
+    exportar_mayor(mayor, evaluar_mayor(mayor), destino)
+
+    wb = openpyxl.load_workbook(destino)
+    assert wb.sheetnames == ["Cuentas", "Meses", "Plana", "Validacion"]
+    assert wb["Cuentas"].max_row == len(mayor.cuentas) + 1
+    assert wb["Meses"].max_row == len(mayor.meses) + 1
+    assert wb["Plana"].max_row == len(mayor.meses) + 1
+    encabezados = [c.value for c in wb["Plana"][1]]
+    assert "saldo_inicial" in encabezados and "periodo" in encabezados
