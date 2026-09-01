@@ -1,0 +1,5717 @@
+{
+ "source_pages_total": 4,
+ "pages_sampled": [
+  1,
+  2,
+  4
+ ],
+ "mask_mode": "values",
+ "salted": true,
+ "pages": [
+  {
+   "page": 1,
+   "width": 612.0,
+   "height": 792.0,
+   "has_text_layer": true,
+   "ruling_lines": 71,
+   "rects": 14,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 41.8,
+     "x_min": 37.6,
+     "x_max": 348.4,
+     "support": 42,
+     "header": ""
+    },
+    {
+     "index": 1,
+     "align": "left",
+     "anchor": 357.4,
+     "x_min": 355.9,
+     "x_max": 564.9,
+     "support": 49,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "ˆ(xxx:999)¯(xxx:999)ª`@˜¯@ˆ¨¯(xxx:999)(xxx:999)¯(xxx:999)",
+     "x0": 245.5,
+     "x1": 366.4,
+     "top": 22.2,
+     "bottom": 33.2,
+     "size": 11.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "¯¢£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ⁄(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 263.2,
+     "x1": 348.4,
+     "top": 37.6,
+     "bottom": 47.6,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "¯(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)x@¨(xxx:999)´ˆ@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)@(xxx:999)X`X@(xxx:999)(xxx:999)¢£(xxx:999)£⁄(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)x@˙(xxx:999)⁄(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¨(xxx:999)´ˆX@(xxx:999)˘ˆx@¨(xxx:999)(xxx:999)‘øı(xxx:999)æ(xxx:999)ı(xxx:999)˙ł",
+     "x0": 23.5,
+     "x1": 470.2,
+     "top": 750.4,
+     "bottom": 759.4,
+     "size": 9.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)X@(xxx:999)(xxx:999)(xxx:999)x@ˆ(xxx:999)(xxx:999)X@ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x@ˆX(xxx:999)X@(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)x@`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)@ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)x@ˆ(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)@ª(xxx:999)(xxx:999)X@ıı@ı(xxx:999)(xxx:999)æ‘(xxx:999)(xxx:999)ø(xxx:999)@(xxx:999)`˙X@æx(xxx:999)",
+     "x0": 23.5,
+     "x1": 589.4,
+     "top": 761.0,
+     "bottom": 770.0,
+     "size": 9.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)`(xxx:999)(xxx:999)˜(xxx:999)(xxx:999)x@(xxx:999)X`X@˜¯@ˆX(xxx:999)X",
+     "x0": 43.2,
+     "x1": 131.5,
+     "top": 108.0,
+     "bottom": 116.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "`(xxx:999)@(xxx:999)(xxx:999)`(xxx:999)¯Ø@(xxx:999)ıæø@(xxx:999)(xxx:999)ª@˜¯(xxx:999)(xxx:999)`ˆ¨(xxx:999)",
+     "x0": 43.2,
+     "x1": 168.2,
+     "top": 128.6,
+     "bottom": 136.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)@˜¯@ˆ(xxx:999)¯(xxx:999)ª`(xxx:999)",
+     "x0": 411.8,
+     "x1": 504.4,
+     "top": 125.7,
+     "bottom": 133.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)@´",
+     "x0": 43.2,
+     "x1": 63.6,
+     "top": 138.0,
+     "bottom": 146.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 361.4,
+     "x1": 425.5,
+     "top": 134.1,
+     "bottom": 143.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)xø(xxx:999)ıX(xxx:999)(xxx:999)",
+     "x0": 518.1,
+     "x1": 554.8,
+     "top": 135.1,
+     "bottom": 143.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)`@(xxx:999)`Ø",
+     "x0": 43.2,
+     "x1": 70.3,
+     "top": 147.3,
+     "bottom": 155.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 372.0,
+     "x1": 398.2,
+     "top": 144.5,
+     "bottom": 152.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¯´(xxx:999)`@(xxx:999)(xxx:999)¯´(xxx:999)`",
+     "x0": 43.2,
+     "x1": 131.5,
+     "top": 156.7,
+     "bottom": 164.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)˜(xxx:999)(xxx:999)˛¢(xxx:999)£(xxx:999)¢x",
+     "x0": 361.4,
+     "x1": 408.5,
+     "top": 153.6,
+     "bottom": 162.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 533.2,
+     "x1": 554.8,
+     "top": 154.5,
+     "bottom": 162.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "`(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 372.0,
+     "x1": 398.2,
+     "top": 163.9,
+     "bottom": 171.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)¢xˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 361.4,
+     "x1": 423.6,
+     "top": 171.6,
+     "bottom": 180.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)x(xxx:999)(xxx:999)øX(xxx:999)(xxx:999)",
+     "x0": 518.1,
+     "x1": 554.8,
+     "top": 172.5,
+     "bottom": 180.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)¢@(xxx:999)(xxx:999)£(xxx:999)¢",
+     "x0": 361.4,
+     "x1": 426.0,
+     "top": 187.9,
+     "bottom": 196.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)",
+     "x0": 372.0,
+     "x1": 409.2,
+     "top": 198.2,
+     "bottom": 206.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 533.0,
+     "x1": 554.6,
+     "top": 198.2,
+     "bottom": 206.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)¥(xxx:999)",
+     "x0": 372.0,
+     "x1": 409.7,
+     "top": 207.6,
+     "bottom": 215.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)@˜¯@ˆ(xxx:999)¯(xxx:999)ª`",
+     "x0": 43.2,
+     "x1": 126.0,
+     "top": 215.5,
+     "bottom": 223.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)`´¯@(xxx:999)(xxx:999)ª¯(xxx:999)´`(xxx:999)ˆ`(xxx:999)(xxx:999)`",
+     "x0": 182.6,
+     "x1": 276.7,
+     "top": 215.5,
+     "bottom": 223.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)`@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)¥(xxx:999)",
+     "x0": 361.4,
+     "x1": 424.6,
+     "top": 215.0,
+     "bottom": 224.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@øıXł(xxx:999)",
+     "x0": 528.9,
+     "x1": 554.8,
+     "top": 216.0,
+     "bottom": 224.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øłæ(xxx:999)ı",
+     "x0": 43.2,
+     "x1": 86.4,
+     "top": 224.9,
+     "bottom": 232.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)æ(xxx:999)ı(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øłæ(xxx:999)ı(xxx:999)",
+     "x0": 182.6,
+     "x1": 260.4,
+     "top": 224.9,
+     "bottom": 232.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 361.4,
+     "x1": 427.2,
+     "top": 224.1,
+     "bottom": 233.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@ıxæøıX(xxx:999)(xxx:999)",
+     "x0": 517.9,
+     "x1": 554.6,
+     "top": 225.1,
+     "bottom": 233.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)@˜¯@ˆ(xxx:999)(xxx:999)¯(xxx:999)ª¯",
+     "x0": 43.2,
+     "x1": 127.2,
+     "top": 234.5,
+     "bottom": 242.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 372.0,
+     "x1": 401.0,
+     "top": 234.5,
+     "bottom": 242.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)ø(xxx:999)(xxx:999)(xxx:999)łø(xxx:999)",
+     "x0": 43.2,
+     "x1": 77.8,
+     "top": 246.0,
+     "bottom": 254.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)⁄(xxx:999)⁄(xxx:999)¢(xxx:999)(xxx:999)",
+     "x0": 361.4,
+     "x1": 402.5,
+     "top": 245.7,
+     "bottom": 254.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)",
+     "x0": 533.2,
+     "x1": 554.8,
+     "top": 246.7,
+     "bottom": 254.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)˘ˆ",
+     "x0": 43.2,
+     "x1": 59.5,
+     "top": 255.3,
+     "bottom": 263.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)'(xxx:999)",
+     "x0": 361.4,
+     "x1": 391.0,
+     "top": 255.3,
+     "bottom": 264.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)ı",
+     "x0": 546.2,
+     "x1": 554.8,
+     "top": 256.3,
+     "bottom": 264.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)`(xxx:999)`",
+     "x0": 43.2,
+     "x1": 102.2,
+     "top": 264.7,
+     "bottom": 272.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)˜X(xxx:999)¢@ª(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢",
+     "x0": 361.4,
+     "x1": 473.5,
+     "top": 264.5,
+     "bottom": 273.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)æ",
+     "x0": 546.2,
+     "x1": 554.8,
+     "top": 265.4,
+     "bottom": 273.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)X(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)",
+     "x0": 261.6,
+     "x1": 288.7,
+     "top": 98.7,
+     "bottom": 104.7,
+     "size": 6.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)ıX(xxx:999)ı‘(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)‘(xxx:999)(xxx:999)‘(xxx:999)ª",
+     "x0": 261.6,
+     "x1": 318.7,
+     "top": 105.7,
+     "bottom": 111.7,
+     "size": 6.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "‘(xxx:999)æ",
+     "x0": 261.6,
+     "x1": 272.9,
+     "top": 115.7,
+     "bottom": 123.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)łı(xxx:999)ıł",
+     "x0": 261.6,
+     "x1": 287.5,
+     "top": 125.0,
+     "bottom": 133.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)ı(xxx:999)(xxx:999)",
+     "x0": 261.6,
+     "x1": 278.9,
+     "top": 134.4,
+     "bottom": 142.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)æ(xxx:999)",
+     "x0": 571.9,
+     "x1": 577.9,
+     "top": 504.5,
+     "bottom": 575.1,
+     "size": 3.4,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 361.4,
+     "x1": 410.9,
+     "top": 273.8,
+     "bottom": 282.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 467.7,
+     "x1": 555.5,
+     "top": 274.8,
+     "bottom": 282.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 357.8,
+     "x1": 528.7,
+     "top": 287.0,
+     "bottom": 295.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢@£(xxx:999)¢(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)£(xxx:999)(xxx:999)X¢@¢(xxx:999)(xxx:999)@(xxx:999)§(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)@£X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 357.8,
+     "x1": 553.9,
+     "top": 297.6,
+     "bottom": 305.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ⁄(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 71.2,
+     "x1": 97.8,
+     "top": 324.0,
+     "bottom": 332.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)X¢@`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 141.6,
+     "x1": 204.0,
+     "top": 324.0,
+     "bottom": 332.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 226.8,
+     "x1": 309.6,
+     "top": 324.0,
+     "bottom": 332.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˙`ª@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 358.0,
+     "x1": 407.7,
+     "top": 324.0,
+     "bottom": 332.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˙`ª@(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 488.1,
+     "x1": 523.6,
+     "top": 324.0,
+     "bottom": 332.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øłæ(xxx:999)ı",
+     "x0": 63.1,
+     "x1": 106.3,
+     "top": 333.3,
+     "bottom": 341.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)(xxx:999)x",
+     "x0": 162.0,
+     "x1": 183.4,
+     "top": 333.3,
+     "bottom": 341.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[ıøøX(xxx:999)(xxx:999)",
+     "x0": 254.1,
+     "x1": 282.2,
+     "top": 333.3,
+     "bottom": 341.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)(xxx:999)x@`(xxx:999)£(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)¢£(xxx:999)¢",
+     "x0": 334.0,
+     "x1": 431.7,
+     "top": 333.3,
+     "bottom": 341.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "‘(xxx:999)Xł(xxx:999)x@`(xxx:999)£(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)¢£(xxx:999)¢",
+     "x0": 455.5,
+     "x1": 555.8,
+     "top": 333.3,
+     "bottom": 341.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)˘(xxx:999)`(xxx:999)@¯(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)`˜`(xxx:999)@¯(xxx:999)@(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)@(xxx:999)¯(xxx:999)(xxx:999)ˆ`(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 214.7,
+     "top": 349.7,
+     "bottom": 357.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)@˜¯@ª(xxx:999)@ˆ(xxx:999)¯(xxx:999)ª`@˜¯@ˆ¨¯(xxx:999)(xxx:999)¯(xxx:999)",
+     "x0": 41.2,
+     "x1": 195.0,
+     "top": 366.0,
+     "bottom": 374.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢",
+     "x0": 41.2,
+     "x1": 161.7,
+     "top": 375.3,
+     "bottom": 383.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@ıøøX(xxx:999)(xxx:999)",
+     "x0": 534.7,
+     "x1": 564.9,
+     "top": 375.3,
+     "bottom": 383.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 41.2,
+     "x1": 160.2,
+     "top": 384.7,
+     "bottom": 392.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)(xxx:999)x(xxx:999)(xxx:999)(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 523.9,
+     "x1": 564.9,
+     "top": 384.7,
+     "bottom": 392.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)]",
+     "x0": 41.2,
+     "x1": 281.2,
+     "top": 396.2,
+     "bottom": 404.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)xłæ(xxx:999)X(xxx:999)ı",
+     "x0": 528.2,
+     "x1": 564.9,
+     "top": 396.2,
+     "bottom": 404.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ª(xxx:999)¢(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 41.2,
+     "x1": 130.2,
+     "top": 407.7,
+     "bottom": 415.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 534.9,
+     "x1": 564.9,
+     "top": 407.7,
+     "bottom": 415.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)£(xxx:999)(xxx:999)X¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢",
+     "x0": 41.2,
+     "x1": 150.2,
+     "top": 417.1,
+     "bottom": 425.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 543.3,
+     "x1": 564.9,
+     "top": 417.1,
+     "bottom": 425.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)£(xxx:999)(xxx:999)X¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@`X(xxx:999)",
+     "x0": 41.2,
+     "x1": 159.8,
+     "top": 426.5,
+     "bottom": 434.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 543.3,
+     "x1": 564.9,
+     "top": 426.5,
+     "bottom": 434.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)`@ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 41.2,
+     "x1": 85.4,
+     "top": 435.8,
+     "bottom": 443.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@øıXł(xxx:999)",
+     "x0": 539.0,
+     "x1": 564.9,
+     "top": 435.8,
+     "bottom": 443.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢",
+     "x0": 41.2,
+     "x1": 122.3,
+     "top": 445.2,
+     "bottom": 453.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 543.3,
+     "x1": 564.9,
+     "top": 445.2,
+     "bottom": 453.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@`X(xxx:999)",
+     "x0": 41.2,
+     "x1": 121.4,
+     "top": 454.5,
+     "bottom": 462.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 543.3,
+     "x1": 564.9,
+     "top": 454.5,
+     "bottom": 462.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˜¯ª`(xxx:999)(xxx:999)¯@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)ª(xxx:999)(xxx:999)@ˆ(xxx:999)¯(xxx:999)ª`@˜¯@ˆ¨¯(xxx:999)(xxx:999)¯(xxx:999)@(xxx:999)(xxx:999)X@@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øłæ(xxx:999)ı",
+     "x0": 41.2,
+     "x1": 287.0,
+     "top": 471.1,
+     "bottom": 479.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 281.0,
+     "x1": 323.2,
+     "top": 480.5,
+     "bottom": 488.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˜X(xxx:999)",
+     "x0": 41.5,
+     "x1": 53.5,
+     "top": 486.2,
+     "bottom": 494.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˜(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 140.8,
+     "x1": 185.4,
+     "top": 486.2,
+     "bottom": 494.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)xˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 349.2,
+     "x1": 397.0,
+     "top": 486.2,
+     "bottom": 494.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˜(xxx:999)(xxx:999)˛¢(xxx:999)£(xxx:999)x`(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 421.2,
+     "x1": 481.4,
+     "top": 486.2,
+     "bottom": 494.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 527.7,
+     "x1": 549.1,
+     "top": 486.2,
+     "bottom": 494.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 291.3,
+     "x1": 312.7,
+     "top": 489.8,
+     "bottom": 497.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 43.2,
+     "x1": 51.8,
+     "top": 499.7,
+     "bottom": 507.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˜(xxx:999)ˆ@(xxx:999)¯˙(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)˜`@(xxx:999)(xxx:999)˜(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)(xxx:999)ł(xxx:999)(xxx:999)",
+     "x0": 61.2,
+     "x1": 231.1,
+     "top": 499.7,
+     "bottom": 507.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "`ªˆłæ(xxx:999)æø",
+     "x0": 297.3,
+     "x1": 335.0,
+     "top": 499.7,
+     "bottom": 507.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@(xxx:999)x(xxx:999)ı(xxx:999)X(xxx:999)ł",
+     "x0": 364.8,
+     "x1": 401.5,
+     "top": 499.7,
+     "bottom": 507.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "@[@ıxłø(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 525.8,
+     "x1": 564.7,
+     "top": 499.7,
+     "bottom": 507.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 43.2,
+     "x1": 51.8,
+     "top": 509.0,
+     "bottom": 517.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)¯(xxx:999)´(xxx:999)¯(xxx:999)(xxx:999)`@(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)ª¯",
+     "x0": 61.2,
+     "x1": 196.8,
+     "top": 509.0,
+     "bottom": 517.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ææ(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)ı",
+     "x0": 300.4,
+     "x1": 335.0,
+     "top": 509.0,
+     "bottom": 517.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@ıøøX(xxx:999)(xxx:999)",
+     "x0": 371.2,
+     "x1": 401.4,
+     "top": 509.0,
+     "bottom": 517.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "@[@ıx(xxx:999)øæX(xxx:999)(xxx:999)",
+     "x0": 525.8,
+     "x1": 564.7,
+     "top": 509.0,
+     "bottom": 517.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 43.2,
+     "x1": 51.8,
+     "top": 518.4,
+     "bottom": 526.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)X`X",
+     "x0": 61.2,
+     "x1": 80.4,
+     "top": 518.4,
+     "bottom": 526.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 300.4,
+     "x1": 335.0,
+     "top": 518.4,
+     "bottom": 526.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "[@øıXł(xxx:999)",
+     "x0": 375.6,
+     "x1": 401.5,
+     "top": 518.4,
+     "bottom": 526.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "@[@ıxæøıX(xxx:999)(xxx:999)",
+     "x0": 525.8,
+     "x1": 564.7,
+     "top": 518.4,
+     "bottom": 526.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)˜(xxx:999)x@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@ˆ(xxx:999)˜(xxx:999)xx",
+     "x0": 37.6,
+     "x1": 181.6,
+     "top": 527.7,
+     "bottom": 535.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@[ıøøX(xxx:999)(xxx:999)",
+     "x0": 190.8,
+     "x1": 261.4,
+     "top": 587.0,
+     "bottom": 595.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)£(xxx:999)(xxx:999)¢@ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@[(xxx:999)x(xxx:999)ı(xxx:999)X(xxx:999)ł",
+     "x0": 232.8,
+     "x1": 315.8,
+     "top": 601.2,
+     "bottom": 609.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@[ıxæøıX(xxx:999)(xxx:999)",
+     "x0": 44.8,
+     "x1": 119.7,
+     "top": 631.7,
+     "bottom": 639.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "@@@@@@@@@@@@@@@@@@",
+     "x0": 322.5,
+     "x1": 370.0,
+     "top": 648.6,
+     "bottom": 658.6,
+     "size": 10.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@[@@@@@@@@@@@@(xxx:999)xø(xxx:999)ıX(xxx:999)(xxx:999)",
+     "x0": 402.0,
+     "x1": 510.2,
+     "top": 600.5,
+     "bottom": 608.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@[ıxæøıX(xxx:999)(xxx:999)",
+     "x0": 418.8,
+     "x1": 493.7,
+     "top": 612.0,
+     "bottom": 620.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@[ıøøX(xxx:999)(xxx:999)",
+     "x0": 420.9,
+     "x1": 491.5,
+     "top": 623.5,
+     "bottom": 631.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@¯(xxx:999)(xxx:999)(xxx:999)£(xxx:999)¥(xxx:999)@[(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 415.2,
+     "x1": 497.3,
+     "top": 635.0,
+     "bottom": 643.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)£(xxx:999)(xxx:999)¢@ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@[(xxx:999)x(xxx:999)ı(xxx:999)X(xxx:999)ł",
+     "x0": 414.7,
+     "x1": 497.7,
+     "top": 646.5,
+     "bottom": 654.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)¢@¯(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 161.2,
+     "x1": 444.9,
+     "top": 671.7,
+     "bottom": 679.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 41.7,
+     "x1": 75.5,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "¨(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 86.1,
+     "x1": 115.1,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 131.0,
+     "x1": 175.6,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 194.6,
+     "x1": 237.6,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ⁄(xxx:999)(xxx:999)£(xxx:999)@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 253.6,
+     "x1": 326.6,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 340.5,
+     "x1": 390.2,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 403.6,
+     "x1": 461.9,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)¥(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 474.0,
+     "x1": 506.4,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 519.8,
+     "x1": 560.6,
+     "top": 687.6,
+     "bottom": 695.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 39.3,
+     "x1": 77.9,
+     "top": 696.9,
+     "bottom": 704.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 81.3,
+     "x1": 119.9,
+     "top": 696.9,
+     "bottom": 704.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)",
+     "x0": 136.3,
+     "x1": 170.4,
+     "top": 696.9,
+     "bottom": 704.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "´(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@\\",
+     "x0": 191.0,
+     "x1": 240.9,
+     "top": 696.9,
+     "bottom": 704.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 355.9,
+     "x1": 374.6,
+     "top": 696.9,
+     "bottom": 704.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 475.4,
+     "x1": 504.7,
+     "top": 696.9,
+     "bottom": 704.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 520.3,
+     "x1": 560.4,
+     "top": 696.9,
+     "bottom": 704.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "\\@˜(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)¢£(xxx:999)@(xxx:999)(xxx:999)¢£(xxx:999)£⁄(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 37.6,
+     "x1": 170.8,
+     "top": 721.9,
+     "bottom": 729.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 1
+    }
+   ]
+  },
+  {
+   "page": 2,
+   "width": 612.0,
+   "height": 792.0,
+   "has_text_layer": true,
+   "ruling_lines": 23,
+   "rects": 3,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 38.2,
+     "x_min": 37.6,
+     "x_max": 561.8,
+     "support": 50,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "ˆ(xxx:999)¯(xxx:999)ª`@˜¯@ˆ¨¯(xxx:999)(xxx:999)¯(xxx:999)",
+     "x0": 245.2,
+     "x1": 366.1,
+     "top": 22.2,
+     "bottom": 33.2,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "¯¢£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ⁄(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 263.2,
+     "x1": 348.4,
+     "top": 37.6,
+     "bottom": 47.6,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)`(xxx:999)(xxx:999)˜(xxx:999)(xxx:999)x@(xxx:999)X`X@˜¯@ˆX(xxx:999)X",
+     "x0": 26.8,
+     "x1": 141.3,
+     "top": 81.7,
+     "bottom": 91.7,
+     "size": 10.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "¯(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)x@¨(xxx:999)´ˆ@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)@(xxx:999)X`X@(xxx:999)(xxx:999)¢£(xxx:999)£⁄(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)x@˙(xxx:999)⁄(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¨(xxx:999)´ˆX@(xxx:999)˘ˆx@¨(xxx:999)(xxx:999)‘øı(xxx:999)æ(xxx:999)ı(xxx:999)˙ł",
+     "x0": 23.5,
+     "x1": 470.2,
+     "top": 750.4,
+     "bottom": 759.4,
+     "size": 9.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)X@(xxx:999)(xxx:999)(xxx:999)x@ˆ(xxx:999)(xxx:999)X@ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x@ˆX(xxx:999)X@(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)x@`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)@ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)x@ˆ(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)@ª(xxx:999)(xxx:999)X@ıı@ı(xxx:999)(xxx:999)æ‘(xxx:999)(xxx:999)ø(xxx:999)@(xxx:999)`˙X@(xxx:999)x(xxx:999)",
+     "x0": 23.5,
+     "x1": 589.4,
+     "top": 761.0,
+     "bottom": 770.0,
+     "size": 9.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)łı(xxx:999)ıł",
+     "x0": 264.4,
+     "x1": 290.3,
+     "top": 66.0,
+     "bottom": 74.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)ı(xxx:999)(xxx:999)",
+     "x0": 347.7,
+     "x1": 365.0,
+     "top": 66.0,
+     "bottom": 74.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)¢@¯(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 162.4,
+     "x1": 446.1,
+     "top": 103.9,
+     "bottom": 111.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 42.9,
+     "x1": 76.7,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "¨(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 87.3,
+     "x1": 116.3,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 132.2,
+     "x1": 176.8,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 195.8,
+     "x1": 238.8,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ⁄(xxx:999)(xxx:999)£(xxx:999)@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 254.8,
+     "x1": 327.8,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 341.7,
+     "x1": 391.4,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 404.8,
+     "x1": 463.1,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)¥(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 475.2,
+     "x1": 507.6,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 521.0,
+     "x1": 561.8,
+     "top": 119.7,
+     "bottom": 127.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 40.5,
+     "x1": 79.1,
+     "top": 129.1,
+     "bottom": 137.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 82.5,
+     "x1": 121.1,
+     "top": 129.1,
+     "bottom": 137.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)",
+     "x0": 137.5,
+     "x1": 171.6,
+     "top": 129.1,
+     "bottom": 137.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "´(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@\\",
+     "x0": 192.2,
+     "x1": 242.1,
+     "top": 129.1,
+     "bottom": 137.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 357.1,
+     "x1": 375.8,
+     "top": 129.1,
+     "bottom": 137.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 476.6,
+     "x1": 505.9,
+     "top": 129.1,
+     "bottom": 137.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 521.5,
+     "x1": 561.6,
+     "top": 129.1,
+     "bottom": 137.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)˜(xxx:999)x@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@ˆ(xxx:999)˜(xxx:999)xx",
+     "x0": 38.8,
+     "x1": 182.8,
+     "top": 144.7,
+     "bottom": 152.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)æxæ(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 160.0,
+     "x1": 446.1,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 42.2,
+     "x1": 76.0,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "¨(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 86.6,
+     "x1": 115.6,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 131.5,
+     "x1": 176.1,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 195.1,
+     "x1": 238.1,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ⁄(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 256.5,
+     "x1": 324.4,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 341.0,
+     "x1": 390.7,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 404.1,
+     "x1": 462.4,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)¥(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 474.4,
+     "x1": 506.8,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 519.8,
+     "x1": 560.6,
+     "top": 177.1,
+     "bottom": 185.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 39.8,
+     "x1": 78.4,
+     "top": 186.5,
+     "bottom": 194.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 81.8,
+     "x1": 120.4,
+     "top": 186.5,
+     "bottom": 194.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "¯(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)",
+     "x0": 140.6,
+     "x1": 167.2,
+     "top": 186.5,
+     "bottom": 194.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 197.0,
+     "x1": 236.1,
+     "top": 186.5,
+     "bottom": 194.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 356.4,
+     "x1": 375.1,
+     "top": 186.5,
+     "bottom": 194.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 475.9,
+     "x1": 505.2,
+     "top": 186.5,
+     "bottom": 194.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 520.3,
+     "x1": 560.4,
+     "top": 186.5,
+     "bottom": 194.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)˜(xxx:999)x@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@ˆ(xxx:999)˜(xxx:999)xx",
+     "x0": 38.1,
+     "x1": 182.1,
+     "top": 210.2,
+     "bottom": 218.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x",
+     "x0": 38.1,
+     "x1": 89.2,
+     "top": 228.0,
+     "bottom": 236.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 220.3,
+     "x1": 339.6,
+     "top": 228.0,
+     "bottom": 236.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)X@ˆ⁄(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 66.0,
+     "x1": 107.3,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 164.6,
+     "x1": 196.0,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@`(xxx:999)£(xxx:999)",
+     "x0": 246.2,
+     "x1": 285.6,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 343.9,
+     "x1": 367.9,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "˜(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 464.8,
+     "x1": 509.4,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 38.1,
+     "x1": 87.5,
+     "top": 278.1,
+     "bottom": 286.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)¢",
+     "x0": 37.6,
+     "x1": 120.2,
+     "top": 303.1,
+     "bottom": 311.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "`@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)x@(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ⁄(xxx:999)(xxx:999)£(xxx:999)@¤x(xxx:999)@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¯(xxx:999)(xxx:999)(xxx:999)£(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)(xxx:999)@£(xxx:999)(xxx:999)(xxx:999)(xxx:999)X@(xxx:999)(xxx:999)¢@¢(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)£(xxx:999)¢@(xxx:999)(xxx:999)⁄¢£(xxx:999)¢x",
+     "x0": 37.6,
+     "x1": 521.0,
+     "top": 324.6,
+     "bottom": 335.6,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xæ]@@@@@@@@@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)X(xxx:999)Xæ@ˆ(xxx:999)X⁄¢⁄(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@˙´(xxx:999)",
+     "x0": 37.6,
+     "x1": 338.8,
+     "top": 351.5,
+     "bottom": 362.5,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "X(xxx:999)]@@@@@@@@@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)X(xxx:999)XæXæ@ˆ(xxx:999)X⁄¢⁄(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@ª(xxx:999)(xxx:999)(xxx:999)ªX",
+     "x0": 37.6,
+     "x1": 360.4,
+     "top": 364.9,
+     "bottom": 375.9,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "X(xxx:999)]@@@@@@@@@`(xxx:999)(xxx:999)§(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)£(xxx:999)@¤x(xxx:999)@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 37.6,
+     "x1": 400.7,
+     "top": 378.3,
+     "bottom": 389.3,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "@@@@@@@@(xxx:999)]@@@@@@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)¥(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)£(xxx:999)@9ª(xxx:999)(xxx:999)(xxx:999)ª9X",
+     "x0": 37.6,
+     "x1": 337.8,
+     "top": 391.8,
+     "bottom": 402.8,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "@@@@@@@@(xxx:999)]@@@@@@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)£(xxx:999)@9ˆ⁄(xxx:999)(xxx:999)£(xxx:999)¢@(xxx:999)(xxx:999)x@æ(xxx:999)x@(xxx:999)(xxx:999)9@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@ˆ(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)@(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 556.8,
+     "top": 405.2,
+     "bottom": 416.2,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "[æ(xxx:999)(xxx:999)@(xxx:999)X(xxx:999)@(xxx:999)@[æø(xxx:999)X(xxx:999)(xxx:999)@(xxx:999)X(xxx:999)",
+     "x0": 80.1,
+     "x1": 191.8,
+     "top": 418.7,
+     "bottom": 429.7,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "`@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)x@(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)£(xxx:999)¢@¤@¢(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@£(xxx:999)(xxx:999)(xxx:999)(xxx:999)X@(xxx:999)(xxx:999)¢@¢(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)£(xxx:999)¢@(xxx:999)(xxx:999)⁄¢£(xxx:999)¢x",
+     "x0": 37.6,
+     "x1": 549.8,
+     "top": 445.5,
+     "bottom": 456.5,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xæ]@@@@@@@@@`(xxx:999)(xxx:999)§(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)@(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 37.6,
+     "x1": 412.2,
+     "top": 472.4,
+     "bottom": 483.4,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "@@@@@@@@(xxx:999)]@@@@@@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@¤@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@ª(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@[(xxx:999)(xxx:999)X(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 548.1,
+     "top": 485.9,
+     "bottom": 496.9,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)@(xxx:999)@[(xxx:999)(xxx:999)X(xxx:999)(xxx:999)@(xxx:999)X(xxx:999)",
+     "x0": 79.6,
+     "x1": 161.4,
+     "top": 499.3,
+     "bottom": 510.3,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "@@@@@@@@(xxx:999)]@@@@@@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@ª(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@[ı(xxx:999)X(xxx:999)(xxx:999)@(xxx:999)X(xxx:999)",
+     "x0": 37.6,
+     "x1": 385.1,
+     "top": 512.7,
+     "bottom": 523.7,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¤(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)¢⁄(xxx:999)£(xxx:999)(xxx:999)x@X(xxx:999)]@(xxx:999)(xxx:999)@¢(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@¨(xxx:999)´ˆ@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)¢@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)@",
+     "x0": 37.6,
+     "x1": 439.5,
+     "top": 539.6,
+     "bottom": 550.6,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)££(xxx:999)xxxƒƒƒX(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)¢X(xxx:999)¢(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§x@¤@X(xxx:999)]@(xxx:999)(xxx:999)¢@£X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@¤@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 539.5,
+     "top": 553.1,
+     "bottom": 564.1,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)˜(xxx:999)(xxx:999)¯˘@(xxx:999)££(xxx:999)¢xxx(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢X(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄¢(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§x(xxx:999)(xxx:999)(xxx:999)(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)§X(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 314.9,
+     "top": 566.5,
+     "bottom": 577.5,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "¯(xxx:999)@(xxx:999)(xxx:999)¢(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)¢£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)£(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x@£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)@£⁄@¯(xxx:999)(xxx:999)(xxx:999)⁄£(xxx:999)¥(xxx:999)@(xxx:999)(xxx:999)@ˆ⁄(xxx:999)(xxx:999)£(xxx:999)X",
+     "x0": 37.6,
+     "x1": 551.5,
+     "top": 579.9,
+     "bottom": 590.9,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)@¢⁄@(xxx:999)(xxx:999)(xxx:999)¤(xxx:999)x@(xxx:999)(xxx:999)(xxx:999)(xxx:999)X¢@(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)@£(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@¤@(xxx:999)(xxx:999)@¢⁄@(xxx:999)(xxx:999)¢(xxx:999)@£(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)˛(xxx:999)@(xxx:999)⁄(xxx:999)@(xxx:999)X¢@(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)@£⁄¢",
+     "x0": 37.6,
+     "x1": 537.3,
+     "top": 593.4,
+     "bottom": 604.4,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@¢(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)@¢(xxx:999)@£(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢(xxx:999)£(xxx:999)(xxx:999)¢x@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)£X(xxx:999)⁄(xxx:999)(xxx:999)@(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¤@(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 535.2,
+     "top": 606.8,
+     "bottom": 617.8,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "ª(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¤@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢^@(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)'(xxx:999)(xxx:999)¢(xxx:999)@(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 530.4,
+     "top": 620.3,
+     "bottom": 631.3,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£⁄(xxx:999)@(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄£(xxx:999)¥(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)⁄(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@£(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)X(xxx:999)¢@(xxx:999)(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)¥(xxx:999)¢(xxx:999)x@¢(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 37.6,
+     "x1": 535.1,
+     "top": 633.7,
+     "bottom": 644.7,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)@(xxx:999)@£⁄@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X",
+     "x0": 37.6,
+     "x1": 117.0,
+     "top": 647.1,
+     "bottom": 658.1,
+     "size": 11.0,
+     "bold": false,
+     "page": 2
+    }
+   ]
+  },
+  {
+   "page": 4,
+   "width": 612.0,
+   "height": 792.0,
+   "has_text_layer": true,
+   "ruling_lines": 7,
+   "rects": 1,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 41.2,
+     "x_min": 41.2,
+     "x_max": 577.4,
+     "support": 323,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "ˆ(xxx:999)¯(xxx:999)ª`@˜¯@ˆ¨¯(xxx:999)(xxx:999)¯(xxx:999)",
+     "x0": 245.5,
+     "x1": 366.4,
+     "top": 22.2,
+     "bottom": 33.2,
+     "size": 11.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯¢£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ⁄(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 263.2,
+     "x1": 348.4,
+     "top": 37.6,
+     "bottom": 47.6,
+     "size": 10.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)x@¨(xxx:999)´ˆ@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)@(xxx:999)X`X@(xxx:999)(xxx:999)¢£(xxx:999)£⁄(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)@´(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)x@˙(xxx:999)⁄(xxx:999)(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¨(xxx:999)´ˆX@(xxx:999)˘ˆx@¨(xxx:999)(xxx:999)‘øı(xxx:999)æ(xxx:999)ı(xxx:999)˙ł",
+     "x0": 23.5,
+     "x1": 470.2,
+     "top": 750.4,
+     "bottom": 759.4,
+     "size": 9.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)X@(xxx:999)(xxx:999)(xxx:999)x@ˆ(xxx:999)(xxx:999)X@ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x@ˆX(xxx:999)X@(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)x@`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)@ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)x@ˆ(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)@ª(xxx:999)(xxx:999)X@ıı@ı(xxx:999)(xxx:999)æ‘(xxx:999)(xxx:999)ø(xxx:999)@(xxx:999)`˙X@(xxx:999)x(xxx:999)",
+     "x0": 23.5,
+     "x1": 589.4,
+     "top": 761.0,
+     "bottom": 770.0,
+     "size": 9.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)˘(xxx:999)(xxx:999)(xxx:999)`ˆ(xxx:999)(xxx:999)(xxx:999)@˙¯(xxx:999)¯(xxx:999)`(xxx:999)",
+     "x0": 41.2,
+     "x1": 137.9,
+     "top": 61.9,
+     "bottom": 69.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)łı(xxx:999)ıø",
+     "x0": 281.2,
+     "x1": 307.1,
+     "top": 62.9,
+     "bottom": 70.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)ı(xxx:999)(xxx:999)",
+     "x0": 342.2,
+     "x1": 359.5,
+     "top": 62.9,
+     "bottom": 70.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)ªxˆª`(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 50.4,
+     "x1": 111.4,
+     "top": 77.0,
+     "bottom": 85.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)˜(xxx:999)(xxx:999)¯˘",
+     "x0": 321.3,
+     "x1": 365.0,
+     "top": 77.0,
+     "bottom": 85.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¤(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)x@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x@(xxx:999)@¢⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)",
+     "x0": 41.2,
+     "x1": 311.3,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 321.3,
+     "x1": 337.4,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¤(xxx:999)(xxx:999)",
+     "x0": 343.2,
+     "x1": 364.1,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 369.8,
+     "x1": 409.6,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¤",
+     "x0": 415.4,
+     "x1": 419.0,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 424.8,
+     "x1": 468.7,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 474.4,
+     "x1": 493.6,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 499.4,
+     "x1": 538.0,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 543.8,
+     "x1": 564.9,
+     "top": 85.7,
+     "bottom": 93.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@`£(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)x",
+     "x0": 50.4,
+     "x1": 158.6,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¢⁄(xxx:999)£(xxx:999)(xxx:999)",
+     "x0": 321.3,
+     "x1": 352.7,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 356.8,
+     "x1": 362.6,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 366.9,
+     "x1": 389.7,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 393.8,
+     "x1": 402.2,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)£@ƒƒƒX(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄¢(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§",
+     "x0": 406.5,
+     "x1": 521.0,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "£(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 525.3,
+     "x1": 552.2,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ıı",
+     "x0": 556.3,
+     "x1": 564.9,
+     "top": 95.0,
+     "bottom": 103.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "@@@@ª(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)x@ıı@ı(xxx:999)(xxx:999)æ@(xxx:999)(xxx:999)ø(xxx:999)@(xxx:999)@(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 41.2,
+     "x1": 189.3,
+     "top": 104.4,
+     "bottom": 112.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ı(xxx:999)(xxx:999)(xxx:999)@(xxx:999)øøø@(xxx:999)@(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X",
+     "x0": 321.3,
+     "x1": 414.4,
+     "top": 104.4,
+     "bottom": 112.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯‘(xxx:999)(xxx:999)(xxx:999)(xxx:999)x@(xxx:999)(xxx:999)§(xxx:999)(xxx:999)(xxx:999)x¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)|(xxx:999)¢(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§",
+     "x0": 50.4,
+     "x1": 194.6,
+     "top": 113.7,
+     "bottom": 121.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¨(xxx:999)´ˆ",
+     "x0": 41.2,
+     "x1": 72.5,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 75.8,
+     "x1": 99.8,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X`X",
+     "x0": 102.9,
+     "x1": 117.8,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢£(xxx:999)£⁄(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 121.2,
+     "x1": 156.2,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 159.6,
+     "x1": 168.0,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "´(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 171.1,
+     "x1": 192.9,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 196.3,
+     "x1": 224.9,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˙(xxx:999)⁄(xxx:999)(xxx:999)",
+     "x0": 228.2,
+     "x1": 249.8,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 252.9,
+     "x1": 288.7,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¨(xxx:999)´ˆ",
+     "x0": 292.0,
+     "x1": 314.1,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "«(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@£(xxx:999)¢(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)£(xxx:999)(xxx:999)X¢x",
+     "x0": 321.3,
+     "x1": 465.3,
+     "top": 123.8,
+     "bottom": 131.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 50.4,
+     "x1": 71.3,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢",
+     "x0": 78.4,
+     "x1": 88.2,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¢⁄(xxx:999)£(xxx:999)¢x",
+     "x0": 95.7,
+     "x1": 130.7,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 138.0,
+     "x1": 187.4,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 194.6,
+     "x1": 198.7,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x",
+     "x0": 205.9,
+     "x1": 251.0,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 258.4,
+     "x1": 266.8,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢⁄",
+     "x0": 274.0,
+     "x1": 282.4,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 289.6,
+     "x1": 314.1,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)x",
+     "x0": 321.3,
+     "x1": 330.4,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "X¢£(xxx:999)¢",
+     "x0": 334.5,
+     "x1": 353.0,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¢£X(xxx:999)",
+     "x0": 356.8,
+     "x1": 375.5,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢⁄(xxx:999)(xxx:999)£(xxx:999)¢",
+     "x0": 379.6,
+     "x1": 404.1,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 408.0,
+     "x1": 412.1,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢",
+     "x0": 416.1,
+     "x1": 425.9,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 430.0,
+     "x1": 470.8,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 474.7,
+     "x1": 483.1,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 487.2,
+     "x1": 517.0,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)§(xxx:999)¢£(xxx:999)(xxx:999)£(xxx:999)¢x",
+     "x0": 520.8,
+     "x1": 557.3,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¤",
+     "x0": 561.3,
+     "x1": 564.9,
+     "top": 133.2,
+     "bottom": 141.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)'(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 50.4,
+     "x1": 97.7,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 102.0,
+     "x1": 110.4,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`£(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 114.7,
+     "x1": 144.7,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 148.8,
+     "x1": 152.9,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¢⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x",
+     "x0": 157.2,
+     "x1": 190.1,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 194.4,
+     "x1": 221.3,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 225.6,
+     "x1": 234.0,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 238.3,
+     "x1": 265.7,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)",
+     "x0": 269.7,
+     "x1": 291.3,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 295.6,
+     "x1": 304.0,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 308.4,
+     "x1": 314.2,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)¢(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)X¢¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)¢£X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)⁄(xxx:999)(xxx:999)",
+     "x0": 321.3,
+     "x1": 564.9,
+     "top": 142.5,
+     "bottom": 150.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 50.4,
+     "x1": 79.9,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "{",
+     "x0": 83.7,
+     "x1": 88.0,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 91.9,
+     "x1": 107.0,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)X",
+     "x0": 110.8,
+     "x1": 124.5,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 128.4,
+     "x1": 174.2,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)",
+     "x0": 178.0,
+     "x1": 205.4,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ⁄(xxx:999)⁄(xxx:999)£X(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 209.2,
+     "x1": 255.0,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆX(xxx:999)X",
+     "x0": 258.9,
+     "x1": 274.3,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)x",
+     "x0": 278.1,
+     "x1": 301.9,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 305.7,
+     "x1": 314.1,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "£(xxx:999)¢(xxx:999)@(xxx:999)(xxx:999)¢(xxx:999)@Xˆ¯ª¯(xxx:999)x@ª(xxx:999)(xxx:999)¯x@(xxx:999)£(xxx:999)X]X",
+     "x0": 321.3,
+     "x1": 426.4,
+     "top": 151.9,
+     "bottom": 159.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 50.4,
+     "x1": 76.6,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 80.8,
+     "x1": 105.3,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 109.9,
+     "x1": 118.3,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 122.6,
+     "x1": 146.6,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 150.9,
+     "x1": 178.0,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 182.6,
+     "x1": 192.7,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª(xxx:999)£⁄(xxx:999)(xxx:999)(xxx:999)]x",
+     "x0": 197.0,
+     "x1": 223.4,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¤",
+     "x0": 227.7,
+     "x1": 231.3,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 235.6,
+     "x1": 246.6,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 251.2,
+     "x1": 272.8,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 277.2,
+     "x1": 314.2,
+     "top": 161.3,
+     "bottom": 169.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)§(xxx:999)(xxx:999)(xxx:999)x⁄(xxx:999)(xxx:999)|(xxx:999)¢(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§",
+     "x0": 50.4,
+     "x1": 145.4,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 149.7,
+     "x1": 153.8,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "£(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 158.1,
+     "x1": 185.0,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 189.1,
+     "x1": 194.9,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ıı",
+     "x0": 203.5,
+     "x1": 212.1,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ı(xxx:999)(xxx:999)æ‘ı(xxx:999)(xxx:999)æ",
+     "x0": 216.4,
+     "x1": 253.6,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)",
+     "x0": 257.7,
+     "x1": 278.6,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 282.9,
+     "x1": 314.1,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "«ˆ⁄X(xxx:999)@(xxx:999)¢@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)'(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@⁄(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)x",
+     "x0": 321.3,
+     "x1": 557.9,
+     "top": 170.6,
+     "bottom": 178.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)x(xxx:999)¢X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢⁄¢¢⁄(xxx:999)⁄(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)¢⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢X",
+     "x0": 50.4,
+     "x1": 314.2,
+     "top": 180.0,
+     "bottom": 188.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)£(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛¢(xxx:999)£(xxx:999)",
+     "x0": 321.3,
+     "x1": 564.9,
+     "top": 180.0,
+     "bottom": 188.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯(xxx:999)",
+     "x0": 50.4,
+     "x1": 60.0,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 63.8,
+     "x1": 69.6,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)",
+     "x0": 73.2,
+     "x1": 89.5,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 93.3,
+     "x1": 101.7,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 105.6,
+     "x1": 114.0,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 117.6,
+     "x1": 143.3,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "⁄(xxx:999)(xxx:999)",
+     "x0": 147.1,
+     "x1": 159.8,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)⁄(xxx:999)¢£(xxx:999)",
+     "x0": 163.6,
+     "x1": 197.4,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)£(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 201.1,
+     "x1": 244.5,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)X¢",
+     "x0": 248.4,
+     "x1": 271.9,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 275.7,
+     "x1": 296.8,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 300.4,
+     "x1": 304.5,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 308.4,
+     "x1": 314.2,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 321.3,
+     "x1": 350.6,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 353.7,
+     "x1": 386.1,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 389.2,
+     "x1": 393.3,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 396.4,
+     "x1": 402.2,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¥(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 405.3,
+     "x1": 436.3,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 439.4,
+     "x1": 443.5,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 446.6,
+     "x1": 493.7,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 496.8,
+     "x1": 509.3,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 512.4,
+     "x1": 516.5,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 519.6,
+     "x1": 553.4,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 556.5,
+     "x1": 564.9,
+     "top": 189.3,
+     "bottom": 197.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)¤˜(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢⁄¢⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 50.4,
+     "x1": 314.1,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 321.3,
+     "x1": 341.9,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢£(xxx:999)",
+     "x0": 345.3,
+     "x1": 364.0,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 367.4,
+     "x1": 378.4,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "⁄(xxx:999)",
+     "x0": 381.6,
+     "x1": 390.2,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 393.6,
+     "x1": 414.7,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 418.0,
+     "x1": 426.4,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 429.8,
+     "x1": 457.2,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 460.5,
+     "x1": 488.8,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)⁄(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 492.0,
+     "x1": 530.4,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 533.7,
+     "x1": 537.8,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ı(xxx:999)x(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 541.2,
+     "x1": 565.0,
+     "top": 198.7,
+     "bottom": 206.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@ƒƒƒX(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄¢(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§x@£(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)@ıı@ı(xxx:999)(xxx:999)(xxx:999)@(xxx:999)øøø@(xxx:999)@(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X",
+     "x0": 50.4,
+     "x1": 307.2,
+     "top": 208.1,
+     "bottom": 216.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)˜(xxx:999)x⁄¢£(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)@ø(xxx:999)(xxx:999)X(xxx:999)¢(xxx:999)(xxx:999)£⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 321.3,
+     "x1": 565.0,
+     "top": 208.1,
+     "bottom": 216.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)˙`ªx",
+     "x0": 41.2,
+     "x1": 69.5,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`",
+     "x0": 72.7,
+     "x1": 78.0,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 81.3,
+     "x1": 87.1,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˙(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 90.2,
+     "x1": 123.1,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`(xxx:999)⁄(xxx:999)(xxx:999)",
+     "x0": 126.4,
+     "x1": 146.1,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª(xxx:999)£(xxx:999)(xxx:999)",
+     "x0": 149.2,
+     "x1": 166.2,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 169.4,
+     "x1": 184.0,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)§(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 187.4,
+     "x1": 222.7,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 225.8,
+     "x1": 234.2,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "£X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 237.6,
+     "x1": 267.1,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£⁄(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 270.2,
+     "x1": 314.1,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)'(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 321.3,
+     "x1": 565.0,
+     "top": 217.4,
+     "bottom": 225.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)¢x",
+     "x0": 50.1,
+     "x1": 78.9,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)x",
+     "x0": 84.2,
+     "x1": 99.1,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 104.4,
+     "x1": 119.5,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 124.8,
+     "x1": 141.4,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)¥(xxx:999)¢",
+     "x0": 146.6,
+     "x1": 187.9,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¤",
+     "x0": 193.2,
+     "x1": 196.8,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 202.0,
+     "x1": 210.4,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)x",
+     "x0": 215.7,
+     "x1": 261.8,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 267.1,
+     "x1": 299.0,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢",
+     "x0": 304.3,
+     "x1": 314.1,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)X",
+     "x0": 321.3,
+     "x1": 465.1,
+     "top": 226.8,
+     "bottom": 234.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)¢",
+     "x0": 50.1,
+     "x1": 81.3,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)",
+     "x0": 84.4,
+     "x1": 97.1,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 100.3,
+     "x1": 128.1,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢",
+     "x0": 131.2,
+     "x1": 141.0,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 144.2,
+     "x1": 185.7,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)¥(xxx:999)¢",
+     "x0": 189.1,
+     "x1": 215.0,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 218.1,
+     "x1": 226.5,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 229.6,
+     "x1": 253.6,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)¢(xxx:999)˛(xxx:999)",
+     "x0": 256.8,
+     "x1": 287.3,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¤",
+     "x0": 290.4,
+     "x1": 294.0,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)£(xxx:999)(xxx:999)¢",
+     "x0": 297.1,
+     "x1": 314.1,
+     "top": 236.1,
+     "bottom": 244.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)¢£(xxx:999)£⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)ˆ(xxx:999)X(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)¢⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 50.1,
+     "x1": 314.1,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)¢⁄(xxx:999)£(xxx:999)",
+     "x0": 321.3,
+     "x1": 351.8,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)¢£(xxx:999)(xxx:999)",
+     "x0": 355.4,
+     "x1": 381.1,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`¥(xxx:999)¢(xxx:999)",
+     "x0": 384.9,
+     "x1": 403.6,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 407.2,
+     "x1": 415.6,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 419.5,
+     "x1": 455.3,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 458.8,
+     "x1": 467.2,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ƒƒƒX(xxx:999)¢(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§",
+     "x0": 471.1,
+     "x1": 535.7,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)",
+     "x0": 539.2,
+     "x1": 543.3,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 547.2,
+     "x1": 555.6,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 559.2,
+     "x1": 565.0,
+     "top": 245.5,
+     "bottom": 253.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "£(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 50.1,
+     "x1": 68.8,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢",
+     "x0": 72.4,
+     "x1": 82.2,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢£(xxx:999)¢",
+     "x0": 86.1,
+     "x1": 108.7,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 112.3,
+     "x1": 155.5,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 159.3,
+     "x1": 171.8,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 175.4,
+     "x1": 181.2,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)x",
+     "x0": 184.8,
+     "x1": 220.3,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 224.1,
+     "x1": 254.3,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢",
+     "x0": 258.0,
+     "x1": 267.8,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 271.6,
+     "x1": 280.0,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)£⁄(xxx:999)(xxx:999)x",
+     "x0": 283.6,
+     "x1": 314.1,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢⁄(xxx:999)⁄(xxx:999)¢(xxx:999)(xxx:999)@¨(xxx:999)´ˆ@(xxx:999)(xxx:999)@¢⁄@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X",
+     "x0": 321.3,
+     "x1": 438.7,
+     "top": 254.9,
+     "bottom": 262.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)X",
+     "x0": 50.1,
+     "x1": 65.0,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)§(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 68.6,
+     "x1": 103.9,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "£(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 107.5,
+     "x1": 124.3,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 127.6,
+     "x1": 136.0,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "£X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 139.6,
+     "x1": 169.1,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 172.8,
+     "x1": 193.4,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 197.0,
+     "x1": 215.7,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢x",
+     "x0": 219.1,
+     "x1": 256.1,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 259.6,
+     "x1": 268.0,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 271.6,
+     "x1": 314.1,
+     "top": 264.2,
+     "bottom": 272.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 50.1,
+     "x1": 62.6,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢",
+     "x0": 67.2,
+     "x1": 77.0,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 81.3,
+     "x1": 127.9,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)",
+     "x0": 132.4,
+     "x1": 145.1,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 149.7,
+     "x1": 155.5,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 159.8,
+     "x1": 180.7,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 185.2,
+     "x1": 203.7,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 208.3,
+     "x1": 214.1,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "´(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 218.4,
+     "x1": 240.2,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 244.8,
+     "x1": 253.2,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X§(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 257.7,
+     "x1": 281.7,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 286.0,
+     "x1": 301.1,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢⁄",
+     "x0": 305.7,
+     "x1": 314.1,
+     "top": 273.6,
+     "bottom": 281.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)X",
+     "x0": 50.1,
+     "x1": 76.3,
+     "top": 282.9,
+     "bottom": 290.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 41.2,
+     "x1": 58.8,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˙`ª",
+     "x0": 63.1,
+     "x1": 79.7,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 84.0,
+     "x1": 99.6,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¢",
+     "x0": 103.9,
+     "x1": 112.1,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 116.4,
+     "x1": 122.2,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 126.4,
+     "x1": 166.2,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)",
+     "x0": 170.4,
+     "x1": 183.1,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)",
+     "x0": 187.4,
+     "x1": 219.6,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)⁄X¢",
+     "x0": 223.9,
+     "x1": 253.2,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 257.5,
+     "x1": 265.9,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)",
+     "x0": 270.2,
+     "x1": 304.0,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 308.4,
+     "x1": 314.2,
+     "top": 292.3,
+     "bottom": 300.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X",
+     "x0": 50.4,
+     "x1": 114.0,
+     "top": 301.7,
+     "bottom": 309.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)£⁄(xxx:999)(xxx:999)",
+     "x0": 46.5,
+     "x1": 90.2,
+     "top": 328.3,
+     "bottom": 336.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 98.6,
+     "x1": 140.8,
+     "top": 328.3,
+     "bottom": 336.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)£⁄(xxx:999)(xxx:999)",
+     "x0": 298.5,
+     "x1": 342.2,
+     "top": 328.3,
+     "bottom": 336.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 358.3,
+     "x1": 400.5,
+     "top": 328.3,
+     "bottom": 336.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆx(xxx:999)",
+     "x0": 46.5,
+     "x1": 59.7,
+     "top": 337.7,
+     "bottom": 345.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)`x(xxx:999)¯(xxx:999)ª`",
+     "x0": 98.6,
+     "x1": 162.2,
+     "top": 337.7,
+     "bottom": 345.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)˘",
+     "x0": 298.5,
+     "x1": 308.3,
+     "top": 337.7,
+     "bottom": 345.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)`@˘x(xxx:999)(xxx:999)ˆ`",
+     "x0": 358.3,
+     "x1": 424.8,
+     "top": 337.7,
+     "bottom": 345.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ˜`",
+     "x0": 46.5,
+     "x1": 63.3,
+     "top": 347.0,
+     "bottom": 355.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)@`@(xxx:999)(xxx:999)`Ø(xxx:999)@˘(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 98.6,
+     "x1": 207.8,
+     "top": 347.0,
+     "bottom": 355.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 298.5,
+     "x1": 310.5,
+     "top": 347.0,
+     "bottom": 355.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)`@(xxx:999)(xxx:999)(xxx:999)`(xxx:999)",
+     "x0": 358.3,
+     "x1": 427.4,
+     "top": 347.0,
+     "bottom": 355.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ¯(xxx:999)",
+     "x0": 46.5,
+     "x1": 59.7,
+     "top": 356.4,
+     "bottom": 364.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¯(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)`(xxx:999)(xxx:999)`(xxx:999)@(xxx:999)(xxx:999)ª¯(xxx:999)(xxx:999)¯ª",
+     "x0": 98.6,
+     "x1": 241.4,
+     "top": 356.4,
+     "bottom": 364.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 298.5,
+     "x1": 314.8,
+     "top": 356.4,
+     "bottom": 364.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)`(xxx:999)@(xxx:999)(xxx:999)(xxx:999)ª(xxx:999)@˜¯@(xxx:999)¯(xxx:999)ª`",
+     "x0": 358.3,
+     "x1": 470.6,
+     "top": 356.4,
+     "bottom": 364.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)",
+     "x0": 46.5,
+     "x1": 54.4,
+     "top": 365.7,
+     "bottom": 373.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)´(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)¯˜(xxx:999)`ª(xxx:999)",
+     "x0": 98.6,
+     "x1": 174.2,
+     "top": 365.7,
+     "bottom": 373.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)`(xxx:999)",
+     "x0": 298.5,
+     "x1": 314.8,
+     "top": 365.7,
+     "bottom": 373.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯ˆ¯(xxx:999)ˆ(xxx:999)(xxx:999)(xxx:999)@`(xxx:999)ª(xxx:999)(xxx:999)`ª(xxx:999)Ø`˜`@˜¯@(xxx:999)`˙(xxx:999)(xxx:999)",
+     "x0": 358.3,
+     "x1": 513.8,
+     "top": 365.7,
+     "bottom": 373.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)",
+     "x0": 46.5,
+     "x1": 65.2,
+     "top": 375.1,
+     "bottom": 383.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 98.6,
+     "x1": 138.7,
+     "top": 375.1,
+     "bottom": 383.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯ˆXx(xxx:999)ˆ˜`",
+     "x0": 298.5,
+     "x1": 342.2,
+     "top": 375.1,
+     "bottom": 383.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯ˆ(xxx:999)´(xxx:999)˜(xxx:999)X`]",
+     "x0": 358.3,
+     "x1": 407.3,
+     "top": 375.1,
+     "bottom": 383.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)",
+     "x0": 46.5,
+     "x1": 62.8,
+     "top": 384.5,
+     "bottom": 392.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)`(xxx:999)`@(xxx:999)¯˙(xxx:999)ˆ(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 98.6,
+     "x1": 209.7,
+     "top": 384.5,
+     "bottom": 392.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯ªx(xxx:999)x˜",
+     "x0": 298.5,
+     "x1": 331.9,
+     "top": 384.5,
+     "bottom": 392.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯ª(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 358.3,
+     "x1": 388.5,
+     "top": 384.5,
+     "bottom": 392.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)",
+     "x0": 46.5,
+     "x1": 58.0,
+     "top": 393.8,
+     "bottom": 401.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª(xxx:999)`(xxx:999)(xxx:999)˘¯(xxx:999)¯(xxx:999)ˆ(xxx:999)`@(xxx:999)(xxx:999)ª¯(xxx:999)x(xxx:999)@˜¯@ˆ(xxx:999)x˜(xxx:999)ª(xxx:999)",
+     "x0": 98.6,
+     "x1": 253.9,
+     "top": 393.8,
+     "bottom": 401.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯(xxx:999)",
+     "x0": 298.5,
+     "x1": 314.8,
+     "top": 393.8,
+     "bottom": 401.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)¯(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 358.3,
+     "x1": 397.2,
+     "top": 393.8,
+     "bottom": 401.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜¯(xxx:999)",
+     "x0": 46.5,
+     "x1": 62.3,
+     "top": 403.2,
+     "bottom": 411.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)ª(xxx:999)",
+     "x0": 98.6,
+     "x1": 139.9,
+     "top": 403.2,
+     "bottom": 411.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)x(xxx:999)",
+     "x0": 298.5,
+     "x1": 311.0,
+     "top": 403.2,
+     "bottom": 411.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)´(xxx:999)(xxx:999)(xxx:999)˜(xxx:999)ˆª(xxx:999)",
+     "x0": 358.3,
+     "x1": 420.5,
+     "top": 403.2,
+     "bottom": 411.2,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜¯(xxx:999)",
+     "x0": 46.5,
+     "x1": 62.6,
+     "top": 412.5,
+     "bottom": 420.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 98.6,
+     "x1": 151.2,
+     "top": 412.5,
+     "bottom": 420.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)˙",
+     "x0": 298.5,
+     "x1": 310.0,
+     "top": 412.5,
+     "bottom": 420.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)´(xxx:999)¯˙(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 358.3,
+     "x1": 406.5,
+     "top": 412.5,
+     "bottom": 420.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜(xxx:999)(xxx:999)",
+     "x0": 46.5,
+     "x1": 59.5,
+     "top": 421.9,
+     "bottom": 429.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜(xxx:999)(xxx:999)(xxx:999)(xxx:999)`(xxx:999)",
+     "x0": 98.6,
+     "x1": 129.8,
+     "top": 421.9,
+     "bottom": 429.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¯(xxx:999)",
+     "x0": 298.5,
+     "x1": 316.3,
+     "top": 421.9,
+     "bottom": 429.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)ª¯(xxx:999)`@˜¯@(xxx:999)`˙(xxx:999)(xxx:999)@¯(xxx:999)¯ˆª(xxx:999)(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)(xxx:999)@(xxx:999)(xxx:999)ª¯(xxx:999)´`(xxx:999)ˆ`(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 358.3,
+     "x1": 574.8,
+     "top": 421.9,
+     "bottom": 429.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)˜X",
+     "x0": 46.5,
+     "x1": 61.1,
+     "top": 431.3,
+     "bottom": 439.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)˜(xxx:999)ˆ(xxx:999)`(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 98.6,
+     "x1": 144.4,
+     "top": 431.3,
+     "bottom": 439.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¯(xxx:999)`",
+     "x0": 298.5,
+     "x1": 325.1,
+     "top": 431.3,
+     "bottom": 439.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)ª¯(xxx:999)`@˜¯@(xxx:999)`˙(xxx:999)(xxx:999)@¯(xxx:999)¯ˆª(xxx:999)(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)(xxx:999)@˜¯@(xxx:999)(xxx:999)(xxx:999)@`(xxx:999)(xxx:999)(xxx:999)(xxx:999)`˜(xxx:999)",
+     "x0": 358.3,
+     "x1": 577.4,
+     "top": 431.3,
+     "bottom": 439.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)ª(xxx:999)x(xxx:999)(xxx:999)ª",
+     "x0": 46.5,
+     "x1": 79.4,
+     "top": 440.6,
+     "bottom": 448.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)ª¯(xxx:999)¯(xxx:999)¯(xxx:999)",
+     "x0": 98.6,
+     "x1": 143.7,
+     "top": 440.6,
+     "bottom": 448.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª@(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 298.5,
+     "x1": 350.1,
+     "top": 440.6,
+     "bottom": 448.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª`(xxx:999)`@(xxx:999)(xxx:999)(xxx:999)(xxx:999)¯˜(xxx:999)(xxx:999)@`(xxx:999)(xxx:999)`(xxx:999)",
+     "x0": 358.3,
+     "x1": 453.1,
+     "top": 440.6,
+     "bottom": 448.6,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)Xx(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)",
+     "x0": 46.5,
+     "x1": 93.1,
+     "top": 450.0,
+     "bottom": 458.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 98.6,
+     "x1": 142.3,
+     "top": 450.0,
+     "bottom": 458.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª˜`",
+     "x0": 298.5,
+     "x1": 314.6,
+     "top": 450.0,
+     "bottom": 458.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)¯(xxx:999)ª`@˜¯@˜¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)ª(xxx:999)@`@(xxx:999)(xxx:999)`Ø(xxx:999)",
+     "x0": 358.3,
+     "x1": 483.3,
+     "top": 450.0,
+     "bottom": 458.0,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)`",
+     "x0": 46.5,
+     "x1": 59.5,
+     "top": 459.3,
+     "bottom": 467.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)ª(xxx:999)@`(xxx:999)@(xxx:999)`(xxx:999)(xxx:999)(xxx:999)@`˙(xxx:999)¯˙`˜(xxx:999)",
+     "x0": 98.6,
+     "x1": 229.2,
+     "top": 459.3,
+     "bottom": 467.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª˜ˆ",
+     "x0": 298.5,
+     "x1": 314.8,
+     "top": 459.3,
+     "bottom": 467.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª`(xxx:999)(xxx:999)¯ª`@˜¯@ˆ(xxx:999)x˜(xxx:999)ª(xxx:999)",
+     "x0": 358.3,
+     "x1": 445.4,
+     "top": 459.3,
+     "bottom": 467.3,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)˜",
+     "x0": 46.5,
+     "x1": 56.8,
+     "top": 468.7,
+     "bottom": 476.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)x(xxx:999)¯`@˜(xxx:999)(xxx:999)¯ˆª`",
+     "x0": 98.6,
+     "x1": 158.6,
+     "top": 468.7,
+     "bottom": 476.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª(xxx:999)(xxx:999)",
+     "x0": 298.5,
+     "x1": 310.7,
+     "top": 468.7,
+     "bottom": 476.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª(xxx:999)`(xxx:999)(xxx:999)˘¯(xxx:999)¯(xxx:999)ˆ(xxx:999)`@(xxx:999)(xxx:999)(xxx:999)¯˜(xxx:999)`ª`@˜¯@(xxx:999)`˙(xxx:999)(xxx:999)@",
+     "x0": 358.3,
+     "x1": 516.7,
+     "top": 468.7,
+     "bottom": 476.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)",
+     "x0": 46.5,
+     "x1": 57.5,
+     "top": 478.1,
+     "bottom": 486.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)˜¯(xxx:999)@˜¯@(xxx:999)`˙(xxx:999)",
+     "x0": 98.6,
+     "x1": 165.8,
+     "top": 478.1,
+     "bottom": 486.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª(xxx:999)`(xxx:999)(xxx:999)˘xª(xxx:999)`(xxx:999)",
+     "x0": 298.5,
+     "x1": 354.4,
+     "top": 478.1,
+     "bottom": 486.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ª(xxx:999)`(xxx:999)(xxx:999)˘¯(xxx:999)¯(xxx:999)ˆ(xxx:999)`@",
+     "x0": 358.3,
+     "x1": 427.7,
+     "top": 478.1,
+     "bottom": 486.1,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 46.5,
+     "x1": 59.7,
+     "top": 487.4,
+     "bottom": 495.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)˜¯(xxx:999)@˜¯@(xxx:999)`˙(xxx:999)@(xxx:999)(xxx:999)ª¯(xxx:999)(xxx:999)`ˆ(xxx:999)(xxx:999)(xxx:999)`(xxx:999)",
+     "x0": 98.6,
+     "x1": 232.5,
+     "top": 487.4,
+     "bottom": 495.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)˜(xxx:999)",
+     "x0": 298.5,
+     "x1": 311.7,
+     "top": 487.4,
+     "bottom": 495.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)˜`˜¯(xxx:999)@˜¯@(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 358.3,
+     "x1": 458.4,
+     "top": 487.4,
+     "bottom": 495.4,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)ª(xxx:999)",
+     "x0": 46.5,
+     "x1": 62.6,
+     "top": 496.8,
+     "bottom": 504.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)ª(xxx:999)`(xxx:999)¯x`@(xxx:999)(xxx:999)(xxx:999)ˆ`",
+     "x0": 98.6,
+     "x1": 180.9,
+     "top": 496.8,
+     "bottom": 504.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 298.5,
+     "x1": 318.9,
+     "top": 496.8,
+     "bottom": 504.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˜(xxx:999)(xxx:999)`(xxx:999)¯(xxx:999)",
+     "x0": 358.3,
+     "x1": 396.2,
+     "top": 496.8,
+     "bottom": 504.8,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "@@",
+     "x0": 45.1,
+     "x1": 50.4,
+     "top": 538.5,
+     "bottom": 548.5,
+     "size": 10.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯¢£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)£(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)`´(xxx:999)(xxx:999)¢£(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˜(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢£(xxx:999)£⁄(xxx:999)(xxx:999)˛(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 109.9,
+     "x1": 572.3,
+     "top": 515.5,
+     "bottom": 523.5,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)⁄(xxx:999)@(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)@(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¢£(xxx:999)£⁄£(xxx:999)X@(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)@ƒ(xxx:999)(xxx:999)x@ƒƒƒX(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)(xxx:999)(xxx:999)X(xxx:999)§",
+     "x0": 109.9,
+     "x1": 470.1,
+     "top": 524.9,
+     "bottom": 532.9,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 48.7,
+     "x1": 64.5,
+     "top": 548.2,
+     "bottom": 554.2,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)`ªx",
+     "x0": 119.0,
+     "x1": 158.6,
+     "top": 548.2,
+     "bottom": 554.2,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¤@¨(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@¯§(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@x@¯(xxx:999)(xxx:999)¢(xxx:999)˛(xxx:999)x",
+     "x0": 245.0,
+     "x1": 354.4,
+     "top": 548.2,
+     "bottom": 554.2,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@¤@¨(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)x",
+     "x0": 428.8,
+     "x1": 514.5,
+     "top": 548.2,
+     "bottom": 554.2,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øłæ(xxx:999)ı",
+     "x0": 48.7,
+     "x1": 82.3,
+     "top": 555.4,
+     "bottom": 561.4,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆł´øæ˘(xxx:999)ł‘ł˘´ł‘(xxx:999)(xxx:999)`(xxx:999)‘`(xxx:999)(xxx:999)(xxx:999)‘˘ø`æ(xxx:999)æ¯(xxx:999)´˜",
+     "x0": 119.0,
+     "x1": 235.2,
+     "top": 555.4,
+     "bottom": 561.4,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)‘æ(xxx:999)‘(xxx:999)æª(xxx:999)(xxx:999)x(xxx:999)(xxx:999)x(xxx:999)(xxx:999)",
+     "x0": 245.0,
+     "x1": 302.6,
+     "top": 555.4,
+     "bottom": 561.4,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)‘æ(xxx:999)‘(xxx:999)æª(xxx:999)(xxx:999)x(xxx:999)æxı(xxx:999)",
+     "x0": 442.8,
+     "x1": 500.4,
+     "top": 555.4,
+     "bottom": 561.4,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "`(xxx:999)",
+     "x0": 119.0,
+     "x1": 126.4,
+     "top": 562.4,
+     "bottom": 568.4,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X£(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 48.7,
+     "x1": 96.5,
+     "top": 569.6,
+     "bottom": 575.6,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˘(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 119.0,
+     "x1": 163.6,
+     "top": 569.6,
+     "bottom": 575.6,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ⁄(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 245.0,
+     "x1": 324.4,
+     "top": 569.6,
+     "bottom": 575.6,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@˘(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 335.0,
+     "x1": 380.4,
+     "top": 569.6,
+     "bottom": 575.6,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)x",
+     "x0": 479.0,
+     "x1": 500.8,
+     "top": 569.6,
+     "bottom": 575.6,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)¯@‘@(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@⁄(xxx:999)(xxx:999)",
+     "x0": 48.7,
+     "x1": 100.8,
+     "top": 576.8,
+     "bottom": 582.8,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)@‘@ª(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)˛(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 119.0,
+     "x1": 227.2,
+     "top": 576.8,
+     "bottom": 582.8,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øłæ(xxx:999)ı",
+     "x0": 245.0,
+     "x1": 295.4,
+     "top": 576.8,
+     "bottom": 582.8,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)æ@‘@˙(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)¤@(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)¢@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢",
+     "x0": 335.0,
+     "x1": 420.4,
+     "top": 577.0,
+     "bottom": 583.0,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@¢(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 479.0,
+     "x1": 528.7,
+     "top": 576.8,
+     "bottom": 582.8,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)(xxx:999)@(xxx:999)§(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)",
+     "x0": 48.7,
+     "x1": 88.5,
+     "top": 583.7,
+     "bottom": 589.7,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@¯(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)x",
+     "x0": 48.7,
+     "x1": 171.6,
+     "top": 590.9,
+     "bottom": 596.9,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@ˆ(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)`ªx",
+     "x0": 191.0,
+     "x1": 305.5,
+     "top": 590.9,
+     "bottom": 596.9,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)@¯§(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)x",
+     "x0": 335.0,
+     "x1": 395.5,
+     "top": 590.9,
+     "bottom": 596.9,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)ıłøøı(xxx:999)(xxx:999)",
+     "x0": 48.7,
+     "x1": 115.9,
+     "top": 598.1,
+     "bottom": 604.1,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)łæ(xxx:999)(xxx:999)(xxx:999)(xxx:999)ø",
+     "x0": 191.0,
+     "x1": 258.2,
+     "top": 598.1,
+     "bottom": 604.1,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆX(xxx:999)X@(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)",
+     "x0": 335.0,
+     "x1": 365.2,
+     "top": 598.1,
+     "bottom": 604.1,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@˜(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@¯(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)x",
+     "x0": 188.1,
+     "x1": 256.3,
+     "top": 605.3,
+     "bottom": 611.3,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)Ł(xxx:999)ˆ(xxx:999)(xxx:999)˜(xxx:999)'(xxx:999)(xxx:999)ł(xxx:999)ø(xxx:999)(xxx:999)`ˆ(xxx:999)¨Ł(xxx:999)(xxx:999)(xxx:999)(xxx:999)Ø¯(xxx:999)ƒ(xxx:999)(xxx:999)£⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)Łıł(xxx:999)(xxx:999)(xxx:999)˙'(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)ª(xxx:999)˜(xxx:999)ª(xxx:999)(xxx:999)(xxx:999)łƒ¥(xxx:999)¯ˆ(xxx:999)˙XƒłX¯x§(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)ˆˆ(xxx:999)(xxx:999)Xˆ(xxx:999)æ(xxx:999)(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)x(xxx:999)",
+     "x0": 187.4,
+     "x1": 570.0,
+     "top": 614.2,
+     "bottom": 620.2,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)£(xxx:999)(xxx:999)´(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)(xxx:999)(xxx:999)˙(xxx:999)(xxx:999)˘(xxx:999)ª(xxx:999)(xxx:999)Øł(xxx:999)¤(xxx:999)ø(xxx:999)(xxx:999)ı(xxx:999)¤(xxx:999)¥Ł⁄(xxx:999)(xxx:999)(xxx:999)˜(xxx:999)`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)´x'(xxx:999)ˆ(xxx:999)¤æ(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)´ˆ(xxx:999)£(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)æª(xxx:999)(xxx:999)Ł`¤(xxx:999)¢(xxx:999)(xxx:999)ı(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)ª(xxx:999)(xxx:999)(xxx:999)¯X¯X˘(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 187.4,
+     "x1": 571.4,
+     "top": 621.2,
+     "bottom": 627.2,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)ªØ'łØ(xxx:999)(xxx:999)˘(xxx:999)¢(xxx:999)(xxx:999)ƒX(xxx:999)£˙Ł(xxx:999)ı(xxx:999)(xxx:999)(xxx:999)(xxx:999)¨(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øØ(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)'æ£(xxx:999)(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ'(xxx:999)(xxx:999)´(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)⁄(xxx:999)Ø(xxx:999)(xxx:999)¥¯¤(xxx:999)(xxx:999)X(xxx:999)˙(xxx:999)(xxx:999)(xxx:999)Ł˜(xxx:999)(xxx:999)(xxx:999)˜`ı`(xxx:999)(xxx:999)ª(xxx:999)'(xxx:999)(xxx:999)(xxx:999)(xxx:999)¤˘˘˙⁄ø(xxx:999)¯(xxx:999)(xxx:999)ø¥£¢(xxx:999)",
+     "x0": 187.4,
+     "x1": 572.1,
+     "top": 628.1,
+     "bottom": 634.1,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "˙(xxx:999)(xxx:999)(xxx:999)ł(xxx:999)`~~",
+     "x0": 187.4,
+     "x1": 218.8,
+     "top": 635.1,
+     "bottom": 641.1,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@ª(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@˘(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)@˜(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)`ªx",
+     "x0": 187.4,
+     "x1": 329.0,
+     "top": 650.7,
+     "bottom": 656.7,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "XXæXæXˆł´øæ˘(xxx:999)ł‘ł˘´ł‘(xxx:999)(xxx:999)`(xxx:999)‘`(xxx:999)(xxx:999)(xxx:999)‘˘ø`æ(xxx:999)æ¯(xxx:999)´˜`(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)‘æ(xxx:999)‘(xxx:999)æª(xxx:999)(xxx:999)x(xxx:999)æxı(xxx:999)Xˆ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)Ł(xxx:999)ˆ(xxx:999)(xxx:999)˜(xxx:999)'(xxx:999)(xxx:999)ł(xxx:999)ø(xxx:999)(xxx:999)`ˆ(xxx:999)¨Ł(xxx:999)(xxx:999)(xxx:999)(xxx:999)Ø¯(xxx:999)ƒ(xxx:999)(xxx:999)£⁄(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)Łıł",
+     "x0": 187.4,
+     "x1": 570.9,
+     "top": 657.9,
+     "bottom": 663.9,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)˙'(xxx:999)(xxx:999)(xxx:999)¯(xxx:999)ª(xxx:999)˜(xxx:999)ª(xxx:999)(xxx:999)(xxx:999)łƒ¥(xxx:999)¯ˆ(xxx:999)˙XƒłX¯x§(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)ˆˆ(xxx:999)(xxx:999)Xˆ(xxx:999)æ(xxx:999)(xxx:999)x(xxx:999)(xxx:999)(xxx:999)(xxx:999)x(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)´(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)(xxx:999)(xxx:999)˙(xxx:999)(xxx:999)˘(xxx:999)ª(xxx:999)(xxx:999)Øł(xxx:999)¤(xxx:999)ø(xxx:999)(xxx:999)ı(xxx:999)¤(xxx:999)¥Ł⁄(xxx:999)(xxx:999)(xxx:999)˜(xxx:999)`(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)£(xxx:999)",
+     "x0": 187.4,
+     "x1": 568.5,
+     "top": 664.9,
+     "bottom": 670.9,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "´x'(xxx:999)ˆ(xxx:999)¤æ(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)´ˆ(xxx:999)£(xxx:999)¯(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)æª(xxx:999)(xxx:999)Ł`¤(xxx:999)¢(xxx:999)(xxx:999)ı(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)ª(xxx:999)(xxx:999)(xxx:999)¯X¯X˘(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)ªØ'łØ(xxx:999)(xxx:999)˘(xxx:999)¢(xxx:999)(xxx:999)ƒX(xxx:999)£˙Ł(xxx:999)ı(xxx:999)(xxx:999)(xxx:999)(xxx:999)¨(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)øØ(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)'æ£(xxx:999)(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 187.4,
+     "x1": 569.7,
+     "top": 671.8,
+     "bottom": 677.8,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)æ'(xxx:999)(xxx:999)´(xxx:999)(xxx:999)(xxx:999)ˆ(xxx:999)⁄(xxx:999)Ø(xxx:999)(xxx:999)¥¯¤(xxx:999)(xxx:999)X(xxx:999)˙(xxx:999)(xxx:999)(xxx:999)Ł˜(xxx:999)(xxx:999)(xxx:999)˜`ı`(xxx:999)(xxx:999)ª(xxx:999)'(xxx:999)(xxx:999)(xxx:999)(xxx:999)¤˘˘˙⁄ø(xxx:999)¯(xxx:999)(xxx:999)ø¥£¢(xxx:999)˙(xxx:999)(xxx:999)(xxx:999)ł(xxx:999)`~~X(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)łæ(xxx:999)(xxx:999)(xxx:999)(xxx:999)øXX",
+     "x0": 187.4,
+     "x1": 491.5,
+     "top": 678.8,
+     "bottom": 684.8,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)@˜(xxx:999)(xxx:999)(xxx:999)£(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)@(xxx:999)`ªx",
+     "x0": 187.4,
+     "x1": 247.2,
+     "top": 688.1,
+     "bottom": 694.1,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "´(xxx:999)(xxx:999)(xxx:999)¨˘Ł(xxx:999)(xxx:999)(xxx:999)¤(xxx:999)X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)ª(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)Ł(xxx:999)¨(xxx:999)(xxx:999)(xxx:999)ª£(xxx:999)¥(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)`(xxx:999)˘¨(xxx:999)Ø(xxx:999)ƒ(xxx:999)ı(xxx:999)æ(xxx:999)(xxx:999)˘x(xxx:999)¥(xxx:999)Ł(xxx:999)£(xxx:999)£¨(xxx:999)(xxx:999)(xxx:999)(xxx:999)ø(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)ł(xxx:999)(xxx:999)(xxx:999)Ø(xxx:999)xı´(xxx:999)¯ø§(xxx:999)ƒ¥(xxx:999)(xxx:999)(xxx:999)ł(xxx:999)¤⁄",
+     "x0": 187.4,
+     "x1": 567.3,
+     "top": 695.3,
+     "bottom": 701.3,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¥(xxx:999)´x(xxx:999)(xxx:999)§(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)§(xxx:999)(xxx:999)¤(xxx:999)ı(xxx:999)˜(xxx:999)§Ø¯¢(xxx:999)˘(xxx:999)(xxx:999)ƒX(xxx:999)⁄(xxx:999)ı(xxx:999)(xxx:999)(xxx:999)(xxx:999)¯ØØ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)X(xxx:999)(xxx:999)æ§(xxx:999)(xxx:999)(xxx:999)(xxx:999)'ƒ(xxx:999)(xxx:999)ı(xxx:999)(xxx:999)ª(xxx:999)(xxx:999)ª(xxx:999)£(xxx:999)¢˘X(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)æ(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)'`ª(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)",
+     "x0": 187.4,
+     "x1": 567.3,
+     "top": 702.3,
+     "bottom": 708.3,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "ø(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)'(xxx:999)(xxx:999)`(xxx:999)(xxx:999)(xxx:999)X'Øª(xxx:999)ø¯(xxx:999)Ø(xxx:999)˜§(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)`¥(xxx:999)(xxx:999)(xxx:999)ı(xxx:999)§(xxx:999)˘Łø(xxx:999)(xxx:999)x(xxx:999)(xxx:999)ˆƒ¢(xxx:999)(xxx:999)'(xxx:999)¢(xxx:999)´(xxx:999)(xxx:999)(xxx:999)ø(xxx:999)(xxx:999)`(xxx:999)(xxx:999)ı¤(xxx:999)ªx(xxx:999)(xxx:999)(xxx:999)æªª(xxx:999)(xxx:999)(xxx:999)(xxx:999)xł(xxx:999)¢ø(xxx:999)¨(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¤(xxx:999)¯(xxx:999)(xxx:999)X¥(xxx:999)",
+     "x0": 187.4,
+     "x1": 568.3,
+     "top": 709.3,
+     "bottom": 715.3,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "(xxx:999)ł(xxx:999)˘(xxx:999)(xxx:999)(xxx:999)ƒ~~",
+     "x0": 187.4,
+     "x1": 221.7,
+     "top": 716.2,
+     "bottom": 722.2,
+     "size": 6.0,
+     "bold": false,
+     "page": 4
+    },
+    {
+     "text": "¯¢£(xxx:999)@(xxx:999)(xxx:999)(xxx:999)⁄(xxx:999)(xxx:999)(xxx:999)£(xxx:999)@(xxx:999)¢@⁄(xxx:999)(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)(xxx:999)£(xxx:999)(xxx:999)(xxx:999)˛(xxx:999)@(xxx:999)(xxx:999)(xxx:999)(xxx:999)(xxx:999)¢(xxx:999)@(xxx:999)(xxx:999)@⁄(xxx:999)@ˆ˘˜(xxx:999)",
+     "x0": 199.6,
+     "x1": 421.4,
+     "top": 726.7,
+     "bottom": 734.7,
+     "size": 8.0,
+     "bold": false,
+     "page": 4
+    }
+   ]
+  }
+ ]
+}

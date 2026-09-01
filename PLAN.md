@@ -197,6 +197,28 @@ Hallazgos medidos (fase 7, AFIRME):
   arrastra 4–5 líneas con CLABE, RFC, CONCEPTO, REFERENCIA e IVA — más
   líneas de continuación que de movimiento.
 
+**Segunda tanda de fixtures (15 documentos, 5 empresas, 9 bancos).**
+Hallazgos que aplican a todo el sistema, no solo a estados de cuenta:
+
+- **Duplicación de tokens generalizada** (ver caso 5 arriba). Afecta a
+  balanza, auxiliar, pólizas y mayor de «manufacturas», más Santander.
+  La fase 7c deja de ser un arreglo de un banco y pasa a ser requisito de
+  extracción para 5 documentos de 2 empresas.
+- **Encabezados agrupados fuera del Libro Mayor**: `balanza-fd` tiene
+  `SaldoAnterior` abarcando `Deudor`/`Acreedor`, y `SaldoActual` igual. Lo
+  que resuelva la fase 7b sirve aquí.
+- **Cuentas con punto como separador**: Proactivity usa `101.01.01`.
+  `RE_CUENTA` no las reconoce, se enmascaran como montos y la columna de
+  cuenta desaparece. Afecta al dumper y al parser.
+- **Cuentas de 4 grupos**: `balanza-fd` usa `000-000-100-000`.
+- **Páginas apaisadas**: Monex es 792×612 y Proactivity llega a x=818.
+  Nada asume tamaño de página, pero falta un test que lo fije.
+- **`$` como columna propia** (Proactivity, Banorte julio): ya resuelto en
+  AFIRME tomando anclas del encabezado, no de la posición.
+- **Inbursa página 2 detecta 6 columnas limpias**
+  (`FECHA | REFERENCIA | CONCEPTO | CARGO | ABONO | SALDO`): es el estado
+  de cuenta mejor estructurado de los nueve.
+
 **Declarado sin cubrir** (una sola muestra, AFIRME): otro banco puede
 nombrar distinto el resumen, la tabla y el bloque de identificación; el
 pegado sin separador está medido en este formato y un banco que envuelva
@@ -420,8 +442,17 @@ casos, no dos:
      no mejora. **Ningún OCR —local, neuronal o en nube— recupera tinta
      que no existe**; pedir aprobación de nube por privacidad aquí no
      serviría de nada.
-5. **Glifos duplicados** → el documento dibuja cada carácter dos veces con
-   un desplazamiento mínimo, para simular negritas. Medido en Santander:
+6. **Texto en CID sin mapa ToUnicode** → el extractor devuelve
+   `(cid:123)(cid:45)…` porque el PDF no trae la tabla que traduce glifos a
+   letras. Medido en Inbursa y Multiva. **Es un subcaso de 3a: la tinta sí
+   está dibujada**, así que el reintento por OCR debe recuperarlo — a
+   diferencia del 3b de GUME, aquí sí va a funcionar.
+5. **Glifos duplicados** → el documento dibuja el mismo contenido varias
+   veces. **No es un caso aislado**: medido en Santander (×2, con
+   desplazamiento) y en toda la familia «manufacturas» (×5 en balanza,
+   pólizas y mayor; **×25** en el auxiliar, en coordenadas idénticas).
+   La duplicación ahoga el clustering: `polizas-manufacturas` y
+   `mayor-manufacturas` detectan **1 sola columna**. Medido en Santander:
    `999999,,999999..9999` es `999,999.99` y `9999--XXXXXX--99999999` es
    `99-XXX-9999`. El mismo documento trae filas sin duplicar
    (`[32-77]99-XXX-9999`), lo que confirma la lectura. **Sin deduplicar, no
@@ -635,7 +666,7 @@ cp-pdf/
 | 6 | OCR | `ocr.py` + preprocesado + fallback para texto mutilado | **hecho** (409 tests) |
 | 7 | Estado de cuenta | Multilínea + variación por banco | **hecho** (436 tests) |
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | siguiente |
-| 7c | Extracción de bancos | Deduplicar glifos duplicados (Santander) + separar fecha pegada (Banorte) | |
+| 7c | Extracción transversal | Deduplicar tokens repetidos (×2 a ×25), CID sin ToUnicode → OCR, fecha pegada, cuentas con punto | |
 | 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 4 formatos con el mismo parser | |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 

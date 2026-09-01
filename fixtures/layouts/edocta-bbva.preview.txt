@@ -1,0 +1,175 @@
+
+==============================================================================
+PAGINA 1  (612x792, lines=93, rects=9)
+==============================================================================
+COLUMNAS DETECTADAS: 2
+  col  0  left   x[   8.6.. 292.5]  n=133   ''
+  col  1  left   x[ 309.5.. 600.0]  n=115   ''
+------------------------------------------------------------------------------
+     6.9 | [497-533]Estado  [536-549]de  [551-590]Cuenta
+    21.3 | [481-529]XXXXXXX  [532-560]XXXX  [563-590]XXXX
+    32.9 | [529-564]PAGINA  [569-574]9  [576-579]/  [581-591]99
+    56.9 | [310-338]Periodo  [481-497]DEL  [499-540]99/99/9999  [542-552]AL  [554-596]99/99/9999
+    71.9 | [314-336]Fecha  [339-348]de  [350-370]Corte  [554-596]99/99/9999
+    94.0 | [30-70]XXXXXXX  [72-83]XX  [85-96]DE  [99-110]XX  [314-326]No.  [329-338]de  [340-367]Cuenta  [550-596]9999999999
+   105.5 | [30-41]XX  [43-75]XXXXXX  [77-96]9999  [314-326]No.  [329-338]de  [340-366]Xxxxxxx  [558-596]X9999999
+   117.0 | [30-40]LA  [42-58]XXX  [314-335]X.X.X  [534-596]RFCE17C0B397
+   128.5 | [30-62]XXXXXX  [314-326]No.  [329-355]Cuenta  [358-384]XXXXX  [514-596]CLB1CAB7C6BF71B12
+   140.0 | [30-47]XXX  [114-146]XXXXXX  [200-212]XX  [220-243]99999
+   154.0 | [310-354]SUCURSAL  [356-359]:  [370-388]9999  [404-437]XXXXXX  [439-444]9  [446-457]DE  [459-484]XXXX
+   166.5 | [310-358]XXXXXXXXX:  [404-428]XXXX.  [430-435]9  [437-448]DE  [451-475]XXXX  [477-495]9999  [498-517]XXX.  [519-569]XXXXXXXXXX  [572-583]DE
+   174.1 | [31-74]XXXXXXXXX  [76-105]XXXXXX  [404-439]XXXXXXX  [441-459]XXX
+   185.6 | [31-42]XX  [31-41]LA  [43-59]XXX  [44-76]XXXXXX  [78-97]9999  [310-338]XXXXX:  [404-437]XXXXXX
+   208.6 | [31-64]XXXXXX  [129-146]XXX  [208-220]XX  [222-245]99999  [310-356]TELEFONO:  [404-436]9999999
+   223.5 | [10-74]Información  [77-132]Xxxxxxxxxx  [473-523]MONEDA  [526-584]XXXXXXXX
+   249.4 | [10-56]Rendimiento  [316-377]Xxxxxxxxxxxxxx
+   261.6 | [16-37]Saldo  [39-74]Promedio  [246-287]999,999.99  [316-337]Saldo  [339-348]de  [351-392]Xxxxxxxxxxx  [395-416]Inicial  [552-600]9,999,999.99
+   274.3 | [16-33]Xxxx  [35-46]del  [48-77]Periodo  [278-287]99  [316-337]Saldo  [339-348]de  [351-389]Xxxxxxxxx  [391-412]Inicial  [552-600]9,999,999.99
+   287.1 | [16-35]Tasa  [37-59]Xxxxx  [61-84]Anual  [180-187]%  [267-287]9.999  [316-353]Depósitos  [355-357]/  [360-387]Xxxxxx  [390-400](+)  [455-464]99  [552-600]9,999,999.99
+   299.8 | [17-38]Saldo  [40-75]Promedio  [78-111]Xxxxxxxx  [246-287]999,999.99  [317-343]Retiros  [345-347]/  [350-376]Xxxxxx  [378-386](-)  [455-464]99  [548-600]99,999,999.99
+   312.6 | [17-51]Xxxxxxxxx  [53-57]a  [60-81]Xxxxx  [83-93](+)  [271-287]9.99  [316-337]Saldo  [339-357]Final  [360-370](+)  [564-600]99,999.99
+   326.0 | [17-30]XXX  [33-66]Xxxxxxxx  [68-76](-)  [271-287]9.99  [316-337]Saldo  [339-348]de  [351-389]Xxxxxxxxx  [391-409]Final  [564-600]99,999.99
+   338.7 | [10-53]Comisiones  [56-65]de  [67-73]la  [76-100]cuenta  [316-337]Saldo  [339-374]Promedio  [377-404]Mínimo  [406-437]Xxxxxxx  [439-463]Hasta:  [595-600]9
+   350.9 | [16-49]Cheques  [52-83]xxxxxxx  [179-184]9  [271-287]9.99
+   363.6 | [16-43]Xxxxxx  [46-55]de  [57-83]Cuenta  [271-287]9.99  [313-333]Xxxxx  [336-372]xxxxxxxxx  [374-406]xxxxxxxxx  [408-417]en  [419-426]xx  [428-453]estado  [455-464]de  [466-491]cuenta  [496-543](Xxxxxxxxxxx)
+   376.4 | [16-53]Xxxxxxxxx  [16-63]Operaciones  [179-184]9  [271-287]9.99  [271-287]9.99  [322-353]Xxxxxxxx  [369-402]Xxxxxxxx  [418-437]Tasa  [420-447]Interes  [423-444]anual  [440-449]de  [466-498]Nominal  [466-489]Xxxxx  [473-491]XXX  [492-502]de  [504-546]Xxxxxxxxx  [522-539]XXX  [522-539]Real  [558-599]comisiones  [564-582]Total  [584-593]de
+   402.5 | [10-29]Total  [31-74]Comisiones  [266-286]99.99
+   414.6 | [16-43]Xxxxxx  [45-83]Xxxxxxxxx  [179-184]9  [271-287]9.99  [330-344]X/X  [379-392]X/X  [427-441]X/X  [475-489]X/X  [524-537]X/X  [572-585]X/X
+   428.0 | [16-44]Xxxxxx  [47-84]Xxxxxxxxx  [179-184]9  [271-287]9.99
+   556.8 | [10-46]Detalle  [49-62]de  [65-132]Xxxxxxxxxxx  [135-192]Xxxxxxxxxx
+   569.9 | [33-61]FECHA  [522-550]SALDO
+   582.1 | [18-41]XXXX  [51-65]XXX  [86-106]XXX.  [109-166]DESCRIPCIÓN  [231-284]REFERENCIA  [362-398]XXXXXX  [423-459]XXXXXX  [475-525]XXXXXXXXX  [539-593]XXXXXXXXXXX
+   595.6 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [415-456]999,999.99
+   607.0 | [86-108]XXXX  [110-156]9999999999  [158-227]XXXXXXXXXXXXX  [230-245]Xxx.  [247-292]9999999999
+   620.2 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   631.7 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   659.1 | [256-310]Xxxxxxxx  [313-356]Xxxxxxx,
+   672.9 | [70-85]Xx  [89-129]Estado  [132-146]de  [150-190]Cuenta  [194-208]xx  [211-236]xxxx  [239-303]xxxxxxxxxx  [306-313]y  [316-349]xxxxx  [352-380]xxxxx  [384-408]xxx  [411-449]detalle  [452-466]de  [470-542]información.
+   686.7 | [133-182]Xxxxxxx  [186-196]xx  [199-268]xxxxxxxxxx  [271-292]xxx  [296-310]xx  [313-363]Xxxxxxxx  [366-380]xx  [384-408]xxxx  [412-479]xxxxxxxxxx,
+   700.5 | [123-134]xx  [137-161]xxxx  [164-200]xxxxx  [203-268]xxxxxxxxxxx  [271-285]en  [288-342]xxxxxxxxx  [345-394]sucursal  [398-405]x  [408-488]xxx.xxxx.xx
+   714.3 | [248-271]Xxx  [274-308]XXXX  [312-364]xxxxxxxx.
+   744.7 | [9-18]La  [20-37]XXX  [39-56]Real  [58-67]xx  [69-76]xx  [78-121]rendimiento  [123-137]xxx  [139-174]xxxxxxxxx  [176-207]xxxxxxx  [209-218]de  [221-257]xxxxxxxxx  [259-265]la  [268-298]xxxxxxxxx  [300-333]xxxxxxxx
+   756.3 | [9-31]XXXX  [33-68]XXXXXX,  [70-88]X.X.,  [90-142]XXXXXXXXXXX  [145-156]DE  [158-187]XXXXX  [189-231]XXXXXXXX,  [234-264]XXXXX  [266-317]XXXXXXXXXX  [319-341]XXXX  [343-375]XXXXXX
+   767.7 | [9-21]Xx.  [23-46]Xxxxx  [48-57]de  [59-65]la  [67-98]Xxxxxxx  [100-116]999,  [118-132]Xxx.  [134-161]Xxxxxx,  [163-191]Xxxxxxxx  [194-241]Xxxxxxxxxx,  [243-259]X.X.  [261-286]99999,  [288-313]Xxxxxx  [315-324]de  [326-354]Xxxxxx.  [356-382]Xxxxxx  [384-407]X.X.X.  [409-465]RFCCE8D00515
+
+==============================================================================
+PAGINA 3  (612x792, lines=9, rects=1)
+==============================================================================
+COLUMNAS DETECTADAS: 7
+  col  0  left   x[   9.0..  35.3]  n=22    ''
+  col  1  left   x[  50.9..  79.5]  n=20    ''
+  col  2  left   x[  83.7.. 316.6]  n=210   'XXXXXXXXX XXXXXXXXXXXXX XX DE XX'
+  col  3  right  x[ 336.2.. 397.8]  n=18    ''
+  col  4  right  x[ 407.8.. 455.7]  n=8     ''
+  col  5  right  x[ 489.9.. 526.3]  n=3     ''
+  col  6  right  x[ 548.0.. 598.5]  n=4     ''
+------------------------------------------------------------------------------
+     6.9 | [497-533]Estado  [536-549]de  [551-590]Cuenta
+    21.3 | [481-529]XXXXXXX  [532-560]XXXX  [563-590]XXXX
+    32.9 | [529-564]PAGINA  [569-574]9  [576-579]/  [581-591]99
+    70.3 | [338-353]No.  [355-384]Cuenta  [548-598]9999999999
+    87.3 | [338-353]No.  [355-382]Xxxxxxx  [556-598]X9999999
+   120.9 | [33-61]FECHA  [522-550]SALDO
+   133.0 | [18-41]XXXX  [51-65]XXX  [86-106]XXX.  [109-166]DESCRIPCIÓN  [231-284]REFERENCIA  [362-398]XXXXXX  [423-459]XXXXXX  [475-525]XXXXXXXXX  [539-593]XXXXXXXXXXX
+   144.9 | [84-195]CLBB6A24ADD40E681
+   156.1 | [84-232]9999XXX9999999999999999999
+   167.3 | [84-110]XXXX  [113-158]XXXXXXX  [161-231]XXXXXXXXXX  [234-293]XXXXXXXXX
+   180.1 | [10-35]99/XXX  [54-80]99/XXX  [86-100]X99  [102-121]XXXX  [123-203]XXXXXXXXXXXXXXX  [419-456]99,999.99
+   191.5 | [86-139]9999999XXXX  [142-155]395  [158-173]Xxx.  [175-220]9999999999  [223-236]072
+   203.1 | [84-195]CLB3F903FF5FF07C3
+   214.3 | [84-232]9999XXX9999999999999999999
+H  225.5 | [84-145]XXXXXXXXX  [148-231]XXXXXXXXXXXXX  [234-247]XX  [250-264]DE  [266-280]XX
+   238.3 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [419-456]99,999.99  [490-526]99,999.99  [558-594]99,999.99
+   249.7 | [86-108]XXXX  [110-156]9999999999  [158-196]Xxxxxxxxxx  [198-227]xxxxxxx  [230-245]Xxx.  [247-292]9999999999
+   262.9 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-125]XXXX  [128-156]XXXXX  [158-199]XXXXXXXX  [377-398]99.99
+   274.4 | [88-103]Xxx.  [106-123]XXX  [125-148]XXXX  [150-167]XXX  [169-177]XX
+   287.6 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-116]IVA  [118-138]XXX  [140-162]XXXX  [164-181]XXX  [184-224]XXXXXXXX  [382-398]9.99
+   299.1 | [88-103]Xxx.  [106-119]IVA  [121-140]XXX  [142-165]XXXX  [167-178]XX
+   312.2 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [419-456]99,999.99  [490-526]99,999.99  [558-594]99,999.99
+   323.7 | [86-108]XXXX  [110-156]9999999999  [158-196]Xxxxxxxxxx  [198-227]xxxxxxx  [230-245]Xxx.  [247-292]9999999999
+   336.9 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [415-456]999,999.99
+   348.4 | [86-108]XXXX  [110-156]9999999999  [158-171]Xxx  [173-192]X999  [194-210]Xxx.  [212-257]9999999999
+   361.6 | [10-35]99/XXX  [54-80]99/XXX  [86-102]X99  [104-147]XXXXXXXX  [149-184]XXXXXX  [186-208]XXXX  [424-456]9,999.99
+   386.2 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [419-456]99,999.99
+   397.7 | [86-108]XXXX  [110-156]9999999999  [158-198]XXXXXXX  [200-216]XXX  [219-232]412  [235-246]XX  [248-263]Xxx.  [265-311]9999999999
+   410.9 | [10-35]99/XXX  [54-80]99/XXX  [86-100]X99  [102-121]XXXX  [123-195]XXXXXXXXXXXXXX  [408-456]9,999,999.99
+   422.4 | [86-136]9999999XXX  [138-149]DE  [152-188]XXXXXX  [190-230]XXXXXXX  [232-261]XXXXXX  [263-269]X  [271-286]Xxx.  [288-334]9999999999  [336-350]127
+   434.0 | [84-195]CLBCEC123684CF827
+   445.2 | [84-187]999999999999999999X
+   456.3 | [84-136]XXXXXXXXX  [139-153]DE  [156-214]XXXXXXXXX
+   469.1 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   480.6 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   493.7 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   505.2 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   518.4 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   529.9 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   543.1 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   554.6 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   567.7 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   579.2 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   592.4 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   603.9 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-199]Xxx.  [201-247]9999999999
+   617.1 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   628.5 | [86-108]XXXX  [110-156]9999999999  [158-173]Xxx.  [175-221]9999999999
+   641.7 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   653.2 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   666.4 | [10-35]99/XXX  [54-80]99/XXX  [86-101]X99  [103-127]XXXX  [129-163]CUENTA  [165-177]DE  [179-219]TERCERO  [357-398]999,999.99
+   677.9 | [86-108]XXXX  [110-156]9999999999  [158-182]XXXX  [184-223]XXXXXXXX  [226-240]Xxx.  [243-288]9999999999
+   691.0 | [10-35]99/XXX  [54-80]99/XXX  [86-103]X99  [105-148]XXXXXXXX  [150-161]DE  [164-204]TERCERO  [419-456]99,999.99  [490-526]99,999.99  [558-594]99,999.99
+   702.5 | [86-137]XXXXXXXXX  [139-214]XXXXXXXXXXXXXX  [217-282]XXXXXXXXXXXX  [285-300]Xxx.
+   714.0 | [84-159]XXXXXXX99999999
+   726.8 | [10-35]99/XXX  [54-80]99/XXX  [86-100]X99  [102-121]XXXX  [123-160]XXXXXXX  [163-202]XXXXXXX  [373-398]999.99
+   756.3 | [9-31]XXXX  [33-68]XXXXXX,  [70-88]X.X.,  [90-142]XXXXXXXXXXX  [145-156]DE  [158-187]XXXXX  [189-231]XXXXXXXX,  [234-264]XXXXX  [266-317]XXXXXXXXXX  [319-341]XXXX  [343-375]XXXXXX
+   767.7 | [9-21]Xx.  [23-46]Xxxxx  [48-57]de  [59-65]la  [67-98]Xxxxxxx  [100-116]999,  [118-132]Xxx.  [134-161]Xxxxxx,  [163-191]Xxxxxxxx  [194-241]Xxxxxxxxxx,  [243-259]X.X.  [261-286]99999,  [288-313]Xxxxxx  [315-324]de  [326-354]Xxxxxx.  [356-382]Xxxxxx  [384-407]X.X.X.  [409-465]RFCCE8D00515
+
+==============================================================================
+PAGINA 11  (612x792, lines=16, rects=2)
+==============================================================================
+COLUMNAS DETECTADAS: 1
+  col  0  left   x[   9.0.. 598.5]  n=170   'Xxxxxxx en (xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:9)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:9)(xxx:99)(xxx:999)'
+------------------------------------------------------------------------------
+     6.9 | [497-533]Estado  [536-549]de  [551-590]Cuenta
+    21.3 | [481-529]XXXXXXX  [532-560]XXXX  [563-590]XXXX
+    32.9 | [524-559]PAGINA  [564-574]99  [576-579]/  [581-591]99
+    70.3 | [338-353]No.  [355-384]Cuenta  [548-598]9999999999
+    87.3 | [338-353]No.  [355-382]Xxxxxxx  [556-598]X9999999
+   130.7 | [47-73]Xxxxx  [76-84]xx  [87-114]xxxxx  [117-158]xxxxxxxx  [161-215]xxxxxxxxxxx  [217-226]xx  [228-259]estado  [261-272]de  [275-305]cuenta  [308-319]en  [322-384]xxx.xxxx.xx  [387-426]xxxxxxxx  [429-446]xxx  [449-456]xx  [459-486]xxxxx  [489-530]xxxxxxxx  [533-544]xx
+   142.7 | [240-310]xxxxxxxxxxxxxxx  [313-324]de  [327-351]xxxxx
+   179.2 | [27-48]Folio  [51-80]Xxxxxx:  [322-370]Xxxxxxxxxxx
+   193.4 | [25-209]UUID-14A0857731B9  [320-420]CLBAE6930B7D626C6
+   216.9 | [27-48]Xxxxx  [51-78]Xxxxxxx
+   231.0 | [25-484]XXXXXxXxXXx9Xx9XxXXx9XxxxXxX9XxXxXX9Xx99XxXX9xXxxxXxX/xXXxxxxXXX+XX9x9xXx+xXx9X9XxXXXXxXX
+   241.3 | [25-486]+X9+99xXXXXxx9XXXXxxXxxXXxxXx9XX9xxXxxXxXXxXx9XxxXxXXxX9xxXXXxXxX9XXxxXXX9xXX9999Xxxx9
+   251.7 | [25-485]xx9XXx9x9XX9XXXX9xX99999XXxXXXxx9XXxxxXx9xxXX9xXx9XxxXXXx/X9XxXxX9xXXxX9Xxx9XXx+XXX+xX99
+   262.0 | [25-444]x9XX9XxXXXxxXXXX9xxxxXXXX9XxxXX9xXxXX9X9x9xx9XXxXXx+x99xxx99XXXxx99xxXXXX+X9Xxx==
+   284.6 | [27-48]Xxxxx  [51-69]XXX
+   296.8 | [24-484]xxXxXxx9xxxxXXxxxxxxxxX9xX+xxXXxX9xXX9x9X9x+XxxxxxXx/XxxXxXxxxxx9XxxxxXXxx/XXxX9x9x9xxx9X9xXXX999
+   307.1 | [24-486]x9xXxxx9xxx9XXxXx9xxxXxXXxxXxXxx9xXxXXXxxxx9xX99xxXxx9XX/XXX/XxXXXXXXXxXxxXX9XXXx9xXXx
+   317.5 | [24-482]Xxxx9XXxXXXxx+XXX9xxXX++X9XxxXxxxXxxxx99XxxX9XXxX99xxXX/XXx9xxxX9XXXXxxXXXxX9XX9xXXX+XXX
+   327.8 | [24-409]XXx9xxxX9XxXXXXxXx9X/XX+xx9xxx9XXxxxXXx9xxXxXxXxXxxx9xXXx9X9XxXX9XXXxxX==
+   345.8 | [25-39]No.  [42-52]de  [55-77]Xxxxx  [79-92]del  [95-142]Xxxxxxxxxxx  [144-157]del  [160-181]XXX:  [183-283]CLB56E32913742C89  [321-347]Fecha  [350-355]y  [357-377]xxxx  [379-390]de  [392-448]xxxxxxxxxxxxx:  [461-548]9999-99-99X99:99:99
+   372.2 | [24-57]Xxxxxx  [60-94]Xxxxxxxx  [96-109]del  [112-170]xxxxxxxxxxx  [172-183]de  [186-238]xxxxxxxxxxxxx  [241-268]xxxxxxx  [270-283]del  [286-306]XXX:
+   385.7 | [23-486]||9.9|99999X9X-99XX-9999-99XX-XXX999X9X9XX|9999-99-99X99:99:99|XXXXXxXxXXx9Xx9XxXXx9XxxxXxX9XxXx
+   393.8 | [23-483]XX9Xx99XxXX9xXxxxXxX/xXXxxxxXXX+XX9x9xXx+xXx9X9XxXXXXxXX+X9+99xXXXXxx9XXXXxxXxxXXxxXx9X
+   402.0 | [23-487]X9xxXxxXxXXxXx9XxxXxXXxX9xxXXXxXxX9XXxxXXX9xXX9999Xxxx9xx9XXx9x9XX9XXXX9xX99999XXxXXXxx
+   410.1 | [23-488]9XXxxxXx9xxXX9xXx9XxxXXXx/X9XxXxX9xXXxX9Xxx9XXx+XXX+xX99x9XX9XxXXXxxXXXX9xxxxXXXX9XxxXX9
+   418.3 | [23-373]xXxXX9X9x9xx9XXxXXx+x99xxx99XXXxx99xxXXXX+X9Xxx==|99999999999999999999||
+   435.7 | [202-222]Xxxx  [225-275]documento  [278-288]xx  [291-308]xxx  [310-376]xxxxxxxxxxxxxx  [379-415]xxxxxxx  [418-429]de  [432-443]xx  [445-472]CFDI.
+   453.9 | [75-210](xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:9)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:9)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)
+   471.8 | [75-210](xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:9)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)
+   489.6 | [75-210](xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:9)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:9)(xxx:99)(xxx:999)(xxx:99)(xxx:9)(xxx:9)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:9)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)
+H  507.5 | [75-210](xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:9)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:9)(xxx:99)(xxx:999)  [414-444]Xxxxxxx  [447-457]en
+   511.6 | [298-327]Xxxxxx  [329-339]de  [342-373]Xxxxxx,  [375-404]Xxxxxx  [406-411]a  [414-424]99  [426-436]de  [439-479]Xxxxxxxxx  [482-492]de  [494-514]9999  [517-522]a  [524-536]xxx  [538-573]99:99:99
+   525.4 | [75-210](xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:9)(xxx:999)(xxx:99)
+   543.2 | [75-210](xxx:9)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:9)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:9)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:99)(xxx:999)(xxx:999)(xxx:9)(xxx:999)(xxx:9)(xxx:99)(xxx:99)
+   561.1 | [75-210](xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:999)(xxx:999)(xxx:99)(xxx:9)(xxx:9)(xxx:99)(xxx:99)
+   578.9 | [75-210](xxx:999)(xxx:9)(xxx:999)(xxx:999)(xxx:999)(xxx:9)(xxx:999)(xxx:9)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:9)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:9)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:9)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:99)(xxx:99)(xxx:999)(xxx:99)(xxx:99)(xxx:9)
+   621.7 | [11-30]"Xxx  [33-84]Xxxxxxxxxxx  [87-114]Xxxxxxx  [117-124]xx  [127-159]xxxxxxx  [162-168]x  [170-200]xxxxxx  [203-266]xxxxxxxxxxxxxx  [268-280]de  [282-312]xxxxxx  [315-363]xxxxxxxxxx  [366-377]en  [380-416]moneda  [418-463]xxxxxxxxxx  [466-471]y  [473-536]xxxxxxxxxxxxxx  [539-550]de  [553-583]xxxxxx
+   633.2 | [11-81]xxxxxxxxxxxxxxx,  [84-110]XXXX  [113-132]xxxx  [135-173]xxxxxxxx  [175-181]a  [184-225]xxxxxxxxx  [228-239]en  [242-250]la  [253-300]xxxxxxxxxx  [303-316]del  [319-347]Banco  [350-361]de  [364-395]Xxxxxx  [398-418]xxxx  [421-458]xxxxxxxx  [461-466]y  [469-512]xxxxxxxxx  [515-526]de  [529-551]otras  [554-598]Xxxxxxxxx
+   644.7 | [11-62]Xxxxxxxxxxx  [65-73]la  [76-128]información  [130-202]xxxxxxxxxxxxxxx  [205-210]a  [213-234]xxxx  [237-292]operaciones  [294-299]y  [302-308]a  [310-319]xx  [322-379]xxxxxxxxxxxxxx  [382-407]xxxx  [409-443]Xxxxxxx,  [446-476]xxxxx  [478-495]xxx  [498-524]XXXX  [527-558]xxxxxx  [561-602]xxxxxxxxx
+   656.2 | [11-45]xxxxxxx  [48-55]xx  [58-88]xxxxxx  [91-108]xxx  [110-160]xxxxxxxxx  [163-179]xxx  [182-217]xxxxxxxx  [220-252]xxxxxxxx  [255-271]xxx  [274-293]xxxx  [295-343]Xxxxxxxxxxx,  [346-360]xxx  [363-371]xx  [374-390]xxx  [393-400]xx  [403-441]xxxxxxxx  [444-449]x  [452-484]xxxxxxx  [487-516]xxxxxx  [519-573]operaciones  [576-587]xx
+   667.7 | [11-56]xxxxxxxxx  [59-75]xxx  [78-112]xxxxxxx  [114-123]xx  [125-193]xxxxxxxxxxxxxx  [195-215]xxxx  [218-240]xxxx."
+   738.7 | [489-522]Xxxxxxx  [525-550]Xxxxxx:
+   746.8 | [437-471]Xxxxxxx  [473-503]General  [505-515]de  [517-531]Xxx  [533-569]Xxxxxxxx  [571-601]Xxxxxxx
+   756.3 | [9-31]XXXX  [33-68]XXXXXX,  [70-88]X.X.,  [90-142]XXXXXXXXXXX  [145-156]DE  [158-187]XXXXX  [189-231]XXXXXXXX,  [234-264]XXXXX  [266-317]XXXXXXXXXX  [319-341]XXXX  [343-375]XXXXXX
+   767.7 | [9-21]Xx.  [23-46]Xxxxx  [48-57]de  [59-65]la  [67-98]Xxxxxxx  [100-116]999,  [118-132]Xxx.  [134-161]Xxxxxx,  [163-191]Xxxxxxxx  [194-241]Xxxxxxxxxx,  [243-259]X.X.  [261-286]99999,  [288-313]Xxxxxx  [315-324]de  [326-354]Xxxxxx.  [356-382]Xxxxxx  [384-407]X.X.X.  [409-465]RFCCE8D00515

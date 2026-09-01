@@ -1,0 +1,4719 @@
+{
+ "source_pages_total": 3,
+ "pages_sampled": [
+  1,
+  2,
+  3
+ ],
+ "mask_mode": "values",
+ "salted": true,
+ "pages": [
+  {
+   "page": 1,
+   "width": 612.0,
+   "height": 792.0,
+   "has_text_layer": true,
+   "ruling_lines": 0,
+   "rects": 87,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 49.4,
+     "x_min": 45.1,
+     "x_max": 465.6,
+     "support": 124,
+     "header": "Periodo"
+    },
+    {
+     "index": 1,
+     "align": "left",
+     "anchor": 476.6,
+     "x_min": 471.1,
+     "x_max": 571.7,
+     "support": 19,
+     "header": "99-XXX-99/99-XXX-99"
+    }
+   ],
+   "header_line_indexes": [
+    3
+   ],
+   "words": [
+    {
+     "text": "PAGINA",
+     "x0": 108.0,
+     "x1": 138.0,
+     "top": 21.4,
+     "bottom": 21.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9",
+     "x0": 140.2,
+     "x1": 144.5,
+     "top": 21.4,
+     "bottom": 21.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 146.6,
+     "x1": 157.7,
+     "top": 21.4,
+     "bottom": 21.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9",
+     "x0": 159.8,
+     "x1": 164.2,
+     "top": 21.4,
+     "bottom": 21.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "999999",
+     "x0": 53.5,
+     "x1": 53.8,
+     "top": 73.9,
+     "bottom": 99.8,
+     "size": 4.3,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 60.0,
+     "x1": 71.0,
+     "top": 78.5,
+     "bottom": 78.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 73.2,
+     "x1": 106.8,
+     "top": 78.5,
+     "bottom": 78.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Y",
+     "x0": 109.0,
+     "x1": 114.0,
+     "top": 78.5,
+     "bottom": 78.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 116.2,
+     "x1": 149.5,
+     "top": 78.5,
+     "bottom": 78.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXX",
+     "x0": 151.7,
+     "x1": 198.5,
+     "top": 78.5,
+     "bottom": 78.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 200.6,
+     "x1": 228.5,
+     "top": 78.5,
+     "bottom": 78.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "X.X.",
+     "x0": 60.0,
+     "x1": 75.4,
+     "top": 115.0,
+     "bottom": 115.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99999",
+     "x0": 77.5,
+     "x1": 99.1,
+     "top": 115.0,
+     "bottom": 115.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "X.X.",
+     "x0": 101.3,
+     "x1": 117.1,
+     "top": 115.0,
+     "bottom": 115.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99999",
+     "x0": 119.3,
+     "x1": 140.9,
+     "top": 115.0,
+     "bottom": 115.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 145.2,
+     "x1": 162.0,
+     "top": 115.0,
+     "bottom": 115.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "999999",
+     "x0": 164.2,
+     "x1": 190.1,
+     "top": 115.0,
+     "bottom": 115.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Ì9999999999999999999999999999999999xÎ",
+     "x0": 51.4,
+     "x1": 332.9,
+     "top": 170.6,
+     "bottom": 170.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XxxxxxxxXxxxxx",
+     "x0": 397.2,
+     "x1": 458.6,
+     "top": 68.9,
+     "bottom": 69.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "CHEQUES",
+     "x0": 474.5,
+     "x1": 513.8,
+     "top": 68.6,
+     "bottom": 68.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Cuenta",
+     "x0": 429.6,
+     "x1": 454.3,
+     "top": 83.8,
+     "bottom": 84.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99999999999",
+     "x0": 475.9,
+     "x1": 523.4,
+     "top": 83.8,
+     "bottom": 84.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXX",
+     "x0": 427.4,
+     "x1": 454.3,
+     "top": 93.1,
+     "bottom": 93.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "CLB3FE2F338BCBBE6",
+     "x0": 475.9,
+     "x1": 553.7,
+     "top": 92.9,
+     "bottom": 93.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxxxxx",
+     "x0": 403.2,
+     "x1": 454.3,
+     "top": 102.2,
+     "bottom": 102.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99-XXX-99",
+     "x0": 475.9,
+     "x1": 514.1,
+     "top": 102.0,
+     "bottom": 102.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Periodo",
+     "x0": 428.2,
+     "x1": 454.3,
+     "top": 111.4,
+     "bottom": 111.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99-XXX-99/99-XXX-99",
+     "x0": 475.9,
+     "x1": 555.6,
+     "top": 111.1,
+     "bottom": 111.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xx.xxxxxxxxxxxxxxxxx",
+     "x0": 368.6,
+     "x1": 454.3,
+     "top": 120.5,
+     "bottom": 120.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99",
+     "x0": 475.9,
+     "x1": 484.6,
+     "top": 120.2,
+     "bottom": 120.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Moneda",
+     "x0": 427.0,
+     "x1": 454.3,
+     "top": 130.1,
+     "bottom": 130.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 475.9,
+     "x1": 516.5,
+     "top": 130.3,
+     "bottom": 130.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxx",
+     "x0": 432.5,
+     "x1": 454.3,
+     "top": 139.7,
+     "bottom": 139.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 475.9,
+     "x1": 492.7,
+     "top": 139.4,
+     "bottom": 139.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 494.9,
+     "x1": 505.9,
+     "top": 139.4,
+     "bottom": 139.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "SUCURSAL",
+     "x0": 508.1,
+     "x1": 551.3,
+     "top": 139.4,
+     "bottom": 139.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "X.X.X.Xxxxxxx",
+     "x0": 59.5,
+     "x1": 110.6,
+     "top": 188.9,
+     "bottom": 189.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "RFC90374AEF0",
+     "x0": 152.2,
+     "x1": 213.1,
+     "top": 188.6,
+     "bottom": 188.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Sucursal",
+     "x0": 59.5,
+     "x1": 93.4,
+     "top": 195.8,
+     "bottom": 196.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXX",
+     "x0": 152.2,
+     "x1": 177.1,
+     "top": 195.8,
+     "bottom": 196.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 179.3,
+     "x1": 194.2,
+     "top": 195.8,
+     "bottom": 196.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 196.3,
+     "x1": 226.6,
+     "top": 195.8,
+     "bottom": 196.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 228.7,
+     "x1": 259.9,
+     "top": 195.8,
+     "bottom": 196.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 59.5,
+     "x1": 98.2,
+     "top": 205.2,
+     "bottom": 205.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXX",
+     "x0": 100.3,
+     "x1": 121.2,
+     "top": 205.2,
+     "bottom": 205.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXX",
+     "x0": 123.4,
+     "x1": 149.8,
+     "top": 205.2,
+     "bottom": 205.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX",
+     "x0": 151.9,
+     "x1": 156.2,
+     "top": 205.2,
+     "bottom": 205.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9999",
+     "x0": 158.4,
+     "x1": 175.7,
+     "top": 205.2,
+     "bottom": 205.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX99999",
+     "x0": 177.8,
+     "x1": 210.5,
+     "top": 205.2,
+     "bottom": 205.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 59.5,
+     "x1": 90.7,
+     "top": 212.2,
+     "bottom": 212.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxx",
+     "x0": 59.0,
+     "x1": 85.7,
+     "top": 225.6,
+     "bottom": 225.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX,",
+     "x0": 153.1,
+     "x1": 186.5,
+     "top": 226.8,
+     "bottom": 227.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX.",
+     "x0": 188.6,
+     "x1": 207.1,
+     "top": 226.8,
+     "bottom": 227.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 53.3,
+     "x1": 70.1,
+     "top": 246.2,
+     "bottom": 246.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXXXXX",
+     "x0": 74.4,
+     "x1": 152.6,
+     "top": 246.2,
+     "bottom": 246.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Interés",
+     "x0": 49.9,
+     "x1": 75.6,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxx",
+     "x0": 77.8,
+     "x1": 112.3,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99%",
+     "x0": 114.5,
+     "x1": 135.8,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": ".",
+     "x0": 139.0,
+     "x1": 141.1,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxx",
+     "x0": 143.3,
+     "x1": 172.1,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 174.2,
+     "x1": 205.2,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99%.",
+     "x0": 207.4,
+     "x1": 231.6,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 233.8,
+     "x1": 250.3,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "nominal",
+     "x0": 252.5,
+     "x1": 279.1,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99%",
+     "x0": 281.3,
+     "x1": 303.4,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 309.8,
+     "x1": 326.4,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "real",
+     "x0": 328.6,
+     "x1": 341.0,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99%.",
+     "x0": 343.2,
+     "x1": 367.4,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxx",
+     "x0": 369.6,
+     "x1": 389.5,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 391.7,
+     "x1": 400.1,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxx.",
+     "x0": 402.2,
+     "x1": 439.7,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "La",
+     "x0": 441.8,
+     "x1": 450.2,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 452.4,
+     "x1": 469.0,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "real",
+     "x0": 471.1,
+     "x1": 483.6,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xx",
+     "x0": 485.8,
+     "x1": 493.9,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xx",
+     "x0": 496.1,
+     "x1": 501.8,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "rendimiento",
+     "x0": 504.0,
+     "x1": 543.8,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxx",
+     "x0": 546.0,
+     "x1": 558.7,
+     "top": 260.9,
+     "bottom": 261.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxx",
+     "x0": 49.9,
+     "x1": 82.1,
+     "top": 270.0,
+     "bottom": 270.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 84.2,
+     "x1": 113.5,
+     "top": 270.0,
+     "bottom": 270.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 115.7,
+     "x1": 124.1,
+     "top": 270.0,
+     "bottom": 270.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxx",
+     "x0": 126.2,
+     "x1": 160.1,
+     "top": 270.0,
+     "bottom": 270.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "la",
+     "x0": 162.2,
+     "x1": 168.0,
+     "top": 270.0,
+     "bottom": 270.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxx",
+     "x0": 170.2,
+     "x1": 198.5,
+     "top": 270.0,
+     "bottom": 270.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxx.",
+     "x0": 200.6,
+     "x1": 233.8,
+     "top": 270.0,
+     "bottom": 270.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxxxxxxx",
+     "x0": 243.1,
+     "x1": 289.2,
+     "top": 288.5,
+     "bottom": 288.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 292.6,
+     "x1": 299.0,
+     "top": 288.5,
+     "bottom": 288.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxxxxxx",
+     "x0": 302.4,
+     "x1": 340.3,
+     "top": 288.5,
+     "bottom": 288.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "en",
+     "x0": 343.7,
+     "x1": 350.2,
+     "top": 288.5,
+     "bottom": 288.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xx",
+     "x0": 353.5,
+     "x1": 359.3,
+     "top": 288.5,
+     "bottom": 288.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "cuenta",
+     "x0": 362.6,
+     "x1": 381.1,
+     "top": 288.5,
+     "bottom": 288.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XxxxxxxxxXxxxxx",
+     "x0": 103.4,
+     "x1": 177.8,
+     "top": 289.0,
+     "bottom": 289.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Saldo",
+     "x0": 393.8,
+     "x1": 407.3,
+     "top": 298.8,
+     "bottom": 299.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "inicial",
+     "x0": 410.4,
+     "x1": 425.8,
+     "top": 298.8,
+     "bottom": 299.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "=",
+     "x0": 428.9,
+     "x1": 434.9,
+     "top": 298.8,
+     "bottom": 299.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 438.0,
+     "x1": 451.2,
+     "top": 298.8,
+     "bottom": 299.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Saldo",
+     "x0": 460.6,
+     "x1": 474.0,
+     "top": 298.8,
+     "bottom": 299.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxx=",
+     "x0": 477.1,
+     "x1": 494.2,
+     "top": 298.8,
+     "bottom": 299.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 497.3,
+     "x1": 510.5,
+     "top": 298.8,
+     "bottom": 299.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxxxxx",
+     "x0": 131.0,
+     "x1": 168.0,
+     "top": 306.7,
+     "bottom": 307.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 307.0,
+     "bottom": 307.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 280.8,
+     "x1": 290.4,
+     "top": 317.8,
+     "bottom": 318.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(+)Xxxxxxxxx",
+     "x0": 126.0,
+     "x1": 168.2,
+     "top": 325.2,
+     "bottom": 325.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 325.4,
+     "bottom": 325.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 280.6,
+     "x1": 290.2,
+     "top": 328.6,
+     "bottom": 328.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(+)",
+     "x0": 48.0,
+     "x1": 57.1,
+     "top": 344.6,
+     "bottom": 344.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxx",
+     "x0": 58.3,
+     "x1": 89.5,
+     "top": 344.6,
+     "bottom": 344.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxx",
+     "x0": 91.0,
+     "x1": 122.9,
+     "top": 344.6,
+     "bottom": 344.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(Tasa",
+     "x0": 124.3,
+     "x1": 143.0,
+     "top": 344.6,
+     "bottom": 344.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99%)",
+     "x0": 144.5,
+     "x1": 167.0,
+     "top": 344.6,
+     "bottom": 344.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 343.9,
+     "bottom": 344.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 280.8,
+     "x1": 290.4,
+     "top": 344.2,
+     "bottom": 344.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(-)Xxxxxxx",
+     "x0": 134.6,
+     "x1": 165.6,
+     "top": 362.2,
+     "bottom": 362.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 362.4,
+     "bottom": 362.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 280.3,
+     "x1": 290.2,
+     "top": 359.5,
+     "bottom": 359.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 281.0,
+     "x1": 290.4,
+     "top": 374.9,
+     "bottom": 375.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(-)Xxxxxxxxxxxxxxxxxx",
+     "x0": 91.2,
+     "x1": 168.2,
+     "top": 380.6,
+     "bottom": 380.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 380.9,
+     "bottom": 381.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 280.6,
+     "x1": 290.2,
+     "top": 390.2,
+     "bottom": 390.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(-)Xxxxxxxxx",
+     "x0": 126.2,
+     "x1": 168.0,
+     "top": 399.1,
+     "bottom": 399.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 399.4,
+     "bottom": 399.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 281.8,
+     "x1": 290.2,
+     "top": 405.8,
+     "bottom": 406.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(=)Xxxxxxxxxxxxxxxxxxxx",
+     "x0": 85.2,
+     "x1": 167.8,
+     "top": 418.3,
+     "bottom": 418.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 418.3,
+     "bottom": 418.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99",
+     "x0": 280.3,
+     "x1": 290.2,
+     "top": 416.9,
+     "bottom": 417.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 339.8,
+     "x1": 353.0,
+     "top": 414.0,
+     "bottom": 414.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 389.0,
+     "x1": 402.2,
+     "top": 414.0,
+     "bottom": 414.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 438.0,
+     "x1": 451.2,
+     "top": 414.0,
+     "bottom": 414.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 487.0,
+     "x1": 500.2,
+     "top": 414.0,
+     "bottom": 414.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 536.2,
+     "x1": 549.4,
+     "top": 414.0,
+     "bottom": 414.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "*",
+     "x0": 246.5,
+     "x1": 250.1,
+     "top": 437.5,
+     "bottom": 437.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxx",
+     "x0": 253.4,
+     "x1": 273.4,
+     "top": 437.5,
+     "bottom": 437.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxxx",
+     "x0": 276.7,
+     "x1": 305.0,
+     "top": 437.5,
+     "bottom": 437.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Depósitos",
+     "x0": 331.9,
+     "x1": 359.0,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxx",
+     "x0": 377.3,
+     "x1": 404.6,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Retiros",
+     "x0": 413.8,
+     "x1": 433.2,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "en",
+     "x0": 436.6,
+     "x1": 443.3,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 446.6,
+     "x1": 468.2,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxx",
+     "x0": 478.3,
+     "x1": 493.7,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "xxxxxx*",
+     "x0": 497.0,
+     "x1": 518.9,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Comisiones",
+     "x0": 527.5,
+     "x1": 558.2,
+     "top": 436.1,
+     "bottom": 436.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(+)Xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "x0": 63.8,
+     "x1": 167.8,
+     "top": 440.6,
+     "bottom": 440.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XxxxxxxxXxxxxxxXxxxxxxxx",
+     "x0": 238.6,
+     "x1": 355.4,
+     "top": 450.7,
+     "bottom": 451.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(=)Xxxxxxxxxxxxxxxx+xxxxxxxxxxx",
+     "x0": 59.0,
+     "x1": 168.2,
+     "top": 459.4,
+     "bottom": 459.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 216.0,
+     "x1": 234.0,
+     "top": 459.4,
+     "bottom": 459.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxxxxxx",
+     "x0": 237.6,
+     "x1": 330.5,
+     "top": 463.2,
+     "bottom": 463.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99%",
+     "x0": 549.6,
+     "x1": 571.0,
+     "top": 463.9,
+     "bottom": 464.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxx.Xxxx.Xxx.xxxxxxxxxxxxxxxxx",
+     "x0": 52.8,
+     "x1": 167.8,
+     "top": 477.8,
+     "bottom": 478.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$99,999.99",
+     "x0": 198.2,
+     "x1": 234.0,
+     "top": 478.1,
+     "bottom": 478.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxxxxxx",
+     "x0": 237.6,
+     "x1": 333.1,
+     "top": 475.9,
+     "bottom": 476.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9.99%",
+     "x0": 549.6,
+     "x1": 571.0,
+     "top": 476.6,
+     "bottom": 476.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxx.xxxxxxxxxxxxxxxxxxxx",
+     "x0": 237.6,
+     "x1": 329.3,
+     "top": 488.6,
+     "bottom": 488.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 552.2,
+     "x1": 571.7,
+     "top": 489.4,
+     "bottom": 489.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxx.",
+     "x0": 67.0,
+     "x1": 82.1,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxx.",
+     "x0": 83.5,
+     "x1": 103.0,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(9)",
+     "x0": 104.4,
+     "x1": 113.3,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "de",
+     "x0": 114.5,
+     "x1": 122.6,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "la",
+     "x0": 124.3,
+     "x1": 129.6,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxx.",
+     "x0": 131.3,
+     "x1": 144.5,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXX",
+     "x0": 145.9,
+     "x1": 168.2,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "$9.99",
+     "x0": 213.6,
+     "x1": 233.0,
+     "top": 496.6,
+     "bottom": 496.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxx",
+     "x0": 237.6,
+     "x1": 311.8,
+     "top": 500.4,
+     "bottom": 500.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "NO",
+     "x0": 523.4,
+     "x1": 535.4,
+     "top": 499.4,
+     "bottom": 499.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 537.6,
+     "x1": 571.4,
+     "top": 499.4,
+     "bottom": 499.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "9Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+     "x0": 48.0,
+     "x1": 219.1,
+     "top": 514.6,
+     "bottom": 514.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX",
+     "x0": 84.2,
+     "x1": 94.3,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 96.5,
+     "x1": 141.1,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 143.3,
+     "x1": 182.9,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 185.0,
+     "x1": 195.8,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 198.0,
+     "x1": 241.7,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 243.8,
+     "x1": 283.4,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX",
+     "x0": 285.6,
+     "x1": 296.2,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXX",
+     "x0": 298.3,
+     "x1": 354.7,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "A",
+     "x0": 356.9,
+     "x1": 362.4,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 364.6,
+     "x1": 393.8,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DEL",
+     "x0": 396.0,
+     "x1": 411.6,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99-XXX-99.",
+     "x0": 413.8,
+     "x1": 456.7,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX",
+     "x0": 463.7,
+     "x1": 473.8,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 475.9,
+     "x1": 520.6,
+     "top": 555.1,
+     "bottom": 555.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXX",
+     "x0": 84.2,
+     "x1": 109.2,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 111.4,
+     "x1": 122.2,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 124.3,
+     "x1": 168.0,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 170.2,
+     "x1": 201.1,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX",
+     "x0": 203.3,
+     "x1": 213.8,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXX",
+     "x0": 216.0,
+     "x1": 272.4,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "A",
+     "x0": 274.6,
+     "x1": 280.1,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 282.2,
+     "x1": 311.5,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DEL",
+     "x0": 313.7,
+     "x1": 329.3,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "99-XXX-99.",
+     "x0": 331.4,
+     "x1": 374.4,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 380.9,
+     "x1": 424.3,
+     "top": 564.2,
+     "bottom": 564.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXX.XXX.XX/XXXXXXXXX.",
+     "x0": 84.2,
+     "x1": 225.8,
+     "top": 573.4,
+     "bottom": 573.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX",
+     "x0": 45.1,
+     "x1": 52.6,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 54.7,
+     "x1": 86.9,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 89.0,
+     "x1": 121.2,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXX",
+     "x0": 123.4,
+     "x1": 151.7,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "A",
+     "x0": 153.8,
+     "x1": 159.1,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 161.3,
+     "x1": 193.2,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 195.4,
+     "x1": 206.4,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXXXXX",
+     "x0": 208.6,
+     "x1": 281.0,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXXX",
+     "x0": 283.2,
+     "x1": 345.1,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 347.3,
+     "x1": 358.3,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXXXXXXXXXXX",
+     "x0": 360.5,
+     "x1": 465.4,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "(XXXXXX",
+     "x0": 467.5,
+     "x1": 498.2,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXX",
+     "x0": 500.4,
+     "x1": 522.5,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "EN",
+     "x0": 524.6,
+     "x1": 535.7,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "MONEDA",
+     "x0": 537.8,
+     "x1": 572.6,
+     "top": 692.4,
+     "bottom": 692.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX),",
+     "x0": 45.1,
+     "x1": 90.5,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 92.6,
+     "x1": 130.6,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 132.7,
+     "x1": 175.0,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "A",
+     "x0": 177.1,
+     "x1": 182.4,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 184.6,
+     "x1": 199.4,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXX",
+     "x0": 201.6,
+     "x1": 263.0,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 265.2,
+     "x1": 305.8,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXX",
+     "x0": 307.9,
+     "x1": 323.8,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXX",
+     "x0": 325.9,
+     "x1": 354.2,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXXXXXXXX,",
+     "x0": 356.4,
+     "x1": 415.2,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XX",
+     "x0": 417.4,
+     "x1": 428.2,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "NUMERO",
+     "x0": 430.3,
+     "x1": 465.6,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "DE",
+     "x0": 467.8,
+     "x1": 478.8,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "XXXXX:",
+     "x0": 481.0,
+     "x1": 509.0,
+     "top": 701.5,
+     "bottom": 701.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    },
+    {
+     "text": "CLB3FE2F338BCBBE6",
+     "x0": 45.1,
+     "x1": 122.9,
+     "top": 710.6,
+     "bottom": 710.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 1
+    }
+   ]
+  },
+  {
+   "page": 2,
+   "width": 612.0,
+   "height": 792.0,
+   "has_text_layer": true,
+   "ruling_lines": 0,
+   "rects": 19,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 27.1,
+     "x_min": 27.1,
+     "x_max": 590.4,
+     "support": 100,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "\"Xxxx",
+     "x0": 27.1,
+     "x1": 49.4,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxx",
+     "x0": 52.1,
+     "x1": 63.8,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 66.5,
+     "x1": 95.5,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "del",
+     "x0": 98.2,
+     "x1": 110.2,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxx.",
+     "x0": 112.8,
+     "x1": 126.2,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "100",
+     "x0": 128.9,
+     "x1": 144.0,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 146.6,
+     "x1": 156.5,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "la",
+     "x0": 159.1,
+     "x1": 166.3,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxx",
+     "x0": 169.0,
+     "x1": 183.4,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 186.0,
+     "x1": 195.8,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxxxx",
+     "x0": 198.5,
+     "x1": 249.4,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 252.0,
+     "x1": 261.8,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxx,",
+     "x0": 264.5,
+     "x1": 296.6,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xx",
+     "x0": 299.3,
+     "x1": 308.6,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxx",
+     "x0": 311.3,
+     "x1": 330.7,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxx",
+     "x0": 333.4,
+     "x1": 363.4,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxx",
+     "x0": 366.0,
+     "x1": 380.9,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "la",
+     "x0": 383.5,
+     "x1": 390.7,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 393.4,
+     "x1": 428.2,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "impresión",
+     "x0": 430.8,
+     "x1": 470.6,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 473.3,
+     "x1": 507.8,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 510.5,
+     "x1": 520.3,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxx",
+     "x0": 523.0,
+     "x1": 552.5,
+     "top": 758.2,
+     "bottom": 758.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxx",
+     "x0": 27.1,
+     "x1": 74.2,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "y",
+     "x0": 76.8,
+     "x1": 81.4,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxx",
+     "x0": 84.0,
+     "x1": 117.6,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxx",
+     "x0": 120.2,
+     "x1": 135.1,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxx",
+     "x0": 137.8,
+     "x1": 161.0,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "en",
+     "x0": 163.7,
+     "x1": 173.5,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxx",
+     "x0": 176.2,
+     "x1": 187.9,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxx",
+     "x0": 190.6,
+     "x1": 224.6,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 227.3,
+     "x1": 237.1,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxx",
+     "x0": 239.8,
+     "x1": 256.8,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxx\"",
+     "x0": 259.4,
+     "x1": 304.1,
+     "top": 768.7,
+     "bottom": 769.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxx",
+     "x0": 27.1,
+     "x1": 72.2,
+     "top": 779.3,
+     "bottom": 779.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxx",
+     "x0": 74.9,
+     "x1": 104.9,
+     "top": 779.3,
+     "bottom": 779.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "X.X.",
+     "x0": 107.5,
+     "x1": 124.8,
+     "top": 779.3,
+     "bottom": 779.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "999999",
+     "x0": 53.8,
+     "x1": 79.7,
+     "top": 20.6,
+     "bottom": 20.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "PAGINA",
+     "x0": 153.4,
+     "x1": 183.4,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "9",
+     "x0": 185.5,
+     "x1": 189.8,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "DE",
+     "x0": 192.0,
+     "x1": 203.0,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "9",
+     "x0": 205.2,
+     "x1": 209.5,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Cuenta",
+     "x0": 262.1,
+     "x1": 286.8,
+     "top": 19.2,
+     "bottom": 19.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "99999999999",
+     "x0": 289.0,
+     "x1": 336.5,
+     "top": 19.2,
+     "bottom": 19.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.",
+     "x0": 51.4,
+     "x1": 365.8,
+     "top": 59.8,
+     "bottom": 60.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.",
+     "x0": 51.4,
+     "x1": 590.4,
+     "top": 70.3,
+     "bottom": 70.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxXxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 51.4,
+     "x1": 445.4,
+     "top": 81.1,
+     "bottom": 81.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 50.4,
+     "x1": 66.5,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXX",
+     "x0": 68.6,
+     "x1": 116.4,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXX",
+     "x0": 118.6,
+     "x1": 145.9,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 148.1,
+     "x1": 164.9,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXXXX",
+     "x0": 167.0,
+     "x1": 227.5,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 229.7,
+     "x1": 246.5,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 248.6,
+     "x1": 259.4,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX,",
+     "x0": 261.6,
+     "x1": 280.6,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "EN",
+     "x0": 282.7,
+     "x1": 293.5,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 295.7,
+     "x1": 306.5,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXX,",
+     "x0": 308.6,
+     "x1": 333.4,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 335.5,
+     "x1": 346.6,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 348.7,
+     "x1": 359.3,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXX",
+     "x0": 361.4,
+     "x1": 416.2,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXXXX",
+     "x0": 418.3,
+     "x1": 481.9,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "EN",
+     "x0": 484.1,
+     "x1": 494.9,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 497.0,
+     "x1": 507.1,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "DETALLE",
+     "x0": 509.3,
+     "x1": 545.5,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "DE",
+     "x0": 547.7,
+     "x1": 558.5,
+     "top": 104.6,
+     "bottom": 104.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 50.4,
+     "x1": 66.2,
+     "top": 113.8,
+     "bottom": 114.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXXX",
+     "x0": 68.4,
+     "x1": 125.0,
+     "top": 113.8,
+     "bottom": 114.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxxxxxxxxxxxxxxxxxxxxxxXxxxxxx:",
+     "x0": 50.4,
+     "x1": 221.0,
+     "top": 141.4,
+     "bottom": 141.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "$9.99",
+     "x0": 232.8,
+     "x1": 252.2,
+     "top": 141.4,
+     "bottom": 141.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxxx",
+     "x0": 55.2,
+     "x1": 104.4,
+     "top": 317.8,
+     "bottom": 318.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "\"XX",
+     "x0": 55.2,
+     "x1": 67.7,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 69.8,
+     "x1": 86.2,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 88.3,
+     "x1": 99.1,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 101.3,
+     "x1": 137.3,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "DE",
+     "x0": 139.4,
+     "x1": 150.5,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "TASA",
+     "x0": 152.6,
+     "x1": 173.5,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXX,",
+     "x0": 175.7,
+     "x1": 216.5,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 218.6,
+     "x1": 234.5,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXX",
+     "x0": 236.6,
+     "x1": 281.8,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 283.9,
+     "x1": 317.0,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXX\"",
+     "x0": 319.2,
+     "x1": 366.7,
+     "top": 332.4,
+     "bottom": 332.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "\"XXXXXXXXX",
+     "x0": 55.2,
+     "x1": 101.5,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 103.7,
+     "x1": 119.8,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXXXX",
+     "x0": 121.9,
+     "x1": 181.9,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 184.1,
+     "x1": 194.4,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXX",
+     "x0": 196.6,
+     "x1": 223.9,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 226.1,
+     "x1": 265.4,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "COMISIONES",
+     "x0": 267.6,
+     "x1": 318.2,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "X",
+     "x0": 320.4,
+     "x1": 325.7,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXX",
+     "x0": 327.8,
+     "x1": 373.0,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXX\"",
+     "x0": 375.1,
+     "x1": 432.5,
+     "top": 344.4,
+     "bottom": 344.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "\"XXXXXXXXX",
+     "x0": 55.2,
+     "x1": 108.0,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXX",
+     "x0": 110.2,
+     "x1": 151.4,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXX",
+     "x0": 153.6,
+     "x1": 170.9,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXX",
+     "x0": 173.0,
+     "x1": 202.6,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "DE",
+     "x0": 204.7,
+     "x1": 215.8,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 217.9,
+     "x1": 228.7,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXX",
+     "x0": 230.9,
+     "x1": 277.2,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "DE",
+     "x0": 279.4,
+     "x1": 290.4,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXX",
+     "x0": 292.6,
+     "x1": 315.6,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXX",
+     "x0": 317.8,
+     "x1": 345.1,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXX",
+     "x0": 347.3,
+     "x1": 384.5,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XX",
+     "x0": 386.6,
+     "x1": 397.4,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXX",
+     "x0": 399.6,
+     "x1": 441.6,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XXXXXXXXXX\"",
+     "x0": 443.8,
+     "x1": 492.7,
+     "top": 355.4,
+     "bottom": 355.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxxxx",
+     "x0": 287.3,
+     "x1": 377.0,
+     "top": 376.6,
+     "bottom": 376.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxXxxxxxxxXxxxxxxxxx:",
+     "x0": 88.6,
+     "x1": 204.5,
+     "top": 394.6,
+     "bottom": 394.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxXxxxxxxxxx:",
+     "x0": 373.7,
+     "x1": 453.6,
+     "top": 394.6,
+     "bottom": 394.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "99999999x999999999999",
+     "x0": 88.6,
+     "x1": 189.8,
+     "top": 403.9,
+     "bottom": 404.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "·Xxxxxxxxxxxxxxxxxxxxx",
+     "x0": 373.7,
+     "x1": 458.2,
+     "top": 403.9,
+     "bottom": 404.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "·Xxxxxxxxxxxxxxxxxxxxx99xxxxxxxxxxx,xxx999xxxxxxxxxx.",
+     "x0": 88.6,
+     "x1": 302.6,
+     "top": 413.3,
+     "bottom": 413.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "·Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+     "x0": 88.6,
+     "x1": 227.8,
+     "top": 422.6,
+     "bottom": 422.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "·Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+     "x0": 88.6,
+     "x1": 220.8,
+     "top": 432.0,
+     "bottom": 432.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "·Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+     "x0": 88.6,
+     "x1": 251.8,
+     "top": 440.9,
+     "bottom": 441.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxXxxxxxxxxxxxxxXxxxxxxxxxxXxxxxxxxxxxx",
+     "x0": 373.7,
+     "x1": 560.9,
+     "top": 452.9,
+     "bottom": 453.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXX",
+     "x0": 88.6,
+     "x1": 290.2,
+     "top": 462.2,
+     "bottom": 462.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxxxXxxxxxxxxXxxxxxxxxxx(XXXXXXXX):",
+     "x0": 373.7,
+     "x1": 544.6,
+     "top": 462.2,
+     "bottom": 462.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(XxxxxxXxxxxxxxxxxxxxxXxxxxxxxxxxx):",
+     "x0": 88.6,
+     "x1": 238.3,
+     "top": 471.6,
+     "bottom": 471.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "99999999x99(999)9999999",
+     "x0": 373.7,
+     "x1": 484.1,
+     "top": 471.6,
+     "bottom": 471.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(99)99999999",
+     "x0": 88.6,
+     "x1": 141.4,
+     "top": 481.0,
+     "bottom": 481.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "x0": 373.7,
+     "x1": 538.1,
+     "top": 481.0,
+     "bottom": 481.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxx@xxxxxxxxxx.xxx.xx",
+     "x0": 88.6,
+     "x1": 182.6,
+     "top": 490.3,
+     "bottom": 490.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "x0": 373.7,
+     "x1": 547.4,
+     "top": 490.3,
+     "bottom": 490.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxxxx.xxxxxxxx.xxx.xx",
+     "x0": 373.7,
+     "x1": 484.3,
+     "top": 499.7,
+     "bottom": 499.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,xxxxxxxxxxxxxxxxxx",
+     "x0": 88.6,
+     "x1": 307.9,
+     "top": 512.4,
+     "bottom": 512.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxxx99xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     "x0": 88.6,
+     "x1": 296.6,
+     "top": 521.8,
+     "bottom": 522.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxx,xxxxxxxxxxxxxxx,xxxxxxxxxxxxxxxxx.",
+     "x0": 88.6,
+     "x1": 268.6,
+     "top": 531.1,
+     "bottom": 531.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "·xxx.xxxxxxxxxx.xxx.xx",
+     "x0": 88.6,
+     "x1": 186.2,
+     "top": 549.8,
+     "bottom": 550.1,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxx",
+     "x0": 88.6,
+     "x1": 130.8,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxx",
+     "x0": 135.1,
+     "x1": 161.3,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "X.X.",
+     "x0": 165.6,
+     "x1": 180.7,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxx",
+     "x0": 185.0,
+     "x1": 221.3,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 225.4,
+     "x1": 234.0,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxx",
+     "x0": 238.3,
+     "x1": 260.9,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxx,",
+     "x0": 265.4,
+     "x1": 295.2,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxx",
+     "x0": 299.3,
+     "x1": 321.1,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxx",
+     "x0": 325.7,
+     "x1": 362.6,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxx",
+     "x0": 367.2,
+     "x1": 406.8,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxx",
+     "x0": 411.1,
+     "x1": 437.3,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxx",
+     "x0": 441.6,
+     "x1": 463.0,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxx",
+     "x0": 467.5,
+     "x1": 477.8,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxx,",
+     "x0": 481.9,
+     "x1": 518.2,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxxxxx",
+     "x0": 522.5,
+     "x1": 574.3,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "x",
+     "x0": 582.5,
+     "x1": 586.6,
+     "top": 580.8,
+     "bottom": 581.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxxxxxxxxx,",
+     "x0": 88.6,
+     "x1": 135.8,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxXxxxxxXxxxxxxxxxxxx",
+     "x0": 141.1,
+     "x1": 241.0,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "de",
+     "x0": 246.7,
+     "x1": 255.1,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxx",
+     "x0": 258.2,
+     "x1": 296.2,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxx,xxxxxxxxxXxxXxxxxxxxxx",
+     "x0": 299.3,
+     "x1": 435.1,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "X/X,xxx.xxxXxxxxxxx",
+     "x0": 438.2,
+     "x1": 523.9,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxx",
+     "x0": 529.4,
+     "x1": 566.9,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxx,",
+     "x0": 570.0,
+     "x1": 586.8,
+     "top": 589.9,
+     "bottom": 590.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxx.XxXxxxxxx,XxxxxxxxxxxXxxxxxxxxxXxxxxxx,XxxxxxxxXxxxxx,X.X.99999xxxxxxxxxxxxxxxxxxxxxxxx@xxxxxxxxxx.xxx.xxx",
+     "x0": 88.6,
+     "x1": 555.4,
+     "top": 599.0,
+     "bottom": 599.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "teléfono",
+     "x0": 558.5,
+     "x1": 586.6,
+     "top": 599.0,
+     "bottom": 599.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "(99)99999999,xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,xxxxxxxxxxxx",
+     "x0": 88.6,
+     "x1": 586.6,
+     "top": 608.2,
+     "bottom": 608.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "la",
+     "x0": 88.6,
+     "x1": 94.3,
+     "top": 617.3,
+     "bottom": 617.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxXxxxxxxxxxxx",
+     "x0": 97.4,
+     "x1": 183.1,
+     "top": 617.3,
+     "bottom": 617.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxXxxxxxxxxxx",
+     "x0": 186.2,
+     "x1": 239.5,
+     "top": 617.3,
+     "bottom": 617.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxx",
+     "x0": 242.6,
+     "x1": 283.7,
+     "top": 617.3,
+     "bottom": 617.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxXxxxxxxxxxXxxxxxxxxXxxxxxxxxxx(xxx.xxxxxxxx.xxx.xxx",
+     "x0": 286.8,
+     "x1": 514.6,
+     "top": 617.3,
+     "bottom": 617.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "teléfono",
+     "x0": 517.7,
+     "x1": 545.8,
+     "top": 617.3,
+     "bottom": 617.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "9999-9999",
+     "x0": 548.9,
+     "x1": 586.8,
+     "top": 617.3,
+     "bottom": 617.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "xxxxXxxxXxxxxxxxxxxxx,x99999999-9999xxxxxxxxxxxxxxxxXxxxxxxxxXxxxxxxx).",
+     "x0": 88.6,
+     "x1": 396.7,
+     "top": 626.4,
+     "bottom": 626.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,xxxxxxxxxxxxxxxxx:",
+     "x0": 88.6,
+     "x1": 306.2,
+     "top": 644.2,
+     "bottom": 644.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxxxxxXxxxxxxx,X.X.XxxxxxxxXxxxxxXx.9-999,",
+     "x0": 88.6,
+     "x1": 276.0,
+     "top": 653.3,
+     "bottom": 653.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    },
+    {
+     "text": "XxxxxxXxxxxx99999,Xxxxxx,XxxxxxxxXxxxxx",
+     "x0": 88.6,
+     "x1": 260.9,
+     "top": 662.4,
+     "bottom": 662.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 2
+    }
+   ]
+  },
+  {
+   "page": 3,
+   "width": 612.0,
+   "height": 792.0,
+   "has_text_layer": true,
+   "ruling_lines": 0,
+   "rects": 1,
+   "columns": [
+    {
+     "index": 0,
+     "align": "left",
+     "anchor": 46.6,
+     "x_min": 46.3,
+     "x_max": 584.2,
+     "support": 59,
+     "header": ""
+    }
+   ],
+   "header_line_indexes": [],
+   "words": [
+    {
+     "text": "999999",
+     "x0": 53.8,
+     "x1": 79.7,
+     "top": 20.6,
+     "bottom": 20.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "PAGINA",
+     "x0": 153.4,
+     "x1": 183.4,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "9",
+     "x0": 185.5,
+     "x1": 189.8,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "DE",
+     "x0": 192.0,
+     "x1": 203.0,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "9",
+     "x0": 205.2,
+     "x1": 209.5,
+     "top": 19.9,
+     "bottom": 20.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "Cuenta",
+     "x0": 262.1,
+     "x1": 286.8,
+     "top": 19.2,
+     "bottom": 19.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "99999999999",
+     "x0": 289.0,
+     "x1": 336.5,
+     "top": 19.2,
+     "bottom": 19.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXXXXXXXXX:",
+     "x0": 46.6,
+     "x1": 106.1,
+     "top": 175.2,
+     "bottom": 175.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 415.4,
+     "top": 175.2,
+     "bottom": 175.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XX/XXX-XXXXXXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 562.1,
+     "top": 175.2,
+     "bottom": 175.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXÕX",
+     "x0": 46.6,
+     "x1": 111.6,
+     "top": 184.6,
+     "bottom": 184.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX/XX/X-XXXXXX",
+     "x0": 279.8,
+     "x1": 346.6,
+     "top": 184.6,
+     "bottom": 184.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXX",
+     "x0": 449.8,
+     "x1": 514.6,
+     "top": 184.6,
+     "bottom": 184.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXXXXXXX",
+     "x0": 46.6,
+     "x1": 145.2,
+     "top": 193.9,
+     "bottom": 194.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XX-XXXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 347.5,
+     "top": 193.9,
+     "bottom": 194.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 514.3,
+     "top": 193.9,
+     "bottom": 194.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXX",
+     "x0": 46.6,
+     "x1": 83.8,
+     "top": 203.3,
+     "bottom": 203.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXÕXXXX",
+     "x0": 279.8,
+     "x1": 335.0,
+     "top": 203.3,
+     "bottom": 203.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "X/XX-XXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 525.4,
+     "top": 203.3,
+     "bottom": 203.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "X9X-XXXXX-XXXX9XXXXXXXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 46.6,
+     "x1": 259.9,
+     "top": 212.6,
+     "bottom": 212.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXÕX",
+     "x0": 279.8,
+     "x1": 346.1,
+     "top": 212.6,
+     "bottom": 212.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 584.2,
+     "top": 212.6,
+     "bottom": 212.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XX-XXXXXXXXXXXÕXXXX",
+     "x0": 46.6,
+     "x1": 139.2,
+     "top": 222.0,
+     "bottom": 222.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXX",
+     "x0": 279.8,
+     "x1": 338.2,
+     "top": 222.0,
+     "bottom": 222.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 544.3,
+     "top": 222.0,
+     "bottom": 222.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXX-XXXXXXXXXXÕX",
+     "x0": 46.6,
+     "x1": 124.3,
+     "top": 231.4,
+     "bottom": 231.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 343.7,
+     "top": 231.4,
+     "bottom": 231.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 512.2,
+     "top": 231.4,
+     "bottom": 231.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "X/XX-XXXXXXXXXXXXXXXXXX",
+     "x0": 46.6,
+     "x1": 159.6,
+     "top": 240.7,
+     "bottom": 241.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 351.4,
+     "top": 240.7,
+     "bottom": 241.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXX",
+     "x0": 449.8,
+     "x1": 493.4,
+     "top": 240.7,
+     "bottom": 241.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "X/XXXX/X/XX-XXXXXXXXXXX",
+     "x0": 46.6,
+     "x1": 157.0,
+     "top": 250.1,
+     "bottom": 250.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 387.8,
+     "top": 250.1,
+     "bottom": 250.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 529.0,
+     "top": 250.1,
+     "bottom": 250.3,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "X/XXXXXX/-XXXXXXXXX",
+     "x0": 46.6,
+     "x1": 137.5,
+     "top": 259.4,
+     "bottom": 259.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXX",
+     "x0": 279.8,
+     "x1": 338.9,
+     "top": 259.4,
+     "bottom": 259.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 541.4,
+     "top": 259.4,
+     "bottom": 259.7,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXX",
+     "x0": 46.6,
+     "x1": 84.5,
+     "top": 268.8,
+     "bottom": 269.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 340.6,
+     "top": 268.8,
+     "bottom": 269.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 564.5,
+     "top": 268.8,
+     "bottom": 269.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXXXXXXX",
+     "x0": 46.6,
+     "x1": 141.8,
+     "top": 278.2,
+     "bottom": 278.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXX-XXXXXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 363.4,
+     "top": 278.2,
+     "bottom": 278.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXXX",
+     "x0": 449.8,
+     "x1": 519.1,
+     "top": 278.2,
+     "bottom": 278.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 46.6,
+     "x1": 269.8,
+     "top": 286.6,
+     "bottom": 286.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXX",
+     "x0": 279.8,
+     "x1": 335.0,
+     "top": 286.6,
+     "bottom": 286.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXX",
+     "x0": 449.8,
+     "x1": 513.8,
+     "top": 286.6,
+     "bottom": 286.8,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXX",
+     "x0": 46.6,
+     "x1": 97.0,
+     "top": 295.9,
+     "bottom": 296.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXÕX",
+     "x0": 279.8,
+     "x1": 334.3,
+     "top": 295.9,
+     "bottom": 296.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXXX-XXXXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 543.4,
+     "top": 295.9,
+     "bottom": 296.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 46.6,
+     "x1": 203.0,
+     "top": 305.3,
+     "bottom": 305.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXX",
+     "x0": 279.8,
+     "x1": 323.0,
+     "top": 305.3,
+     "bottom": 305.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 515.5,
+     "top": 305.3,
+     "bottom": 305.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXÕX",
+     "x0": 46.6,
+     "x1": 103.4,
+     "top": 314.6,
+     "bottom": 314.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXX",
+     "x0": 279.8,
+     "x1": 344.4,
+     "top": 314.6,
+     "bottom": 314.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXXX-XXXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 533.3,
+     "top": 314.6,
+     "bottom": 314.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXX",
+     "x0": 46.6,
+     "x1": 97.0,
+     "top": 324.0,
+     "bottom": 324.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XX/XXX-XXXXXXXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 375.6,
+     "top": 324.0,
+     "bottom": 324.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXX-XXXXXXXXXX",
+     "x0": 449.8,
+     "x1": 515.0,
+     "top": 324.0,
+     "bottom": 324.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXX",
+     "x0": 46.6,
+     "x1": 102.5,
+     "top": 333.1,
+     "bottom": 333.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+     "x0": 279.8,
+     "x1": 475.4,
+     "top": 333.4,
+     "bottom": 333.6,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XXXXXXXXXXXXXXXXXX,X.X.",
+     "x0": 203.3,
+     "x1": 348.5,
+     "top": 400.8,
+     "bottom": 401.0,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XxxxxXxxxxxxXxxxxxxx999",
+     "x0": 383.5,
+     "x1": 482.4,
+     "top": 398.2,
+     "bottom": 398.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XxxxxxxxxxxxxXxxxxXxxxxxxx,",
+     "x0": 203.3,
+     "x1": 303.6,
+     "top": 410.2,
+     "bottom": 410.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "Xxx.Xxxxxxxx",
+     "x0": 383.5,
+     "x1": 431.8,
+     "top": 410.2,
+     "bottom": 410.4,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XxxxxXxxxxxxxxxXxxxxxxxxxXxxxxxxx",
+     "x0": 203.3,
+     "x1": 329.8,
+     "top": 419.3,
+     "bottom": 419.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XxxxxxXxxxxx99999,XxxxxxXxxxxxxxXxxxxx",
+     "x0": 383.5,
+     "x1": 560.2,
+     "top": 419.3,
+     "bottom": 419.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "X.X.X.XXX9999999X9",
+     "x0": 203.3,
+     "x1": 277.9,
+     "top": 428.6,
+     "bottom": 428.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XxxxxxxxxxXxxxxxxxxx",
+     "x0": 383.5,
+     "x1": 474.7,
+     "top": 428.6,
+     "bottom": 428.9,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "Xxxxxxxxx:99999999x999999999999",
+     "x0": 383.5,
+     "x1": 527.5,
+     "top": 438.0,
+     "bottom": 438.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "Xxxxxxxxxxx",
+     "x0": 46.3,
+     "x1": 92.6,
+     "top": 457.0,
+     "bottom": 457.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "xxx",
+     "x0": 94.8,
+     "x1": 104.9,
+     "top": 457.0,
+     "bottom": 457.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "xxxxx",
+     "x0": 107.0,
+     "x1": 123.1,
+     "top": 457.0,
+     "bottom": 457.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "xxxxxx",
+     "x0": 125.3,
+     "x1": 143.3,
+     "top": 457.0,
+     "bottom": 457.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "XxxxxxxxxxxxxxxxxxXxxXxxxxxxxxXxxxxxxxxxxxXxxxxXxxxxxxxxxxxXxxxxxxxxxXxxxxxxxxxxx,xxxxxxxxxxxxxxxxxxxxxxxXxxxxxx",
+     "x0": 49.9,
+     "x1": 520.1,
+     "top": 469.9,
+     "bottom": 470.2,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    },
+    {
+     "text": "Xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:xxx.xxxxxxxxxx.xxx.xx,xxxxxxxxxxxxxxxxxxxxxxxxx.",
+     "x0": 49.9,
+     "x1": 384.2,
+     "top": 479.3,
+     "bottom": 479.5,
+     "size": 0.2,
+     "bold": false,
+     "page": 3
+    }
+   ]
+  }
+ ]
+}
