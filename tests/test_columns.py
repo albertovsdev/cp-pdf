@@ -157,3 +157,46 @@ def test_documento_del_auxiliar_es_columna_izquierda(page_number):
     assert len(documento) == 1
     assert documento[0].align == "left"
     assert documento[0].x_max > 240.0
+
+
+# --- Cuentas ambiguas: la posicion decide, no la forma ------------------
+def test_is_amount_no_puede_distinguir_una_cuenta_con_puntos_por_su_forma():
+    # '101.01' y '999.99' son indistinguibles: la misma pinta exacta.
+    assert is_amount("999.99") is True
+    assert is_amount("101.01") is True
+
+
+def test_en_la_columna_de_cuenta_la_forma_ambigua_es_texto():
+    assert is_amount("101.01", en_columna_de_cuenta=True) is False
+    assert is_amount("101.01.01", en_columna_de_cuenta=True) is False
+    assert is_amount("999.99", en_columna_de_cuenta=True) is False
+
+
+def test_la_columna_de_cuenta_no_convierte_en_texto_a_un_monto_normal():
+    # Un importe de verdad trae separador de miles o signo: no es ambiguo.
+    assert is_amount("99,999.99", en_columna_de_cuenta=True) is True
+    assert is_amount("-1,250.25", en_columna_de_cuenta=True) is True
+
+
+def test_el_parametro_es_aditivo():
+    # Los cinco parsers llaman a is_amount(texto) sin el: no cambia nada.
+    for texto in ("99,999.99", "101-01", "01/01/2025", "Xxxxxx", "0.00"):
+        assert is_amount(texto) == is_amount(texto, en_columna_de_cuenta=False)
+
+
+def test_proactivity_deja_de_partir_su_columna_de_cuenta():
+    """Las cuentas 101.01.01 se agrupaban por x1 y, al tener largos
+    distintos, producian tres columnas falsas donde hay una sola.
+    """
+    from conftest import requires_real_pdf
+
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.base import detectar_layout
+
+    doc, _ = extraer(requires_real_pdf("balanza-proactivity"), page_numbers=[1, 2])
+    columnas = detectar_layout(list(doc.open_pages())).columns
+
+    izquierda = [c for c in columnas if c.x_min < 100]
+    assert len(izquierda) == 1
+    assert izquierda[0].align == "left"
+    assert len(columnas) < 11

@@ -22,21 +22,56 @@ _RE_NUMERIC = re.compile(r"^[\d.,\-$()%/:]+$")
 # por monto se agrupa por x1 y degrada la deteccion en silencio.
 _RE_CUENTA = re.compile(r"^\d{3,}(-\d+)*$")
 _RE_FECHA = re.compile(r"^\d{1,2}[-/]\d{1,2}[-/]\d{2,4}$")
+# Forma que un monto y una cuenta con puntos comparten exactamente:
+# '101.01' y '999.99' son indistinguibles mirando el texto. Solo la
+# POSICION las separa, asi que la decide quien sabe en que columna cae.
+_RE_AMBIGUA = re.compile(r"^\d{1,6}(\.\d{1,6})+$")
+# Minimo de renglones que tienen que abrir en la misma x para creer que
+# ahi hay una columna de cuenta y no una coincidencia.
+_MIN_ZONA = 5
 
 
-def is_amount(text: str) -> bool:
+def is_amount(text: str, *, en_columna_de_cuenta: bool = False) -> bool:
     """True solo para MONTOS, que son los que van alineados a la derecha.
 
     Las cuentas contables (100-01) y las fechas (01-01-2025) tambien son
     "numericas", pero van alineadas a la izquierda: su borde derecho varia
     con el largo y tratarlas como montos impide detectar su columna.
+
+    Hay catalogos que separan con punto ('101.01.01'), y esa forma es
+    IDENTICA a la de un importe. Ninguna regla sobre el texto puede
+    distinguirlas; lo unico que las separa es donde caen. Por eso quien
+    sabe que la palabra esta en la columna de cuenta lo dice con
+    'en_columna_de_cuenta', y ahi la forma ambigua se lee como texto.
+    El parametro es aditivo: sin el, la funcion se comporta igual que
+    siempre.
     """
     s = text.strip()
     if not s or not any(c.isdigit() for c in s):
         return False
     if _RE_CUENTA.match(s) or _RE_FECHA.match(s):
         return False
+    if en_columna_de_cuenta and _RE_AMBIGUA.match(s):
+        return False
     return bool(_RE_NUMERIC.match(s))
+
+
+def zona_de_cuenta(lines: Sequence[Line], tol: float = 3.0) -> tuple[float, float] | None:
+    """El tramo de x donde abren los renglones, o None si no hay tal cosa.
+
+    Es la columna que arranca cada fila. Se calcula sin mirar el contenido
+    -- solo la posicion de la primera palabra de cada renglon -- porque el
+    contenido es justo lo ambiguo.
+    """
+    primeras = [ln.words[0] for ln in lines if ln.words]
+    if len(primeras) < _MIN_ZONA:
+        return None
+    grupos = _cluster([w.x0 for w in primeras], tol)
+    mayor = max(grupos, key=len)
+    if len(mayor) < _MIN_ZONA:
+        return None
+    miembros = [w for w in primeras if mayor[0] - tol <= w.x0 <= mayor[-1] + tol]
+    return min(w.x0 for w in miembros), max(w.x1 for w in miembros)
 
 
 @dataclass(frozen=True)
@@ -69,10 +104,14 @@ def _words_of(lines: Iterable[Line]) -> list[Word]:
     return [w for ln in lines for w in ln.words]
 
 
-def _candidates(words: Sequence[Word], tol: float,
-                min_support: int) -> list[_Candidate]:
-    montos = [w for w in words if is_amount(w.text)]
-    textos = [w for w in words if not is_amount(w.text)]
+def _candidates(words: Sequence[Word], tol: float, min_support: int,
+                zona: tuple[float, float] | None = None) -> list[_Candidate]:
+    def es_monto(word: Word) -> bool:
+        dentro = zona is not None and zona[0] - tol <= word.x0 <= zona[1] + tol
+        return is_amount(word.text, en_columna_de_cuenta=dentro)
+
+    montos = [w for w in words if es_monto(w)]
+    textos = [w for w in words if not es_monto(w)]
 
     found: list[_Candidate] = []
     for grupo, align, edge in ((montos, "right", "x1"), (textos, "left", "x0")):
@@ -137,7 +176,8 @@ def detect(lines: Sequence[Line], *, tol: float = 3.0,
     Conviene pasarle solo los renglones de la tabla (ver layout.region): con
     la pagina completa, los metadatos y el sello digital corren los clusters.
     """
-    return _merge_overlapping(_candidates(_words_of(lines), tol, min_support))
+    return _merge_overlapping(_candidates(_words_of(lines), tol, min_support,
+                                          zona_de_cuenta(lines, tol)))
 
 
 def amount_columns(lines: Sequence[Line], *, tol: float = 3.0,
@@ -152,7 +192,8 @@ def amount_columns(lines: Sequence[Line], *, tol: float = 3.0,
     columnas = [
         ColumnSpec(index=0, align="right", x_min=c.x_min, x_max=c.x_max,
                    support=c.support)
-        for c in _candidates(_words_of(lines), tol, min_support)
+        for c in _candidates(_words_of(lines), tol, min_support,
+                             zona_de_cuenta(lines, tol))
         if c.align == "right"
     ]
     for i, col in enumerate(columnas):
@@ -168,5 +209,6 @@ def amount_anchors(lines: Sequence[Line], *, tol: float = 3.0,
     son parte de ella (ver layout.region). Va sin fundir porque ahi importa
     el borde exacto, no la extension de la columna.
     """
-    return [c.anchor for c in _candidates(_words_of(lines), tol, min_support)
+    return [c.anchor for c in _candidates(_words_of(lines), tol, min_support,
+                                          zona_de_cuenta(lines, tol))
             if c.align == "right"]
