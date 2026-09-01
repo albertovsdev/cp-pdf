@@ -6,7 +6,12 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fases 0, 1 y 2 completadas** (2026-08). Siguiente: fase 3.
+Estado: **fases 0 a 7d completadas.** Los cinco parsers existen (balanza,
+auxiliar, pólizas, estado de cuenta, libro mayor). 581 tests verdes + 9
+lentos. Siguiente: **fase 7e** (cerrar el núcleo), luego la **8** (capa web).
+
+> Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
+> §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
 
 **Alcance: 5 tipos de documento.** El Libro Mayor se agregó tras confirmarlo
 con el cliente. Y cada tipo tiene variantes fuertes entre empresas: no basta
@@ -261,8 +266,8 @@ Hallazgos que aplican a todo el sistema, no solo a estados de cuenta:
 
 **Los 9 bancos, medidos (fase 7d).** De 11 fixtures:
 
-- **Con tabla de movimientos (6 documentos, 5 bancos)**: AFIRME,
-  Santander abril, Banorte julio, Bajío, Inbursa, BBVA. Todos comparten la
+- **Con tabla de movimientos (7 documentos, 6 bancos)**: AFIRME,
+  Santander abril, Santander integral, Banorte julio, Bajío, Inbursa, BBVA. Todos comparten la
   misma forma —fecha, descripción, uno de {depósito, retiro}, saldo
   corrido, descripción envuelta, fila nueva marcada por la fecha— que es la
   que ya resuelve `EstadoCuentaParser`.
@@ -272,31 +277,129 @@ Hallazgos que aplican a todo el sistema, no solo a estados de cuenta:
   `01-JUL-23` pegada, `1 SEP`, `JUL. 03`, `05/DIC`), número de columnas de
   fecha (BBVA trae dos: operación y liquidación) y presencia del símbolo
   `$`.
-- **Sin tabla de movimientos (4)**: Santander inversión a plazo,
-  Scotiabank (crédito), Monex y Multiva (resúmenes). **No fallan: son otro
-  tipo de reporte.** El parser lanza `LayoutDesconocido` con motivo
-  consumible por la capa web, no un error genérico.
+- **Sin tabla de movimientos (3)**: Scotiabank, Monex y Multiva. **No
+  fallan: son otro tipo de reporte.** El parser lanza `ReporteNoEsperado`
+  —un `LayoutDesconocido` con `clave`, `etiqueta` y `evidencia`— consumible
+  por la capa web, no un error genérico. Los tres resultan ser lo mismo y
+  el propio resumen lo dice: **depósitos 0.00 y retiros 0.00**, o sea una
+  cuenta sin movimientos en el período. La clave es `sin_movimientos`, y no
+  se apoya en "no encontré la tabla" sino en lo que el banco declara.
+
+- **CORRECCIÓN (fase 7d): el Santander «inversión a plazo» SÍ trae tabla.**
+  La medición anterior se hizo sobre las 3 páginas volcadas al fixture, y el
+  documento tiene 10. En la página 2 arranca `DETALLE DE MOVIMIENTOS CUENTA
+  DE CHEQUES`. Es un `ESTADO DE CUENTA INTEGRAL` con **cuatro productos**:
+  cheques, dinero creciente, inversiones a plazo (con otro encabezado:
+  `DÍAS PLAZO`, `TASA`, `SALDO INVERTIDO`) y un **crédito** con `CARGOS /
+  ABONOS`. Sale con 3 cuentas y 14 movimientos, la regla del TOTAL cuadra, y
+  el saldo corrido **falla en 5 renglones**: los del crédito, donde el saldo
+  corre al revés. Se entrega con la falla declarada, que es lo correcto —el
+  sistema no modela una cuenta de crédito. **Lección: no medir sobre el
+  fixture volcado cuando la pregunta es "¿qué trae el documento?".**
 - **Ilegible sin OCR (1)**: HSBC, con **97% de sus palabras en CID**
   (590 de 609). Caso 6 en su forma extrema.
+
+  **MEDIDO (fase 7d): el OCR recupera 565 de 590, o sea 95.8%** —muy por
+  encima de Inbursa (35%) y Multiva (20%), y contra el pronóstico de que
+  saldría bajo. La diferencia es de qué son los tokens en CID: en Inbursa y
+  Multiva son el sello digital, tinta diminuta y decorativa; en HSBC es la
+  página entera dibujada a tamaño normal.
+  **Y no se queda en la tasa: leído por OCR, HSBC lo procesa el mismo
+  parser sin tocar nada.** Su resumen sale completo (7,945.22 + 0.00 −
+  2,749.62 = 5,195.60) y los tres movimientos suman exactamente los
+  2,749.62 declarados. Confirma el invariante de ARQUITECTURA: un parser
+  consume un `Document` venga de donde venga.
+  **Falta**: `strategy.extraer()` no enruta a OCR por CID, así que hoy hay
+  que pasarle el `Document` de `ocr.extract()` a mano. Cuesta ~21 s por
+  documento y es una decisión de la fase 8, no de ésta.
 
 Confirma que el eje de la plantilla es **(banco, tipo de reporte)**: los
 dos Santander son el mismo banco con estructuras incomparables, y los dos
 Banorte igual.
 
-**Declarado sin cubrir** (una sola muestra, AFIRME): otro banco puede
-nombrar distinto el resumen, la tabla y el bloque de identificación; el
-pegado sin separador está medido en este formato y un banco que envuelva
-por palabra saldría con las palabras pegadas; la fecha se deriva del
-período y solo cuando no cruza de mes.
-**Antes de poner esto en producción hacen falta muestras de otros bancos.**
+**Declarado sin cubrir** (después de la fase 7d, con seis formatos
+medidos): el vocabulario del encabezado y las etiquetas de saldo son tablas
+de sinónimos, y un banco que nombre distinto sus columnas necesita
+agregarlos antes de leerse; la unión de continuaciones usa el separador del
+formato (ver el hallazgo de abajo); la fecha se deriva del período cuando el
+documento solo imprime el día, y solo si el período no cruza de mes; con dos
+o más cuentas los depósitos y retiros por cuenta se leen solo si el
+documento los desglosa.
 
-Contrato:
+### Resultados de la fase 7d (generalización de estados de cuenta)
 
-```
-meta: banco, rfc, num_cuenta, clabe, periodo_ini, periodo_fin,
-      saldo_inicial, depositos, retiros, saldo_corte
-movimientos: dia, fecha, descripcion, referencia, deposito, retiro, saldo
-```
+Cobertura medida, documento por documento. Ninguno entrega con una regla en
+falla salvo el integral, que la declara:
+
+| Documento | cuentas | movs | resumen | resumen_movs | saldo_corrido | total |
+|---|---|---|---|---|---|---|
+| AFIRME | 1 | 45 | cuadra | cuadra | 45/45 | no verificable |
+| Santander abril | 1 | 110 | cuadra | cuadra | 110/110 | cuadra |
+| Banorte julio | 2 | 283 | no verif. | no verif. | 283/283 | **cuadra** |
+| Bajío | 1 | 67 | cuadra | cuadra | 65/65 | no verificable |
+| Inbursa | 1 | 44 | cuadra | cuadra | 44/44 | no verificable |
+| BBVA | 1 | 116 | cuadra | cuadra | 5/5 | no verificable |
+| Santander integral | 3 | 14 | no verif. | no verif. | **falla 5** | cuadra |
+
+Los cinco con resumen completo suman **exactamente** lo declarado, sin
+tolerancia consumida. BBVA además declara sus propios contadores
+(`Depósitos / Abonos (+) 53`, `Retiros / Cargos (-) 63`) y salen 53 y 63.
+
+**Lo que generaliza no es una rama por banco.** Un test lee el módulo y
+prohíbe que nombre a ninguno. Lo que cubre los seis formatos:
+
+- **El encabezado manda, y ancla por el borde derecho.** Los importes se
+  alinean a la derecha con su etiqueta en los seis, con desviaciones de 0 a
+  30pt, siempre menores que media separación entre columnas. Tomar "las tres
+  más a la derecha" mete el retiro en la casilla del depósito.
+- **Encabezado agrupado**: `SALDO` arriba abarcando `OPERACIÓN` y
+  `LIQUIDACIÓN`. Se consulta el renglón de arriba **solo** cuando la
+  subetiqueta no significa nada por sí sola; así `DESCRIPCIÓN DE LA
+  OPERACIÓN` no se confunde con un saldo.
+- **Seis formatos de fecha** (`03`, `01-ABR-2025`, `01-JUL-23`, `1 SEP`,
+  `JUL. 03`, `01/DIC`) normalizados a `dd/mm/aaaa`. El año sale del período
+  declarado, que cada banco escribe distinto; alcanza con extraerle el año.
+- **Las cuentas son secciones**, reconocidas por cómo abre el renglón y no
+  por igualdad: el documento repite el nombre del producto y a veces le pega
+  detrás el número de cuenta o la CLABE.
+
+**Tres bugs que la generalización destapó, los tres con checksum que lo
+prueba:**
+
+1. **`find_table_region` no sirve para acotar estos documentos.** Deja
+   páginas enteras fuera: BBVA página 2 devuelve `None` con 40 movimientos
+   impresos, y Bajío pierde las páginas 9-11. La tabla se acota ahora con lo
+   que el documento garantiza —los seis **reimprimen el encabezado en cada
+   página de tabla**— y una continuación tiene que venir a menos de 12pt del
+   renglón anterior (dentro de la tabla van de 2 a 4pt; el pie de página cae
+   a 19pt o más).
+2. **`extract/tokens.py` aprendía mal el ancho del año.** `\d+` era codicioso,
+   así que `11-JUL-2320230711400140BET…` se leía como un año de **dieciséis
+   dígitos** y contaminaba lo aprendido para toda la página. Banorte perdía
+   6 páginas de 13. La corrida de dígitos tiene que medir 2 o 4.
+3. **El signo puede ir detrás, o en su propio token.** La reversa de un
+   cargo se imprime `287,000.00-`, y un saldo negativo como `-$ 34,791.58`
+   con el `-$` suelto. Sin las dos cosas, Banorte perdía 590,653.00 en
+   retiros y Bajío fallaba el saldo corrido en el único renglón negativo del
+   documento. `parse_monto` acepta ahora el signo al final; el símbolo y el
+   signo sueltos se pegan al importe antes de repartir la fila.
+
+**Lo que NO se pudo decidir con los datos: el separador de continuación.**
+Hay documentos que envuelven partiendo palabras a la mitad (`CON` +
+`CEPTO:`) y otros que envuelven por palabra entera (`CVE` + `RASTREO:`). Se
+midió y **la geometría no los distingue**: en los dos casos el último token
+llega al margen y el siguiente arranca en el borde izquierdo de la columna,
+y las formas de los tokens son idénticas (`CON`/`CEPTO:` contra
+`CON`/`RFC`). Por eso `separador_continuacion` es un **parámetro del
+formato**, no una deducción, y su valor por omisión es el medido en el
+primer formato de la fase 7 (`""`). Con ese default, cinco de los seis
+formatos quedan con las palabras pegadas dentro de la descripción. **No
+afecta ningún importe, saldo ni checksum**; solo el texto de la descripción.
+**Decisión pendiente del cliente.**
+
+**Todavía sin hacer**: no hay `exportar_estado_cuenta` en `export/excel.py`;
+los seis formatos se alcanzan solo por API.
+
 
 ### 1.3 Validación: cada documento trae su propio checksum
 
@@ -485,6 +588,12 @@ ortogonales.
 
 Business Pro es el caso donde ni la región salva la detección: ahí el
 problema no son las secciones sino el texto encimado (ver arriba).
+
+**Muestrear páginas 1 y 2 es insuficiente para estados de cuenta.** La
+tabla de movimientos puede empezar después, y un estado integral cambia de
+producto a mitad del documento. Muestrear al menos una página del medio, o
+la conclusión sobre qué trae el documento será falsa. Se descubrió al
+declarar erróneamente que un Santander no tenía tabla de movimientos.
 
 **Los conteos de columnas del dumper no son fiables en documentos con
 secciones.** El Libro Mayor reporta 4 en pág 1-2 y 6 en la 17: los nombres
@@ -722,6 +831,18 @@ correcto, y estos documentos tienen uso fiscal.
 | `PLAN.md` | Decisiones, mediciones, contratos, principios, el *porqué* | El orquestador, con cada reporte |
 | `ARQUITECTURA.md` | Qué existe en código hoy: módulos, firmas públicas, flujo, invariantes | Claude Code, al cerrar cada fase |
 
+**Quién escribe qué dentro de `PLAN.md`.** La regla original («solo el
+orquestador lo toca») no aguantó y era peor: quien mide es Claude Code, y
+que el orquestador transcriba sus mediciones pierde precisión — pasó con el
+Santander integral y con las cifras de HSBC. Regla nueva, por sección:
+
+- **§2 (hallazgos medidos): Claude Code escribe.** Agrega lo que midió, con
+  sus números. No reescribe principios ni decisiones.
+- **§0, §1, §4, §5, §6 y los principios: el orquestador.** Restricciones,
+  contratos, tabla de fases, deuda técnica e infraestructura.
+- Al cerrar una fase, Claude Code reporta qué secciones tocó, para que el
+  orquestador no sobrescriba sus mediciones con una versión vieja.
+
 **Un hecho, un solo hogar.** `ARQUITECTURA.md` no repite hallazgos ni
 justifica decisiones; describe el sistema tal como está. Si los dos se
 contradicen, `PLAN.md` manda en el *porqué* y `ARQUITECTURA.md` en el *qué*.
@@ -801,7 +922,8 @@ cp-pdf/
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | **hecho** (460 tests) |
 | 7c | Extracción transversal | Deduplicar tokens repetidos, CID → OCR, fecha pegada, encabezado de balanza-fd | **hecho** (508 tests) |
 | 7c2 | Cuentas ambiguas + ARQUITECTURA.md | `is_amount` por posición + documento de arquitectura | **hecho** (513 tests) |
-| 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 5 bancos con tabla, mismo parser | en curso (contrato aprobado) |
+| 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 6 formatos con tabla, mismo parser | **hecho** (581 tests + 9 lentos) |
+| 7e | Cerrar el núcleo | `exportar_estado_cuenta`, los 5 comandos del CLI, enrutamiento CID→OCR, separador de continuación | siguiente |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
@@ -992,6 +1114,13 @@ antes de implementarse.
   inusable a MySQL y hay que convertir los parsers a streaming primero.
 - **El CLI solo expone `balanza` y `confirmar`.** Los otros cuatro parsers
   son alcanzables únicamente por API. La capa web los necesita los cinco.
+  Y `export/excel.py` no tiene `exportar_estado_cuenta`: el estado de cuenta
+  es el único de los cinco que todavía no sale a Excel.
+- **El OCR no se enruta solo.** `strategy.extraer()` elige entre `pdf_text` y
+  `pdf_chars`; un documento 97% en CID (HSBC) sale ilegible salvo que se le
+  pase el `Document` de `ocr.extract()` a mano. Con ~21 s por documento, si
+  se enruta automáticamente tiene que ser en el carril lento con tiempo
+  estimado visible.
 - **Puerto**: Apache ya ocupa el 80. El servicio Python va en otro puerto o
   detrás de un proxy de Apache. Decidir antes de la fase 8.
 - **Apagado diario a las 21:00**: la cola debe persistir en disco y los
