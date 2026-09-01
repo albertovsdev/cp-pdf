@@ -30,6 +30,18 @@ REAL_PDFS = {
     "auxiliar-gume": REAL / "3-Auxiliares" / "auxiliar-gume.pdf",
     "mayor-gume": REAL / "5-Libro-Mayor" / "mayor-gume.pdf",
     "diario-general": REAL / "2-Libro-Diario" / "diario-general.pdf",
+    "balanza-fd": REAL / "1-Balanza" / "balanza-fd.pdf",
+    "balanza-manufacturas": REAL / "1-Balanza" / "balanza-manufacturas.pdf",
+    "balanza-proactivity": REAL / "1-Balanza" / "balanza-proactivity.pdf",
+    "polizas-manufacturas": REAL / "2-Libro-Diario" / "polizas-manufacturas.pdf",
+    "auxiliar-manufacturas": REAL / "3-Auxiliares" / "auxiliar-manufacturas.pdf",
+    "mayor-manufacturas": REAL / "5-Libro-Mayor" / "mayor-manufacturas.pdf",
+    "mayor-proactivity": REAL / "5-Libro-Mayor" / "mayor-proactivity.pdf",
+    "mayor-fd": REAL / "5-Libro-Mayor" / "mayor-fd.pdf",
+    "edocta-inbursa": REAL / "4-Estados-Cuenta" / "edocta-inbursa.pdf",
+    "edocta-multiva": REAL / "4-Estados-Cuenta" / "edocta-multiva.pdf",
+    "edocta-santander": REAL / "4-Estados-Cuenta" / "edocta-santander.pdf",
+    "edocta-julio-banorte": REAL / "4-Estados-Cuenta" / "edocta-julio-banorte.pdf",
 }
 
 

@@ -74,3 +74,50 @@ def test_la_estrategia_se_puede_imponer():
     _, estrategia = extraer(requires_real_pdf("balanza-businesspro"),
                             estrategia="pdf_text")
     assert estrategia == "pdf_text"
+
+
+# --- Criterio 1: la repeticion ahogaba el clustering --------------------
+@pytest.mark.parametrize(("nombre", "minimo"), [
+    ("polizas-manufacturas", 4),
+    ("mayor-manufacturas", 4),
+])
+def test_los_documentos_repetidos_dejan_de_ver_una_sola_columna(nombre, minimo):
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.base import detectar_layout
+
+    doc, _ = extraer(requires_real_pdf(nombre), page_numbers=[1, 2])
+    layout = detectar_layout(list(doc.open_pages()))
+    assert layout is not None
+    assert len(layout.columns) >= minimo
+
+
+def test_extraer_deduplica_y_lo_reporta():
+    from contapdf.extract import pdf_text
+    from contapdf.extract.dedup import multiplicador
+    from contapdf.extract.strategy import extraer
+
+    crudo = next(pdf_text.extract(requires_real_pdf("auxiliar-manufacturas"),
+                                  page_numbers=[1]).open_pages())
+    assert multiplicador(crudo.words) == 25
+
+    doc, _ = extraer(requires_real_pdf("auxiliar-manufacturas"), page_numbers=[1])
+    limpio = next(doc.open_pages())
+    assert multiplicador(limpio.words) == 1
+    assert len(limpio.words) < len(crudo.words)
+
+
+# --- Criterio 2: los documentos sanos no cambian ------------------------
+@pytest.mark.parametrize("nombre", [
+    "balanza", "balanza-businesspro", "balanza-gume", "poliza",
+    "diario-general", "auxiliar", "auxiliar-gume", "mayor-gume", "edocta",
+])
+def test_deduplicar_no_altera_a_los_que_ya_funcionaban(nombre):
+    from contapdf.extract import pdf_chars, pdf_text
+    from contapdf.extract.strategy import esta_contaminada, extraer
+
+    crudo_mod = pdf_chars if esta_contaminada(requires_real_pdf(nombre)) else pdf_text
+    crudo = next(crudo_mod.extract(requires_real_pdf(nombre),
+                                   page_numbers=[2]).open_pages())
+    doc, _ = extraer(requires_real_pdf(nombre), page_numbers=[2])
+    limpio = next(doc.open_pages())
+    assert limpio.words == crudo.words

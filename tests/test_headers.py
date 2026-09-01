@@ -185,3 +185,25 @@ def test_el_encabezado_de_dos_renglones_de_siempre_no_cambia():
         "Saldo Inicial Acreedor", "Debe", "Haber", "Saldo Final Deudor",
         "Saldo Final Acreedor",
     ]
+
+
+def test_balanza_fd_pone_las_seis_subetiquetas_en_seis_columnas():
+    """Criterio 5. Lo que lo impedia no era el agrupado sino la repeticion.
+
+    La pagina 3 imprime su encabezado DOS veces; con los tokens repetidos
+    las dos subcolumnas de saldo se fundian en una.
+    """
+    from conftest import requires_real_pdf
+
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.base import detectar_layout
+
+    doc, _ = extraer(requires_real_pdf("balanza-fd"), page_numbers=[1, 2, 3])
+    headers = [c.header for c in detectar_layout(list(doc.open_pages())).columns]
+
+    assert "SaldosIniciales Deudor" in headers
+    assert "SaldosIniciales Acreedor" in headers
+    assert "Cargos" in headers and "Abonos" in headers
+    assert "SaldosActuales Deudor" in headers
+    assert "SaldosActuales Acreedor" in headers
+    assert len(headers) == len(set(headers))

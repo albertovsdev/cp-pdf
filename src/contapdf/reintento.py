@@ -201,3 +201,83 @@ def _valor_en(pagina: Page, top: float,
         if _RE_PARECE_MONTO.match(texto) and any(c.isdigit() for c in texto):
             return texto
     return None
+
+
+_MARCA_CID = "(cid:"
+
+
+def paginas_con_cid(documento: Document) -> list[PaginaSospechosa]:
+    """Paginas cuyo texto viene en CID sin mapa ToUnicode.
+
+    El PDF no trae la tabla que traduce glifos a letras, asi que el
+    extractor devuelve '(cid:123)(cid:45)...'. Es un subcaso del texto
+    mutilado con la tinta SI dibujada, de modo que el reintento por OCR
+    tiene con que trabajar -- a diferencia de los digitos que nunca se
+    dibujaron.
+    """
+    sospechosas: list[PaginaSospechosa] = []
+    for page in documento.open_pages():
+        cuantos = sum(1 for w in page.words if _MARCA_CID in w.text)
+        if cuantos:
+            sospechosas.append(PaginaSospechosa(
+                pagina=page.number,
+                motivo=f"{cuantos} token(s) en CID sin mapa ToUnicode"))
+    return sospechosas
+
+
+def reintentar_cid(pdf: str | Path, *, binario: str = "tesseract",
+                   dpi: int = 300) -> Reintento:
+    """Relee por OCR las paginas cuyo texto vino en CID.
+
+    Cuenta como recuperado el token cuyo lugar el OCR devuelve legible: en
+    la misma banda vertical, traslapando su caja, y sin marca de CID.
+    """
+    from contapdf.extract import pdf_text
+
+    documento = pdf_text.extract(pdf)
+    sospechosas = paginas_con_cid(documento)
+    ilegibles = sum(int(s.motivo.split()[0]) for s in sospechosas)
+    paginas = tuple(s.pagina for s in sospechosas)
+
+    if not sospechosas:
+        return Reintento(paginas=(), recuperados=0, ilegibles=0, truncados=0,
+                         disponible=ocr.hay_tesseract(binario=binario),
+                         motivo="el documento no trae texto en CID")
+
+    if not ocr.hay_tesseract(binario=binario):
+        return Reintento(
+            paginas=paginas, recuperados=0, ilegibles=ilegibles, truncados=0,
+            disponible=False,
+            motivo=(f"tesseract no esta instalado ({binario!r}): "
+                    f"{len(paginas)} pagina(s) quedan sin reintentar"))
+
+    recuperados = 0
+    for numero in paginas:
+        crudas = next(pdf_text.extract(pdf, page_numbers=[numero]).open_pages())
+        objetivo = [w for w in crudas.words if _MARCA_CID in w.text]
+        try:
+            leida = ocr.leer_pagina(pdf, numero, binario=binario, dpi=dpi)
+        except Exception as exc:  # una pagina no tumba el documento
+            _LOG.warning("el reintento de la pagina %s fallo: %s", numero, exc)
+            continue
+        for word in objetivo:
+            if _texto_en(leida, word):
+                recuperados += 1
+
+    return Reintento(
+        paginas=paginas, recuperados=recuperados, ilegibles=ilegibles,
+        truncados=0, disponible=True,
+        motivo=(f"{len(paginas)} pagina(s) reintentadas por OCR; "
+                f"{recuperados} de {ilegibles} tokens en CID recuperados"))
+
+
+def _texto_en(pagina: Page, word) -> bool:
+    """True si el OCR leyo algo legible donde estaba el token en CID."""
+    for otra in pagina.words:
+        if abs(otra.top - word.top) > _BANDA:
+            continue
+        if otra.x1 < word.x0 or word.x1 < otra.x0:
+            continue
+        if _MARCA_CID not in otra.text and otra.text.strip():
+            return True
+    return False

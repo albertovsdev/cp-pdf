@@ -14,7 +14,9 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from contapdf.extract import pdf_chars, pdf_text
-from contapdf.ir import Document, Word
+from contapdf.extract.dedup import deduplicar_pagina, multiplicador
+from contapdf.extract.tokens import separar_fecha_pegada
+from contapdf.ir import Document, Page, Word
 
 _LOG = logging.getLogger(__name__)
 _RE_MONTO = re.compile(r"-?\d{1,3}(,\d{3})*\.\d{2}")
@@ -98,7 +100,36 @@ def extraer(path: str | Path, *, estrategia: str | None = None,
         _LOG.info("estrategia de extraccion elegida para %s: %s", path, estrategia)
 
     if estrategia == "pdf_chars":
-        return pdf_chars.extract(path, page_numbers=page_numbers), estrategia
-    if estrategia == "pdf_text":
-        return pdf_text.extract(path, page_numbers=page_numbers), estrategia
-    raise ValueError(f"estrategia desconocida: {estrategia!r}")
+        documento = pdf_chars.extract(path, page_numbers=page_numbers)
+    elif estrategia == "pdf_text":
+        documento = pdf_text.extract(path, page_numbers=page_numbers)
+    else:
+        raise ValueError(f"estrategia desconocida: {estrategia!r}")
+    return _normalizado(documento), estrategia
+
+
+def _normalizado(documento: Document) -> Document:
+    """El mismo documento sin repeticiones y con los tokens pegados sueltos.
+
+    Va aqui y no en los extractores: son propiedades del archivo, no de la
+    manera de leerlo, y las dos estrategias las sufren igual. Una pagina
+    que no traiga ninguna de las dos sale intacta, asi que los documentos
+    que ya funcionaban no cambian.
+    """
+    abrir = documento.open_pages
+
+    def paginas():
+        for page in abrir():
+            limpia = deduplicar_pagina(page)
+            if limpia is not page:
+                _LOG.info("pagina %s: repeticion x%s quitada", page.number,
+                          multiplicador(page.words))
+            sueltas = separar_fecha_pegada(limpia.words)
+            if len(sueltas) != len(limpia.words):
+                limpia = Page(number=limpia.number, width=limpia.width,
+                              height=limpia.height, words=sueltas,
+                              ruling_lines=limpia.ruling_lines)
+            yield limpia
+
+    return Document(source=documento.source, page_count=documento.page_count,
+                    open_pages=paginas)

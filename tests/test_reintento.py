@@ -71,3 +71,47 @@ def test_mide_cuantos_datos_recupera_el_ocr(gume):
     assert reporte.recuperados == 0
     assert reporte.truncados == 19
     assert "truncadas" in reporte.motivo
+
+
+# --- Criterio 3: CID sin mapa ToUnicode ---------------------------------
+def test_detecta_las_paginas_con_texto_en_cid():
+    from contapdf.extract import pdf_text
+    from contapdf.reintento import paginas_con_cid
+
+    doc = pdf_text.extract(requires_real_pdf("edocta-inbursa"))
+    sospechosas = paginas_con_cid(doc)
+    assert sospechosas
+    assert all("cid" in s.motivo.lower() for s in sospechosas)
+
+
+def test_un_documento_sin_cid_no_pide_reintento():
+    from contapdf.extract import pdf_text
+    from contapdf.reintento import paginas_con_cid
+
+    doc = pdf_text.extract(requires_real_pdf("balanza"), page_numbers=[1, 2])
+    assert paginas_con_cid(doc) == []
+
+
+def test_sin_tesseract_el_reintento_de_cid_degrada_limpio():
+    from contapdf.reintento import reintentar_cid
+
+    reporte = reintentar_cid(requires_real_pdf("edocta-multiva"),
+                             binario="no-existe-este-binario")
+    assert reporte.disponible is False
+    assert reporte.recuperados == 0
+    assert "tesseract" in reporte.motivo.lower()
+
+
+@pytest.mark.lento
+@sin_tesseract
+@pytest.mark.parametrize("nombre", ["edocta-inbursa", "edocta-multiva"])
+def test_mide_cuanto_recupera_el_ocr_de_los_tokens_cid(nombre):
+    # Es un subcaso de 3a: la tinta SI esta dibujada, asi que aqui el OCR
+    # tiene con que trabajar, a diferencia del 3b de GUME.
+    from contapdf.reintento import reintentar_cid
+
+    reporte = reintentar_cid(requires_real_pdf(nombre))
+    assert reporte.disponible is True
+    assert reporte.ilegibles > 0
+    assert 0 <= reporte.recuperados <= reporte.ilegibles
+    assert reporte.motivo
