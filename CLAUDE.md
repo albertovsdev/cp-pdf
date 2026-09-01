@@ -12,12 +12,12 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
-Estado: fases 0 a 7d completas (5 parsers: balanza, auxiliar, polizas,
-estado de cuenta, libro mayor). El de estado de cuenta cubre 6 formatos de
-6 bancos con un solo parser, sin ramas por banco. 581 tests verdes mas 9
+Estado: fases 0 a 7e completas. El nucleo esta cerrado: 5 parsers, los 5
+salen a Excel, los 5 tienen comando de CLI, y strategy.extraer() enruta
+sola entre pdf_text, pdf_chars y OCR. El parser de estado de cuenta cubre
+6 formatos de 6 bancos sin ramas por banco. 635 tests verdes mas 11
 marcados lento (pytest -m lento). Corre pytest tests/ antes de tocar nada.
-Siguiente: fase 8 (web). Pendiente heredado: no hay exportar_estado_cuenta
-ni comandos de CLI para los cuatro parsers que no son balanza.
+Siguiente: fase 8 (capa web).
 
 Como trabajamos:
   - Tests primero, siempre. Muestrame el rojo antes de implementar.
@@ -28,7 +28,9 @@ Como trabajamos:
     medicion refuto una hipotesis mia.
   - Cuando la aritmetica no alcanza para decidir, el sistema entrega el
     dato y la pregunta: no_verificable con motivo. Nunca finge saber.
-  - Actualiza ARQUITECTURA.md al cerrar cada fase.
+  - Actualiza ARQUITECTURA.md al cerrar cada fase, y la seccion 2 de
+    PLAN.md con lo que hayas MEDIDO. Las demas secciones de PLAN.md las
+    escribe el orquestador; al cerrar, dile que secciones tocaste.
   - No toques scripts/dump_layout.py: es la herramienta de anonimizacion.
   - Los PDFs reales de fixtures/real/ tienen datos sensibles y estan en
     .gitignore. Los de fixtures/layouts/ son sus versiones enmascaradas.
