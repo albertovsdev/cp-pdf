@@ -163,6 +163,25 @@ SA DE CV` en una sola columna). Cuando la fuente no los separa,
 `documento` y `tercero` van vacíos: no se fabrica una división que la
 fuente no da. `saldo` puede ser `None` si el documento no lo trae legible.
 
+**Libro Mayor** — dos tablas relacionadas:
+
+```
+mayor_cuentas(cuenta, nombre_cuenta, naturaleza, saldo_inicial,
+              saldo_final, total_cargos, total_abonos, pagina_inicio)
+mayor_meses(cuenta, orden, periodo, cargos, abonos, saldo,
+            acum_cargos, acum_abonos, pagina)
+```
+
+La unidad natural es la cuenta-año, no el mes: aplanarlo repetiría
+`saldo_inicial` doce veces. `orden` (1..12) va explícito para no depender
+de parsear nombres de mes. `saldo_final` y los totales se **leen** del
+último mes —el documento ya imprime acumulados— y el checksum los verifica.
+Al Excel: Cuentas | Meses | Plana | Validación, igual que pólizas.
+
+Que las dos tablas estén relacionadas hace verificable el corte entre
+páginas: «ninguna fila huérfana» se vuelve el invariante «todo mes apunta a
+una cuenta existente».
+
 **Estado de cuenta** — metadata + movimientos.
 
 Hallazgos medidos (fase 7, AFIRME):
@@ -397,11 +416,18 @@ ortogonales.
   maneja.
 - 6 columnas: Periodo, Cargos, Abonos, Saldo, Acum-Cargos, Acum-Abonos.
 - `lines=0, rects=323`: usa rectángulos, no líneas. Otra estrategia de borde.
-- Checksum verificado con datos reales:
+- Checksum, **corregido tras medirlo sobre las 49 cuentas**:
   ```
-  saldo[mes]       = saldo[mes-1] + cargos - abonos   (saldo[0] = Inicial)
-  acum_cargos[mes] = acum_cargos[mes-1] + cargos
+  acum_cargos[mes] = acum_cargos[mes-1] + cargos          (siempre)
+  saldo[mes]       = saldo[mes-1] ± (cargos - abonos)      (según naturaleza)
   ```
+  La verificación original a mano usó BANCOS, una cuenta deudora, y se
+  generalizó de más. Medido: 34 de 49 cuentas siguen `+ cargos − abonos`;
+  las otras 11 —todas pasivo 2xxx más 1360— encadenan con el signo
+  invertido. Cablear una sola identidad producía 87 fallas en 12 cuentas.
+  La naturaleza se deriva por cuenta de sus doce meses: 12 D, 12 A, 25 sin
+  determinar (meses con `cargos == abonos`, donde ambas identidades
+  coinciden).
 
 **Conteos medidos con `find_table_region` + `detect`** (vs. el dumper):
 
@@ -570,6 +596,23 @@ vocabulario es el que el asistente de la fase 4 hace confirmar al humano una
 vez; la plantilla guarda esa confirmación y las cargas siguientes del mismo
 formato ya no preguntan.
 
+### Principio: toda identidad de saldo depende de la naturaleza
+
+Ocurrió tres veces, siempre igual: se verifica a mano una identidad de
+saldo corrido sobre una cuenta, se generaliza, y falla en las cuentas de
+naturaleza contraria.
+
+- Balanza Business Pro: `actual = anterior + creditos − cargos` en las 35
+  acreedoras, invertido en las 120 deudoras.
+- Balanza GUME: la orientación debe/haber no es verificable por aritmética
+  porque al invertirla la naturaleza derivada se invierte también.
+- Libro Mayor: 34 de 49 cuentas siguen una identidad, 11 la contraria.
+
+**Regla: nunca fijar el signo de una identidad de saldo. Derivar la
+naturaleza por renglón o por cuenta, y dejar sin determinar lo que no se
+pueda derivar.** Una verificación manual sobre una cuenta es evidencia de
+que la identidad existe, no de que valga para todas.
+
 ### Principio: la aritmética manda sobre el vocabulario
 
 Un diccionario de sinónimos de encabezado (`CARGOS`↔Debe,
@@ -665,8 +708,8 @@ cp-pdf/
 | 5 | Pólizas | Parser de bloques, contra las DOS variantes (poliza + diario-general) | **hecho** (388 tests) |
 | 6 | OCR | `ocr.py` + preprocesado + fallback para texto mutilado | **hecho** (409 tests) |
 | 7 | Estado de cuenta | Multilínea + variación por banco | **hecho** (436 tests) |
-| 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | siguiente |
-| 7c | Extracción transversal | Deduplicar tokens repetidos (×2 a ×25), CID sin ToUnicode → OCR, fecha pegada, cuentas con punto | |
+| 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | **hecho** (460 tests) |
+| 7c | Extracción transversal | Deduplicar tokens repetidos (×2 a ×25), CID sin ToUnicode → OCR, fecha pegada, cuentas con punto | siguiente |
 | 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 4 formatos con el mismo parser | |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
@@ -773,6 +816,9 @@ Registrada a propósito, con la fase en que toca resolverla.
   Opción honesta pendiente: cuando la forma es `saldo_con_signo`, exportar
   las columnas con signo **tal como las presenta el documento** y llenar
   deudor/acreedor solo donde la naturaleza está fundamentada.
+- **`balanza-fd` detecta 4 columnas pero tiene 6 subetiquetas de
+  encabezado agrupado.** Es un problema de detección, no de agrupado.
+  **Resolver en fase 7c.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
 
