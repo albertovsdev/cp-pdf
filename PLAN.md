@@ -755,8 +755,8 @@ cp-pdf/
 | 7 | Estado de cuenta | Multilínea + variación por banco | **hecho** (436 tests) |
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | **hecho** (460 tests) |
 | 7c | Extracción transversal | Deduplicar tokens repetidos, CID → OCR, fecha pegada, encabezado de balanza-fd | **hecho** (508 tests) |
-| 7c2 | Cuentas ambiguas + ARQUITECTURA.md | `is_amount` por posición + documento de arquitectura | siguiente |
-| 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 4 formatos con el mismo parser | |
+| 7c2 | Cuentas ambiguas + ARQUITECTURA.md | `is_amount` por posición + documento de arquitectura | **hecho** (513 tests) |
+| 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 9 bancos con el mismo parser | siguiente |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
@@ -929,6 +929,15 @@ antes de implementarse.
 
 ### Puntos abiertos
 
+- **MEDIR ANTES DE LA FASE 8: memoria pico por documento.** Cuatro de los
+  cinco parsers hacen `list(document.open_pages())` — solo `BalanzaParser`
+  transmite página por página. Eso contradice §0. Con un solo trabajo a la
+  vez probablemente aguante, pero hay que medir el pico real del auxiliar
+  de 886 páginas contra los ~11 GB que quedarán libres tras la ampliación.
+  Si son cientos de MB, se sigue; si son varios GB, el worker deja
+  inusable a MySQL y hay que convertir los parsers a streaming primero.
+- **El CLI solo expone `balanza` y `confirmar`.** Los otros cuatro parsers
+  son alcanzables únicamente por API. La capa web los necesita los cinco.
 - **Puerto**: Apache ya ocupa el 80. El servicio Python va en otro puerto o
   detrás de un proxy de Apache. Decidir antes de la fase 8.
 - **Apagado diario a las 21:00**: la cola debe persistir en disco y los
