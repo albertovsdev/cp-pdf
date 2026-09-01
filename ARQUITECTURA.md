@@ -88,12 +88,21 @@ ocr.extract(path, *, page_numbers=None, dpi=300, idioma="spa",
 ocr.leer_pagina(path, numero, *, ...) -> Page      # unidad del reintento
 ocr.hay_tesseract(*, binario="tesseract") -> bool  # nunca lanza
 
+@dataclass(frozen=True)
+class strategy.Decision: estrategia, motivo, senales: dict
+
+strategy.decidir(path, *, paginas_muestra=2, umbral_traslape=0.02,
+                 umbral_cid=0.5, binario="tesseract") -> Decision
+strategy.extraer_con_motivo(path, *, estrategia=None, page_numbers=None,
+                            paginas_muestra=2,
+                            umbral_cid=0.5) -> tuple[Document, Decision]
 strategy.extraer(path, *, estrategia=None, page_numbers=None,
                  paginas_muestra=2) -> tuple[Document, str]
 strategy.esta_contaminada(path, *, paginas_muestra=2,
                           umbral_traslape=0.02) -> bool
 strategy.tokens_contaminados(words) -> list[Word]
 strategy.palabras_traslapadas(words) -> int
+strategy.fraccion_cid(words) -> float
 
 dedup.multiplicador(words) -> int
 dedup.deduplicar(words) -> tuple[Word, ...]
@@ -104,6 +113,27 @@ tokens.separar_fecha_pegada(words) -> tuple[Word, ...]
 `extraer()` es la puerta que usa todo el sistema: elige estrategia, y el
 `Document` que devuelve ya viene deduplicado y con los tokens pegados
 sueltos. Los extractores crudos no normalizan nada.
+
+**Tres señales deciden la estrategia**, cada una con su umbral medido:
+
+| Señal | Qué delata | Estrategia |
+|---|---|---|
+| `tokens_contaminados` | glifos de dos corridas en una palabra | `pdf_chars` |
+| `palabras_traslapadas` > 0.02 | una columna impresa encima de otra | `pdf_chars` |
+| `fraccion_cid` ≥ 0.5 | el PDF no trae el mapa que traduce glifos | `ocr` |
+
+El CID se evalúa **primero**: cuando el archivo no trae el mapa, ni
+`pdf_text` ni `pdf_chars` lo salvan. Y el umbral es una fracción alta a
+propósito — el OCR cuesta ~21 s por documento, así que lo que lo justifica
+es que el documento sea ilegible, no que traiga un sello digital en CID;
+eso último lo cubre `reintento.reintentar_cid`, página por página. Si el
+documento pide OCR y no hay Tesseract, `decidir()` devuelve `pdf_text` y lo
+dice en el motivo, en vez de fallar.
+
+`Decision.motivo` viaja hasta el reporte del CLI: mandar un documento a OCR
+cuesta veinte veces más que no mandarlo, y esa decisión no puede quedarse
+en un log. `extraer()` conserva su firma de siempre porque hay veintitantos
+llamadores que la desempaquetan.
 
 ### `layout/`
 
@@ -240,8 +270,10 @@ huella_de(layout, cuentas=()) -> Huella | None
 class Plantilla: tenant_id, huella, tipo, estrategia, mapeo, forma,
                  verificado_por, orientacion_verificada, filas_afectadas,
                  esquema, reglas, cobertura, pendiente_de_confirmacion,
-                 confirmada_por="", confirmada_en="", version=1
-                 que_confirmar() -> dict | None
+                 confirmada_por="", confirmada_en="", version=1,
+                 separador_continuacion=""
+                 pendientes() -> list[dict]
+                 que_confirmar() -> dict | None   # el primero de pendientes()
 
 class AlmacenPlantillas:
     __init__(raiz)
@@ -262,12 +294,19 @@ procesar_estado_cuenta(...)  -> ResultadoEstadoCuenta
 procesar_mayor(..., balanza=None) -> ResultadoMayor
 
 exportar_balanza(balanza, cobertura, destino) -> Path
+exportar_auxiliar(auxiliar, cobertura, destino) -> Path
 exportar_polizas(libro, cobertura, destino) -> Path
+exportar_estado_cuenta(estado, cobertura, destino) -> Path
 exportar_mayor(mayor, cobertura, destino) -> Path
 ```
 
-Todos los `Resultado*` traen `cobertura`, `estrategia`, `huella`,
-`plantilla` y `reutilizada`.
+Los cinco tipos de documento salen a Excel. Los que devuelven una sola
+tabla (`balanza`, `auxiliar`) escriben dos hojas; los que devuelven tablas
+relacionadas (`polizas`, `estado_cuenta`, `mayor`) escriben las
+relacionadas, una plana denormalizada y la validación.
+
+Todos los `Resultado*` traen `cobertura`, `estrategia`, `motivo_estrategia`,
+`huella`, `plantilla` y `reutilizada`.
 
 ---
 
@@ -275,8 +314,8 @@ Todos los `Resultado*` traen `cobertura`, `estrategia`, `huella`,
 
 ```
 PDF
- └─ strategy.extraer(pdf)                      elige pdf_text | pdf_chars
-     ├─ esta_contaminada()                     glifos pegados o sobreimpresión
+ └─ strategy.extraer_con_motivo(pdf)           pdf_text | pdf_chars | ocr
+     ├─ decidir()                              3 señales medidas + el porqué
      ├─ dedup.deduplicar_pagina()              por página, al vuelo
      └─ tokens.separar_fecha_pegada()
  └─ Document  (open_pages() → Iterator[Page])
@@ -350,7 +389,8 @@ parse(document, *, layout=None, mapeo=None) -> <resultado>
 ```
 
 `layout` y `mapeo` permiten aplicar una plantilla ya aprendida y saltarse
-la detección. Todos lanzan `LayoutDesconocido` (en `parsers/balanza.py`)
+la detección. `EstadoCuentaParser` recibe además `separador_continuacion`,
+que también sale de la plantilla. Todos lanzan `LayoutDesconocido` (en `parsers/balanza.py`)
 cuando no reconocen el documento.
 
 Los que devuelven tablas relacionadas —`polizas`, `mayor`— exportan además
@@ -421,8 +461,11 @@ más allá del tipo del parámetro.
 ## 7. Qué NO hace el sistema
 
 - **No hay capa web, cola ni workers.** El punto de entrada es
-  `python -m contapdf.cli`, con dos comandos: `balanza` y `confirmar`.
-  Los otros cuatro parsers solo se alcanzan por API.
+  `python -m contapdf.cli`, con seis comandos: `balanza`, `auxiliar`,
+  `polizas`, `estado-cuenta`, `mayor` y `confirmar`. Los cinco primeros
+  tienen la misma forma (`<comando> <pdf> [-o] [--tenant] [--plantillas]`),
+  el mismo reporte de cobertura y los mismos códigos de salida
+  (0 cuadra, 1 hay discrepancias, 2 no se pudo procesar).
 - **No cruza documentos automáticamente.** `evaluar_mayor(balanza=...)` es
   el único cruce y hay que pasarle el otro documento a mano; ningún módulo
   sale a buscar archivos.
@@ -438,7 +481,7 @@ más allá del tipo del parámetro.
 | Quiero… | Choca con |
 |---|---|
 | Depósitos y retiros por cuenta cuando el documento no los desglosa | Se quedan en `None`; repartir el total del documento sería inventarlo |
-| Distinguir una continuación partida a la mitad de una partida por palabra | La geometría es idéntica en los dos casos; `separador_continuacion` es un parámetro del formato, no una deducción |
+| Distinguir una continuación partida a la mitad de una partida por palabra | La geometría es idéntica en los dos casos y se midió que no hay discriminador; `separador_continuacion` lo confirma un humano una vez por formato y la plantilla lo guarda |
 | Una cuenta de crédito, donde el saldo corre al revés | `_saldo_corrido_bancario` fija el signo `saldo + depósito − retiro`; una sección de crédito falla la regla y lo declara |
 | Un identificador de póliza estable entre lecturas | `Poliza.poliza_id` es la posición en esa lectura |
 | Procesar sin materializar el documento | `AuxiliarParser`, `PolizasParser`, `MayorParser` y `EstadoCuentaParser` hacen `list(document.open_pages())`. Solo `BalanzaParser` transmite página por página |

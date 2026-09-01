@@ -6,9 +6,10 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fases 0 a 7d completadas.** Los cinco parsers existen (balanza,
-auxiliar, pólizas, estado de cuenta, libro mayor). 581 tests verdes + 9
-lentos. Siguiente: **fase 7e** (cerrar el núcleo), luego la **8** (capa web).
+Estado: **fases 0 a 7e completadas.** Los cinco parsers existen (balanza,
+auxiliar, pólizas, estado de cuenta, libro mayor), los cinco salen a Excel
+y los cinco tienen comando de CLI. 635 tests verdes + 11 lentos.
+Siguiente: **fase 7f** (cobertura con denominador), luego la **8** (capa web).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -397,8 +398,58 @@ formatos quedan con las palabras pegadas dentro de la descripción. **No
 afecta ningún importe, saldo ni checksum**; solo el texto de la descripción.
 **Decisión pendiente del cliente.**
 
-**Todavía sin hacer**: no hay `exportar_estado_cuenta` en `export/excel.py`;
-los seis formatos se alcanzan solo por API.
+### Resultados de la fase 7e (cierre del núcleo)
+
+**El discriminador del separador de continuación NO existe. Medido.**
+
+La hipótesis era buena: si el corte es por carácter, el renderizador corta
+exactamente en el margen y el borde derecho del último token debería ser
+idéntico en todas las líneas llenas; si es por palabra, varía hasta el ancho
+de una palabra. Se midió sobre las líneas de continuación de cada bloque,
+excluyendo la última de cada uno (esa termina donde termina el texto, no en
+el margen — sin esa corrección la medición no significa nada).
+
+| Documento | bloques | líneas llenas | desv. de x1 | llegan al margen (≤1 carácter) |
+|---|---|---|---|---|
+| **AFIRME** (parte palabras) | 13 | 91 | 29.5 | **3%** |
+| Santander abril | 63 | 378 | 52.0 | 38% |
+| Banorte julio | 158 | 294 | 38.2 | 100% (n=2) |
+| Bajío | 56 | 280 | 43.6 | 26% |
+| Inbursa | 32 | 95 | 60.7 | 50% (n=2) |
+| BBVA | 15 | 43 | 50.7 | 50% (n=6) |
+
+**Sale al revés de lo esperado**: el único documento del que se sabe que
+parte palabras es el que PEOR puntúa. La razón, al mirarlo de cerca: el
+bloque de continuación de AFIRME no es un párrafo re-fluido contra un
+margen, es un **registro de ancho fijo** con campos rellenados a columna
+(`CUENTA:…`, `HORA:… DESTINATARIO:…`), y solo se parte el campo que no cabe
+entero. La mayoría de sus líneas terminan donde termina su campo, en ningún
+lugar cercano al margen. La señal que la hipótesis suponía —un párrafo
+contra una pared— no existe en ese documento.
+
+**Queda como pregunta sin propuesta.** `Plantilla.pendientes()` la expone con
+`se_propone: None` y dice por qué no propone: fingir una propuesta sin
+evidencia es la misma mentira que un `0 discrepancias` sin cobertura. El
+humano contesta una vez por formato y la plantilla lo guarda.
+
+**El umbral de CID, medido sobre los 27 fixtures.** El documento ilegible da
+**98.8%** de su muestra en CID y el siguiente da **0.55%**; los otros 25 dan
+cero exacto. No hay nada en medio, así que cualquier umbral entre los dos
+separa. Se puso en **0.50** a propósito: expresa que lo que justifica releer
+todo el documento por OCR es que sea ilegible, no que traiga un sello digital
+en CID. Los seis tokens de Inbursa y Multiva siguen siendo trabajo del carril
+de `reintento.reintentar_cid`, página por página.
+
+**Corrección: eran DOS los parsers sin salida a Excel, no uno.** Al conectar
+el CLI apareció que `exportar_auxiliar` tampoco existía. Los cinco tipos
+salen ahora a Excel.
+
+**El `guardar()` que rechaza lo que no cuadró se nota al conectar el CLI.**
+De los cinco fixtures de referencia, tres cuadran y aprenden plantilla
+(balanza, estado de cuenta, mayor) y dos no (auxiliar con 1 regla en falla,
+pólizas con 3). Los dos salen con código 1 y sin plantilla, que es
+exactamente lo que ese código y esa regla significan. No es una regresión:
+es la primera vez que se ve de punta a punta.
 
 
 ### 1.3 Validación: cada documento trae su propio checksum
@@ -426,6 +477,18 @@ edocta:    saldo_inicial + Σ depositos - Σ retiros == saldo_corte
 **Si la validación falla, no se entrega el Excel limpio**: se entrega con
 las filas sospechosas marcadas y un reporte de discrepancias. Con OCR de
 por medio esto no es opcional.
+
+**Una regla declara sobre cuántos casos pudo correr.** `ResultadoRegla`
+lleva `aplicables` además de `comprobaciones`: cuántos casos existían en el
+documento y sobre cuántos corrió efectivamente. Un `cuadra` con
+`comprobaciones=5, aplicables=116` no es el mismo resultado que uno con
+`5/5`, y hasta la fase 7f el sistema no sabía distinguirlos: la tabla de la
+7d aprobó BBVA con el saldo corrido verificado en el 4% de la tabla.
+
+`Cobertura.resumen()` imprime siempre las dos cifras. Un `aplicables` que
+no se puede determinar es `None` y la regla se reporta `no_verificable`,
+nunca `cuadra`. **Un porcentaje sin denominador es la misma mentira que el
+`0 discrepancias`.**
 
 ---
 
@@ -624,9 +687,24 @@ casos, no dos:
      serviría de nada.
 6. **Texto en CID sin mapa ToUnicode** → el extractor devuelve
    `(cid:123)(cid:45)…` porque el PDF no trae la tabla que traduce glifos a
-   letras. Medido en Inbursa y Multiva. **Es un subcaso de 3a: la tinta sí
-   está dibujada**, así que el reintento por OCR debe recuperarlo — a
-   diferencia del 3b de GUME, aquí sí va a funcionar.
+   letras. Medido en Inbursa, Multiva y HSBC. **Es un subcaso de 3a: la
+   tinta sí está dibujada**, así que el OCR lo recupera — a diferencia del
+   3b de GUME.
+
+   **Lo que fija la tasa de recuperación es el TAMAÑO DE LA TINTA, no el
+   porcentaje de CID.** Medido:
+
+   | Documento | palabras en CID | recuperadas | qué son |
+   |---|---|---|---|
+   | Inbursa | 20 (0.8%) | 7 (35%) | sello digital |
+   | Multiva | 5 (0.5%) | 1 (20%) | sello digital |
+   | HSBC | 590 (97%) | 565 (**95.8%**) | la página entera |
+
+   El sello digital es tinta diminuta y decorativa, y ahí el OCR falla aunque
+   la tinta exista; una página dibujada a tamaño normal se recupera casi
+   entera. La conclusión práctica: **un documento mayoritariamente en CID es
+   un buen candidato a OCR, y unos pocos tokens en CID no lo son** — cuestan
+   21 s para recuperar seis tokens decorativos.
 5. **Glifos duplicados** → el documento dibuja el mismo contenido varias
    veces. **No es un caso aislado**: medido en Santander (×2, con
    desplazamiento) y en toda la familia «manufacturas» (×5 en balanza,
@@ -862,46 +940,11 @@ estables con sal, para poder probar cruces entre documentos.
 
 ## 3. Estructura del repo
 
-```
-cp-pdf/
-├── src/contapdf/
-│   ├── ir.py                  # Word, Line, Document, ColumnSpec
-│   ├── extract/
-│   │   ├── pdf_text.py        # pdfplumber -> IR (generador por pagina)
-│   │   └── ocr.py             # (fase 6)
-│   ├── layout/
-│   │   ├── lines.py           # words -> lines por solapamiento vertical
-│   │   ├── columns.py         # clustering x1 (montos) / x0 (texto)
-│   │   ├── region.py          # acota el analisis a la zona de tabla
-│   │   └── headers.py         # etiqueta columnas (encabezados multilinea)
-│   ├── parsers/
-│   │   ├── base.py
-│   │   ├── balanza.py
-│   │   ├── auxiliar.py
-│   │   ├── polizas.py
-│   │   └── estado_cuenta.py
-│   ├── templates/
-│   │   ├── fingerprint.py     # huella del formato (ligada al tenant)
-│   │   └── store.py
-│   ├── validate/rules.py
-│   └── export/excel.py
-├── tests/
-├── fixtures/
-│   ├── layouts/               # JSON enmascarados — SI se versionan
-│   ├── synthetic/             # PDFs sinteticos — SI se versionan
-│   ├── real/                  # PDFs reales — GITIGNORED
-│   │   ├── 1-Balanza/
-│   │   ├── 2-Libro-Diario/
-│   │   ├── 3-Auxiliares/
-│   │   └── 4-Estados-Cuenta/
-│   └── golden/                # CSV esperado por fixture
-├── scripts/
-│   ├── dump_layout.py         # herramienta de anonimizacion — NO tocar
-│   └── dump_all.sh
-└── PLAN.md
-```
+Vive en `ARQUITECTURA.md` §1, que es donde se mantiene. Aquí duplicaba y se
+quedó atrás cuatro fases seguidas.
 
-`.gitignore` incluye `fixtures/real/` desde el primer commit.
+`.gitignore` incluye `fixtures/real/` desde el primer commit — eso sí es
+decisión, no descripción, y se queda aquí.
 
 ---
 
@@ -923,7 +966,8 @@ cp-pdf/
 | 7c | Extracción transversal | Deduplicar tokens repetidos, CID → OCR, fecha pegada, encabezado de balanza-fd | **hecho** (508 tests) |
 | 7c2 | Cuentas ambiguas + ARQUITECTURA.md | `is_amount` por posición + documento de arquitectura | **hecho** (513 tests) |
 | 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 6 formatos con tabla, mismo parser | **hecho** (581 tests + 9 lentos) |
-| 7e | Cerrar el núcleo | `exportar_estado_cuenta`, los 5 comandos del CLI, enrutamiento CID→OCR, separador de continuación | siguiente |
+| 7e | Cerrar el núcleo | `exportar_estado_cuenta` + `exportar_auxiliar`, los 5 comandos del CLI, enrutamiento CID→OCR, separador de continuación como pregunta | **hecho** (635 tests + 11 lentos) |
+| 7f | Cobertura con denominador | `aplicables` en `ResultadoRegla`; diagnóstico de las 4 reglas en falla de auxiliar y pólizas | siguiente |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
@@ -945,6 +989,14 @@ fixtures, criterios de aceptación verificables, y restricciones.
 La restricción que más ahorra: *"si el fixture no alcanza para decidir algo,
 PREGUNTA en vez de asumir"*. Sin ella, se inventa un caso de borde plausible
 y lo descubres tres fases después.
+
+**Las cifras de un prompt se copian del archivo, nunca de memoria.** Pasó
+dos veces en direcciones opuestas: un número del dumper metido en un prompt
+como si fuera medición del sistema, y el `5/5` de BBVA citado como `45/45`
+—que es la fila de AFIRME— en el prompt de la 7f. Un número equivocado en
+el CONTEXTO hace que Claude Code mida la cosa correcta sobre el caso
+equivocado, y eso cuesta una sesión entera. Antes de pegar un prompt,
+`grep` la cifra en `PLAN.md`.
 
 Dos cosas que no debe tocar Claude Code:
 
@@ -1034,6 +1086,20 @@ Registrada a propósito, con la fase en que toca resolverla.
   **Resolver en fase 7c.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
+- **Auxiliar y pólizas fallan su aritmética sobre el fixture de referencia**
+  (1 y 3 reglas respectivamente, descubierto al conectar el CLI en la 7e).
+  Sin diagnosticar: no se sabe si es el defecto conocido de la capa de
+  texto de `auxiliar-gume` o algo nuevo. Dos de los cinco tipos no entregan
+  Excel limpio hoy. **Diagnosticar en fase 7f.**
+- **El enrutamiento CID→OCR corre en el carril normal.** Añade ~21 s a una
+  llamada síncrona sin avisar, y esos 21 s se midieron en la máquina de
+  desarrollo. El PLAN lo exige en el carril lento con tiempo estimado
+  visible. **Resolver en fase 8.**
+- **Ninguna medición de tiempo se ha hecho en SERVIDORSIST.** Los 0.1 s por
+  página y los 21 s de OCR salen de un i5-1335U con SSD; el destino es un
+  i5-3470 de 2012 sin AVX2 con disco mecánico compartido con Apache y
+  MySQL. La memoria pico (543 MB) sí traslada; el tiempo no. **Medir en la
+  máquina objetivo antes de dimensionar la cola de la fase 8.**
 
 ---
 
@@ -1112,15 +1178,11 @@ antes de implementarse.
   de 886 páginas contra los ~11 GB que quedarán libres tras la ampliación.
   Si son cientos de MB, se sigue; si son varios GB, el worker deja
   inusable a MySQL y hay que convertir los parsers a streaming primero.
-- **El CLI solo expone `balanza` y `confirmar`.** Los otros cuatro parsers
-  son alcanzables únicamente por API. La capa web los necesita los cinco.
-  Y `export/excel.py` no tiene `exportar_estado_cuenta`: el estado de cuenta
-  es el único de los cinco que todavía no sale a Excel.
-- **El OCR no se enruta solo.** `strategy.extraer()` elige entre `pdf_text` y
-  `pdf_chars`; un documento 97% en CID (HSBC) sale ilegible salvo que se le
-  pase el `Document` de `ocr.extract()` a mano. Con ~21 s por documento, si
-  se enruta automáticamente tiene que ser en el carril lento con tiempo
-  estimado visible.
+- **El umbral de CID vive en `strategy.py` con una constante sin unidad
+  documentada.** El hueco medido sobre 27 fixtures es enorme (98.8% contra
+  0.55% contra 25 en cero exacto), así que el umbral es defendible; lo que
+  falta es dejar escrito qué unidad usa y que la fracción está a mitad del
+  hueco, no pegada al borde inferior.
 - **Puerto**: Apache ya ocupa el 80. El servicio Python va en otro puerto o
   detrás de un proxy de Apache. Decidir antes de la fase 8.
 - **Apagado diario a las 21:00**: la cola debe persistir en disco y los
