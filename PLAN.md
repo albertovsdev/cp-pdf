@@ -636,6 +636,51 @@ con el mapeo de columnas y las reglas de validación.
 antes de darse por buenas.** Medir que cuadran no prueba que signifiquen lo
 correcto, y estos documentos tienen uso fiscal.
 
+### Resultados de la fase 7c (extracción transversal)
+
+- **Deduplicación**: multiplicador medido, no listado. `manufacturas` ×5
+  (balanza, pólizas, mayor) y **×25** (auxiliar); `edocta` y
+  `edocta-santander` ×2 en tokens del sello digital. Criterio: mismo texto
+  + misma coordenada (0.1pt) + mismo renglón. Dos renglones con `0.00` en
+  la misma columna difieren en `top`, así que no se tocan.
+  Columnas antes → después: mayor-manufacturas 8→6 (igual que mayor-gume),
+  auxiliar-manufacturas 11→7 (igual que el auxiliar original),
+  balanza-manufacturas 13→6, polizas-manufacturas 10→11 (**sin defender**:
+  el documento tiene 494 páginas y las primeras son pólizas en ceros; el
+  número correcto lo fijará el parser de la fase 5).
+- **CID → OCR**: recupera Inbursa 7/20 y Multiva 1/5 (35% y 20%). Confirma
+  cualitativamente que es caso 3a —hay tinta, a diferencia del 0/74 de
+  GUME— pero la tasa es baja. El volumen es chico (0.8% y 0.5% del
+  documento) y en Inbursa caen dentro de la región de tabla, así que sí
+  importan.
+- **Fecha pegada (Banorte)**: `03-JUL-23085901901344318433` es ambiguo (el
+  año puede ser `23` o `2308`). **El ancho del año se aprende de los
+  tokens donde sí es inequívoco** — los pegados a letras, donde los dígitos
+  terminan donde empieza el texto. Banorte no imprime ni una fecha suelta,
+  así que son la única fuente. Si el documento no da ninguna, no se parte.
+- **balanza-fd**: no era detección ni agrupado. La página 3 imprime su
+  encabezado dos veces y los tokens repetidos fundían las dos subcolumnas
+  de saldo (x1=332 y x1=346). Deduplicando salen las 6. Cada renglón usa
+  una de las dos subcolumnas, nunca ambas (272 vs 462 renglones).
+- **Cuentas con punto (Proactivity)**: medido, no implementado. `is_amount`
+  toma 21 de 21 como monto; el clustering produce 3 columnas falsas y el
+  documento sale con 11. **La forma no alcanza**: hay un token de idéntica
+  forma en x=547 que es un monto legítimo. Solución aprobada: `is_amount`
+  recibe opcionalmente la columna, y un token ambiguo que cae en la columna
+  de cuenta se trata como texto. Parámetro aditivo, para no romper a los
+  cinco parsers.
+
+### Dos documentos, sin solapamiento
+
+| Archivo | Contiene | Lo mantiene |
+|---|---|---|
+| `PLAN.md` | Decisiones, mediciones, contratos, principios, el *porqué* | El orquestador, con cada reporte |
+| `ARQUITECTURA.md` | Qué existe en código hoy: módulos, firmas públicas, flujo, invariantes | Claude Code, al cerrar cada fase |
+
+**Un hecho, un solo hogar.** `ARQUITECTURA.md` no repite hallazgos ni
+justifica decisiones; describe el sistema tal como está. Si los dos se
+contradicen, `PLAN.md` manda en el *porqué* y `ARQUITECTURA.md` en el *qué*.
+
 ### Anonimización
 
 `scripts/dump_layout.py` produce los fixtures enmascarados. Requiere
@@ -709,7 +754,8 @@ cp-pdf/
 | 6 | OCR | `ocr.py` + preprocesado + fallback para texto mutilado | **hecho** (409 tests) |
 | 7 | Estado de cuenta | Multilínea + variación por banco | **hecho** (436 tests) |
 | 7b | Libro Mayor | Bloques con sección partida entre páginas + encabezado agrupado | **hecho** (460 tests) |
-| 7c | Extracción transversal | Deduplicar tokens repetidos (×2 a ×25), CID sin ToUnicode → OCR, fecha pegada, cuentas con punto | siguiente |
+| 7c | Extracción transversal | Deduplicar tokens repetidos, CID → OCR, fecha pegada, encabezado de balanza-fd | **hecho** (508 tests) |
+| 7c2 | Cuentas ambiguas + ARQUITECTURA.md | `is_amount` por posición + documento de arquitectura | siguiente |
 | 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 4 formatos con el mismo parser | |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
