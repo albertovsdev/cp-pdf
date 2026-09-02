@@ -30,12 +30,14 @@ from contapdf.parsers.auxiliar import (
     Auxiliar,
     FilaAuxiliar,
 )
+from contapdf.validate.rules import naturaleza_por_cuenta
 
 _LOG = logging.getLogger(__name__)
 
 
 def _ancla_verificada(movimientos: Sequence[FilaAuxiliar],
-                      subtotal: FilaAuxiliar | None) -> bool:
+                      subtotal: FilaAuxiliar | None,
+                      signo: Decimal) -> bool:
     """Si la cadena esta completa y sus dos extremos son comprobables."""
     if subtotal is None or not movimientos:
         return False
@@ -57,7 +59,7 @@ def _ancla_verificada(movimientos: Sequence[FilaAuxiliar],
     if subtotal.saldo is not None:
         final = movimientos[0].saldo_inicial_cuenta
         for fila in movimientos:
-            final = final + fila.debe - fila.haber
+            final = final + signo * (fila.debe - fila.haber)
         if final != subtotal.saldo:
             return False
     return True
@@ -77,16 +79,26 @@ def recalcular_saldos(auxiliar: Auxiliar) -> Auxiliar:
         else:
             por_seccion.setdefault(fila.cuenta, []).append(indice)
 
+    # El signo NO se cablea aqui tampoco: encadenar una cuenta acreedora con
+    # la identidad deudora produce saldos incorrectos MARCADOS COMO BUENOS,
+    # que es peor que dejarlos vacios.
+    naturalezas = naturaleza_por_cuenta(auxiliar)
+
     filas = list(auxiliar.filas)
     recalculadas = 0
     for cuenta, indices in por_seccion.items():
         movimientos = [filas[i] for i in indices]
-        if not _ancla_verificada(movimientos, subtotales.get(cuenta)):
+        naturaleza = naturalezas.get(cuenta, "")
+        if not naturaleza:
+            # Sin saber de que lado corre el saldo no se puede encadenar.
+            continue
+        signo = Decimal(-1) if naturaleza == "A" else Decimal(1)
+        if not _ancla_verificada(movimientos, subtotales.get(cuenta), signo):
             continue
         corriente = movimientos[0].saldo_inicial_cuenta
         for indice in indices:
             fila = filas[indice]
-            corriente = corriente + fila.debe - fila.haber
+            corriente = corriente + signo * (fila.debe - fila.haber)
             if fila.saldo is None:
                 filas[indice] = replace(fila, saldo=corriente,
                                         saldo_origen=RECALCULADO)

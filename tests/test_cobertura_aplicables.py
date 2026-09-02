@@ -195,10 +195,19 @@ def test_auxiliar_saldo_corrido_sobre_todos_los_movimientos():
 
 @pytest.mark.lento
 def test_auxiliar_gume_reporta_sobre_57024_no_sobre_21757():
-    """61% del documento no trae saldo legible. El denominador lo dice."""
+    """El denominador es el documento entero, pase lo que pase arriba.
+
+    En la 7f los evaluados eran 21,757 porque el pipeline no recalculaba;
+    la 7g conecto `recalcular_saldos` y subieron a 47,987 con 26,032 saldos
+    derivados de un ancla verificada. Lo que este test defiende es el
+    DENOMINADOR: sigue siendo 57,024, y los 9,037 que faltan siguen
+    contados y explicados.
+    """
     r = procesar_auxiliar(requires_real_pdf("auxiliar-gume"))
     corrido = _regla(r.cobertura, "saldo_corrido")
-    assert (corrido.aplicables, corrido.evaluados) == (57024, 21757)
+    assert corrido.aplicables == 57024
+    assert corrido.evaluados == 47987
+    assert corrido.aplicables - corrido.evaluados == 9037
     assert corrido.motivo
     # 735 subtotales x debe/haber: las unidades de 'exactas'. En la
     # medicion previa este universo se anoto en subtotales (735) mientras

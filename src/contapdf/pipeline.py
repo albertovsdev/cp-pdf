@@ -25,6 +25,7 @@ from contapdf.parsers.estado_cuenta import (
 )
 from contapdf.parsers.mayor import Mayor, MayorParser
 from contapdf.parsers.polizas import LibroDiario, PolizasParser
+from contapdf.recalculo import recalcular_saldos
 from contapdf.parsers.base import Layout, detectar_layout, lineas_de_tabla
 from contapdf.templates.fingerprint import Huella, huella_de
 from contapdf.templates.store import AlmacenPlantillas, Plantilla
@@ -202,6 +203,13 @@ def procesar_auxiliar(pdf: str | Path, *, tenant_id: str | None = None,
     auxiliar = parser.parse(
         documento, layout=layout,
         mapeo=_mapeo_de(plantilla) if plantilla is not None else None)
+    # Rellena los saldos que la capa de texto no dejo leer, PERO solo donde
+    # los dos extremos de la cadena estan anclados contra el subtotal que el
+    # documento declara. Donde no hay ancla el saldo se queda en None y la
+    # cobertura lo declara: nunca se inventa con un solo extremo. Cada saldo
+    # derivado queda marcado como 'recalculado', no se confunde con uno
+    # impreso.
+    auxiliar = recalcular_saldos(auxiliar)
     cobertura = evaluar_auxiliar(auxiliar)
 
     aprendida = plantilla

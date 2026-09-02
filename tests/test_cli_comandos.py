@@ -80,9 +80,10 @@ def test_sin_o_ningun_comando_escribe_excel(comando, tmp_path):
 def test_los_cinco_aceptan_el_mismo_par_de_banderas(tmp_path):
     """Y solo aprende plantilla el documento cuya aritmetica cuadro.
 
-    Los fixtures de auxiliar y polizas traen discrepancias reales, asi que
-    `guardar()` los rechaza: no se aprende un formato que no cuadro (PLAN 2).
-    Salen con codigo 1, que es justo lo que ese codigo significa.
+    Desde la fase 7g el auxiliar cuadra: sus 3,585 fallas eran el signo
+    cableado, no discrepancias del documento. Polizas sigue en 1 hasta que
+    `cfdi_cruzado` compare por contencion. Un documento que no cuadra no
+    aprende plantilla y sale con codigo 1 (PLAN 2).
     """
     from contapdf.templates.store import AlmacenPlantillas
 
@@ -96,8 +97,8 @@ def test_los_cinco_aceptan_el_mismo_par_de_banderas(tmp_path):
 
     aprendidas = {p.tipo for p in AlmacenPlantillas(tmp_path).listar("t")}
     cuadran = {c for c, k in codigos.items() if k == 0}
-    assert cuadran == {"balanza", "estado-cuenta", "mayor"}
-    assert aprendidas == {"balanza", "estado_cuenta", "mayor"}
+    assert cuadran == {"balanza", "auxiliar", "estado-cuenta", "mayor"}
+    assert aprendidas == {"balanza", "auxiliar", "estado_cuenta", "mayor"}
 
 
 def test_el_estado_de_cuenta_queda_pendiente_por_el_separador(tmp_path):

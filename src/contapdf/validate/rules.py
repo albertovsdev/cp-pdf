@@ -371,6 +371,71 @@ def _partida_doble(reglas: ReglasBalanza,
                       () if veredicto == "exacto" else ("Totales",), [])
 
 
+def naturaleza_por_cuenta(auxiliar, *,
+                          tolerancia: Decimal = TOLERANCIA) -> dict[str, str]:
+    """Cual de las dos identidades sostiene el saldo corrido de cada cuenta.
+
+    'D' para `saldo = anterior + debe - haber`, 'A' para la contraria, y ''
+    cuando el documento no lo revela. Se decide por MAYORIA de los renglones
+    que la revelan -- el mismo criterio que `MayorParser._naturaleza` -- y no
+    por unanimidad: un solo saldo mal leido no puede voltear una cuenta
+    entera. Medido: en los dos fixtures ninguna cuenta tiene votos de los dos
+    lados, asi que mayoria y unanimidad coinciden hoy.
+
+    NUNCA se infiere del numero ni del nombre de la cuenta: la aritmetica
+    manda sobre el vocabulario (PLAN 2).
+    """
+    movimientos: dict[str, list] = {}
+    subtotales: dict[str, object] = {}
+    for fila in auxiliar.filas:
+        if fila.es_subtotal:
+            subtotales.setdefault(fila.cuenta, fila)
+        else:
+            movimientos.setdefault(fila.cuenta, []).append(fila)
+
+    naturalezas: dict[str, str] = {}
+    for cuenta, filas in movimientos.items():
+        deudora, acreedora = _votos_de_naturaleza(filas, subtotales.get(cuenta),
+                                                  tolerancia)
+        naturalezas[cuenta] = ("" if deudora == acreedora
+                               else "D" if deudora > acreedora else "A")
+    return naturalezas
+
+
+def _votos_de_naturaleza(filas: Sequence, subtotal, tolerancia: Decimal
+                         ) -> tuple[int, int]:
+    """Cuantos renglones sostiene cada identidad.
+
+    Un renglon con `debe == haber` no vota: las dos identidades lo cumplen.
+    El aterrizaje de la cadena entera en el saldo del subtotal declarado
+    vale un voto mas, y es el UNICO disponible cuando todos los saldos
+    intermedios son ilegibles -- el caso de auxiliar-gume.
+    """
+    deudora = acreedora = 0
+    anterior = filas[0].saldo_inicial_cuenta if filas else None
+    for fila in filas:
+        if fila.saldo is None or fila.debe is None or fila.haber is None:
+            # Sin uno de los tres el renglon no puede votar, y ademas corta
+            # la cadena: el siguiente no tiene contra que compararse.
+            anterior = fila.saldo
+            continue
+        if anterior is not None and fila.debe != fila.haber:
+            movimiento = fila.debe - fila.haber
+            deudora += abs(anterior + movimiento - fila.saldo) <= tolerancia
+            acreedora += abs(anterior - movimiento - fila.saldo) <= tolerancia
+        anterior = fila.saldo
+
+    if (subtotal is not None and subtotal.saldo is not None and filas
+            and filas[0].saldo_inicial_cuenta is not None
+            and not any(f.debe is None or f.haber is None for f in filas)):
+        neto = sum((f.debe - f.haber for f in filas), Decimal(0))
+        if neto != 0:
+            inicial = filas[0].saldo_inicial_cuenta
+            deudora += abs(inicial + neto - subtotal.saldo) <= tolerancia
+            acreedora += abs(inicial - neto - subtotal.saldo) <= tolerancia
+    return deudora, acreedora
+
+
 def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
     """saldo[n] == saldo[n-1] + debe - haber, dentro de cada seccion.
 
@@ -383,13 +448,28 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
         return ResultadoRegla(regla="saldo_corrido", estado=NO_VERIFICABLE,
                               aplicables=0, evaluados=0,
                               motivo="el documento no trajo movimientos")
+    # El signo de la identidad NO se cablea: sale de los datos de cada
+    # cuenta. Cablearlo le hacia la pregunta equivocada a las 44 cuentas
+    # acreedoras del fixture y producia 3,585 fallas inventadas.
+    naturalezas = naturaleza_por_cuenta(auxiliar, tolerancia=tolerancia)
+    sin_naturaleza = sorted(c for c, n in naturalezas.items() if not n)
+    indeterminados = sum(1 for f in movimientos if not naturalezas.get(f.cuenta))
+
     exactas, rozando, malas = 0, [], []
     anterior: Decimal | None = None
     cuenta = ""
+    signo = Decimal(1)
     ilegibles = 0
     for indice, fila in enumerate(movimientos):
         if fila.cuenta != cuenta:
             cuenta, anterior = fila.cuenta, fila.saldo_inicial_cuenta
+            naturaleza = naturalezas.get(cuenta, "")
+            signo = Decimal(-1) if naturaleza == "A" else Decimal(1)
+        if not naturalezas.get(fila.cuenta):
+            # Sin saber de que lado corre el saldo no se puede comprobar
+            # nada: el caso sigue en el denominador y la cobertura lo dice.
+            anterior = fila.saldo
+            continue
         if fila.saldo is None:
             # El documento no dejo leer este saldo: se corta la cadena en
             # vez de encadenar sobre un numero que no existe.
@@ -399,7 +479,7 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
         if anterior is None:
             anterior = fila.saldo
             continue
-        esperado = anterior + fila.debe - fila.haber
+        esperado = anterior + signo * (fila.debe - fila.haber)
         veredicto = _comparar(esperado, fila.saldo, tolerancia)
         if veredicto == "exacto":
             exactas += 1
@@ -413,20 +493,29 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
 
     comprobadas = exactas + len(rozando) + len(malas)
     if not comprobadas:
+        detalle = (f"{ilegibles} de {len(movimientos)} movimientos no traen "
+                   "saldo en la capa de texto")
+        if sin_naturaleza:
+            detalle = (f"{len(sin_naturaleza)} cuenta(s) no revelan de que "
+                       "lado corre su saldo: "
+                       + ", ".join(sin_naturaleza[:5]))
         return ResultadoRegla(
             regla="saldo_corrido", estado=NO_VERIFICABLE,
-            aplicables=len(movimientos), evaluados=0,
-            motivo=(f"ningun saldo legible: {ilegibles} de {len(movimientos)} "
-                    "movimientos no traen saldo en la capa de texto"))
+            aplicables=len(movimientos), evaluados=0, motivo=detalle)
     # El universo son todos los movimientos, incluido el que siembra cada
     # cadena: que no se pueda encadenar el primero es una limitacion de la
     # comprobacion, no una razon para sacarlo del denominador.
     total = len(movimientos)
-    siembras = total - comprobadas - ilegibles
+    siembras = total - comprobadas - ilegibles - indeterminados
     partes = []
     if ilegibles:
         partes.append(f"{ilegibles} de {total} movimientos no traen saldo "
                       "legible en la capa de texto")
+    if indeterminados:
+        partes.append(f"{indeterminados} de {total} pertenecen a "
+                      f"{len(sin_naturaleza)} cuenta(s) cuyo saldo no revela "
+                      "de que lado corre: "
+                      + ", ".join(sin_naturaleza[:5]))
     if siembras > 0:
         partes.append(f"{siembras} de {total} abren cadena y no tienen contra "
                       "que encadenarse")
@@ -626,11 +715,15 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
             motivo=("ni el CFDI ni la poliza traen un numero de documento "
                     "con el que cruzarlos"))
 
+    # CONTENCION, no igualdad: PLAN 1.2 dice que el numero del CFDI es el
+    # que la poliza declara, y la descripcion lo trae con texto alrededor
+    # ('FACT. FOLIO: 65501589987'). Comparar con '!=' convertia 863 cruces
+    # correctos en fallas inventadas.
     malos = [
         Discrepancia(fila=c.poliza_id, indice=-1, regla="cfdi_cruzado",
                      esperado=Decimal(0), obtenido=Decimal(0))
         for c in comparables
-        if c.documento != por_id[c.poliza_id].descripcion
+        if c.documento not in por_id[c.poliza_id].descripcion
     ]
     sin_cruzar = len(libro.cfdi) - len(comparables)
     motivo = ""
@@ -835,8 +928,14 @@ def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
     siembras = total - comparados - ilegibles
     partes = []
     if ilegibles:
-        partes.append(f"{ilegibles} de {total} movimientos no traen saldo "
-                      "legible")
+        # 'no traen saldo', no 'no traen saldo legible': la causa varia y
+        # esta regla no la puede ver. Medido en la 7g: en BBVA los 93
+        # renglones no tienen NINGUN token en la columna del saldo -- el
+        # banco solo lo imprime al cierre del dia, y eso es correcto -- pero
+        # en Bajio el unico renglon sin saldo SI tiene tinta ahi, o sea es
+        # perdida de extraccion. Afirmar una sola causa seria inventarla.
+        partes.append(f"{ilegibles} de {total} movimientos no traen saldo con "
+                      "el que encadenar")
     if siembras > 0:
         partes.append(f"{siembras} de {total} abren cadena y no tienen contra "
                       "que encadenarse")
