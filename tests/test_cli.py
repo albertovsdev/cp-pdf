@@ -31,7 +31,7 @@ def _fila(cuenta: str) -> FilaBalanza:
 def _cobertura(discrepancias=()):
     reglas = tuple(
         ResultadoRegla(regla=nombre, estado=FALLA if discrepancias and nombre == "renglon"
-                       else CUADRA, comprobaciones=2, exactas=2,
+                       else CUADRA, aplicables=2, evaluados=2, exactas=2,
                        discrepancias=tuple(discrepancias) if nombre == "renglon" else ())
         for nombre in ("renglon", "jerarquia", "totales", "partida_doble"))
     return Cobertura(reglas=reglas)

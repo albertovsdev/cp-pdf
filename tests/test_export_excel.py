@@ -88,7 +88,10 @@ def test_con_discrepancias_las_lista_bajo_la_cobertura(tmp_path):
     assert len(discrepancias) == 1
     ws = openpyxl.load_workbook(destino)["Validacion"]
     filas = [[c.value for c in f] for f in ws.iter_rows()]
-    assert filas[0][:3] == ["regla", "estado", "detalle"]
+    # Desde la fase 7f la hoja lleva el denominador: sin 'aplicables' una
+    # regla que corrio en el 4% del documento se lee igual que una entera.
+    assert filas[0][:5] == ["regla", "estado", "aplicables", "evaluados",
+                            "exactos"]
     encabezado = next(i for i, f in enumerate(filas) if f[0] == "fila")
     assert filas[encabezado][:4] == ["fila", "regla", "esperado", "obtenido"]
     assert filas[encabezado + 1][:2] == ["102-02", "renglon"]

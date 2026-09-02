@@ -132,8 +132,9 @@ def _cola(cobertura: Cobertura, destino: Path | None, salida: TextIO, *,
              + (f"{fallas} discrepancias\n" if fallas else "sin discrepancias\n"))
     escribir(f"  cobertura : {cobertura.resumen()}\n")
     for regla in cobertura.reglas:
-        detalle = regla.motivo if regla.estado == NO_VERIFICABLE else _detalle(regla)
-        escribir(f"    {regla.regla:<20} {regla.estado:<15} {detalle}\n")
+        escribir(f"    {regla.regla:<20} {regla.estado:<15} {_detalle(regla)}\n")
+        if regla.motivo:
+            escribir(f"    {'':<20} {'':<15} {regla.motivo}\n")
 
     for d in cobertura.discrepancias:
         escribir(f"    ! {d.fila:<16} {d.regla:<18} "
@@ -158,7 +159,14 @@ def _cola(cobertura: Cobertura, destino: Path | None, salida: TextIO, *,
 
 
 def _detalle(regla) -> str:
-    partes = []
+    """Lo que corrio de una regla, NUNCA sin decir sobre cuanto.
+
+    Un '5 exactas' sobre 116 casos y uno sobre 5 se leian igual; asi se
+    aprobo BBVA con la regla corriendo en el 4% de la tabla.
+    """
+    if regla.aplicables is None:
+        return "universo sin determinar"
+    partes = [f"{regla.evaluados} de {regla.aplicables} evaluados"]
     if regla.exactas:
         partes.append(f"{regla.exactas} exacta"
                       + ("s" if regla.exactas != 1 else ""))
@@ -166,7 +174,7 @@ def _detalle(regla) -> str:
         partes.append(f"{len(regla.con_tolerancia)} dentro de tolerancia")
     if regla.discrepancias:
         partes.append(f"{len(regla.discrepancias)} con diferencia")
-    return ", ".join(partes) or f"{regla.comprobaciones} comprobaciones"
+    return ", ".join(partes)
 
 
 def ejecutar_balanza(pdf: Path, destino: Path | None, *, paginas_muestra: int,

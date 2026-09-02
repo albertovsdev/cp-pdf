@@ -41,6 +41,9 @@ _MARCA_CID = "(cid:"
 # pone en la mitad a proposito: lo que justifica releer TODO por OCR es que
 # el documento sea ilegible, no que traiga un sello digital en CID. Eso
 # ultimo lo cubre reintento.reintentar_cid, pagina por pagina.
+# UNIDAD: fraccion de 0 a 1, no porcentaje. 0.5 es "la mitad de la muestra".
+# Se compara contra fraccion_cid(), que tambien devuelve una fraccion; el
+# documento que da 0.55% vale 0.0055 aqui y NO se enruta a OCR.
 _UMBRAL_CID = 0.5
 
 

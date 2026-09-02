@@ -57,11 +57,45 @@ class ResultadoRegla:
 
     regla: str
     estado: str
-    comprobaciones: int = 0
+    # El UNIVERSO: cuantos casos de esta regla contiene el documento. None
+    # solo cuando no se pudo determinar, y entonces la regla no puede
+    # afirmar que cuadro.
+    aplicables: int | None = None
+    # Cuantos de esos casos recibieron veredicto. Antes se llamaba
+    # 'comprobaciones' y en unas reglas significaba esto y en otras el
+    # universo: un 5 de 116 y un 116 de 116 se imprimian igual.
+    evaluados: int = 0
     exactas: int = 0
     con_tolerancia: tuple[str, ...] = ()
     discrepancias: tuple[Discrepancia, ...] = ()
     motivo: str = ""
+
+    def __post_init__(self) -> None:
+        if self.estado == CUADRA and self.aplicables is None:
+            raise ValueError(
+                f"{self.regla}: no puede cuadrar sin saber sobre cuantos "
+                "casos podia correr; sin 'aplicables' va no_verificable")
+        if self.aplicables is not None and self.aplicables < self.evaluados:
+            raise ValueError(
+                f"{self.regla}: 'aplicables' ({self.aplicables}) no puede ser "
+                f"menor que 'evaluados' ({self.evaluados})")
+
+    @property
+    def comprobaciones(self) -> int:
+        """DEPRECADO, se retira en la fase 8. Usa 'evaluados'."""
+        return self.evaluados
+
+    def resumen(self) -> str:
+        """La linea de una regla, siempre con su denominador."""
+        if self.aplicables is None:
+            return f"{self.regla}: universo sin determinar"
+        partes = [f"{self.evaluados} de {self.aplicables} evaluados",
+                  f"{self.exactas} exactos"]
+        if self.con_tolerancia:
+            partes.append(f"{len(self.con_tolerancia)} dentro de tolerancia")
+        if self.discrepancias:
+            partes.append(f"{len(self.discrepancias)} con diferencia")
+        return f"{self.regla}: " + ", ".join(partes)
 
 
 @dataclass(frozen=True)
@@ -92,10 +126,27 @@ class Cobertura:
     def no_verificables(self) -> int:
         return sum(1 for r in self.reglas if r.estado == NO_VERIFICABLE)
 
+    @property
+    def aplicables(self) -> int:
+        """Casos que los documentos contienen para el conjunto de reglas."""
+        return sum(r.aplicables or 0 for r in self.reglas)
+
+    @property
+    def evaluados(self) -> int:
+        return sum(r.evaluados for r in self.reglas)
+
     def resumen(self) -> str:
-        return (f"{len(self.reglas)} reglas: {self.cuadran} cuadran, "
-                f"{self.fallan} fallan, {self.no_verificables} no verificable"
-                + ("s" if self.no_verificables != 1 else ""))
+        """Nunca un numerador solo: cuantas reglas, y sobre cuantos casos."""
+        sin_universo = sum(1 for r in self.reglas if r.aplicables is None)
+        texto = (f"{len(self.reglas)} reglas: {self.cuadran} cuadran, "
+                 f"{self.fallan} fallan, {self.no_verificables} no verificable"
+                 + ("s" if self.no_verificables != 1 else "")
+                 + f"; {self.evaluados} de {self.aplicables} casos evaluados")
+        if sin_universo:
+            texto += (f" ({sin_universo} regla"
+                      + ("s" if sin_universo != 1 else "")
+                      + " con universo sin determinar)")
+        return texto
 
     def resumen_saldos(self) -> str:
         """De donde salio el saldo de cada movimiento."""
@@ -173,22 +224,38 @@ def _comparar(esperado: Decimal, obtenido: Decimal,
     return "tolerancia" if diferencia <= tolerancia else "falla"
 
 
-def _resultado(regla: str, comprobaciones: int, exactas: int,
+def _resultado(regla: str, aplicables: int, exactas: int,
                con_tolerancia: Sequence[str],
-               discrepancias: Sequence[Discrepancia]) -> ResultadoRegla:
+               discrepancias: Sequence[Discrepancia], *,
+               evaluados: int | None = None,
+               motivo: str = "") -> ResultadoRegla:
+    """Arma el resultado y deja el hueco a la vista.
+
+    'evaluados' se deduce de los veredictos emitidos; cuando es menor que
+    el universo, el hueco se explica en 'motivo' -- una regla que corrio en
+    parte del documento tiene que decir en que parte no corrio.
+    """
+    if evaluados is None:
+        evaluados = exactas + len(con_tolerancia) + len(discrepancias)
+    if evaluados < aplicables and not motivo:
+        motivo = (f"{aplicables - evaluados} de {aplicables} casos no se "
+                  "pudieron comprobar")
     return ResultadoRegla(
         regla=regla,
         estado=FALLA if discrepancias else CUADRA,
-        comprobaciones=comprobaciones,
+        aplicables=aplicables,
+        evaluados=evaluados,
         exactas=exactas,
         con_tolerancia=tuple(con_tolerancia),
         discrepancias=tuple(discrepancias),
+        motivo=motivo,
     )
 
 
 def _renglones(balanza: Balanza, tolerancia: Decimal) -> ResultadoRegla:
     if not balanza.filas:
         return ResultadoRegla(regla="renglon", estado=NO_VERIFICABLE,
+                              aplicables=0, evaluados=0,
                               motivo="el documento no trajo renglones")
     exactas, rozando, malas = 0, [], []
     for indice, fila in enumerate(balanza.filas):
@@ -211,11 +278,20 @@ def _renglones(balanza: Balanza, tolerancia: Decimal) -> ResultadoRegla:
 
 def _jerarquia(balanza: Balanza, tolerancia: Decimal) -> ResultadoRegla:
     filas = balanza.filas
+    # El universo son los padres que el documento DECLARA que existen -- las
+    # cuentas nombradas en algun 'cuenta_padre' -- y no los pares que se
+    # lograron formar. Una hija que apunta a un padre ausente es un caso que
+    # existe y no se comprobo; contar solo los pares formados lo escondia.
+    # Se cuenta x2 porque cada padre se comprueba en debe y en haber, que
+    # son las unidades de 'exactas'.
+    padres_referidos = {f.cuenta_padre for f in filas if f.cuenta_padre}
+    aplicables = len(padres_referidos) * 2
     parejas = [(i, p, _hijas_directas(filas, p)) for i, p in enumerate(filas)]
     parejas = [(i, p, h) for i, p, h in parejas if h]
     if not parejas:
         return ResultadoRegla(
             regla="jerarquia", estado=NO_VERIFICABLE,
+            aplicables=aplicables, evaluados=0,
             motivo=(f"sin jerarquia: los {len(filas)} renglones quedaron en "
                     "nivel 1"))
 
@@ -233,17 +309,24 @@ def _jerarquia(balanza: Balanza, tolerancia: Decimal) -> ResultadoRegla:
                 malas.append(Discrepancia(
                     fila=padre.cuenta, indice=indice, regla=f"jerarquia_{campo}",
                     esperado=suma, obtenido=propio))
-    return _resultado("jerarquia", len(parejas) * 2, exactas, rozando, malas)
+    huerfanos = sorted(padres_referidos - {p.cuenta for p in filas})
+    motivo = ""
+    if huerfanos:
+        motivo = (f"{len(huerfanos)} cuenta(s) padre que alguna fila declara "
+                  f"no aparecen en el documento: {', '.join(huerfanos[:5])}")
+    return _resultado("jerarquia", aplicables, exactas, rozando, malas,
+                      evaluados=len(parejas) * 2, motivo=motivo)
 
 
 def _totales(balanza: Balanza, reglas: ReglasBalanza,
              base: Sequence[FilaBalanza]) -> ResultadoRegla:
     if balanza.totales is None:
         return ResultadoRegla(regla="totales", estado=NO_VERIFICABLE,
+                              aplicables=2, evaluados=0,
                               motivo="fila de totales no detectada en el PDF")
     if not base:
         return ResultadoRegla(
-            regla="totales", estado=NO_VERIFICABLE,
+            regla="totales", estado=NO_VERIFICABLE, aplicables=2, evaluados=0,
             motivo=(f"sin filas en el subconjunto '{reglas.subconjunto_totales}' "
                     "contra el que cuadra la fila de totales"))
 
@@ -267,11 +350,13 @@ def _partida_doble(reglas: ReglasBalanza,
                    base: Sequence[FilaBalanza]) -> ResultadoRegla:
     if not reglas.exige_partida_doble:
         return ResultadoRegla(
-            regla="partida_doble", estado=NO_VERIFICABLE,
+            regla="partida_doble", estado=NO_VERIFICABLE, aplicables=1,
+            evaluados=0,
             motivo=("el documento no la declara: su fila de totales no cuadra "
                     "debe contra haber"))
     if not base:
         return ResultadoRegla(regla="partida_doble", estado=NO_VERIFICABLE,
+                              aplicables=1, evaluados=0,
                               motivo="sin filas contra las que sumar")
 
     debe = sum((f.debe for f in base), Decimal(0))
@@ -296,6 +381,7 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
     movimientos = [f for f in auxiliar.filas if not f.es_subtotal]
     if not movimientos:
         return ResultadoRegla(regla="saldo_corrido", estado=NO_VERIFICABLE,
+                              aplicables=0, evaluados=0,
                               motivo="el documento no trajo movimientos")
     exactas, rozando, malas = 0, [], []
     anterior: Decimal | None = None
@@ -329,14 +415,24 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
     if not comprobadas:
         return ResultadoRegla(
             regla="saldo_corrido", estado=NO_VERIFICABLE,
+            aplicables=len(movimientos), evaluados=0,
             motivo=(f"ningun saldo legible: {ilegibles} de {len(movimientos)} "
                     "movimientos no traen saldo en la capa de texto"))
-    resultado = _resultado("saldo_corrido", comprobadas, exactas, rozando, malas)
+    # El universo son todos los movimientos, incluido el que siembra cada
+    # cadena: que no se pueda encadenar el primero es una limitacion de la
+    # comprobacion, no una razon para sacarlo del denominador.
+    total = len(movimientos)
+    siembras = total - comprobadas - ilegibles
+    partes = []
     if ilegibles:
-        resultado = replace(resultado, motivo=(
-            f"{ilegibles} de {len(movimientos)} movimientos no traen saldo "
-            "legible y quedaron sin encadenar"))
-    return resultado
+        partes.append(f"{ilegibles} de {total} movimientos no traen saldo "
+                      "legible en la capa de texto")
+    if siembras > 0:
+        partes.append(f"{siembras} de {total} abren cadena y no tienen contra "
+                      "que encadenarse")
+    motivo = "; ".join(partes)
+    return _resultado("saldo_corrido", len(movimientos), exactas, rozando,
+                      malas, evaluados=comprobadas, motivo=motivo)
 
 
 def _subtotales(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
@@ -348,8 +444,12 @@ def _subtotales(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
     subtotales = [f for f in auxiliar.filas if f.es_subtotal]
     if not subtotales:
         return ResultadoRegla(
-            regla="subtotales", estado=NO_VERIFICABLE,
+            regla="subtotales", estado=NO_VERIFICABLE, aplicables=0,
+            evaluados=0,
             motivo="el documento no imprime filas de subtotal")
+    # Dos comprobaciones por subtotal, debe y haber: son las unidades de
+    # 'exactas', y el universo tiene que estar en las mismas.
+    aplicables = len(subtotales) * 2
 
     por_cuenta: dict[str, list] = {}
     for fila in auxiliar.filas:
@@ -375,10 +475,16 @@ def _subtotales(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
                     esperado=suma, obtenido=declarado))
     if not exactas and not rozando and not malas:
         return ResultadoRegla(
-            regla="subtotales", estado=NO_VERIFICABLE,
+            regla="subtotales", estado=NO_VERIFICABLE, aplicables=aplicables,
+            evaluados=0,
             motivo="los subtotales no corresponden a ninguna seccion leida")
-    return _resultado("subtotales", exactas + len(rozando) + len(malas),
-                      exactas, rozando, malas)
+    evaluados = exactas + len(rozando) + len(malas)
+    motivo = ""
+    if evaluados < aplicables:
+        motivo = (f"{(aplicables - evaluados) // 2} de {len(subtotales)} "
+                  "subtotales no corresponden a ninguna seccion leida")
+    return _resultado("subtotales", aplicables, exactas, rozando, malas,
+                      evaluados=evaluados, motivo=motivo)
 
 
 def _partida_doble_por_poliza(libro, tolerancia: Decimal) -> ResultadoRegla:
@@ -389,9 +495,13 @@ def _partida_doble_por_poliza(libro, tolerancia: Decimal) -> ResultadoRegla:
     documento no tiene.
     """
     completas = [p for p in libro.polizas if p.completa]
+    # Las incompletas son APLICABLES aunque no se evaluen: el PLAN dice que
+    # la cobertura las declara, y declarar exige estar en el denominador.
+    aplicables = len(libro.polizas)
     if not completas:
         return ResultadoRegla(
             regla="partida_doble", estado=NO_VERIFICABLE,
+            aplicables=aplicables, evaluados=0,
             motivo="ninguna poliza cerro dentro de lo leido")
 
     por_poliza: dict[str, list] = {}
@@ -414,23 +524,30 @@ def _partida_doble_por_poliza(libro, tolerancia: Decimal) -> ResultadoRegla:
             malas.append(Discrepancia(fila=poliza.poliza_id, indice=indice,
                                       regla="partida_doble", esperado=debe,
                                       obtenido=haber))
-    resultado = _resultado("partida_doble", exactas + len(rozando) + len(malas),
-                           exactas, rozando, malas)
+    evaluados = exactas + len(rozando) + len(malas)
     incompletas = len(libro.polizas) - len(completas)
+    partes = []
     if incompletas:
-        resultado = replace(resultado, motivo=(
-            f"{incompletas} poliza(s) no cerraron dentro de lo leido y "
-            "quedaron sin comprobar"))
-    return resultado
+        partes.append(f"{incompletas} de {aplicables} polizas no cerraron "
+                      "dentro de lo leido")
+    sin_movimientos = aplicables - incompletas - evaluados
+    if sin_movimientos > 0:
+        partes.append(f"{sin_movimientos} de {aplicables} polizas no trajeron "
+                      "ningun movimiento")
+    motivo = "; ".join(partes)
+    return _resultado("partida_doble", aplicables, exactas, rozando, malas,
+                      evaluados=evaluados, motivo=motivo)
 
 
 def _totales_declarados(libro, tolerancia: Decimal) -> ResultadoRegla:
     """Los totales que imprime la poliza contra la suma de sus movimientos."""
     con_totales = [p for p in libro.polizas
                    if p.completa and p.total_debe is not None]
+    aplicables = len(libro.polizas) * 2
     if not con_totales:
         return ResultadoRegla(
-            regla="totales", estado=NO_VERIFICABLE,
+            regla="totales", estado=NO_VERIFICABLE, aplicables=aplicables,
+            evaluados=0,
             motivo="ninguna poliza declara totales dentro de lo leido")
 
     por_poliza: dict[str, list] = {}
@@ -456,21 +573,29 @@ def _totales_declarados(libro, tolerancia: Decimal) -> ResultadoRegla:
                     esperado=suma, obtenido=declarado))
     if not (exactas or rozando or malas):
         return ResultadoRegla(regla="totales", estado=NO_VERIFICABLE,
+                              aplicables=aplicables, evaluados=0,
                               motivo="ninguna poliza con totales trajo movimientos")
-    return _resultado("totales", exactas + len(rozando) + len(malas),
-                      exactas, rozando, malas)
+    evaluados = exactas + len(rozando) + len(malas)
+    motivo = ""
+    if evaluados < aplicables:
+        motivo = (f"{(aplicables - evaluados) // 2} de {len(libro.polizas)} "
+                  "polizas no declaran totales o no cerraron dentro de lo leido")
+    return _resultado("totales", aplicables, exactas, rozando, malas,
+                      evaluados=evaluados, motivo=motivo)
 
 
 def _cfdi_atados(libro) -> ResultadoRegla:
     """Todo CFDI apunta a una poliza que existe."""
     if not libro.cfdi:
         return ResultadoRegla(regla="cfdi", estado=NO_VERIFICABLE,
+                              aplicables=0, evaluados=0,
                               motivo="el documento no trae tabla de CFDI")
     ids = {p.poliza_id for p in libro.polizas}
     huerfanos = [c for c in libro.cfdi if c.poliza_id not in ids]
     if huerfanos:
         return ResultadoRegla(
-            regla="cfdi", estado=FALLA, comprobaciones=len(libro.cfdi),
+            regla="cfdi", estado=FALLA, aplicables=len(libro.cfdi),
+            evaluados=len(libro.cfdi),
             exactas=len(libro.cfdi) - len(huerfanos),
             discrepancias=tuple(
                 Discrepancia(fila=c.uuid or c.documento, indice=-1, regla="cfdi",
@@ -488,6 +613,7 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
     """
     if not libro.cfdi:
         return ResultadoRegla(regla="cfdi_cruzado", estado=NO_VERIFICABLE,
+                              aplicables=0, evaluados=0,
                               motivo="el documento no trae tabla de CFDI")
     por_id = {p.poliza_id: p for p in libro.polizas}
     comparables = [c for c in libro.cfdi
@@ -496,6 +622,7 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
     if not comparables:
         return ResultadoRegla(
             regla="cfdi_cruzado", estado=NO_VERIFICABLE,
+            aplicables=len(libro.cfdi), evaluados=0,
             motivo=("ni el CFDI ni la poliza traen un numero de documento "
                     "con el que cruzarlos"))
 
@@ -505,13 +632,14 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
         for c in comparables
         if c.documento != por_id[c.poliza_id].descripcion
     ]
-    resultado = _resultado("cfdi_cruzado", len(comparables),
-                           len(comparables) - len(malos), (), malos)
     sin_cruzar = len(libro.cfdi) - len(comparables)
+    motivo = ""
     if sin_cruzar:
-        resultado = replace(resultado, motivo=(
-            f"{sin_cruzar} CFDI sin numero de documento con el que cruzar"))
-    return resultado
+        motivo = (f"{sin_cruzar} de {len(libro.cfdi)} CFDI sin numero de "
+                  "documento con el que cruzar")
+    return _resultado("cfdi_cruzado", len(libro.cfdi),
+                      len(comparables) - len(malos), (), malos,
+                      evaluados=len(comparables), motivo=motivo)
 
 
 def _cuentas_con(estado, campos):
@@ -535,6 +663,7 @@ def _resumen_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
                          if getattr(c, campo) is None})
         return ResultadoRegla(
             regla="resumen", estado=NO_VERIFICABLE,
+            aplicables=len(estado.cuentas), evaluados=0,
             motivo=(f"ninguna de las {len(estado.cuentas)} cuenta(s) trae el "
                     f"resumen completo; falta: {', '.join(faltan) or 'todo'}"))
 
@@ -550,12 +679,13 @@ def _resumen_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
             malas.append(Discrepancia(
                 fila=f"resumen {cuenta.num_cuenta}".strip(), indice=-1,
                 regla="resumen", esperado=esperado, obtenido=cuenta.saldo_corte))
-    resultado = _resultado("resumen", len(completas), exactas, rozando, malas)
+    motivo = ""
     if len(completas) < len(estado.cuentas):
-        resultado = replace(resultado, motivo=(
-            f"{len(estado.cuentas) - len(completas)} de {len(estado.cuentas)} "
-            "cuenta(s) no traen el resumen completo y quedaron fuera"))
-    return resultado
+        motivo = (f"{len(estado.cuentas) - len(completas)} de "
+                  f"{len(estado.cuentas)} cuenta(s) no traen el resumen "
+                  "completo y quedaron sin comprobar")
+    return _resultado("resumen", len(estado.cuentas), exactas, rozando, malas,
+                      evaluados=len(completas), motivo=motivo)
 
 
 def _resumen_contra_movimientos(estado, tolerancia: Decimal) -> ResultadoRegla:
@@ -568,10 +698,12 @@ def _resumen_contra_movimientos(estado, tolerancia: Decimal) -> ResultadoRegla:
     if not completas:
         return ResultadoRegla(
             regla="resumen_movimientos", estado=NO_VERIFICABLE,
+            aplicables=len(estado.cuentas) * 2, evaluados=0,
             motivo=("ninguna cuenta declara depositos y retiros propios; con "
                     "dos o mas cuentas el total del documento no se reparte"))
     if not estado.movimientos:
         return ResultadoRegla(regla="resumen_movimientos", estado=NO_VERIFICABLE,
+                              aplicables=len(estado.cuentas) * 2, evaluados=0,
                               motivo="no se leyo ningun movimiento")
 
     exactas, rozando, malas = 0, [], []
@@ -589,8 +721,14 @@ def _resumen_contra_movimientos(estado, tolerancia: Decimal) -> ResultadoRegla:
                 malas.append(Discrepancia(
                     fila=f"resumen {cuenta.num_cuenta}".strip(), indice=-1,
                     regla=f"resumen_{campo}s", esperado=suma, obtenido=declarado))
-    return _resultado("resumen_movimientos", len(completas) * 2, exactas,
-                      rozando, malas)
+    motivo = ""
+    if len(completas) < len(estado.cuentas):
+        motivo = (f"{len(estado.cuentas) - len(completas)} de "
+                  f"{len(estado.cuentas)} cuenta(s) no declaran depositos y "
+                  "retiros propios")
+    return _resultado("resumen_movimientos", len(estado.cuentas) * 2, exactas,
+                      rozando, malas, evaluados=len(completas) * 2,
+                      motivo=motivo)
 
 
 def _total_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
@@ -603,16 +741,17 @@ def _total_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
                   "saldo_corte": estado.meta.total_saldo_corte}
     if all(v is None for v in declarados.values()):
         return ResultadoRegla(
-            regla="total_declarado", estado=NO_VERIFICABLE,
+            regla="total_declarado", estado=NO_VERIFICABLE, aplicables=2,
+            evaluados=0,
             motivo=("el documento no imprime una fila TOTAL con la que cruzar "
                     "la suma de los saldos por cuenta"))
 
-    exactas, rozando, malas, comprobaciones = 0, [], [], 0
+    exactas, rozando, malas, evaluados = 0, [], [], 0
     for campo, declarado in declarados.items():
         propios = [getattr(c, campo) for c in estado.cuentas]
         if declarado is None or any(v is None for v in propios) or not propios:
             continue
-        comprobaciones += 1
+        evaluados += 1
         suma = sum(propios, Decimal(0))
         veredicto = _comparar(suma, declarado, tolerancia)
         if veredicto == "exacto":
@@ -623,12 +762,18 @@ def _total_declarado(estado, tolerancia: Decimal) -> ResultadoRegla:
             malas.append(Discrepancia(fila="TOTAL", indice=-1,
                                       regla=f"total_{campo}",
                                       esperado=suma, obtenido=declarado))
-    if not comprobaciones:
+    if not evaluados:
         return ResultadoRegla(
-            regla="total_declarado", estado=NO_VERIFICABLE,
+            regla="total_declarado", estado=NO_VERIFICABLE, aplicables=2,
+            evaluados=0,
             motivo=("el documento imprime una fila TOTAL pero alguna cuenta no "
                     "trae el saldo con el que sumarla"))
-    return _resultado("total_declarado", comprobaciones, exactas, rozando, malas)
+    motivo = ""
+    if evaluados < 2:
+        motivo = ("el documento solo imprime uno de los dos totales (saldo "
+                  "inicial y saldo al corte)")
+    return _resultado("total_declarado", 2, exactas, rozando, malas,
+                      evaluados=evaluados, motivo=motivo)
 
 
 def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
@@ -642,6 +787,7 @@ def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
     """
     if not estado.movimientos:
         return ResultadoRegla(regla="saldo_corrido", estado=NO_VERIFICABLE,
+                              aplicables=0, evaluados=0,
                               motivo="no se leyo ningun movimiento")
 
     inicial: dict[str, Decimal | None] = {}
@@ -682,18 +828,28 @@ def _saldo_corrido_bancario(estado, tolerancia: Decimal) -> ResultadoRegla:
                 obtenido=movimiento.saldo))
         anteriores[clave] = movimiento.saldo
 
-    resultado = _resultado("saldo_corrido", comparados, exactas, rozando, malas)
+    # El universo son todos los movimientos, incluido el que abre cada
+    # cadena. Un banco que imprime el saldo una sola vez por dia deja 111 de
+    # 116 sin comprobar: eso es cobertura del 4%, no una tabla de 5 casos.
+    total = len(estado.movimientos)
+    siembras = total - comparados - ilegibles
+    partes = []
     if ilegibles:
-        resultado = replace(resultado, motivo=(
-            f"{ilegibles} de {len(estado.movimientos)} movimientos no traen "
-            "saldo legible y no se pudieron encadenar"))
-    return resultado
+        partes.append(f"{ilegibles} de {total} movimientos no traen saldo "
+                      "legible")
+    if siembras > 0:
+        partes.append(f"{siembras} de {total} abren cadena y no tienen contra "
+                      "que encadenarse")
+    motivo = "; ".join(partes)
+    return _resultado("saldo_corrido", total, exactas, rozando, malas,
+                      evaluados=comparados, motivo=motivo)
 
 
 def _saldo_mensual(mayor, tolerancia: Decimal) -> ResultadoRegla:
     """saldo[mes] = saldo[mes-1] + cargos - abonos, con saldo[0] = Inicial."""
     if not mayor.meses:
         return ResultadoRegla(regla="saldo_mensual", estado=NO_VERIFICABLE,
+                              aplicables=0, evaluados=0,
                               motivo="el documento no trajo meses")
     inicial = {c.cuenta: c.saldo_inicial for c in mayor.cuentas}
     # El signo con que el movimiento entra al saldo depende de la
@@ -724,8 +880,9 @@ def _saldo_mensual(mayor, tolerancia: Decimal) -> ResultadoRegla:
                                       esperado=esperado, obtenido=mes.saldo))
         anterior = mes.saldo
 
+    evaluados = exactas + len(rozando) + len(malas)
     resultado = _resultado("saldo_mensual", len(mayor.meses), exactas,
-                           rozando, malas)
+                           rozando, malas, evaluados=evaluados)
     if sin_naturaleza:
         resultado = replace(resultado, motivo=(
             f"{len(sin_naturaleza)} cuenta(s) sin naturaleza determinable "
@@ -737,6 +894,7 @@ def _acumulados(mayor, tolerancia: Decimal) -> ResultadoRegla:
     """acum[mes] = acum[mes-1] + movimiento del mes, para cargos y abonos."""
     if not mayor.meses:
         return ResultadoRegla(regla="acumulados", estado=NO_VERIFICABLE,
+                              aplicables=0, evaluados=0,
                               motivo="el documento no trajo meses")
     exactas, rozando, malas = 0, [], []
     previos: dict[str, Decimal] = {}
@@ -759,7 +917,14 @@ def _acumulados(mayor, tolerancia: Decimal) -> ResultadoRegla:
                     fila=f"{mes.cuenta} {mes.periodo}", indice=indice,
                     regla=f"acum_{campo}", esperado=esperado, obtenido=acumulado))
             previos[campo] = acumulado
-    return _resultado("acumulados", len(mayor.meses) * 2, exactas, rozando, malas)
+    evaluados = exactas + len(rozando) + len(malas)
+    aplicables = len(mayor.meses) * 2
+    motivo = ""
+    if evaluados < aplicables:
+        motivo = (f"{aplicables - evaluados} de {aplicables} acumulados no "
+                  "vienen legibles en el documento")
+    return _resultado("acumulados", aplicables, exactas, rozando, malas,
+                      evaluados=evaluados, motivo=motivo)
 
 
 def _cruce_balanza(mayor, balanza) -> ResultadoRegla:
@@ -777,6 +942,7 @@ def _cruce_balanza(mayor, balanza) -> ResultadoRegla:
     if balanza is None:
         return ResultadoRegla(
             regla="cruce_balanza", estado=NO_VERIFICABLE,
+            aplicables=len(mayor.cuentas), evaluados=0,
             motivo=("no se recibio una balanza con la que cruzar; es una "
                     "comprobacion entre documentos y quien orquesta decide "
                     "cual corresponde"))
@@ -799,13 +965,21 @@ def _cruce_balanza(mayor, balanza) -> ResultadoRegla:
     if not comprobadas:
         return ResultadoRegla(
             regla="cruce_balanza", estado=NO_VERIFICABLE,
+            aplicables=len(mayor.cuentas), evaluados=0,
             motivo="ninguna cuenta del mayor aparece en la balanza recibida")
     if not difieren:
-        return _resultado("cruce_balanza", comprobadas, coinciden, (), [])
+        motivo = ""
+        if comprobadas < len(mayor.cuentas):
+            motivo = (f"{len(mayor.cuentas) - comprobadas} de "
+                      f"{len(mayor.cuentas)} cuentas del mayor no aparecen en "
+                      "la balanza recibida")
+        return _resultado("cruce_balanza", len(mayor.cuentas), coinciden, (),
+                          [], evaluados=comprobadas, motivo=motivo)
 
     listado = ", ".join(c for c, _, _ in difieren)
     return ResultadoRegla(
-        regla="cruce_balanza", estado=NO_VERIFICABLE, comprobaciones=comprobadas,
+        regla="cruce_balanza", estado=NO_VERIFICABLE,
+        aplicables=len(mayor.cuentas), evaluados=comprobadas,
         exactas=coinciden,
         motivo=(f"{coinciden} de {comprobadas} coinciden; {len(difieren)} "
                 f"difieren, todas de resultados, cierre o impuestos: {listado}. "
