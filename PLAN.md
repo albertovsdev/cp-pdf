@@ -6,10 +6,11 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fases 0 a 7e completadas.** Los cinco parsers existen (balanza,
-auxiliar, pólizas, estado de cuenta, libro mayor), los cinco salen a Excel
-y los cinco tienen comando de CLI. 635 tests verdes + 11 lentos.
-Siguiente: **fase 7f** (cobertura con denominador), luego la **8** (capa web).
+Estado: **fases 0 a 7f completadas.** Los cinco parsers existen (balanza,
+auxiliar, pólizas, estado de cuenta, libro mayor), los cinco salen a Excel,
+los cinco tienen comando de CLI y toda regla de validación declara su
+denominador. 673 tests verdes + 12 lentos.
+Siguiente: **fase 7g** (arreglar lo que midió la 7f), luego la **8** (capa web).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -327,131 +328,6 @@ documento solo imprime el día, y solo si el período no cruza de mes; con dos
 o más cuentas los depósitos y retiros por cuenta se leen solo si el
 documento los desglosa.
 
-### Resultados de la fase 7d (generalización de estados de cuenta)
-
-Cobertura medida, documento por documento. Ninguno entrega con una regla en
-falla salvo el integral, que la declara:
-
-| Documento | cuentas | movs | resumen | resumen_movs | saldo_corrido | total |
-|---|---|---|---|---|---|---|
-| AFIRME | 1 | 45 | cuadra | cuadra | 45/45 | no verificable |
-| Santander abril | 1 | 110 | cuadra | cuadra | 110/110 | cuadra |
-| Banorte julio | 2 | 283 | no verif. | no verif. | 283/283 | **cuadra** |
-| Bajío | 1 | 67 | cuadra | cuadra | 65/65 | no verificable |
-| Inbursa | 1 | 44 | cuadra | cuadra | 44/44 | no verificable |
-| BBVA | 1 | 116 | cuadra | cuadra | 5/5 | no verificable |
-| Santander integral | 3 | 14 | no verif. | no verif. | **falla 5** | cuadra |
-
-Los cinco con resumen completo suman **exactamente** lo declarado, sin
-tolerancia consumida. BBVA además declara sus propios contadores
-(`Depósitos / Abonos (+) 53`, `Retiros / Cargos (-) 63`) y salen 53 y 63.
-
-**Lo que generaliza no es una rama por banco.** Un test lee el módulo y
-prohíbe que nombre a ninguno. Lo que cubre los seis formatos:
-
-- **El encabezado manda, y ancla por el borde derecho.** Los importes se
-  alinean a la derecha con su etiqueta en los seis, con desviaciones de 0 a
-  30pt, siempre menores que media separación entre columnas. Tomar "las tres
-  más a la derecha" mete el retiro en la casilla del depósito.
-- **Encabezado agrupado**: `SALDO` arriba abarcando `OPERACIÓN` y
-  `LIQUIDACIÓN`. Se consulta el renglón de arriba **solo** cuando la
-  subetiqueta no significa nada por sí sola; así `DESCRIPCIÓN DE LA
-  OPERACIÓN` no se confunde con un saldo.
-- **Seis formatos de fecha** (`03`, `01-ABR-2025`, `01-JUL-23`, `1 SEP`,
-  `JUL. 03`, `01/DIC`) normalizados a `dd/mm/aaaa`. El año sale del período
-  declarado, que cada banco escribe distinto; alcanza con extraerle el año.
-- **Las cuentas son secciones**, reconocidas por cómo abre el renglón y no
-  por igualdad: el documento repite el nombre del producto y a veces le pega
-  detrás el número de cuenta o la CLABE.
-
-**Tres bugs que la generalización destapó, los tres con checksum que lo
-prueba:**
-
-1. **`find_table_region` no sirve para acotar estos documentos.** Deja
-   páginas enteras fuera: BBVA página 2 devuelve `None` con 40 movimientos
-   impresos, y Bajío pierde las páginas 9-11. La tabla se acota ahora con lo
-   que el documento garantiza —los seis **reimprimen el encabezado en cada
-   página de tabla**— y una continuación tiene que venir a menos de 12pt del
-   renglón anterior (dentro de la tabla van de 2 a 4pt; el pie de página cae
-   a 19pt o más).
-2. **`extract/tokens.py` aprendía mal el ancho del año.** `\d+` era codicioso,
-   así que `11-JUL-2320230711400140BET…` se leía como un año de **dieciséis
-   dígitos** y contaminaba lo aprendido para toda la página. Banorte perdía
-   6 páginas de 13. La corrida de dígitos tiene que medir 2 o 4.
-3. **El signo puede ir detrás, o en su propio token.** La reversa de un
-   cargo se imprime `287,000.00-`, y un saldo negativo como `-$ 34,791.58`
-   con el `-$` suelto. Sin las dos cosas, Banorte perdía 590,653.00 en
-   retiros y Bajío fallaba el saldo corrido en el único renglón negativo del
-   documento. `parse_monto` acepta ahora el signo al final; el símbolo y el
-   signo sueltos se pegan al importe antes de repartir la fila.
-
-**Lo que NO se pudo decidir con los datos: el separador de continuación.**
-Hay documentos que envuelven partiendo palabras a la mitad (`CON` +
-`CEPTO:`) y otros que envuelven por palabra entera (`CVE` + `RASTREO:`). Se
-midió y **la geometría no los distingue**: en los dos casos el último token
-llega al margen y el siguiente arranca en el borde izquierdo de la columna,
-y las formas de los tokens son idénticas (`CON`/`CEPTO:` contra
-`CON`/`RFC`). Por eso `separador_continuacion` es un **parámetro del
-formato**, no una deducción, y su valor por omisión es el medido en el
-primer formato de la fase 7 (`""`). Con ese default, cinco de los seis
-formatos quedan con las palabras pegadas dentro de la descripción. **No
-afecta ningún importe, saldo ni checksum**; solo el texto de la descripción.
-**Decisión pendiente del cliente.**
-
-### Resultados de la fase 7e (cierre del núcleo)
-
-**El discriminador del separador de continuación NO existe. Medido.**
-
-La hipótesis era buena: si el corte es por carácter, el renderizador corta
-exactamente en el margen y el borde derecho del último token debería ser
-idéntico en todas las líneas llenas; si es por palabra, varía hasta el ancho
-de una palabra. Se midió sobre las líneas de continuación de cada bloque,
-excluyendo la última de cada uno (esa termina donde termina el texto, no en
-el margen — sin esa corrección la medición no significa nada).
-
-| Documento | bloques | líneas llenas | desv. de x1 | llegan al margen (≤1 carácter) |
-|---|---|---|---|---|
-| **AFIRME** (parte palabras) | 13 | 91 | 29.5 | **3%** |
-| Santander abril | 63 | 378 | 52.0 | 38% |
-| Banorte julio | 158 | 294 | 38.2 | 100% (n=2) |
-| Bajío | 56 | 280 | 43.6 | 26% |
-| Inbursa | 32 | 95 | 60.7 | 50% (n=2) |
-| BBVA | 15 | 43 | 50.7 | 50% (n=6) |
-
-**Sale al revés de lo esperado**: el único documento del que se sabe que
-parte palabras es el que PEOR puntúa. La razón, al mirarlo de cerca: el
-bloque de continuación de AFIRME no es un párrafo re-fluido contra un
-margen, es un **registro de ancho fijo** con campos rellenados a columna
-(`CUENTA:…`, `HORA:… DESTINATARIO:…`), y solo se parte el campo que no cabe
-entero. La mayoría de sus líneas terminan donde termina su campo, en ningún
-lugar cercano al margen. La señal que la hipótesis suponía —un párrafo
-contra una pared— no existe en ese documento.
-
-**Queda como pregunta sin propuesta.** `Plantilla.pendientes()` la expone con
-`se_propone: None` y dice por qué no propone: fingir una propuesta sin
-evidencia es la misma mentira que un `0 discrepancias` sin cobertura. El
-humano contesta una vez por formato y la plantilla lo guarda.
-
-**El umbral de CID, medido sobre los 27 fixtures.** El documento ilegible da
-**98.8%** de su muestra en CID y el siguiente da **0.55%**; los otros 25 dan
-cero exacto. No hay nada en medio, así que cualquier umbral entre los dos
-separa. Se puso en **0.50** a propósito: expresa que lo que justifica releer
-todo el documento por OCR es que sea ilegible, no que traiga un sello digital
-en CID. Los seis tokens de Inbursa y Multiva siguen siendo trabajo del carril
-de `reintento.reintentar_cid`, página por página.
-
-**Corrección: eran DOS los parsers sin salida a Excel, no uno.** Al conectar
-el CLI apareció que `exportar_auxiliar` tampoco existía. Los cinco tipos
-salen ahora a Excel.
-
-**El `guardar()` que rechaza lo que no cuadró se nota al conectar el CLI.**
-De los cinco fixtures de referencia, tres cuadran y aprenden plantilla
-(balanza, estado de cuenta, mayor) y dos no (auxiliar con 1 regla en falla,
-pólizas con 3). Los dos salen con código 1 y sin plantilla, que es
-exactamente lo que ese código y esa regla significan. No es una regresión:
-es la primera vez que se ve de punta a punta.
-
-
 ### 1.3 Validación: cada documento trae su propio checksum
 
 **Contra qué suma cuadra la fila «Totales» (medido, fase 2):** contra la
@@ -489,6 +365,34 @@ documento y sobre cuántos corrió efectivamente. Un `cuadra` con
 no se puede determinar es `None` y la regla se reporta `no_verificable`,
 nunca `cuadra`. **Un porcentaje sin denominador es la misma mentira que el
 `0 discrepancias`.**
+
+`comprobaciones` se renombró a `evaluados`, porque el nombre viejo
+significaba dos cosas distintas según la regla: en unas era el universo y en
+otras solo lo que corrió. `comprobaciones` sobrevive como propiedad de solo
+lectura, deprecada, y se retira en la fase 8.
+
+**Tres decisiones sobre qué entra al universo** (fase 7f). Las tres siguen la
+misma regla: ante la duda, el caso entra al denominador. Elegir la
+interpretación que sube el porcentaje es como se llegó al `5/5` de BBVA.
+
+- **El renglón que siembra una cadena de saldo es aplicable**, aunque no se
+  pueda evaluar. BBVA son 116 movimientos, no 115. Un movimiento que la
+  regla no verificó es un movimiento no verificado, sea cual sea el motivo.
+- **Una póliza incompleta es aplicable y no evaluada, con motivo.** §1.2 dice
+  que la cobertura las declara, y declarar algo exige que esté en el
+  denominador; sacarlas lo vuelve invisible.
+- **El universo de `jerarquia` son las filas que deberían tener padre**, no
+  los pares que se lograron formar. Esta decisión destapó en la 7f cuentas
+  padre que ninguna fila del documento contiene —2 en balanza, 1 en business
+  pro— invisibles durante nueve fases porque el conteo de pares encogía en
+  silencio y la regla se veía cubierta al 100%.
+
+**Lo que `aplicables` NO resuelve: una regla que corre sobre casos vacíos.**
+`balanza-gume` reporta `renglon: 734 de 734, 732 exactas` —cobertura
+perfecta— y de esas 734 filas **687 están en ceros** y cumplen el checksum de
+gracia. La regla corre sobre todo y prueba el 6% del documento. Hace falta
+una tercera cifra, casos no triviales, y es una fase aparte. Hasta entonces:
+**un 100% de cobertura no significa que el documento esté verificado.**
 
 ---
 
@@ -902,6 +806,275 @@ correcto, y estos documentos tienen uso fiscal.
   de cuenta se trata como texto. Parámetro aditivo, para no romper a los
   cinco parsers.
 
+### Resultados de la fase 7d (generalización de estados de cuenta)
+
+Cobertura medida, documento por documento. Ninguno entrega con una regla en
+falla salvo el integral, que la declara:
+
+| Documento | cuentas | movs | resumen | resumen_movs | saldo_corrido | total |
+|---|---|---|---|---|---|---|
+| AFIRME | 1 | 45 | cuadra | cuadra | 45/45 | no verificable |
+| Santander abril | 1 | 110 | cuadra | cuadra | 110/110 | cuadra |
+| Banorte julio | 2 | 283 | no verif. | no verif. | 283/283 | **cuadra** |
+| Bajío | 1 | 67 | cuadra | cuadra | 65/65 | no verificable |
+| Inbursa | 1 | 44 | cuadra | cuadra | 44/44 | no verificable |
+| BBVA | 1 | 116 | cuadra | cuadra | 5/5 | no verificable |
+| Santander integral | 3 | 14 | no verif. | no verif. | **falla 5** | cuadra |
+
+Los cinco con resumen completo suman **exactamente** lo declarado, sin
+tolerancia consumida. BBVA además declara sus propios contadores
+(`Depósitos / Abonos (+) 53`, `Retiros / Cargos (-) 63`) y salen 53 y 63.
+
+> **Anotación de la fase 7f: los conteos de `saldo_corrido` de esta tabla
+> son numeradores sin denominador.** La columna dice sobre cuántos renglones
+> corrió la regla, no sobre cuántos podía correr, y las dos cifras se
+> imprimen igual. Medido en 7f, fila por fila:
+>
+> | Fila de la tabla | dice | aplicables reales | cobertura |
+> |---|---|---|---|
+> | AFIRME | 45/45 | 45 | 100% |
+> | Santander abril | 110/110 | 110 | 100% |
+> | Banorte julio | 283/283 | 283 | 100% |
+> | Bajío | 65/65 | **67** | 97% |
+> | Inbursa | 44/44 | 44 | 100% |
+> | **BBVA** | 5/5 | **116** | **4.3%** |
+>
+> Cuatro de las seis filas son honestas; dos exageran, y una de ellas por un
+> factor de 23. BBVA imprime el saldo corrido una sola vez por día, así que
+> 111 de sus 116 movimientos no tienen contra qué encadenarse — la regla se
+> aprobó habiendo corrido en el 4% de la tabla. **Esta tabla no se puede usar
+> como evidencia de cobertura**; la fase 7f agrega `aplicables` para que no
+> vuelva a pasar.
+
+**Lo que generaliza no es una rama por banco.** Un test lee el módulo y
+prohíbe que nombre a ninguno. Lo que cubre los seis formatos:
+
+- **El encabezado manda, y ancla por el borde derecho.** Los importes se
+  alinean a la derecha con su etiqueta en los seis, con desviaciones de 0 a
+  30pt, siempre menores que media separación entre columnas. Tomar "las tres
+  más a la derecha" mete el retiro en la casilla del depósito.
+- **Encabezado agrupado**: `SALDO` arriba abarcando `OPERACIÓN` y
+  `LIQUIDACIÓN`. Se consulta el renglón de arriba **solo** cuando la
+  subetiqueta no significa nada por sí sola; así `DESCRIPCIÓN DE LA
+  OPERACIÓN` no se confunde con un saldo.
+- **Seis formatos de fecha** (`03`, `01-ABR-2025`, `01-JUL-23`, `1 SEP`,
+  `JUL. 03`, `01/DIC`) normalizados a `dd/mm/aaaa`. El año sale del período
+  declarado, que cada banco escribe distinto; alcanza con extraerle el año.
+- **Las cuentas son secciones**, reconocidas por cómo abre el renglón y no
+  por igualdad: el documento repite el nombre del producto y a veces le pega
+  detrás el número de cuenta o la CLABE.
+
+**Tres bugs que la generalización destapó, los tres con checksum que lo
+prueba:**
+
+1. **`find_table_region` no sirve para acotar estos documentos.** Deja
+   páginas enteras fuera: BBVA página 2 devuelve `None` con 40 movimientos
+   impresos, y Bajío pierde las páginas 9-11. La tabla se acota ahora con lo
+   que el documento garantiza —los seis **reimprimen el encabezado en cada
+   página de tabla**— y una continuación tiene que venir a menos de 12pt del
+   renglón anterior (dentro de la tabla van de 2 a 4pt; el pie de página cae
+   a 19pt o más).
+2. **`extract/tokens.py` aprendía mal el ancho del año.** `\d+` era codicioso,
+   así que `11-JUL-2320230711400140BET…` se leía como un año de **dieciséis
+   dígitos** y contaminaba lo aprendido para toda la página. Banorte perdía
+   6 páginas de 13. La corrida de dígitos tiene que medir 2 o 4.
+3. **El signo puede ir detrás, o en su propio token.** La reversa de un
+   cargo se imprime `287,000.00-`, y un saldo negativo como `-$ 34,791.58`
+   con el `-$` suelto. Sin las dos cosas, Banorte perdía 590,653.00 en
+   retiros y Bajío fallaba el saldo corrido en el único renglón negativo del
+   documento. `parse_monto` acepta ahora el signo al final; el símbolo y el
+   signo sueltos se pegan al importe antes de repartir la fila.
+
+**Lo que NO se pudo decidir con los datos: el separador de continuación.**
+Hay documentos que envuelven partiendo palabras a la mitad (`CON` +
+`CEPTO:`) y otros que envuelven por palabra entera (`CVE` + `RASTREO:`). Se
+midió y **la geometría no los distingue**: en los dos casos el último token
+llega al margen y el siguiente arranca en el borde izquierdo de la columna,
+y las formas de los tokens son idénticas (`CON`/`CEPTO:` contra
+`CON`/`RFC`). Por eso `separador_continuacion` es un **parámetro del
+formato**, no una deducción, y su valor por omisión es el medido en el
+primer formato de la fase 7 (`""`). Con ese default, cinco de los seis
+formatos quedan con las palabras pegadas dentro de la descripción. **No
+afecta ningún importe, saldo ni checksum**; solo el texto de la descripción.
+**Decisión pendiente del cliente.**
+
+### Resultados de la fase 7e (cierre del núcleo)
+
+**El discriminador del separador de continuación NO existe. Medido.**
+
+La hipótesis era buena: si el corte es por carácter, el renderizador corta
+exactamente en el margen y el borde derecho del último token debería ser
+idéntico en todas las líneas llenas; si es por palabra, varía hasta el ancho
+de una palabra. Se midió sobre las líneas de continuación de cada bloque,
+excluyendo la última de cada uno (esa termina donde termina el texto, no en
+el margen — sin esa corrección la medición no significa nada).
+
+| Documento | bloques | líneas llenas | desv. de x1 | llegan al margen (≤1 carácter) |
+|---|---|---|---|---|
+| **AFIRME** (parte palabras) | 13 | 91 | 29.5 | **3%** |
+| Santander abril | 63 | 378 | 52.0 | 38% |
+| Banorte julio | 158 | 294 | 38.2 | 100% (n=2) |
+| Bajío | 56 | 280 | 43.6 | 26% |
+| Inbursa | 32 | 95 | 60.7 | 50% (n=2) |
+| BBVA | 15 | 43 | 50.7 | 50% (n=6) |
+
+**Sale al revés de lo esperado**: el único documento del que se sabe que
+parte palabras es el que PEOR puntúa. La razón, al mirarlo de cerca: el
+bloque de continuación de AFIRME no es un párrafo re-fluido contra un
+margen, es un **registro de ancho fijo** con campos rellenados a columna
+(`CUENTA:…`, `HORA:… DESTINATARIO:…`), y solo se parte el campo que no cabe
+entero. La mayoría de sus líneas terminan donde termina su campo, en ningún
+lugar cercano al margen. La señal que la hipótesis suponía —un párrafo
+contra una pared— no existe en ese documento.
+
+**Queda como pregunta sin propuesta.** `Plantilla.pendientes()` la expone con
+`se_propone: None` y dice por qué no propone: fingir una propuesta sin
+evidencia es la misma mentira que un `0 discrepancias` sin cobertura. El
+humano contesta una vez por formato y la plantilla lo guarda.
+
+**El umbral de CID, medido sobre los 27 fixtures.** El documento ilegible da
+**98.8%** de su muestra en CID y el siguiente da **0.55%**; los otros 25 dan
+cero exacto. No hay nada en medio, así que cualquier umbral entre los dos
+separa. Se puso en **0.50** a propósito: expresa que lo que justifica releer
+todo el documento por OCR es que sea ilegible, no que traiga un sello digital
+en CID. Los seis tokens de Inbursa y Multiva siguen siendo trabajo del carril
+de `reintento.reintentar_cid`, página por página.
+
+**Corrección: eran DOS los parsers sin salida a Excel, no uno.** Al conectar
+el CLI apareció que `exportar_auxiliar` tampoco existía. Los cinco tipos
+salen ahora a Excel.
+
+**El `guardar()` que rechaza lo que no cuadró se nota al conectar el CLI.**
+De los cinco fixtures de referencia, tres cuadran y aprenden plantilla
+(balanza, estado de cuenta, mayor) y dos no (auxiliar con 1 regla en falla,
+pólizas con 3). Los dos salen con código 1 y sin plantilla, que es
+exactamente lo que ese código y esa regla significan. No es una regresión:
+es la primera vez que se ve de punta a punta.
+
+
+### Resultados de la fase 7f (cada conteo con su denominador)
+
+**El defecto.** `ResultadoRegla` guardaba cuántas comprobaciones corrieron
+pero no cuántas **podía** haber corrido, así que un 5 sobre 116 casos y un
+116 sobre 116 se imprimían igual. Peor: el campo `comprobaciones`
+significaba cosas distintas según la regla. En unas era el universo
+(`renglon`, `jerarquia`, `totales`, `cfdi`, `saldo_mensual`, `acumulados`) y
+en otras sólo lo que alcanzó a correr (`saldo_corrido`, `subtotales`,
+`partida_doble` de pólizas, `cfdi_cruzado`, `resumen`, `total_declarado`,
+`cruce_balanza`). Las de la segunda familia siempre se veían al 100%.
+
+Es el mismo modo de falla del `734 filas, 0 discrepancias` de
+`balanza-gume`, sobrevivido a la fase 4a.
+
+**La tabla, regla por regla y documento por documento.** `apl` es el
+universo de casos que el documento contiene; `eval` cuántos recibieron
+veredicto. Medida primero fuera del código y regenerada después desde él.
+
+| Documento | Regla | apl | eval | % | exactos | tol | Estado |
+|---|---|---|---|---|---|---|---|
+| balanza | renglon | 475 | 475 | 100% | 475 | 0 | cuadra |
+| balanza | jerarquia | 56 | 52 | 93% | 52 | 0 | cuadra |
+| balanza | totales | 2 | 2 | 100% | 2 | 0 | cuadra |
+| balanza | partida_doble | 1 | 1 | 100% | 1 | 0 | cuadra |
+| balanza-businesspro | renglon | 225 | 225 | 100% | 225 | 0 | cuadra |
+| balanza-businesspro | jerarquia | 48 | 46 | 96% | 46 | 0 | cuadra |
+| balanza-businesspro | totales | 2 | 2 | 100% | 2 | 0 | cuadra |
+| balanza-businesspro | partida_doble | 1 | 0 | 0% | 0 | 0 | no verificable |
+| balanza-gume | renglon | 734 | 734 | 100% | 732 | 2 | cuadra |
+| balanza-gume | jerarquia | 126 | 126 | 100% | 126 | 0 | cuadra |
+| balanza-gume | totales | 2 | 2 | 100% | 2 | 0 | cuadra |
+| balanza-gume | partida_doble | 1 | 1 | 100% | 1 | 0 | cuadra |
+| auxiliar | saldo_corrido | 6783 | 6783 | 100% | 3198 | 0 | falla |
+| auxiliar | subtotales | 0 | 0 | — | 0 | 0 | no verificable |
+| **auxiliar-gume** | **saldo_corrido** | **57024** | **21757** | **38%** | 15177 | 19 | falla |
+| **auxiliar-gume** | **subtotales** | **1470** | **344** | **23%** | 341 | 2 | falla |
+| poliza | partida_doble | 1944 | 1944 | 100% | 1941 | 0 | falla |
+| poliza | totales | 3888 | 3888 | 100% | 3885 | 0 | falla |
+| poliza | cfdi | 1942 | 1942 | 100% | 1942 | 0 | cuadra |
+| poliza | cfdi_cruzado | 1942 | 1942 | 100% | 917 | 0 | falla |
+| diario-general | partida_doble | 5302 | 5302 | 100% | 5202 | 0 | falla |
+| diario-general | totales | 10604 | 10604 | 100% | 10499 | 0 | falla |
+| diario-general | cfdi / cfdi_cruzado | 0 | 0 | — | 0 | 0 | no verificable |
+| edocta | resumen / resumen_movs / saldo_corrido | 1 / 2 / 45 | = | 100% | = | 0 | cuadra |
+| edocta | total_declarado | 2 | 0 | 0% | 0 | 0 | no verificable |
+| edocta-abril-santander | los cuatro | 1 / 2 / 110 / 2 | = | 100% | = | 0 | cuadra |
+| edocta-julio-banorte | resumen / resumen_movs | 2 / 4 | 0 | 0% | 0 | 0 | no verificable |
+| edocta-julio-banorte | saldo_corrido / total_declarado | 283 / 2 | = | 100% | = | 0 | cuadra |
+| **edocta-bajio** | **saldo_corrido** | **67** | **65** | **97%** | 65 | 0 | cuadra |
+| edocta-bajio | total_declarado | 2 | 0 | 0% | 0 | 0 | no verificable |
+| edocta-inbursa | resumen / resumen_movs / saldo_corrido | 1 / 2 / 44 | = | 100% | = | 0 | cuadra |
+| edocta-inbursa | total_declarado | 2 | 0 | 0% | 0 | 0 | no verificable |
+| **edocta-bbva** | **saldo_corrido** | **116** | **5** | **4%** | 5 | 0 | cuadra |
+| edocta-bbva | total_declarado | 2 | 0 | 0% | 0 | 0 | no verificable |
+| mayor-gume | saldo_mensual | 588 | 588 | 100% | 584 | 4 | cuadra |
+| mayor-gume | acumulados | 1176 | 1176 | 100% | 1171 | 5 | cuadra |
+| **mayor-gume** | **cruce_balanza** | **49** | **0** | **0%** | 0 | 0 | no verificable |
+
+**Sólo dos reglas cuadraban con hueco**: BBVA (5 de 116, 4%) y Bajío (65 de
+67, 97%). Los demás huecos ya salían `no_verificable`, que era honesto. Pero
+el peor caso en cifras absolutas no es BBVA sino **auxiliar-gume**, que
+declaraba 21 757 comprobaciones sobre un documento de 57 024 renglones: quien
+leyera «15 177 exactas de 21 757» calculaba 70% cuando la cobertura real es
+27%.
+
+**Tres decisiones de universo, todas hacia el denominador más grande.** Ante
+la duda, el caso entra al denominador; elegir la interpretación que sube el
+porcentaje es como se llegó al 5/5.
+
+1. **El renglón que siembra la cadena es aplicable**, aunque no se pueda
+   evaluar. BBVA son 116, no 115.
+2. **Las pólizas incompletas son aplicables**, no evaluadas, con motivo. El
+   PLAN dice que la cobertura las declara, y declarar exige estar en el
+   denominador.
+3. **El universo de `jerarquia` son los padres que alguna fila declara**
+   (`cuenta_padre` no vacía), no los pares que se lograron formar. Destapó
+   huérfanos que no se veían: `balanza` tiene **2 cuentas padre que ninguna
+   fila del documento contiene** (28 referidas, 26 formadas) y
+   `balanza-businesspro` **1** (24 referidas, 23 formadas). `balanza-gume` no
+   tiene ninguna. Ninguna cambia de estado, pero la cobertura baja de un 100%
+   falso a 93% y 96% reales.
+
+**Tres diferencias entre la medición externa y la regenerada desde el
+código, las tres explicadas:**
+
+| Regla | Fuera | Código | Por qué |
+|---|---|---|---|
+| `balanza / jerarquia` | 52/52 | 56/52 | la decisión 3 de arriba: padres referidos, no pares formados |
+| `balanza-businesspro / jerarquia` | 46/46 | 48/46 | igual |
+| `auxiliar-gume / subtotales` | 735/344 | 1470/344 | la medición externa mezcló unidades: contó el universo en subtotales (735) y lo evaluado en subtotal×campo (344). El universo va en las unidades de `exactas`: 735 × debe/haber |
+
+**Por qué la partición del auxiliar no tiene cubo de ambiguos.** En el
+diagnóstico del signo salieron 3 198 deudoras + 3 585 acreedoras = 6 783
+exacto, sin renglones que cumplieran las dos identidades. No es casualidad ni
+un artefacto de resolver por cuenta: un renglón cumple ambas si y sólo si
+`debe == haber`, y en este documento **ningún renglón tiene `debe == haber`**
+(cero de 6 783; tampoco ninguno con los dos en cero). Cada movimiento del
+auxiliar carga un solo lado, así que la clasificación se hizo **por renglón,
+independiente**, sin necesidad de desempatar con los demás renglones de su
+cuenta. Es lo que lo distingue de `mayor-gume`, donde 25 de 49 cuentas quedan
+sin determinar porque un mes agrega muchos movimientos y `cargos == abonos`
+sí ocurre.
+
+**Denominadores que no se habían escrito.** Dos cifras del propio PLAN
+resultaron ser de ventanas distintas a las que sugerían:
+
+- Las tres tasas de CID de HSBC son el mismo documento en tres ventanas:
+  **590/609 (96.9%)** el documento entero de 4 páginas, **248/251 (98.8%)**
+  una muestra de 3 páginas, **204/205 (99.5%)** la muestra de 2 páginas que
+  usa `decidir()` y que por eso sale en el CLI. Por página: 131/132, 73/73,
+  44/46, 342/358.
+- El «2 509 de 7 762 (32%) sin saldo legible» de `auxiliar-gume` es de **una
+  sección de 118 páginas**. Sobre el documento completo son **35 045 de
+  57 024 (61%)**.
+- `_UMBRAL_CID = 0.5` es una **fracción de 0 a 1**, no un porcentaje, y la
+  unidad ya está escrita en el código. El documento del 0.55% vale 0.0055 y
+  **no** se enruta a OCR, que es lo correcto.
+
+**Hallazgo colateral: `recalculo.recalcular_saldos` no está conectado.**
+Existe y está probado, pero `pipeline.py` no lo llama nunca. El PLAN mide que
+ese carril deja `auxiliar-gume` en «5 253 impresos, 2 509 recalculados, 0 sin
+saldo»; el pipeline entrega hoy **35 045 sin saldo**. Registrado en §5.1.
+
 ### Dos documentos, sin solapamiento
 
 | Archivo | Contiene | Lo mantiene |
@@ -967,7 +1140,8 @@ decisión, no descripción, y se queda aquí.
 | 7c2 | Cuentas ambiguas + ARQUITECTURA.md | `is_amount` por posición + documento de arquitectura | **hecho** (513 tests) |
 | 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 6 formatos con tabla, mismo parser | **hecho** (581 tests + 9 lentos) |
 | 7e | Cerrar el núcleo | `exportar_estado_cuenta` + `exportar_auxiliar`, los 5 comandos del CLI, enrutamiento CID→OCR, separador de continuación como pregunta | **hecho** (635 tests + 11 lentos) |
-| 7f | Cobertura con denominador | `aplicables` en `ResultadoRegla`; diagnóstico de las 4 reglas en falla de auxiliar y pólizas | siguiente |
+| 7f | Cobertura con denominador | `aplicables` en `ResultadoRegla`; diagnóstico de las 4 reglas en falla de auxiliar y pólizas | **hecho** (673 tests + 12 lentos) |
+| 7g | Arreglar lo que midió la 7f | Signo del saldo corrido en auxiliar; conectar `recalculo` al pipeline; `cfdi_cruzado` por contención; medir los 93 saldos ilegibles de BBVA | siguiente |
 | 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
@@ -1086,11 +1260,32 @@ Registrada a propósito, con la fase en que toca resolverla.
   **Resolver en fase 7c.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
-- **Auxiliar y pólizas fallan su aritmética sobre el fixture de referencia**
-  (1 y 3 reglas respectivamente, descubierto al conectar el CLI en la 7e).
-  Sin diagnosticar: no se sabe si es el defecto conocido de la capa de
-  texto de `auxiliar-gume` o algo nuevo. Dos de los cinco tipos no entregan
-  Excel limpio hoy. **Diagnosticar en fase 7f.**
+- **`recalculo.recalcular_saldos` nunca se llama desde `pipeline.py`.** Existe
+  y está testeado, pero el flujo real no lo ejecuta: `auxiliar-gume` entrega
+  hoy **35,045 movimientos sin saldo** donde §2 mide «0 sin saldo» llamando
+  la función a mano. Cuatro fases con una capacidad documentada como
+  resuelta que en producción no existe. **Fase 7g.**
+- **`auxiliar/saldo_corrido` tiene el signo cableado.** Medido en la 7f:
+  3,198 renglones cumplen la identidad deudora y 3,585 la acreedora, cero sin
+  explicar y cero ambiguos —ningún renglón trae `debe == haber`—; 396 cuentas
+  deudoras y 44 acreedoras, sin mezcla. El documento se lee perfecto y la
+  regla hace la pregunta equivocada a 44 cuentas. Cuarta aparición del
+  principio «nunca fijar el signo de una identidad de saldo». **Fase 7g.**
+- **`cfdi_cruzado` compara por igualdad; §1.2 describe contención.** 1,025
+  fallas por igualdad contra 162 por contención: 863 son falsas alarmas
+  (`65501589987` sí está dentro de `FACT. FOLIO: 65501589987`). De las 162
+  reales, 101 traen `documento == tipo de póliza` y son artefacto de parseo;
+  **61 quedan sin explicar**. **Fase 7g.**
+- **93 de 116 movimientos de BBVA no traen saldo legible.** Medido en la 7f
+  al abrir el denominador. No se sabe si el banco solo imprime el saldo al
+  cierre del día —que sería correcto— o si es pérdida de extracción. **Medir
+  en la fase 7g antes de decidir si es defecto.**
+- **La partida doble no detecta pérdida simétrica.** Las 3 pólizas que fallan
+  perdieron un solo lado del asiento (P00010 y P01804 traen solo el debe;
+  P01919 pierde una línea de 1,500). Una póliza que pierda los dos lados
+  sigue cuadrando. Señal medida: 72 pólizas tienen 2 movimientos contra una
+  moda de 3–4. Es el mismo mecanismo del doble conteo simétrico de
+  `balanza-gume`. **Sin fase asignada; medir antes de decidir.**
 - **El enrutamiento CID→OCR corre en el carril normal.** Añade ~21 s a una
   llamada síncrona sin avisar, y esos 21 s se midieron en la máquina de
   desarrollo. El PLAN lo exige en el carril lento con tiempo estimado

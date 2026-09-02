@@ -12,10 +12,12 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
-Estado: fases 0 a 7e completas. El nucleo esta cerrado: 5 parsers, los 5
+Estado: fases 0 a 7f completas. El nucleo esta cerrado: 5 parsers, los 5
 salen a Excel, los 5 tienen comando de CLI, y strategy.extraer() enruta
 sola entre pdf_text, pdf_chars y OCR. El parser de estado de cuenta cubre
-6 formatos de 6 bancos sin ramas por banco. 635 tests verdes mas 11
+6 formatos de 6 bancos sin ramas por banco. Cada regla de validacion
+reporta 'aplicables' (el universo del documento) ademas de 'evaluados':
+ningun conteo se imprime sin su denominador. 673 tests verdes mas 12
 marcados lento (pytest -m lento). Corre pytest tests/ antes de tocar nada.
 Siguiente: fase 8 (capa web).
 
