@@ -256,6 +256,10 @@ class ReglasBalanza:  tolerancia=0.01, subconjunto_totales="nivel_1",
 evaluar_balanza(balanza, *, reglas=None) -> Cobertura
 evaluar_auxiliar(auxiliar, *, reglas=None) -> Cobertura
 evaluar_polizas(libro, *, reglas=None) -> Cobertura
+naturaleza_por_cuenta(auxiliar, *, tolerancia=TOLERANCIA) -> dict[str, str]
+    # 'D' | 'A' | '' por cuenta, por mayoria de los renglones que la
+    # revelan. La usan _saldo_corrido y recalculo.recalcular_saldos: el
+    # signo de una identidad de saldo NUNCA se cablea.
 evaluar_estado_cuenta(estado, *, reglas=None) -> Cobertura
     # 4 reglas, todas POR CUENTA: resumen, resumen_movimientos,
     # saldo_corrido y total_declarado (la fila TOTAL contra la suma)
@@ -354,8 +358,14 @@ Carriles aparte, disparados por la aritmética y no por el flujo normal:
 ```
 reintento.paginas_a_reintentar(auxiliar) → reintentar_ilegibles(pdf, aux)
 reintento.paginas_con_cid(documento)     → reintentar_cid(pdf)
-recalculo.recalcular_saldos(auxiliar)    → Auxiliar con saldos recalculados
 ```
+
+`recalculo.recalcular_saldos()` **ya no es un carril aparte**: desde la fase
+7g `procesar_auxiliar()` lo llama siempre, justo entre el parseo y la
+validación. Sólo rellena las secciones cuyos dos extremos están anclados
+contra el subtotal declarado; donde no hay ancla el saldo se queda en `None`
+y la cobertura lo declara. Cada saldo derivado queda con
+`saldo_origen="recalculado"`, nunca confundido con uno impreso.
 
 ---
 
@@ -370,6 +380,7 @@ No son convenciones: el código no compila o no corre si se violan.
 | El dinero nunca es `float` | `parse_monto()` devuelve `Decimal` y es el único parseador. Un test AST prohíbe llamar a `float()` en los módulos de dinero. |
 | Un dato ilegible no se inventa | Los campos que pueden faltar son `Decimal | None`: `FilaAuxiliar.saldo`, `MovimientoBancario.saldo`, `MesMayor.saldo`, `Poliza.total_debe`. Quien consume tiene que decidir qué hacer con `None`. |
 | Un valor derivado declara su procedencia | `FilaBalanza.naturaleza_origen`, `FilaAuxiliar.saldo_origen`, `Mapeo.verificado_por`. |
+| El signo de una identidad de saldo no se cablea | `naturaleza_por_cuenta()` lo deriva de los datos y es el único origen para `_saldo_corrido` y `recalcular_saldos`. Un test de espejo (intercambiar debe y haber) falla si alguien vuelve a fijarlo. |
 | No se aprende un formato que no cuadró | `AlmacenPlantillas.guardar()` lanza `PlantillaRechazada` si `cobertura["fallan"]`. |
 | Un tenant no ve lo de otro | La ruta se deriva del `tenant_id` validado contra `^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$`; `TenantInvalido` bloquea todo lo demás. |
 | El núcleo no imprime | Tests AST prohíben `print` y lectura de `os.environ` bajo `src/contapdf/`. `cli.py` escribe a un stream que recibe por parámetro. |

@@ -6,11 +6,14 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fases 0 a 7f completadas.** Los cinco parsers existen (balanza,
+Estado: **fases 0 a 7g completadas.** Los cinco parsers existen (balanza,
 auxiliar, pólizas, estado de cuenta, libro mayor), los cinco salen a Excel,
-los cinco tienen comando de CLI y toda regla de validación declara su
-denominador. 673 tests verdes + 12 lentos.
-Siguiente: **fase 7g** (arreglar lo que midió la 7f), luego la **8** (capa web).
+los cinco tienen comando de CLI, toda regla de validación declara su
+denominador y el signo de las identidades de saldo se deriva por cuenta.
+691 tests verdes + 14 lentos. Cuatro de los cinco tipos aprenden plantilla;
+pólizas todavía no.
+Siguiente: **fase 7h** (última de núcleo), luego la **8a** (interfaz mínima)
+y la **8b** (capa web completa).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -393,6 +396,20 @@ perfecta— y de esas 734 filas **687 están en ceros** y cumplen el checksum de
 gracia. La regla corre sobre todo y prueba el 6% del documento. Hace falta
 una tercera cifra, casos no triviales, y es una fase aparte. Hasta entonces:
 **un 100% de cobertura no significa que el documento esté verificado.**
+
+**Un saldo recalculado no verifica la cadena que lo produjo.** Si el sistema
+calculó un saldo encadenando `anterior + debe − haber`, comprobar después
+que ese saldo cumple `anterior + debe − haber` es una tautología. En la 7g,
+`auxiliar-gume/saldo_corrido` pasó a «47,965 de 47,987 cuadra» y 26,032 de
+esas exactas son saldos que el propio sistema generó. La verificación real
+de una sección recalculada es **el ancla**: que la cadena aterrice en el
+subtotal declarado. Eso es una comprobación por sección, no una por
+movimiento.
+
+`ResultadoRegla` separa por tanto `exactas_impresas` de
+`exactas_recalculadas`, y `Cobertura.resumen()` las imprime aparte. Un
+`cuadra` cuyas exactas sean mayoritariamente recalculadas no significa que
+el documento esté verificado.
 
 ---
 
@@ -1075,6 +1092,125 @@ Existe y está probado, pero `pipeline.py` no lo llama nunca. El PLAN mide que
 ese carril deja `auxiliar-gume` en «5 253 impresos, 2 509 recalculados, 0 sin
 saldo»; el pipeline entrega hoy **35 045 sin saldo**. Registrado en §5.1.
 
+### Resultados de la fase 7g (los tres defectos diagnosticados en la 7f)
+
+**Las cifras de §5.1 se verificaron antes de tocar nada y salieron
+idénticas**: 3,198 deudoras / 3,585 acreedoras / 0 ambiguos / 0 sin
+explicar; 396 D y 44 A sin mezcla; 1,025 fallas por igualdad, 162 por
+contención, 101 artefacto, 61 sin explicar.
+
+**Tres celdas de la tabla de cobertura cambiaron, y sólo tres.** Ninguna se
+movió sin querer:
+
+| Documento / regla | 7f | 7g | Qué lo movió |
+|---|---|---|---|
+| `auxiliar / saldo_corrido` | 3,198 exactas de 6,783 — **falla** | 6,783 de 6,783 — **cuadra** | el signo derivado |
+| `auxiliar-gume / saldo_corrido` | 15,177 exactas de 21,757 evaluados — **falla** | 47,965 de 47,987 — **cuadra** | el signo + 26,032 saldos recalculados |
+| `poliza / cfdi_cruzado` | 917 exactas de 1,942 — falla | 1,780 de 1,942 — falla | la contención |
+
+`auxiliar-gume / subtotales` **no** cambió (344 de 1,470), y es lo esperado:
+los subtotales se comprueban contra debe y haber, que siempre fueron
+legibles; el defecto estaba en los saldos.
+
+#### 1. El signo del saldo corrido se deriva por cuenta
+
+Cuarta aparición del principio «nunca fijar el signo de una identidad de
+saldo». La naturaleza se decide **por mayoría de los renglones que la
+revelan**, el mismo criterio que ya usaba `MayorParser._naturaleza`, con dos
+fuentes de evidencia:
+
+1. los renglones con saldo impreso: cuál identidad los encadena;
+2. **el aterrizaje**: encadenar la sección entera desde su saldo inicial y
+   ver cuál signo cae exacto en el saldo del subtotal declarado.
+
+La fuente 2 no estaba prevista y resultó decisiva: funciona aunque **todos**
+los saldos intermedios sean ilegibles, que es el caso de `auxiliar-gume`.
+Sin ella quedaban 29 secciones sin determinar; con ella, ninguna.
+
+Un renglón con `debe == haber` no vota, porque las dos identidades lo
+cumplen. Medido: **ninguna sección de ninguno de los dos fixtures tiene
+votos de los dos lados**, así que hoy mayoría y unanimidad coinciden — la
+mayoría está ahí para que un solo saldo mal leído no voltee una cuenta
+entera, no para tapar un conflicto.
+
+| Fixture | secciones | D | A | sin determinar |
+|---|---|---|---|---|
+| `auxiliar` | 440 | 396 | 44 | 0 |
+| `auxiliar-gume` | 172 | 99 | 73 | 0 |
+
+El recálculo **también tenía el signo cableado**, y eso era peor que la
+regla: encadenar una cuenta acreedora con la identidad deudora produce
+saldos incorrectos **marcados como buenos**. Las dos usan ahora la misma
+`naturaleza_por_cuenta`.
+
+#### 2. El recálculo, conectado al pipeline
+
+Cuatro fases con una capacidad documentada como resuelta que en producción
+no existía. Antes y después, por fixture:
+
+| Fixture | | impresos | recalculados | sin saldo |
+|---|---|---|---|---|
+| `auxiliar` | antes y después | 6,783 | 0 | 0 |
+| `auxiliar-gume` | antes | 21,979 | 0 | **35,045** |
+| `auxiliar-gume` | después | 21,979 | **26,032** | **9,013** |
+
+`auxiliar` no cambia y no es un fallo: **ninguna de sus 440 secciones
+imprime fila de subtotal**, así que no hay ancla posible — y tampoco hace
+falta, porque no tiene ni un saldo ilegible.
+
+Por qué quedan 9,013, medido sección por sección:
+
+| Sección | cuántas | movimientos sin saldo |
+|---|---|---|
+| anclada y recalculada | 168 | — |
+| la suma no cuadra con el subtotal (falta algún movimiento) | 2 | **9,013** |
+| la cadena no aterriza en el saldo del subtotal | 2 | 0 |
+| sin naturaleza determinable | 0 | 0 |
+
+Los 9,013 salen de **dos secciones** donde la suma de los movimientos no
+cuadra con el subtotal declarado, o sea donde falta algún renglón por leer.
+Ahí encadenar desplazaría todos los saldos siguientes sin que nada avisara,
+así que se quedan vacíos. **Es el comportamiento correcto**, y de paso
+señala un defecto de lectura en esas dos secciones que nadie había visto.
+
+La estimación previa a implementar decía 15,950 rescatables y salieron
+26,032: la estimación exigía **unanimidad** para la naturaleza y el código
+usa **mayoría**, que determina más secciones y por tanto ancla más.
+
+#### 3. `cfdi_cruzado` por contención
+
+De 1,025 fallas a 162. Las 863 de diferencia eran falsas alarmas.
+
+**Diagnóstico de las 61 sin explicar: son una sola familia.** Todas son
+pólizas de **Pago (40), Cobro (13) y Venta (8)** — ninguna de tipo Compra,
+que son justo las que sí cruzan. En ellas la `descripcion` no es el folio de
+la factura sino el concepto bancario del movimiento:
+
+| Forma | cuántas |
+|---|---|
+| ambos numéricos pero distintos (`16998` contra `CUENTA CLAVE DE 0126500…`) | 39 |
+| la descripción no trae ningún dígito | 9 |
+| el documento es sólo letras | 5 |
+| otras | 8 |
+
+No es un problema de comparación: **el documento y la descripción son datos
+distintos**, no el mismo número escrito de otra forma. La regla les está
+pidiendo a esas pólizas un dato que el documento no pone ahí.
+
+#### M1: los 93 movimientos de BBVA sin saldo — y la sorpresa de Bajío
+
+Medido sobre el layout, contando tokens en la banda del saldo:
+
+| Documento | sin saldo | con algún token en la columna del saldo | Veredicto |
+|---|---|---|---|
+| BBVA | 93 de 116 | **0** | **(a) correcto**: el banco sólo imprime el saldo al cierre del día |
+| Bajío | 1 de 67 | **1** | **(b) pérdida de extracción** |
+
+La pregunta esperaba una respuesta y hay **dos**. Por eso el motivo de la
+cobertura dice ahora «no traen saldo con el que encadenar» y ya no «no traen
+saldo legible»: la causa varía entre documentos y esa regla no puede verla,
+así que afirmar una sola sería inventarla.
+
 ### Dos documentos, sin solapamiento
 
 | Archivo | Contiene | Lo mantiene |
@@ -1141,8 +1277,10 @@ decisión, no descripción, y se queda aquí.
 | 7d | Generalizar estados de cuenta | Contrato multi-cuenta + los 6 formatos con tabla, mismo parser | **hecho** (581 tests + 9 lentos) |
 | 7e | Cerrar el núcleo | `exportar_estado_cuenta` + `exportar_auxiliar`, los 5 comandos del CLI, enrutamiento CID→OCR, separador de continuación como pregunta | **hecho** (635 tests + 11 lentos) |
 | 7f | Cobertura con denominador | `aplicables` en `ResultadoRegla`; diagnóstico de las 4 reglas en falla de auxiliar y pólizas | **hecho** (673 tests + 12 lentos) |
-| 7g | Arreglar lo que midió la 7f | Signo del saldo corrido en auxiliar; conectar `recalculo` al pipeline; `cfdi_cruzado` por contención; medir los 93 saldos ilegibles de BBVA | siguiente |
-| 8 | Capa web | Upload + cola + worker + aislamiento por tenant | |
+| 7g | Arreglar lo que midió la 7f | Signo derivado por cuenta, `recalculo` conectado, `cfdi_cruzado` por contención | **hecho** (691 tests + 14 lentos) |
+| 7h | Cerrar pólizas y deshacer la circularidad | Separar exactas impresas de recalculadas; renglones perdidos por el parser; los 101 y los 61 de `cfdi_cruzado` | siguiente |
+| 8a | Interfaz mínima | Subir PDF → Excel + cobertura en el navegador, sin cola ni multi-tenant | |
+| 8b | Capa web completa | Cola, worker, aislamiento por tenant, SERVIDORSIST | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
 generalizar un parser que ya funciona para cubrir una segunda variante real
@@ -1260,41 +1398,47 @@ Registrada a propósito, con la fase en que toca resolverla.
   **Resolver en fase 7c.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
-- **`recalculo.recalcular_saldos` nunca se llama desde `pipeline.py`.** Existe
-  y está testeado, pero el flujo real no lo ejecuta: `auxiliar-gume` entrega
-  hoy **35,045 movimientos sin saldo** donde §2 mide «0 sin saldo» llamando
-  la función a mano. Cuatro fases con una capacidad documentada como
-  resuelta que en producción no existe. **Fase 7g.**
-- **`auxiliar/saldo_corrido` tiene el signo cableado.** Medido en la 7f:
-  3,198 renglones cumplen la identidad deudora y 3,585 la acreedora, cero sin
-  explicar y cero ambiguos —ningún renglón trae `debe == haber`—; 396 cuentas
-  deudoras y 44 acreedoras, sin mezcla. El documento se lee perfecto y la
-  regla hace la pregunta equivocada a 44 cuentas. Cuarta aparición del
-  principio «nunca fijar el signo de una identidad de saldo». **Fase 7g.**
-- **`cfdi_cruzado` compara por igualdad; §1.2 describe contención.** 1,025
-  fallas por igualdad contra 162 por contención: 863 son falsas alarmas
-  (`65501589987` sí está dentro de `FACT. FOLIO: 65501589987`). De las 162
-  reales, 101 traen `documento == tipo de póliza` y son artefacto de parseo;
-  **61 quedan sin explicar**. **Fase 7g.**
-- **93 de 116 movimientos de BBVA no traen saldo legible.** Medido en la 7f
-  al abrir el denominador. No se sabe si el banco solo imprime el saldo al
-  cierre del día —que sería correcto— o si es pérdida de extracción. **Medir
-  en la fase 7g antes de decidir si es defecto.**
-- **La partida doble no detecta pérdida simétrica.** Las 3 pólizas que fallan
-  perdieron un solo lado del asiento (P00010 y P01804 traen solo el debe;
-  P01919 pierde una línea de 1,500). Una póliza que pierda los dos lados
-  sigue cuadrando. Señal medida: 72 pólizas tienen 2 movimientos contra una
-  moda de 3–4. Es el mismo mecanismo del doble conteo simétrico de
-  `balanza-gume`. **Sin fase asignada; medir antes de decidir.**
+- **La cobertura del saldo corrido es circular donde hubo recálculo.**
+  `auxiliar-gume/saldo_corrido` reporta «47,965 de 47,987 cuadra» y 26,032 de
+  esas exactas son saldos que el propio sistema generó encadenando. La regla
+  comprueba la fórmula sobre saldos producidos con esa fórmula. La
+  verificación real es el ancla contra el subtotal declarado: una
+  comprobación por sección, no una por movimiento. **Fase 7h.**
+- **El parser pierde renglones y solo se nota cuando rompe una suma.** Tres
+  síntomas medidos de la misma familia: 2 secciones de `auxiliar-gume` cuya
+  suma no cuadra con su subtotal (retienen 9,013 saldos sin recalcular),
+  3 pólizas a las que les falta un movimiento (P00010 y P01804 traen solo el
+  debe; P01919 pierde una línea de 1,500), y 72 pólizas con 2 movimientos
+  contra una moda de 3–4 que podrían tener la misma pérdida sin romper nada.
+  Relacionado: la partida doble no detecta pérdida simétrica, igual que el
+  doble conteo simétrico de `balanza-gume`. **Fase 7h: medir las tres juntas
+  antes de arreglar.**
+- **`cfdi_cruzado` marca 101 pólizas por un artefacto del parser.**
+  `documento == 'Diario'` significa que el parser recogió el tipo de póliza
+  cuando el CFDI no traía número. La regla acierta al marcarlo; el arreglo va
+  en el parser. **Fase 7h.**
+- **61 pólizas de Pago, Cobro y Venta no traen el folio en `descripcion`.**
+  Ahí va el concepto bancario (`documento='16998'` contra
+  `descripcion='CUENTA CLAVE DE 0126500…'`). Ninguna de tipo Compra, que son
+  las que sí cruzan. La regla les pide un dato que el documento no pone ahí:
+  pasan a aplicables-no-evaluadas con motivo. **Fase 7h.**
+- **La regla de mayoría para determinar la naturaleza no está probada.**
+  Medido en la 7g: ninguna sección tiene votos de los dos lados, así que
+  mayoría y unanimidad coinciden en todos los fixtures actuales. El criterio
+  se eligió sin un caso que lo distinga. **Sin fase; volver a medirlo cuando
+  entre un fixture nuevo de auxiliar.**
+- **`Bajío`: 1 movimiento con tinta en la columna del saldo que no se leyó.**
+  Único caso (b) de M1 en la 7g; los 93 de BBVA son (a), el banco solo
+  imprime el saldo al cierre del día. **Sin fase asignada.**
 - **El enrutamiento CID→OCR corre en el carril normal.** Añade ~21 s a una
   llamada síncrona sin avisar, y esos 21 s se midieron en la máquina de
   desarrollo. El PLAN lo exige en el carril lento con tiempo estimado
-  visible. **Resolver en fase 8.**
+  visible. **Resolver en fase 8b.**
 - **Ninguna medición de tiempo se ha hecho en SERVIDORSIST.** Los 0.1 s por
   página y los 21 s de OCR salen de un i5-1335U con SSD; el destino es un
   i5-3470 de 2012 sin AVX2 con disco mecánico compartido con Apache y
   MySQL. La memoria pico (543 MB) sí traslada; el tiempo no. **Medir en la
-  máquina objetivo antes de dimensionar la cola de la fase 8.**
+  máquina objetivo antes de dimensionar la cola de la fase 8b.**
 
 ---
 
