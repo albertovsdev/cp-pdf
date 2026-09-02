@@ -34,3 +34,7 @@ Como trabajamos:
   - No toques scripts/dump_layout.py: es la herramienta de anonimizacion.
   - Los PDFs reales de fixtures/real/ tienen datos sensibles y estan en
     .gitignore. Los de fixtures/layouts/ son sus versiones enmascaradas.
+
+Reporta SIEMPRE en español. Codigo, nombres de simbolo, rutas y mensajes
+de commit en ingles; todo lo demas —reportes, tablas, explicaciones,
+preguntas— en español.
