@@ -239,14 +239,15 @@ CUADRA = "cuadra"; FALLA = "falla"; NO_VERIFICABLE = "no_verificable"
 class Discrepancia:   fila, indice, regla, esperado: Decimal, obtenido: Decimal
 @dataclass(frozen=True)
 class ResultadoRegla: regla, estado, aplicables: int|None = None,
-                      evaluados=0, exactas=0, con_tolerancia=(),
+                      evaluados=0, exactas=0, exactas_impresas=0,
+                      exactas_recalculadas=0, con_tolerancia=(),
                       discrepancias=(), motivo=""
                       comprobaciones -> int   # DEPRECADO, se retira en fase 8
                       resumen() -> str
 @dataclass(frozen=True)
 class Cobertura:      reglas, naturalezas={}, saldos={}
                       discrepancias / cuadran / fallan / no_verificables
-                      aplicables / evaluados
+                      aplicables / evaluados / exactas_recalculadas
                       resumen() / resumen_naturaleza() / resumen_saldos()
 @dataclass(frozen=True)
 class ReglasBalanza:  tolerancia=0.01, subconjunto_totales="nivel_1",
@@ -257,6 +258,7 @@ evaluar_balanza(balanza, *, reglas=None) -> Cobertura
 evaluar_auxiliar(auxiliar, *, reglas=None) -> Cobertura
 evaluar_polizas(libro, *, reglas=None) -> Cobertura
 naturaleza_por_cuenta(auxiliar, *, tolerancia=TOLERANCIA) -> dict[str, str]
+recalculo.ancla_de_seccion(movimientos, subtotal, signo) -> bool
     # 'D' | 'A' | '' por cuenta, por mayoria de los renglones que la
     # revelan. La usan _saldo_corrido y recalculo.recalcular_saldos: el
     # signo de una identidad de saldo NUNCA se cablea.
@@ -376,6 +378,7 @@ No son convenciones: el código no compila o no corre si se violan.
 | Invariante | Cómo se impone |
 |---|---|
 | No se reporta un resultado sin su cobertura | `reportar()` y `exportar_*()` reciben `Cobertura`, no `list[Discrepancia]`. No hay forma de llamarlos con solo las discrepancias. |
+| Una comprobación sobre un dato derivado no cuenta como verificación | `exactas_impresas` y `exactas_recalculadas` suman `exactas` y `__post_init__` lo impone. Comprobar `saldo = anterior + debe − haber` sobre un saldo generado con esa fórmula es una tautología, y `Cobertura.resumen()` lo advierte en voz alta. |
 | Ningún conteo se imprime sin su denominador | `ResultadoRegla` guarda `aplicables` (el universo de casos del documento) además de `evaluados`. `__post_init__` **lanza** si una regla cuadra con `aplicables=None`, o si `aplicables < evaluados`. `resumen()` y el detalle del CLI siempre escriben «N de M». |
 | El dinero nunca es `float` | `parse_monto()` devuelve `Decimal` y es el único parseador. Un test AST prohíbe llamar a `float()` en los módulos de dinero. |
 | Un dato ilegible no se inventa | Los campos que pueden faltar son `Decimal | None`: `FilaAuxiliar.saldo`, `MovimientoBancario.saldo`, `MesMayor.saldo`, `Poliza.total_debe`. Quien consume tiene que decidir qué hacer con `None`. |

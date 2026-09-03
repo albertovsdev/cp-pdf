@@ -6,14 +6,15 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fases 0 a 7g completadas.** Los cinco parsers existen (balanza,
-auxiliar, pólizas, estado de cuenta, libro mayor), los cinco salen a Excel,
-los cinco tienen comando de CLI, toda regla de validación declara su
-denominador y el signo de las identidades de saldo se deriva por cuenta.
-691 tests verdes + 14 lentos. Cuatro de los cinco tipos aprenden plantilla;
-pólizas todavía no.
-Siguiente: **fase 7h** (última de núcleo), luego la **8a** (interfaz mínima)
-y la **8b** (capa web completa).
+Estado: **núcleo cerrado, fases 0 a 7h completadas.** Los cinco parsers
+existen (balanza, auxiliar, pólizas, estado de cuenta, libro mayor), los
+cinco salen a Excel, los cinco tienen comando de CLI, toda regla de
+validación declara su denominador, el signo de las identidades de saldo se
+deriva por cuenta y las exactas impresas se distinguen de las recalculadas.
+711 tests verdes + 15 lentos. Cuatro de los cinco tipos aprenden plantilla;
+pólizas sale en 1 por 53 CFDI que el documento no trae, declarados como
+falla a propósito.
+Siguiente: **fase 8a** (interfaz mínima), luego la **8b** (capa web completa).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -1211,6 +1212,125 @@ cobertura dice ahora «no traen saldo con el que encadenar» y ya no «no traen
 saldo legible»: la causa varía entre documentos y esa regla no puede verla,
 así que afirmar una sola sería inventarla.
 
+### Resultados de la fase 7h (cerrar el nucleo)
+
+#### Correccion: la explicacion de los 10 082 saldos de la 7g era falsa
+
+La 7g afirmo dos cosas incompatibles y una era mentira. Medido ahora, con
+las cuatro combinaciones sobre `auxiliar-gume`:
+
+| Criterio | Aterrizaje | D | A | sin | secciones ancladas | saldos rescatados |
+|---|---|---|---|---|---|---|
+| unanimidad | no | 98 | 71 | 3 | 165 | 25 987 |
+| unanimidad | sí | 99 | 73 | 0 | 168 | 26 032 |
+| mayoría | no | 98 | 71 | 3 | 165 | 25 987 |
+| mayoría | sí | 99 | 73 | 0 | 168 | 26 032 |
+
+**El criterio no mueve ni un saldo.** Mayoría y unanimidad dan resultados
+idénticos en las cuatro columnas, así que la afirmación «la estimación
+exigía unanimidad y el código usa mayoría» no explicaba nada.
+
+La causa real, reproducida: la estimación de la 7g dejaba **votar a los
+renglones con `debe == haber`**, que cumplen las dos identidades y por tanto
+votan a los dos lados. Con criterio de unanimidad, un solo renglón así
+descarta la cuenta entera. Hay **147 renglones con `debe == haber`
+repartidos en 30 de las 172 secciones**.
+
+| Variante | D | A | sin | ancladas | rescatados |
+|---|---|---|---|---|---|
+| los empates votan (la estimación de la 7g) | 79 | 64 | 29 | 141 | **15 950** |
+| los empates no votan (el código) | 98 | 71 | 3 | 165 | **25 987** |
+
+Desglose correcto de los 10 082: **+10 037** por excluir del voto los
+empates, **+45** por el aterrizaje, **0** por el criterio.
+
+**Consecuencia que hay que decir: la regla de mayoría no está probada por
+ningún fixture.** En los dos documentos disponibles ninguna sección tiene
+votos de los dos lados, así que mayoría y unanimidad son indistinguibles
+aquí. La mayoría se eligió por el precedente del libro mayor, no por una
+medición; el primer documento que traiga una sección con votos partidos
+será el que la ponga a prueba.
+
+#### 1. La cobertura del saldo corrido era circular
+
+`auxiliar-gume/saldo_corrido` reportaba «47 965 de 47 987 cuadra» y **26 032
+de esas exactas eran saldos que el propio sistema había encadenado** con
+`saldo = anterior + debe - haber`. Comprobar esa identidad sobre un saldo
+producido con esa fórmula no puede fallar: no prueba nada del documento.
+
+`ResultadoRegla` separa ahora `exactas_impresas` de `exactas_recalculadas`,
+y el resumen de la cobertura lo dice en voz alta. La verificación real de
+una sección recalculada es otra y va en una regla aparte, `ancla_recalculo`,
+contada **por sección** y no por movimiento: 168 de 168 secciones con saldos
+derivados aterrizan en el subtotal que el documento declara.
+
+#### 2. Los renglones que el parser perdía: tres familias, tres causas
+
+| Familia | Qué es | ¿Hay tinta? | Causa |
+|---|---|---|---|
+| **A** — 2 secciones de `auxiliar-gume` | retienen 9 013 saldos | sí, y se leyó | **no falta ningún movimiento**: la suma difiere del subtotal en **0.01 y 0.02 pesos** sobre 37 millones, y el ancla exige igualdad exacta |
+| **B** — 3 pólizas | P00010, P01804, P01919 | sí, y se leyó | el nombre largo del banco se envuelve en 3 renglones y los importes caen en el del **medio**, que no lleva número de cuenta |
+| **C** — 72 pólizas con 2 movimientos | sospecha de §5.1 | — | **no existe**: en las 968 páginas hay exactamente **3** renglones con debe y haber sin número de cuenta, y son los de la familia B |
+
+La familia C queda **descartada por medición**: las 72 pólizas de 2
+movimientos son pólizas de dos asientos, no pólizas mutiladas. Si perdieran
+un movimiento habría un renglón huérfano, y no lo hay.
+
+La familia A **no era lo que la 7g dijo**. Su diagnóstico («falta algún
+movimiento») era incorrecto: no falta ninguno, la diferencia es de un
+céntimo. `1190-001-000` da −0.02 en el debe y `1201-001-000` da +0.01 / −0.01.
+
+La familia B sí se arregló: un renglón que abre con número de cuenta pero
+sin importes deja el movimiento pendiente hasta que aparecen, y si no
+aparecen se descarta — no se inventa un movimiento en cero. Resultado:
+`partida_doble` 1 944 de 1 944 y `totales` 3 888 de 3 888, las dos cuadran.
+
+#### 3. `cfdi_cruzado`: los 101 eran 112, y mi caracterización de los 61 era falsa
+
+**Los CFDI inventados por el parser son 112, no 101.** Los 101 eran sólo los
+que además fallaban el cruce; los otros 11 no eran comparables por otra vía.
+Y de los 1 780 cruces que la 7g daba por buenos, **12 eran falsos positivos**:
+el documento inventado coincidía por casualidad con la descripción.
+
+Marcador inequívoco y medido: **los inventados son exactamente los que no
+traen UUID**. Su renglón es `fecha | Diario | (Manual)`, sin folio fiscal ni
+RFC — pólizas manuales sin comprobante. El parser tomaba la primera palabra
+que quedara. El criterio no mira el resultado del cruce, así que no vuelve
+tautológica a la regla.
+
+**Corrección sobre los 61: el tipo de póliza NO es el discriminante.** La
+7g dijo que eran «una familia: Pago, Cobro y Venta». Medido por tipo:
+
+| Tipo de póliza | cruzan | fallan |
+|---|---|---|
+| Cobro | 817 | 13 |
+| Compra | 76 | 0 |
+| Venta | 853 | 8 |
+| Pago | 31 | 40 |
+| Nota | 3 | 0 |
+
+**1 701 pólizas de esos mismos tipos sí cruzan.** Sacarlas todas del
+numerador habría perdido 1 701 comprobaciones válidas para tapar 53 fallas:
+exactamente «elegir la interpretación que sube el porcentaje». Quedan **53**
+discrepancias con folio fiscal cuya descripción no lo contiene, y no se
+tocaron: el único criterio que las separa de las que cruzan es *que fallan*,
+y usar eso como filtro es la misma circularidad que esta fase vino a quitar.
+
+#### Estado de los cinco tipos
+
+| Comando | Código de salida | Qué queda |
+|---|---|---|
+| `balanza` | 0 | — |
+| `auxiliar` | 0 | — |
+| `estado-cuenta` | 0 | — |
+| `mayor` | 0 | — |
+| `polizas` | **1** | 53 `cfdi_cruzado`, sin decidir |
+
+Tres celdas de la tabla de cobertura cambiaron respecto a la 7g, las tres de
+`poliza`: `partida_doble` (1 941 → 1 944 exactas, pasa a cuadra), `totales`
+(3 885 → 3 888, pasa a cuadra) y `cfdi_cruzado` (1 942 → 1 821 evaluados,
+1 780 → 1 768 exactas). Ninguna otra se movió.
+
 ### Dos documentos, sin solapamiento
 
 | Archivo | Contiene | Lo mantiene |
@@ -1278,9 +1398,10 @@ decisión, no descripción, y se queda aquí.
 | 7e | Cerrar el núcleo | `exportar_estado_cuenta` + `exportar_auxiliar`, los 5 comandos del CLI, enrutamiento CID→OCR, separador de continuación como pregunta | **hecho** (635 tests + 11 lentos) |
 | 7f | Cobertura con denominador | `aplicables` en `ResultadoRegla`; diagnóstico de las 4 reglas en falla de auxiliar y pólizas | **hecho** (673 tests + 12 lentos) |
 | 7g | Arreglar lo que midió la 7f | Signo derivado por cuenta, `recalculo` conectado, `cfdi_cruzado` por contención | **hecho** (691 tests + 14 lentos) |
-| 7h | Cerrar pólizas y deshacer la circularidad | Separar exactas impresas de recalculadas; renglones perdidos por el parser; los 101 y los 61 de `cfdi_cruzado` | siguiente |
-| 8a | Interfaz mínima | Subir PDF → Excel + cobertura en el navegador, sin cola ni multi-tenant | |
+| 7h | Cerrar pólizas y deshacer la circularidad | Separar exactas impresas de recalculadas; renglones perdidos por el parser; los 101 y los 61 de `cfdi_cruzado` | **hecho** (711 tests + 15 lentos) |
+| 8a | Interfaz mínima | Subir PDF → Excel + cobertura en el navegador, sin cola ni multi-tenant | siguiente |
 | 8b | Capa web completa | Cola, worker, aislamiento por tenant, SERVIDORSIST | |
+| 8c | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
 generalizar un parser que ya funciona para cubrir una segunda variante real
@@ -1398,35 +1519,34 @@ Registrada a propósito, con la fase en que toca resolverla.
   **Resolver en fase 7c.**
 - **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
   Aplica a todo parser nuevo.
-- **La cobertura del saldo corrido es circular donde hubo recálculo.**
-  `auxiliar-gume/saldo_corrido` reporta «47,965 de 47,987 cuadra» y 26,032 de
-  esas exactas son saldos que el propio sistema generó encadenando. La regla
-  comprueba la fórmula sobre saldos producidos con esa fórmula. La
-  verificación real es el ancla contra el subtotal declarado: una
-  comprobación por sección, no una por movimiento. **Fase 7h.**
-- **El parser pierde renglones y solo se nota cuando rompe una suma.** Tres
-  síntomas medidos de la misma familia: 2 secciones de `auxiliar-gume` cuya
-  suma no cuadra con su subtotal (retienen 9,013 saldos sin recalcular),
-  3 pólizas a las que les falta un movimiento (P00010 y P01804 traen solo el
-  debe; P01919 pierde una línea de 1,500), y 72 pólizas con 2 movimientos
-  contra una moda de 3–4 que podrían tener la misma pérdida sin romper nada.
-  Relacionado: la partida doble no detecta pérdida simétrica, igual que el
-  doble conteo simétrico de `balanza-gume`. **Fase 7h: medir las tres juntas
-  antes de arreglar.**
-- **`cfdi_cruzado` marca 101 pólizas por un artefacto del parser.**
-  `documento == 'Diario'` significa que el parser recogió el tipo de póliza
-  cuando el CFDI no traía número. La regla acierta al marcarlo; el arreglo va
-  en el parser. **Fase 7h.**
-- **61 pólizas de Pago, Cobro y Venta no traen el folio en `descripcion`.**
-  Ahí va el concepto bancario (`documento='16998'` contra
-  `descripcion='CUENTA CLAVE DE 0126500…'`). Ninguna de tipo Compra, que son
-  las que sí cruzan. La regla les pide un dato que el documento no pone ahí:
-  pasan a aplicables-no-evaluadas con motivo. **Fase 7h.**
+- **La familia A: 2 secciones de `auxiliar-gume` cuya cadena no aterriza.**
+  Medido en la 7h y corrigiendo lo que dijo la 7g: **no falta ningún
+  movimiento**. La suma difiere en 0.01 y 0.02 pesos sobre 37 millones, y el
+  ancla exige igualdad exacta. Un movimiento faltante mueve pesos, no
+  céntimos, así que es redondeo del documento origen. Retiene 9,013 saldos
+  sin recalcular.
+  No se relaja el ancla eligiendo un número: `±0.01` no alcanza y subirlo a
+  `±0.02` es ajustar el umbral hasta que pase el caso. **Fase 8c: medir la
+  distribución completa de residuos sobre las 172 secciones y buscar el hueco,
+  como se hizo con el umbral de CID. Sin hueco no hay tolerancia defendible.**
+  Y si se admite: una sección anclada con residuo no es igual a una anclada
+  exacta, la cobertura las separa, y el residuo nunca se distribuye entre los
+  saldos.
+- **53 pólizas fallan `cfdi_cruzado` y se quedan como falla declarada.**
+  Medido en la 7h: no hay criterio no circular que las separe de las que
+  cruzan. Por tipo, Cobro 817 cruzan / 13 fallan, Venta 853 / 8, Pago 31 / 40;
+  1,701 pólizas de esos mismos tipos sí cruzan, así que **no son una familia**.
+  El comando `polizas` sale con código 1 a propósito: 53 renglones marcados en
+  el Excel son revisables por un contador; un porcentaje inflado no. **Sin
+  fase: es el resultado correcto, no deuda.**
 - **La regla de mayoría para determinar la naturaleza no está probada.**
-  Medido en la 7g: ninguna sección tiene votos de los dos lados, así que
-  mayoría y unanimidad coinciden en todos los fixtures actuales. El criterio
-  se eligió sin un caso que lo distinga. **Sin fase; volver a medirlo cuando
-  entre un fixture nuevo de auxiliar.**
+  Medido en la 7h: el criterio no mueve ni un saldo —unanimidad y mayoría dan
+  165 secciones ancladas sin aterrizaje y 168 con él, idénticas—. Los dos
+  documentos disponibles no lo distinguen. Se eligió por el precedente del
+  libro mayor, no por una medición. **Sin fase; volver a medirlo cuando entre
+  un fixture nuevo de auxiliar.**
+- **20 CFDI traen el RFC pegado al tipo** (`'ROTG870907QC5Ingreso'`). No
+  afecta al cruce; el campo `tipo` sale sucio. **Sin fase asignada.**
 - **`Bajío`: 1 movimiento con tinta en la columna del saldo que no se leyó.**
   Único caso (b) de M1 en la 7g; los 93 de BBVA son (a), el banco solo
   imprime el saldo al cierre del día. **Sin fase asignada.**
