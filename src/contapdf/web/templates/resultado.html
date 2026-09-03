@@ -1,19 +1,15 @@
 {% extends "base.html" %}
 {% block titulo %}Resultado · contapdf{% endblock %}
 {% block cuerpo %}
-<h1>{{ archivo }}</h1>
-<p class="sub">{{ r.tipo }} · {{ r.paginas }} páginas</p>
+<h1>{{ t.archivo }}</h1>
+<p class="sub">{{ r.tipo }} · {{ r.paginas }} páginas · {{ t.reloj }}</p>
 
 <div class="tarjeta">
-  <a class="descarga" href="/descargar/{{ ficha }}">Descargar Excel</a>
-  <p class="sub" style="margin:.8rem 0 0">
-    El enlace sirve una sola vez: al descargar, el archivo se borra del servidor.
-  </p>
+  <a class="descarga" href="/t/{{ tenant }}/descargar/{{ t.identificador }}">Descargar Excel</a>
 </div>
 
-{% set fallan = r.cobertura.fallan %}
-{% if fallan %}
-{% set casos = r.cobertura.reglas | selectattr('discrepancias') | map(attribute='discrepancias') | map('length') | sum %}
+{% if r.fallan %}
+{% set casos = r.total_discrepancias %}
 <div class="aviso malo">
   <strong>{{ casos }} casos que el documento no permite verificar.</strong>
   El Excel se generó y se descarga igual, con esos renglones marcados para que
@@ -24,16 +20,16 @@
 {% endif %}
 
 <h2>Cobertura</h2>
-<p class="sub">{{ r.cobertura.resumen() }}</p>
+<p class="sub">{{ r.resumen_cobertura }}</p>
 <table>
   <thead><tr>
     <th>Regla</th><th>Estado</th><th class="num">Evaluados</th>
-    <th class="num">Exactos</th>
-    <th class="num">Impresos</th><th class="num">Recalculados</th>
-    <th class="num">Tolerancia</th><th class="num">Difieren</th>
+    <th class="num">Exactos</th><th class="num">Impresos</th>
+    <th class="num">Recalculados</th><th class="num">Tolerancia</th>
+    <th class="num">Difieren</th>
   </tr></thead>
   <tbody>
-  {% for regla in r.cobertura.reglas %}
+  {% for regla in r.reglas %}
     <tr>
       <td>{{ regla.regla }}</td>
       <td class="{{ regla.estado }}">{{ regla.estado.replace('_', ' ') }}</td>
@@ -42,8 +38,8 @@
       <td class="num">{{ regla.exactas }}</td>
       <td class="num">{{ regla.exactas_impresas }}</td>
       <td class="num">{{ regla.exactas_recalculadas or '' }}</td>
-      <td class="num">{{ regla.con_tolerancia | length or '' }}</td>
-      <td class="num">{{ regla.discrepancias | length or '' }}</td>
+      <td class="num">{{ regla.con_tolerancia or '' }}</td>
+      <td class="num">{{ regla.discrepancias or '' }}</td>
     </tr>
     {% if regla.motivo %}
     <tr><td colspan="8" class="motivo">{{ regla.motivo }}</td></tr>
@@ -60,8 +56,8 @@
 
 <h2>Lo que trae el documento</h2>
 <dl>
-  {% for etiqueta, valor in r.resumen %}
-  <dt>{{ etiqueta or '' }}</dt><dd>{{ valor }}</dd>
+  {% for par in r.resumen %}
+  <dt>{{ par[0] or '' }}</dt><dd>{{ par[1] }}</dd>
   {% endfor %}
 </dl>
 
@@ -75,54 +71,47 @@
   <dd>
     {% if r.plantilla %}
       <code>{{ r.plantilla.huella }}</code>
-      {{ 'reutilizada' if r.reutilizada else 'aprendida' }}
-      {%- if r.plantilla.pendiente_de_confirmacion %}, pendiente de confirmación{% endif %}
-    {% elif fallan %}
+      {{ 'reutilizada' if r.plantilla.reutilizada else 'aprendida' }}
+      {%- if r.plantilla.pendiente %}, pendiente de confirmación{% endif %}
+    {% elif r.fallan %}
       no se aprendió: no se aprende un formato cuya aritmética no cuadró
     {% else %}
-      no se aprendió: no se indicó despacho ni directorio de plantillas
+      no se aprendió
     {% endif %}
   </dd>
 </dl>
 
 {% if r.plantilla %}
-  {% for pendiente in r.plantilla.pendientes() %}
+  {% for p in r.plantilla.pendientes %}
   <div class="aviso">
-    <strong>Falta confirmar: {{ pendiente.campo }}.</strong>
-    {{ pendiente.consecuencia }}.
-    {% if pendiente.se_propone is none %}
-    El sistema no propone nada porque {{ pendiente.se_apoya_en }}.
-    {% endif %}
+    <strong>Falta confirmar: {{ p.campo }}.</strong> {{ p.consecuencia }}.
+    {% if p.sin_propuesta %}El sistema no propone nada porque {{ p.se_apoya_en }}.{% endif %}
   </div>
   {% endfor %}
 {% endif %}
 
-{% if r.cobertura.discrepancias %}
+{% if r.discrepancias %}
 <h2>Renglones a revisar</h2>
 <table>
   <thead><tr><th>Fila</th><th>Regla</th>
     <th class="num">Debía decir</th><th class="num">Dice</th></tr></thead>
   <tbody>
-  {% for d in r.cobertura.discrepancias[:50] %}
-    {# Hay reglas que cruzan identidades, no importes: ahi las dos cifras
-       vienen en cero y ense~nar «0.00 contra 0.00» haria pensar que el
-       documento dice cero. Se marca como lo que es. #}
+  {% for d in r.discrepancias %}
     <tr><td>{{ d.fila }}</td><td>{{ d.regla }}</td>
-    {% if d.esperado == d.obtenido %}
-        <td class="num" colspan="2">no cuadra el dato, no el importe</td>
+    {% if d.numerica %}
+      <td class="num">{{ d.esperado }}</td><td class="num">{{ d.obtenido }}</td>
     {% else %}
-        <td class="num">{{ '{:,.2f}'.format(d.esperado) }}</td>
-        <td class="num">{{ '{:,.2f}'.format(d.obtenido) }}</td>
+      <td class="num" colspan="2">no cuadra el dato, no el importe</td>
     {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
-{% if r.cobertura.discrepancias | length > 50 %}
-<p class="sub">Se muestran 50 de {{ r.cobertura.discrepancias | length }};
-   están todas en la hoja «Validacion» del Excel.</p>
+{% if r.total_discrepancias > r.discrepancias | length %}
+<p class="sub">Se muestran {{ r.discrepancias | length }} de
+   {{ r.total_discrepancias }}; están todas en la hoja «Validacion» del Excel.</p>
 {% endif %}
 {% endif %}
 
-<p style="margin-top:2rem"><a class="volver" href="/">← Procesar otro documento</a></p>
+<p style="margin-top:2rem"><a class="volver" href="/t/{{ tenant }}/">← Procesar otro documento</a></p>
 {% endblock %}

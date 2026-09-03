@@ -2,15 +2,24 @@
 {% block titulo %}Procesando · contapdf{% endblock %}
 {% block cabeza %}<meta http-equiv="refresh" content="3">{% endblock %}
 {% block cuerpo %}
-<h1>Procesando {{ t.archivo }}</h1>
+<h1>{{ t.archivo }}</h1>
 <p class="sub">{{ t.tipo }}</p>
 
 <div class="tarjeta">
   <p class="reloj">{{ t.reloj }}</p>
+  {% if posicion %}
+  <p style="margin:0 0 .3rem"><strong>En cola, puesto {{ posicion }}.</strong></p>
   <p class="sub" style="margin:0">
-    Tiempo transcurrido. La página se actualiza sola cada 3 segundos; no
-    hace falta recargar ni volver a enviar el documento.
+    Se procesa un documento a la vez: dos a la vez dejarían sin memoria al
+    servidor, que la comparte con otros sistemas. En cuanto termine el
+    anterior, empieza éste.
   </p>
+  {% else %}
+  <p class="sub" style="margin:0">
+    Tiempo transcurrido. La página se actualiza sola cada 3 segundos; no hace
+    falta recargar ni volver a enviar el documento.
+  </p>
+  {% endif %}
 </div>
 
 <div class="aviso">
@@ -20,5 +29,5 @@
   porcentaje aquí sería fabricar un dato.
 </div>
 
-<p><a class="volver" href="/">← Procesar otro documento</a></p>
+<p><a class="volver" href="/t/{{ tenant }}/">← Procesar otro documento</a></p>
 {% endblock %}

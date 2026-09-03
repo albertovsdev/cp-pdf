@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block cuerpo %}
 <h1>Convertir un PDF contable a Excel</h1>
-<p class="sub">Un documento a la vez. El PDF no se guarda: se procesa y se borra.</p>
+<p class="sub">Despacho <code>{{ tenant }}</code> · el PDF no se guarda: se procesa y se borra.</p>
 
-<form class="tarjeta" method="post" action="/procesar"
+<form class="tarjeta" method="post" action="/t/{{ tenant }}/procesar"
       enctype="multipart/form-data" id="formulario">
   <div class="campo">
     <label for="tipo">Tipo de documento</label>
@@ -22,18 +22,38 @@
 </form>
 
 <div class="aviso">
-  <strong>Un documento grande tarda.</strong> Un auxiliar de 400 páginas ronda
-  el medio minuto y uno de 900 pasa de los tres. La página se queda esperando
-  hasta que termina; no la cierres.
+  <strong>Se procesa un documento a la vez.</strong> Si hay otro en curso, el
+  tuyo espera en la cola y la página te dice en qué puesto va. No hace falta
+  dejarla abierta: el trabajo sigue en el servidor y la dirección funciona
+  durante media hora.
 </div>
 
+{% if trabajos %}
+<h2>Documentos de este despacho</h2>
+<table>
+  <thead><tr><th>Archivo</th><th>Tipo</th><th>Estado</th><th></th></tr></thead>
+  <tbody>
+  {% for t in trabajos %}
+    <tr>
+      <td><a href="/t/{{ tenant }}/trabajo/{{ t.identificador }}">{{ t.archivo }}</a></td>
+      <td>{{ t.tipo }}</td>
+      <td>{{ t.estado.replace('_', ' ') }}</td>
+      <td class="num">{% if t.entrega %}<a href="/t/{{ tenant }}/descargar/{{ t.identificador }}">Excel</a>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p class="sub" style="margin-top:.7rem">
+  Sólo aparecen los de este despacho, y se borran solos a la media hora.
+</p>
+{% endif %}
+
 <script>
-  // Lo unico que hace falta de JavaScript: avisar de que esta trabajando.
-  // Sin esto, medio minuto de pagina en blanco parece que se colgo.
+  // Lo unico que hace falta de JavaScript: avisar de que se envio.
   document.getElementById('formulario').addEventListener('submit', function () {
     var b = document.getElementById('enviar');
     b.disabled = true;
-    b.textContent = 'Procesando… puede tardar varios minutos';
+    b.textContent = 'Enviando…';
   });
 </script>
 {% endblock %}

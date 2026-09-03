@@ -26,10 +26,14 @@ from conftest import requires_real_pdf
 
 from contapdf.web import crear_app
 
+TENANT = "despacho-a"
+
 
 @pytest.fixture()
-def cliente():
-    app = crear_app()
+def cliente(tmp_path):
+    # Cada prueba con su propia raiz: desde la 8b la cola persiste en disco,
+    # y una raiz compartida arrastraria trabajos de una corrida a otra.
+    app = crear_app(trabajos=tmp_path)
     app.config.update(TESTING=True)
     with app.test_client() as c:
         yield c
@@ -48,7 +52,7 @@ def _subir(cliente, nombre_fixture, tipo, nombre_archivo=None):
         "pdf": (io.BytesIO(ruta.read_bytes()),
                 nombre_archivo or f"{nombre_fixture}.pdf"),
     }
-    respuesta = cliente.post("/procesar", data=datos,
+    respuesta = cliente.post(f"/t/{TENANT}/procesar", data=datos,
                              content_type="multipart/form-data")
     if respuesta.status_code != 302:
         return respuesta
@@ -67,8 +71,8 @@ def _esperar(cliente, url, limite=300):
 
 # --- Criterio 1: los cinco tipos, de punta a punta ----------------------
 def test_la_portada_ofrece_los_cinco_tipos(cliente):
-    texto = cliente.get("/").get_data(as_text=True)
-    assert cliente.get("/").status_code == 200
+    texto = cliente.get(f"/t/{TENANT}/").get_data(as_text=True)
+    assert cliente.get(f"/t/{TENANT}/").status_code == 200
     for tipo in ("balanza", "auxiliar", "polizas", "estado-cuenta", "mayor"):
         assert tipo in texto, tipo
 
@@ -96,7 +100,7 @@ def test_los_cinco_se_procesan_y_se_descargan(cliente, fixture, tipo):
 
 def _enlace_de_descarga(pagina):
     import re
-    encontrado = re.search(r'href="(/descargar/[^"]+)"', pagina)
+    encontrado = re.search(r'href="(/t/[^"]+/descargar/[^"]+)"', pagina)
     assert encontrado, "la pagina de resultado no ofrece descarga"
     return encontrado.group(1)
 
@@ -165,7 +169,7 @@ def test_un_documento_con_fallas_no_aprende_plantilla(cliente, tmp_path):
 def test_un_archivo_que_no_es_pdf_da_un_mensaje(cliente):
     datos = {"tipo": "balanza",
              "pdf": (io.BytesIO(b"esto no es un pdf"), "notas.txt")}
-    respuesta = cliente.post("/procesar", data=datos,
+    respuesta = cliente.post(f"/t/{TENANT}/procesar", data=datos,
                              content_type="multipart/form-data")
     pagina = respuesta.get_data(as_text=True)
     assert respuesta.status_code == 400
@@ -192,7 +196,7 @@ def test_un_estado_de_cuenta_sin_tabla_explica_que_es(cliente):
 
 
 def test_sin_archivo_da_un_mensaje(cliente):
-    respuesta = cliente.post("/procesar", data={"tipo": "balanza"},
+    respuesta = cliente.post(f"/t/{TENANT}/procesar", data={"tipo": "balanza"},
                              content_type="multipart/form-data")
     assert respuesta.status_code == 400
     assert "Traceback" not in respuesta.get_data(as_text=True)
@@ -201,7 +205,7 @@ def test_sin_archivo_da_un_mensaje(cliente):
 def test_un_tipo_desconocido_da_un_mensaje(cliente):
     datos = {"tipo": "inventado",
              "pdf": (io.BytesIO(b"%PDF-1.4"), "x.pdf")}
-    respuesta = cliente.post("/procesar", data=datos,
+    respuesta = cliente.post(f"/t/{TENANT}/procesar", data=datos,
                              content_type="multipart/form-data")
     assert respuesta.status_code == 400
     assert "Traceback" not in respuesta.get_data(as_text=True)
@@ -248,7 +252,7 @@ def test_la_web_no_imprime():
 
 
 # --- Criterio 5 (bis): nada se queda en disco --------------------------
-def test_el_pdf_subido_y_el_xlsx_se_borran(cliente, tmp_path):
+def test_el_pdf_subido_y_el_xlsx_se_borran(tmp_path):
     app = crear_app(trabajos=tmp_path)
     app.config.update(TESTING=True)
     with app.test_client() as c:

@@ -9,9 +9,10 @@ NO importa parsers, reglas ni exportadores. Si la web pudiera alcanzarlos
 directo acabaria repitiendo la orquestacion, y las dos versiones se
 separarian en la primera correccion; un test lee los imports y lo impide.
 
-Alcance de 8a, a proposito: un documento a la vez, sincrono, un usuario, en
-la maquina de desarrollo. Sin cola, sin worker, sin autenticacion y sin
-aislamiento por tenant -- eso es 8b.
+En la 8b se agrego lo que 8a dejo fuera a proposito: cola persistente en
+SQLite (`cola.py`), un worker secuencial y separacion por despacho. Sigue
+SIN autenticacion: el despacho llega por la ruta, asi que separa lo de cada
+quien pero no impide que alguien escriba el nombre de otro despacho.
 """
 
 from contapdf.web.app import crear_app

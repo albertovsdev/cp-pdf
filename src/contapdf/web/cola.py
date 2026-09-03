@@ -232,6 +232,14 @@ class Cola:
                 "ORDER BY creado DESC LIMIT ?", (tenant, limite)).fetchall()
         return [_desde_fila(f) for f in filas]
 
+    def hay_pendientes(self) -> bool:
+        """Queda algo por atender (en cola o a medio procesar)."""
+        with self._candado:
+            fila = self._cx.execute(
+                "SELECT 1 FROM trabajos WHERE estado IN (?, ?) LIMIT 1",
+                (EN_COLA, PROCESANDO)).fetchone()
+        return fila is not None
+
     def posicion(self, identificador: str) -> int:
         """Cuantos hay por delante, contandose. 0 si ya no espera."""
         with self._candado:
@@ -281,6 +289,24 @@ class Cola:
             _LOG.info("barridos %s trabajo(s) de mas de %s min",
                       len(filas), int(edad // 60))
         return len(filas)
+
+    def olvidar(self, identificador: str, *, tenant: str) -> bool:
+        """Borra un trabajo y su disco antes de tiempo, si es de ese despacho.
+
+        La descarga es de un solo uso (decision de la 8a): en cuanto el Excel
+        sale hacia el navegador, el documento del cliente deja de existir en
+        el servidor. El `tenant` va en el WHERE por lo mismo que en `buscar`.
+        """
+        with self._candado, self._cx:
+            fila = self._cx.execute(
+                "SELECT directorio FROM trabajos WHERE id = ? AND tenant = ?",
+                (identificador, tenant)).fetchone()
+            if fila is None:
+                return False
+            self._cx.execute("DELETE FROM trabajos WHERE id = ?",
+                             (identificador,))
+        _borrar(Path(fila["directorio"]))
+        return True
 
     def envejecer(self, identificador: str, *, segundos: float) -> None:
         """Solo para pruebas: retrasa la fecha de creacion."""

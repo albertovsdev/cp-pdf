@@ -1,17 +1,21 @@
 """El trabajo corre aparte y la pagina responde de inmediato.
 
-Fase 8a. Medido en aislamiento: `auxiliar-gume.pdf` tarda **3m57s**. Ningun
-navegador ni ningun usuario espera cuatro minutos con la pantalla en
-blanco, asi que la subida no puede procesar de forma sincrona.
+Fase 8a, revisado en la 8b. Medido en aislamiento: `auxiliar-gume.pdf`
+tarda **3m57s**. Ningun navegador ni ningun usuario espera cuatro minutos
+con la pantalla en blanco, asi que la subida no puede procesar de forma
+sincrona.
 
-Lo minimo, y nada mas: un hilo por trabajo, un id que se devuelve al
-instante, y una pagina que se refresca sola. Sin cola persistente, sin
-Redis, sin Celery, sin reintentos. El registro de trabajos es un
-diccionario en la capa web -- nunca en el nucleo, que no tiene estado.
+Lo que cambio en la 8b: el registro ya no es un diccionario en memoria sino
+una cola en SQLite (`cola.py`), y hay **un worker secuencial** en vez de un
+hilo por trabajo. El motivo esta en PLAN 6 -- 543 MB de pico medido en una
+maquina de 8 GB que comparte con Apache y MySQL -- y en que SERVIDORSIST se
+apaga a las 21:00. Lo que NO cambio es lo que estos tests protegen: la
+subida responde al instante y la pagina de estado dice el tiempo
+transcurrido y nada mas.
 
-La pagina de estado muestra el TIEMPO TRANSCURRIDO y nada mas. No hay
-porcentaje ni barra: no existe forma de saber cuanto falta, y fabricar esa
-cifra seria inventar un dato.
+La pagina de estado muestra el TIEMPO TRANSCURRIDO. No hay porcentaje ni
+barra: no existe forma de saber cuanto falta, y fabricar esa cifra seria
+inventar un dato.
 """
 
 from __future__ import annotations
@@ -24,6 +28,9 @@ import pytest
 from conftest import requires_real_pdf
 
 from contapdf.web import crear_app
+from contapdf.web.cola import EDAD_MAXIMA, LISTO
+
+TENANT = "despacho-a"
 
 
 @pytest.fixture()
@@ -41,7 +48,7 @@ def cliente(app):
 
 def _subir(cliente, fixture, tipo, nombre=None):
     ruta = requires_real_pdf(fixture)
-    return cliente.post("/procesar", data={
+    return cliente.post(f"/t/{TENANT}/procesar", data={
         "tipo": tipo,
         "pdf": (io.BytesIO(ruta.read_bytes()), nombre or f"{fixture}.pdf"),
     }, content_type="multipart/form-data")
@@ -66,7 +73,7 @@ def test_la_subida_devuelve_un_id_de_trabajo_al_instante(cliente):
     transcurrido = time.monotonic() - inicio
 
     assert respuesta.status_code == 302
-    assert re.match(r"^/trabajo/[0-9a-f]{8,}$",
+    assert re.match(rf"^/t/{TENANT}/trabajo/[0-9a-f]{{8,}}$",
                     respuesta.headers["Location"]), respuesta.headers["Location"]
     # La balanza tarda ~3s en procesarse; la respuesta no puede esperarlo.
     assert transcurrido < 1.5, f"la subida bloqueo {transcurrido:.1f}s"
@@ -74,15 +81,14 @@ def test_la_subida_devuelve_un_id_de_trabajo_al_instante(cliente):
 
 def test_la_pagina_de_estado_se_refresca_sola_y_da_el_tiempo(app, cliente):
     """Un trabajo en curso: sin descarga todavia, con reloj."""
-    from contapdf.web.app import _Trabajo
+    cola = app.extensions["contapdf_cola"]
+    trabajo = cola.encolar(tenant=TENANT, tipo="auxiliar",
+                           archivo="grande.pdf")
+    cola.marcar_procesando(trabajo.identificador)
+    cola.envejecer(trabajo.identificador, segundos=95.0)
 
-    registro = app.extensions["contapdf_trabajos"]
-    registro["fingido"] = _Trabajo(
-        identificador="fingido", tipo="auxiliar", archivo="grande.pdf",
-        directorio=app.config["CONTAPDF_TRABAJOS"] / "fingido",
-        comenzado=time.monotonic() - 95.0)
-
-    pagina = cliente.get("/trabajo/fingido").get_data(as_text=True)
+    pagina = cliente.get(
+        f"/t/{TENANT}/trabajo/{trabajo.identificador}").get_data(as_text=True)
     assert 'http-equiv="refresh"' in pagina
     assert "1:35" in pagina, "falta el tiempo transcurrido"
     assert "/descargar/" not in pagina
@@ -93,7 +99,7 @@ def test_la_pagina_de_estado_se_refresca_sola_y_da_el_tiempo(app, cliente):
 
 
 def test_un_trabajo_que_no_existe_da_404(cliente):
-    assert cliente.get("/trabajo/noexiste").status_code == 404
+    assert cliente.get(f"/t/{TENANT}/trabajo/noexiste").status_code == 404
 
 
 # --- El trabajo termina y la misma pagina muestra el resultado ----------
@@ -108,7 +114,7 @@ def test_al_terminar_la_misma_pagina_muestra_el_resultado(cliente):
 def test_el_xlsx_se_descarga_al_terminar(cliente):
     url = _subir(cliente, "balanza", "balanza").headers["Location"]
     _, pagina = _esperar(cliente, url)
-    enlace = re.search(r'href="(/descargar/[^"]+)"', pagina).group(1)
+    enlace = re.search(r'href="(/t/[^"]+/descargar/[^"]+)"', pagina).group(1)
     descarga = cliente.get(enlace)
     assert descarga.status_code == 200
     assert descarga.data[:2] == b"PK"
@@ -126,54 +132,41 @@ def test_un_documento_que_no_se_reconoce_termina_en_error_sin_traza(cliente):
 # --- Criterio 5 (bis): el barrido de 30 minutos -------------------------
 def test_un_trabajo_viejo_se_barre_aunque_nadie_descargue(app, cliente):
     """La red por si nadie descarga: son documentos de clientes."""
-    from contapdf.web.app import _Trabajo, _EDAD_MAXIMA
-
-    raiz = app.config["CONTAPDF_TRABAJOS"]
-    viejo = raiz / "viejo"
-    viejo.mkdir(parents=True)
-    (viejo / "entrada.pdf").write_bytes(b"%PDF-1.4 datos del cliente")
-    (viejo / "salida.xlsx").write_bytes(b"PK")
-
-    registro = app.extensions["contapdf_trabajos"]
-    registro["viejo"] = _Trabajo(
-        identificador="viejo", tipo="balanza", archivo="v.pdf",
-        directorio=viejo, comenzado=time.monotonic() - (_EDAD_MAXIMA + 60))
+    cola = app.extensions["contapdf_cola"]
+    trabajo = cola.encolar(tenant=TENANT, tipo="balanza", archivo="v.pdf")
+    (trabajo.directorio / "entrada.pdf").write_bytes(b"%PDF-1.4 del cliente")
+    (trabajo.directorio / "salida.xlsx").write_bytes(b"PK")
+    cola.marcar_terminado(trabajo.identificador, estado=LISTO, resumen={})
+    cola.envejecer(trabajo.identificador, segundos=EDAD_MAXIMA + 60)
 
     # Cualquier peticion dispara el barrido: sin scheduler ni proceso aparte.
-    cliente.get("/")
+    cliente.get(f"/t/{TENANT}/")
 
-    assert not viejo.exists(), "el trabajo viejo sigue en disco"
-    assert "viejo" not in registro
+    assert not trabajo.directorio.exists(), "el trabajo viejo sigue en disco"
+    assert cola.buscar(trabajo.identificador, tenant=TENANT) is None
 
 
 def test_un_trabajo_reciente_no_se_barre(app, cliente):
-    from contapdf.web.app import _Trabajo
+    cola = app.extensions["contapdf_cola"]
+    trabajo = cola.encolar(tenant=TENANT, tipo="balanza", archivo="n.pdf")
+    (trabajo.directorio / "entrada.pdf").write_bytes(b"%PDF-1.4")
+    cola.marcar_terminado(trabajo.identificador, estado=LISTO, resumen={})
+    cola.envejecer(trabajo.identificador, segundos=60.0)
 
-    raiz = app.config["CONTAPDF_TRABAJOS"]
-    nuevo = raiz / "nuevo"
-    nuevo.mkdir(parents=True)
-    (nuevo / "entrada.pdf").write_bytes(b"%PDF-1.4")
-    registro = app.extensions["contapdf_trabajos"]
-    registro["nuevo"] = _Trabajo(
-        identificador="nuevo", tipo="balanza", archivo="n.pdf",
-        directorio=nuevo, comenzado=time.monotonic() - 60.0)
-
-    cliente.get("/")
-    assert nuevo.exists()
-    assert "nuevo" in registro
+    cliente.get(f"/t/{TENANT}/")
+    assert trabajo.directorio.exists()
+    assert cola.buscar(trabajo.identificador, tenant=TENANT) is not None
 
 
 def test_el_barrido_no_estorba_a_un_trabajo_en_curso(app, cliente):
     url = _subir(cliente, "balanza", "balanza").headers["Location"]
-    cliente.get("/")            # barrido mientras el trabajo corre
+    cliente.get(f"/t/{TENANT}/")     # barrido mientras el trabajo corre
     _, pagina = _esperar(cliente, url)
     assert "/descargar/" in pagina
 
 
 def test_la_edad_maxima_son_treinta_minutos():
-    from contapdf.web.app import _EDAD_MAXIMA
-
-    assert _EDAD_MAXIMA == 30 * 60
+    assert EDAD_MAXIMA == 30 * 60
 
 
 # --- El PDF del cliente no se queda en disco ---------------------------
@@ -187,7 +180,7 @@ def test_el_pdf_se_borra_en_cuanto_termina_el_procesamiento(app, cliente):
 def test_al_descargar_no_queda_nada(app, cliente):
     url = _subir(cliente, "balanza", "balanza").headers["Location"]
     _, pagina = _esperar(cliente, url)
-    enlace = re.search(r'href="(/descargar/[^"]+)"', pagina).group(1)
+    enlace = re.search(r'href="(/t/[^"]+/descargar/[^"]+)"', pagina).group(1)
     assert cliente.get(enlace).status_code == 200
     raiz = app.config["CONTAPDF_TRABAJOS"]
     assert list(raiz.rglob("*.xlsx")) == []
@@ -198,5 +191,9 @@ def test_al_descargar_no_queda_nada(app, cliente):
 def test_dos_apps_no_comparten_trabajos(tmp_path):
     una = crear_app(trabajos=tmp_path / "a")
     otra = crear_app(trabajos=tmp_path / "b")
-    assert una.extensions["contapdf_trabajos"] is not \
-        otra.extensions["contapdf_trabajos"]
+    assert una.extensions["contapdf_cola"] is not \
+        otra.extensions["contapdf_cola"]
+    trabajo = una.extensions["contapdf_cola"].encolar(
+        tenant="t", tipo="balanza", archivo="x.pdf")
+    assert otra.extensions["contapdf_cola"].buscar(
+        trabajo.identificador, tenant="t") is None

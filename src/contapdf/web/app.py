@@ -5,19 +5,21 @@ CPU-bound y bloqueante, asi que el async de FastAPI no aportaria nada --
 habria que mandarlo a un hilo igualmente -- y traeria uvicorn y una
 plantilla de terceros. Flask trae Jinja2 y send_file de serie.
 
-**Por que el trabajo corre aparte.** Medido en aislamiento:
-`auxiliar-gume.pdf` (886 paginas, 57 024 renglones) tarda **3m57s**. Ningun
-navegador ni ningun usuario espera cuatro minutos con la pantalla en
-blanco, asi que la subida devuelve un id al instante y el procesamiento se
-va a un hilo.
+**Por que hay cola.** `auxiliar-gume.pdf` tarda 3m57s medidos, y
+SERVIDORSIST se apaga a las 21:00: un trabajo a medias no es una hipotesis.
+El estado vive en SQLite (ver `cola.py`), asi que al arrancar un trabajo
+interrumpido lo dice en vez de dar un 404.
 
-Lo minimo y nada mas: un hilo por trabajo y un diccionario en memoria. Sin
-cola persistente, sin Redis, sin Celery, sin reintentos, sin mas de un
-trabajo en paralelo por diseno. Eso es 8b.
+**Un worker, secuencial** (PLAN 6): la maquina objetivo tiene 8 GB
+compartidos con Apache y MySQL y el pico medido del pipeline es 543 MB. Los
+demas esperan con su posicion visible.
 
-El diccionario de trabajos vive en `app.extensions`, no en un global de
-modulo: dos apps no se pisan y no hay nada que se contamine entre
-peticiones.
+**El tenant va en la ruta** (`/t/<despacho>/…`), no en un login: esta fase
+no trae autenticacion. El aislamiento es organizativo -- separa los
+trabajos, las plantillas y las descargas de cada despacho -- pero **no es
+una barrera de seguridad**: quien conozca el nombre de otro despacho entra
+en su area. Lo que si impide es que un id de trabajo sirva fuera de su
+despacho.
 """
 
 from __future__ import annotations
@@ -26,9 +28,6 @@ import logging
 import shutil
 import tempfile
 import threading
-import time
-import uuid
-from dataclasses import dataclass, field
 from pathlib import Path
 
 from flask import (
@@ -47,165 +46,133 @@ from contapdf.cli import (
     DocumentoNoReconocido,
     procesar_documento,
 )
+from contapdf.web import vista
+from contapdf.web.cola import (
+    CON_DISCREPANCIAS,
+    EN_COLA,
+    ERROR,
+    INTERRUMPIDO,
+    LISTO,
+    NO_RECONOCIDO,
+    PROCESANDO,
+    Cola,
+    TenantInvalido,
+    validar_tenant,
+)
 
 _LOG = logging.getLogger(__name__)
 _FIRMA_PDF = b"%PDF"
 # Un documento contable de 968 paginas pesa ~9 MB; 64 deja margen de sobra
 # sin permitir que una subida cualquiera llene el disco.
 _MAXIMO = 64 * 1024 * 1024
-# Media hora y se borra, descargue alguien o no. Son documentos contables de
-# clientes de un despacho, y esto acabara en un servidor que tambien sirve
-# produccion y que nadie reinicia en semanas: dejar PDFs ahi por si acaso no
-# es una opcion. El barrido corre al servir cualquier peticion, sin
-# scheduler ni proceso aparte.
-_EDAD_MAXIMA = 30 * 60
-
-
-@dataclass
-class _Trabajo:
-    """Un documento en proceso. Mutable: el hilo lo va actualizando.
-
-    `estado` solo toma valores que la capa web puede OBSERVAR de verdad:
-    'procesando', 'listo' y 'error'. No hay 'parseando' ni 'validando'
-    porque `procesar_documento()` es una sola llamada opaca y afirmar una
-    etapa que no se mide seria inventar un dato.
-    """
-
-    identificador: str
-    tipo: str
-    archivo: str
-    directorio: Path
-    comenzado: float
-    estado: str = "procesando"
-    resultado: object | None = None
-    error: dict = field(default_factory=dict)
-    xlsx: Path | None = None
-    nombre_xlsx: str = ""
-
-    @property
-    def transcurrido(self) -> float:
-        return time.monotonic() - self.comenzado
-
-    @property
-    def reloj(self) -> str:
-        segundos = int(self.transcurrido)
-        return f"{segundos // 60}:{segundos % 60:02d}"
+_POR_DEFECTO = "general"
 
 
 def crear_app(*, trabajos: Path | None = None) -> Flask:
-    """La app. `trabajos` es donde viven los temporales de cada subida."""
+    """La app. `trabajos` es donde viven la base de la cola y los temporales."""
     app = Flask(__name__)
     app.config["MAX_CONTENT_LENGTH"] = _MAXIMO
     raiz = (Path(trabajos) if trabajos is not None
             else Path(tempfile.gettempdir()) / "contapdf-web")
     raiz.mkdir(parents=True, exist_ok=True)
     app.config["CONTAPDF_TRABAJOS"] = raiz
-    app.extensions["contapdf_trabajos"] = {}
-    app.extensions["contapdf_candado"] = threading.Lock()
+    # Estado en la app, nunca en un global de modulo: dos apps no se pisan.
+    app.extensions["contapdf_cola"] = Cola(raiz / "cola.sqlite3", raiz=raiz)
+    app.extensions["contapdf_worker"] = threading.Lock()
 
-    def registro() -> dict:
-        return app.extensions["contapdf_trabajos"]
+    def cola() -> Cola:
+        return app.extensions["contapdf_cola"]
 
-    def barrer() -> None:
-        """Borra lo que lleve mas de media hora, lo haya descargado o no."""
-        with app.extensions["contapdf_candado"]:
-            viejos = [i for i, t in registro().items()
-                      if t.transcurrido > _EDAD_MAXIMA]
-            for identificador in viejos:
-                trabajo = registro().pop(identificador)
-                _borrar(trabajo.directorio)
-        if viejos:
-            _LOG.info("barridos %s trabajo(s) de mas de %s min",
-                      len(viejos), _EDAD_MAXIMA // 60)
-        # Tambien los directorios sueltos: si el proceso se reinicio, el
-        # registro se perdio pero los archivos del cliente no.
-        for directorio in raiz.glob("trabajo-*"):
-            try:
-                edad = time.time() - directorio.stat().st_mtime
-            except OSError:
-                continue
-            if edad > _EDAD_MAXIMA and directorio.name[8:] not in registro():
-                _borrar(directorio)
+    def tenant_de(valor: str) -> str:
+        try:
+            return validar_tenant(valor)
+        except TenantInvalido:
+            abort(404)
 
     @app.before_request
-    def _limpiar():
-        barrer()
+    def _mantenimiento():
+        cola().barrer()
+        # Re-armar en CADA peticion, no solo al subir: el worker muere al
+        # vaciar la cola, y entre su ultimo `tomar_siguiente()` y el momento
+        # en que suelta el candado cabe una subida. Sin esto ese trabajo se
+        # queda dormido hasta que el barrido lo borre, sin procesarse nunca.
+        _arrancar_worker(app)
 
     @app.get("/")
-    def portada():
-        return render_template("portada.html", tipos=TIPOS_DE_DOCUMENTO)
+    def raiz_sin_tenant():
+        return redirect(url_for("portada", tenant=_POR_DEFECTO), code=302)
 
-    @app.post("/procesar")
-    def procesar():
-        tipo = (request.form.get("tipo") or "").strip()
+    @app.get("/t/<tenant>/")
+    def portada(tenant):
+        tenant = tenant_de(tenant)
+        return render_template("portada.html", tipos=TIPOS_DE_DOCUMENTO,
+                               tenant=tenant, trabajos=cola().listar(tenant))
+
+    @app.post("/t/<tenant>/procesar")
+    def procesar(tenant):
+        tenant = tenant_de(tenant)
         subido = request.files.get("pdf")
+        tipo = (request.form.get("tipo") or "").strip()
         if subido is None or not subido.filename:
-            return _error("No se recibio ningun archivo.",
+            return _error(tenant, "No se recibio ningun archivo.",
                           "Elige un PDF antes de enviar."), 400
         if not any(tipo == n for n, _ in TIPOS_DE_DOCUMENTO):
             return _error(
+                tenant,
                 f"Tipo de documento no valido: {tipo!r}." if tipo
                 else "No se eligio el tipo de documento.",
                 "Selecciona uno de la lista."), 400
 
-        identificador = uuid.uuid4().hex
-        directorio = raiz / f"trabajo-{identificador}"
-        directorio.mkdir(parents=True)
-        pdf = directorio / "entrada.pdf"
+        trabajo = cola().encolar(tenant=tenant, tipo=tipo,
+                                 archivo=subido.filename)
+        pdf = trabajo.directorio / "entrada.pdf"
         subido.save(pdf)
-
         if pdf.read_bytes()[:4] != _FIRMA_PDF:
-            _borrar(directorio)
+            cola().marcar_terminado(
+                trabajo.identificador, estado=NO_RECONOCIDO, resumen={},
+                mensaje=f"{subido.filename!r} no es un PDF.")
+            _borrar(trabajo.directorio)
             return _error(
-                f"{subido.filename!r} no es un PDF.",
-                "El archivo no empieza con la firma de un PDF. Si lo "
-                "exportaste desde otro programa, vuelve a guardarlo como "
-                "PDF y subelo otra vez."), 400
+                tenant, f"{subido.filename!r} no es un PDF.",
+                "El archivo no empieza con la firma de un PDF. Vuelve a "
+                "guardarlo como PDF y subelo otra vez."), 400
 
-        nombre = Path(subido.filename).stem or "documento"
-        trabajo = _Trabajo(identificador=identificador, tipo=tipo,
-                           archivo=subido.filename, directorio=directorio,
-                           comenzado=time.monotonic(),
-                           xlsx=directorio / f"{nombre}.xlsx",
-                           nombre_xlsx=f"{nombre}.xlsx")
-        registro()[identificador] = trabajo
+        _arrancar_worker(app)
+        return redirect(url_for("estado", tenant=tenant,
+                                identificador=trabajo.identificador), code=302)
 
-        hilo = threading.Thread(target=_correr, args=(trabajo, pdf),
-                                name=f"contapdf-{identificador[:8]}",
-                                daemon=True)
-        hilo.start()
-        # De inmediato: el usuario no espera cuatro minutos en blanco.
-        return redirect(url_for("estado", identificador=identificador), code=302)
-
-    @app.get("/trabajo/<identificador>")
-    def estado(identificador):
-        trabajo = registro().get(identificador)
+    @app.get("/t/<tenant>/trabajo/<identificador>")
+    def estado(tenant, identificador):
+        tenant = tenant_de(tenant)
+        trabajo = cola().buscar(identificador, tenant=tenant)
         if trabajo is None:
             abort(404)
-        if trabajo.estado == "procesando":
-            return render_template("procesando.html", t=trabajo)
-        if trabajo.estado == "error":
-            return _error(trabajo.error["mensaje"],
-                          trabajo.error.get("sugerencia", ""),
-                          detalle=trabajo.error.get("detalle", ()),
-                          clave=trabajo.error.get("clave", "")), 400
-        return render_template("resultado.html", r=trabajo.resultado,
-                               ficha=identificador, archivo=trabajo.archivo,
-                               reloj=trabajo.reloj)
+        if trabajo.estado in (EN_COLA, PROCESANDO):
+            return render_template("procesando.html", t=trabajo, tenant=tenant,
+                                   posicion=cola().posicion(identificador))
+        if trabajo.entrega:
+            return render_template("resultado.html", t=trabajo, tenant=tenant,
+                                   r=trabajo.resumen)
+        # 'interrumpido' NO es un 400: nadie rechazo el documento, ni
+        # siquiera se llego a juzgarlo. Los otros dos si conservan el 400
+        # que la 8a le puso a un documento que el sistema no acepta.
+        codigo = 200 if trabajo.estado == INTERRUMPIDO else 400
+        return render_template("interrumpido.html", t=trabajo, tenant=tenant,
+                               r=trabajo.resumen), codigo
 
-    @app.get("/descargar/<identificador>")
-    def descargar(identificador):
-        trabajo = registro().get(identificador)
-        if (trabajo is None or trabajo.estado != "listo"
-                or trabajo.xlsx is None or not trabajo.xlsx.exists()):
+    @app.get("/t/<tenant>/descargar/<identificador>")
+    def descargar(tenant, identificador):
+        tenant = tenant_de(tenant)
+        trabajo = cola().buscar(identificador, tenant=tenant)
+        if (trabajo is None or not trabajo.entrega or trabajo.xlsx is None
+                or not trabajo.xlsx.exists()):
             abort(404)
 
         @after_this_request
         def limpiar(respuesta):
-            # Al descargar no queda nada: ni el Excel ni su directorio.
-            with app.extensions["contapdf_candado"]:
-                registro().pop(identificador, None)
-            _borrar(trabajo.directorio)
+            # De un solo uso: en cuanto el Excel sale hacia el navegador, el
+            # documento del cliente deja de existir en el servidor.
+            cola().olvidar(identificador, tenant=tenant)
             return respuesta
 
         return send_file(trabajo.xlsx, as_attachment=True,
@@ -213,39 +180,80 @@ def crear_app(*, trabajos: Path | None = None) -> Flask:
 
     @app.errorhandler(413)
     def demasiado_grande(_):
-        return _error("El archivo es demasiado grande.",
+        return _error(_POR_DEFECTO, "El archivo es demasiado grande.",
                       f"El limite son {_MAXIMO // (1024 * 1024)} MB."), 413
 
     return app
 
 
-def _correr(trabajo: _Trabajo, pdf: Path) -> None:
-    """El trabajo, en su hilo. No lanza: todo error acaba en el estado."""
+def _arrancar_worker(app: Flask) -> None:
+    """Un solo worker vivo; si ya hay uno, esta atendiendo la cola."""
+    if not app.extensions["contapdf_worker"].acquire(blocking=False):
+        return
+    threading.Thread(target=_atender, args=(app,),
+                     name="contapdf-worker", daemon=True).start()
+
+
+def _atender(app: Flask) -> None:
+    """El worker: un trabajo a la vez hasta vaciar la cola.
+
+    Suelta el candado al vaciarla, para no dejar un hilo vivo sin nada que
+    hacer. Antes de irse comprueba una vez mas: entre el `tomar_siguiente()`
+    que devolvio None y el `release` cabe una subida, y ese trabajo se
+    quedaria dormido.
+    """
+    cola: Cola = app.extensions["contapdf_cola"]
+    candado = app.extensions["contapdf_worker"]
+    while True:
+        try:
+            while True:
+                trabajo = cola.tomar_siguiente()
+                if trabajo is None:
+                    break
+                _procesar_uno(app, cola, trabajo)
+        finally:
+            candado.release()
+        if not cola.hay_pendientes():
+            return
+        if not candado.acquire(blocking=False):
+            return          # otro worker ya arranco: el trabajo es suyo
+
+
+def _procesar_uno(app: Flask, cola: Cola, trabajo) -> None:
+    pdf = trabajo.directorio / "entrada.pdf"
+    nombre = Path(trabajo.archivo).stem or "documento"
+    xlsx = trabajo.directorio / f"{nombre}.xlsx"
+    plantillas = app.config["CONTAPDF_TRABAJOS"] / "plantillas"
     try:
-        trabajo.resultado = procesar_documento(trabajo.tipo, pdf, trabajo.xlsx)
-        trabajo.estado = "listo"
+        resultado = procesar_documento(trabajo.tipo, pdf, xlsx,
+                                       tenant_id=trabajo.tenant,
+                                       plantillas=plantillas)
+        cola.marcar_terminado(
+            trabajo.identificador,
+            estado=CON_DISCREPANCIAS if resultado.cobertura.fallan else LISTO,
+            resumen=vista.como_diccionario(resultado),
+            xlsx=xlsx, nombre_xlsx=f"{nombre}.xlsx")
     except DocumentoNoReconocido as exc:
-        trabajo.error = {"mensaje": str(exc),
-                         "sugerencia": _sugerencia(trabajo.tipo, exc),
-                         "detalle": exc.detalle, "clave": exc.clave}
-        trabajo.estado = "error"
+        cola.marcar_terminado(
+            trabajo.identificador, estado=NO_RECONOCIDO,
+            resumen={"sugerencia": _sugerencia(trabajo.tipo, exc),
+                     "detalle": list(exc.detalle), "clave": exc.clave},
+            mensaje=str(exc))
     except Exception:                       # nunca una traza en pantalla
         _LOG.exception("fallo procesando %s como %s",
                        trabajo.archivo, trabajo.tipo)
-        trabajo.error = {
-            "mensaje": "No se pudo procesar el documento.",
-            "sugerencia": ("Quedo registrado en el log del servidor con el "
-                           "detalle tecnico.")}
-        trabajo.estado = "error"
+        cola.marcar_terminado(
+            trabajo.identificador, estado=ERROR, resumen={},
+            mensaje="No se pudo procesar el documento. Quedo registrado en "
+                    "el log del servidor con el detalle tecnico.")
     finally:
-        # El PDF del cliente no se queda ni un minuto de mas: en cuanto el
-        # nucleo termino de leerlo, fuera. El Excel sigue hasta la descarga
-        # o hasta que lo barra el temporizador.
+        # El PDF del cliente no se queda ni un minuto de mas.
         _borrar(pdf)
 
 
-def _error(mensaje: str, sugerencia: str = "", *, detalle=(), clave: str = ""):
-    return render_template("error.html", mensaje=mensaje,
+def _error(tenant: str, mensaje: str, sugerencia: str = "", *, detalle=(),
+           clave: str = ""):
+    return render_template("error.html", mensaje=mensaje, tenant=tenant,
                            sugerencia=sugerencia, detalle=detalle, clave=clave)
 
 
