@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block titulo %}Resultado · contapdf{% endblock %}
+{% block cuerpo %}
+<h1>{{ archivo }}</h1>
+<p class="sub">{{ r.tipo }} · {{ r.paginas }} páginas</p>
+
+<div class="tarjeta">
+  <a class="descarga" href="/descargar/{{ ficha }}">Descargar Excel</a>
+  <p class="sub" style="margin:.8rem 0 0">
+    El enlace sirve una sola vez: al descargar, el archivo se borra del servidor.
+  </p>
+</div>
+
+{% set fallan = r.cobertura.fallan %}
+{% if fallan %}
+{% set casos = r.cobertura.reglas | selectattr('discrepancias') | map(attribute='discrepancias') | map('length') | sum %}
+<div class="aviso malo">
+  <strong>{{ casos }} casos que el documento no permite verificar.</strong>
+  El Excel se generó y se descarga igual, con esos renglones marcados para que
+  los revises. <em>No es un fallo del procesamiento</em>: es su resultado —
+  la aritmética del documento no cuadra en {{ casos }} casos y hay que mirarlos.
+  Lo único que no ocurre es que el formato se aprenda como plantilla.
+</div>
+{% endif %}
+
+<h2>Cobertura</h2>
+<p class="sub">{{ r.cobertura.resumen() }}</p>
+<table>
+  <thead><tr>
+    <th>Regla</th><th>Estado</th><th class="num">Evaluados</th>
+    <th class="num">Exactos</th>
+    <th class="num">Impresos</th><th class="num">Recalculados</th>
+    <th class="num">Tolerancia</th><th class="num">Difieren</th>
+  </tr></thead>
+  <tbody>
+  {% for regla in r.cobertura.reglas %}
+    <tr>
+      <td>{{ regla.regla }}</td>
+      <td class="{{ regla.estado }}">{{ regla.estado.replace('_', ' ') }}</td>
+      {# El par junto, nunca el numerador solo: es la regla de PLAN 1.3 #}
+      <td class="num">{% if regla.aplicables is not none %}{{ regla.evaluados }} de {{ regla.aplicables }}{% else %}sin determinar{% endif %}</td>
+      <td class="num">{{ regla.exactas }}</td>
+      <td class="num">{{ regla.exactas_impresas }}</td>
+      <td class="num">{{ regla.exactas_recalculadas or '' }}</td>
+      <td class="num">{{ regla.con_tolerancia | length or '' }}</td>
+      <td class="num">{{ regla.discrepancias | length or '' }}</td>
+    </tr>
+    {% if regla.motivo %}
+    <tr><td colspan="8" class="motivo">{{ regla.motivo }}</td></tr>
+    {% endif %}
+  {% endfor %}
+  </tbody>
+</table>
+<p class="sub" style="margin-top:.7rem">
+  «Evaluados de» son los casos comprobados sobre los que el documento contiene.
+  Los <strong>impresos</strong> se comprobaron contra un dato del PDF; los
+  <strong>recalculados</strong>, contra un saldo que el sistema derivó — esos
+  no verifican al documento, sólo la coherencia interna.
+</p>
+
+<h2>Lo que trae el documento</h2>
+<dl>
+  {% for etiqueta, valor in r.resumen %}
+  <dt>{{ etiqueta or '' }}</dt><dd>{{ valor }}</dd>
+  {% endfor %}
+</dl>
+
+<h2>Cómo se leyó</h2>
+<dl>
+  <dt>Extracción</dt><dd><code>{{ r.estrategia }}</code></dd>
+  {% if r.motivo_estrategia %}
+  <dt>Por qué</dt><dd>{{ r.motivo_estrategia }}</dd>
+  {% endif %}
+  <dt>Plantilla</dt>
+  <dd>
+    {% if r.plantilla %}
+      <code>{{ r.plantilla.huella }}</code>
+      {{ 'reutilizada' if r.reutilizada else 'aprendida' }}
+      {%- if r.plantilla.pendiente_de_confirmacion %}, pendiente de confirmación{% endif %}
+    {% elif fallan %}
+      no se aprendió: no se aprende un formato cuya aritmética no cuadró
+    {% else %}
+      no se aprendió: no se indicó despacho ni directorio de plantillas
+    {% endif %}
+  </dd>
+</dl>
+
+{% if r.plantilla %}
+  {% for pendiente in r.plantilla.pendientes() %}
+  <div class="aviso">
+    <strong>Falta confirmar: {{ pendiente.campo }}.</strong>
+    {{ pendiente.consecuencia }}.
+    {% if pendiente.se_propone is none %}
+    El sistema no propone nada porque {{ pendiente.se_apoya_en }}.
+    {% endif %}
+  </div>
+  {% endfor %}
+{% endif %}
+
+{% if r.cobertura.discrepancias %}
+<h2>Renglones a revisar</h2>
+<table>
+  <thead><tr><th>Fila</th><th>Regla</th>
+    <th class="num">Debía decir</th><th class="num">Dice</th></tr></thead>
+  <tbody>
+  {% for d in r.cobertura.discrepancias[:50] %}
+    <tr><td>{{ d.fila }}</td><td>{{ d.regla }}</td>
+        <td class="num">{{ '{:,.2f}'.format(d.esperado) }}</td>
+        <td class="num">{{ '{:,.2f}'.format(d.obtenido) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if r.cobertura.discrepancias | length > 50 %}
+<p class="sub">Se muestran 50 de {{ r.cobertura.discrepancias | length }};
+   están todas en la hoja «Validacion» del Excel.</p>
+{% endif %}
+{% endif %}
+
+<p style="margin-top:2rem"><a class="volver" href="/">← Procesar otro documento</a></p>
+{% endblock %}

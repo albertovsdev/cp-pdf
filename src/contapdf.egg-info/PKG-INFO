@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: contapdf
+Version: 0.1.0
+Summary: Conversion de PDFs contables a Excel
+Requires-Python: >=3.11
+Requires-Dist: pdfplumber
+Requires-Dist: openpyxl
+Requires-Dist: flask

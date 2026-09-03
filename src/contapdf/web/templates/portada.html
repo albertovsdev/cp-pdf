@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block cuerpo %}
+<h1>Convertir un PDF contable a Excel</h1>
+<p class="sub">Un documento a la vez. El PDF no se guarda: se procesa y se borra.</p>
+
+<form class="tarjeta" method="post" action="/procesar"
+      enctype="multipart/form-data" id="formulario">
+  <div class="campo">
+    <label for="tipo">Tipo de documento</label>
+    <select name="tipo" id="tipo" required>
+      <option value="" selected disabled>Elige uno…</option>
+      {% for nombre, ayuda in tipos %}
+      <option value="{{ nombre }}">{{ ayuda }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="campo">
+    <label for="pdf">Archivo PDF</label>
+    <input type="file" name="pdf" id="pdf" accept="application/pdf,.pdf" required>
+  </div>
+  <button type="submit" id="enviar">Procesar</button>
+</form>
+
+<div class="aviso">
+  <strong>Un documento grande tarda.</strong> Un auxiliar de 400 páginas ronda
+  el medio minuto y uno de 900 pasa de los tres. La página se queda esperando
+  hasta que termina; no la cierres.
+</div>
+
+<script>
+  // Lo unico que hace falta de JavaScript: avisar de que esta trabajando.
+  // Sin esto, medio minuto de pagina en blanco parece que se colgo.
+  document.getElementById('formulario').addEventListener('submit', function () {
+    var b = document.getElementById('enviar');
+    b.disabled = true;
+    b.textContent = 'Procesando… puede tardar varios minutos';
+  });
+</script>
+{% endblock %}

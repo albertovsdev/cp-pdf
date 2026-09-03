@@ -206,6 +206,22 @@ def ejecutar_balanza(pdf: Path, destino: Path | None, *, paginas_muestra: int,
     return codigo_de_salida(resultado.cobertura)
 
 
+def _resumen_balanza(balanza) -> "list[tuple[str, str]]":
+    niveles = sorted({f.nivel for f in balanza.filas})
+    reparto = "  ".join(
+        f"nivel {n}: {sum(1 for f in balanza.filas if f.nivel == n)}"
+        for n in niveles)
+    renglones = [("filas", f"{len(balanza.filas)}")]
+    if balanza.totales is not None:
+        renglones.append(("totales", f"debe {_monto(balanza.totales.debe)}"
+                                     f"   haber {_monto(balanza.totales.haber)}"))
+    else:
+        renglones.append(("totales", "sin fila de totales en el PDF"))
+    if reparto:
+        renglones.append(("jerarquia", reparto))
+    return renglones
+
+
 def _resumen_auxiliar(auxiliar) -> "list[tuple[str, str]]":
     subtotales = sum(1 for f in auxiliar.filas if f.es_subtotal)
     sin_saldo = sum(1 for f in auxiliar.filas if f.saldo is None)
@@ -260,6 +276,9 @@ class _Comando:
 # Tupla y no diccionario: un test de arquitectura prohibe estado mutable a
 # nivel de modulo, y con razon -- un dict aqui lo podria mutar cualquiera.
 _TIPOS = (
+    _Comando("balanza", "balanza de comprobacion", procesar_balanza,
+             exportar_balanza, "balanza", _resumen_balanza,
+             lambda b: not b.filas),
     _Comando("auxiliar", "auxiliar de cuentas", procesar_auxiliar,
              exportar_auxiliar, "auxiliar", _resumen_auxiliar,
              lambda a: not a.filas),
@@ -278,41 +297,122 @@ def _tipo_de(comando: str) -> "_Comando | None":
     return next((t for t in _TIPOS if t.nombre == comando), None)
 
 
+#: Los tipos de documento que el sistema sabe procesar. Es la lista que la
+#: capa web ofrece en su selector, para no mantener dos copias.
+TIPOS_DE_DOCUMENTO = tuple((t.nombre, t.ayuda) for t in _TIPOS)
+
+
+class DocumentoNoReconocido(ValueError):
+    """El PDF no es del tipo que se pidió, o no se pudo leer como tal.
+
+    Traduce las excepciones del nucleo a algo que se le pueda ense~nar a un
+    humano. `detalle` trae lo que el propio documento dice, cuando lo dice.
+    """
+
+    def __init__(self, mensaje: str, *, detalle: Sequence[str] = (),
+                 clave: str = "") -> None:
+        super().__init__(mensaje)
+        self.detalle = tuple(detalle)
+        self.clave = clave
+
+
+@dataclass(frozen=True)
+class ResultadoDocumento:
+    """Todo lo que hay que saber de un documento procesado.
+
+    Es la superficie que comparten el CLI y la capa web: los dos llaman a
+    `procesar_documento()` y despues cada uno lo presenta a su manera. Sin
+    esto, la web tendria que repetir la orquestacion y las dos versiones se
+    separarian en la primera correccion.
+    """
+
+    tipo: str
+    fuente: str
+    paginas: int
+    estrategia: str
+    motivo_estrategia: str
+    cobertura: Cobertura
+    plantilla: Plantilla | None
+    reutilizada: bool
+    resumen: tuple[tuple[str, str], ...]
+    datos: object
+    destino: Path | None = None
+
+    @property
+    def cuadra(self) -> bool:
+        return not self.cobertura.fallan
+
+
+def procesar_documento(tipo: str, pdf: Path, destino: Path | None = None, *,
+                       paginas_muestra: int = 3,
+                       tenant_id: str | None = None,
+                       plantillas: Path | None = None) -> ResultadoDocumento:
+    """Procesa un PDF y devuelve los DATOS, sin imprimir nada.
+
+    Lanza `DocumentoNoReconocido` cuando el documento no es del tipo que se
+    pidio: quien llama decide como decirlo.
+    """
+    comando = _tipo_de(tipo)
+    if comando is None:
+        raise DocumentoNoReconocido(
+            f"tipo de documento desconocido: {tipo!r}; los que se pueden "
+            f"procesar son {', '.join(n for n, _ in TIPOS_DE_DOCUMENTO)}")
+    if not Path(pdf).exists():
+        raise DocumentoNoReconocido(f"no existe: {pdf}")
+
+    almacen = AlmacenPlantillas(plantillas) if plantillas is not None else None
+    try:
+        resultado = comando.procesar(pdf, tenant_id=tenant_id, almacen=almacen,
+                                     paginas_muestra=paginas_muestra)
+    except ReporteNoEsperado as exc:
+        raise DocumentoNoReconocido(exc.tipo.etiqueta,
+                                    detalle=exc.tipo.evidencia,
+                                    clave=exc.tipo.clave) from exc
+    except LayoutDesconocido as exc:
+        raise DocumentoNoReconocido(
+            f"no se pudo leer como {tipo}: {exc}") from exc
+
+    datos = getattr(resultado, comando.campo)
+    if comando.vacio(datos):
+        raise DocumentoNoReconocido(
+            f"no se encontro ninguna tabla de {tipo} en el documento")
+
+    if destino is not None:
+        comando.exportar(datos, resultado.cobertura, destino)
+
+    return ResultadoDocumento(
+        tipo=tipo, fuente=str(pdf), paginas=_paginas(pdf),
+        estrategia=resultado.estrategia,
+        motivo_estrategia=resultado.motivo_estrategia,
+        cobertura=resultado.cobertura, plantilla=resultado.plantilla,
+        reutilizada=resultado.reutilizada,
+        resumen=tuple(comando.resumir(datos)), datos=datos, destino=destino)
+
+
 def ejecutar(comando: str, pdf: Path, destino: Path | None, *,
              paginas_muestra: int, salida: TextIO,
              tenant_id: str | None = None,
              plantillas: Path | None = None) -> int:
-    """Los cuatro comandos que no son la balanza, con la misma forma."""
-    if not pdf.exists():
-        salida.write(f"no existe: {pdf}\n")
-        return 2
+    """Los cuatro comandos que no son la balanza, con la misma forma.
 
-    tipo = _tipo_de(comando)
-    almacen = AlmacenPlantillas(plantillas) if plantillas is not None else None
+    Procesa con `procesar_documento` -- la misma puerta que usa la capa
+    web -- y aqui solo se ocupa de contarlo por pantalla.
+    """
     try:
-        resultado = tipo.procesar(pdf, tenant_id=tenant_id, almacen=almacen,
-                                  paginas_muestra=paginas_muestra)
-    except ReporteNoEsperado as exc:
-        # No es 'no se pudo leer': es otro tipo de reporte, y la capa web
-        # tiene que poder decir cual en vez de mostrar un error generico.
-        salida.write(f"{pdf}: {exc.tipo.clave}\n  {exc.tipo.etiqueta}\n")
-        for linea in exc.tipo.evidencia[:4]:
+        resultado = procesar_documento(
+            comando, pdf, destino, paginas_muestra=paginas_muestra,
+            tenant_id=tenant_id, plantillas=plantillas)
+    except DocumentoNoReconocido as exc:
+        # La clave va primero: es lo que un script puede leer sin parsear
+        # la frase, y lo que la capa web usa para decidir como mostrarlo.
+        salida.write(f"{pdf}: {exc.clave or 'no_reconocido'}\n  {exc}\n")
+        for linea in exc.detalle[:4]:
             salida.write(f"    segun el documento: {linea}\n")
         return 2
-    except LayoutDesconocido as exc:
-        salida.write(f"{pdf}: {exc}\n")
-        return 2
 
-    datos = getattr(resultado, tipo.campo)
-    if tipo.vacio(datos):
-        salida.write(f"{pdf}: no se encontro ninguna tabla de {comando}\n")
-        return 2
-
-    if destino is not None:
-        tipo.exportar(datos, resultado.cobertura, destino)
-    reportar_documento(str(pdf), _paginas(pdf), resultado.estrategia,
-                       resultado.motivo_estrategia, tipo.resumir(datos),
-                       resultado.cobertura, destino, salida,
+    reportar_documento(resultado.fuente, resultado.paginas,
+                       resultado.estrategia, resultado.motivo_estrategia,
+                       resultado.resumen, resultado.cobertura, destino, salida,
                        plantilla=resultado.plantilla,
                        reutilizada=resultado.reutilizada)
     return codigo_de_salida(resultado.cobertura)
@@ -345,16 +445,7 @@ def main(argv: Sequence[str] | None = None, *, salida: TextIO | None = None) -> 
     ap = argparse.ArgumentParser(prog="contapdf", description=__doc__.split("\n")[0])
     comandos = ap.add_subparsers(dest="comando", required=True)
 
-    balanza = comandos.add_parser("balanza", help="balanza de comprobacion")
-    balanza.add_argument("pdf", type=Path)
-    balanza.add_argument("-o", "--out", type=Path, default=None,
-                         help="ruta del .xlsx; sin esto solo reporta")
-    balanza.add_argument("--paginas-muestra", type=int, default=3,
-                         help="paginas que se guardan para deducir el layout")
-    balanza.add_argument("--tenant", default=None, help="ID del despacho")
-    balanza.add_argument("--plantillas", type=Path, default=None,
-                         help="directorio donde viven las plantillas")
-
+    # Los cinco se registran desde _TIPOS: una sola lista, sin copias.
     for tipo in _TIPOS:
         sub = comandos.add_parser(tipo.nombre, help=tipo.ayuda)
         sub.add_argument("pdf", type=Path)
@@ -377,6 +468,13 @@ def main(argv: Sequence[str] | None = None, *, salida: TextIO | None = None) -> 
     if args.comando == "confirmar":
         return ejecutar_confirmar(tenant_id=args.tenant, plantillas=args.plantillas,
                                   huella=args.huella, por=args.por, salida=salida)
+    if args.comando == "balanza":
+        # La balanza conserva su reporte propio: trae jerarquia, totales y
+        # procedencia de la naturaleza, que los otros cuatro no tienen.
+        return ejecutar_balanza(args.pdf, args.out,
+                                paginas_muestra=args.paginas_muestra,
+                                salida=salida, tenant_id=args.tenant,
+                                plantillas=args.plantillas)
     if _tipo_de(args.comando) is not None:
         return ejecutar(args.comando, args.pdf, args.out,
                         paginas_muestra=args.paginas_muestra, salida=salida,

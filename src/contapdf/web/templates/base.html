@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}contapdf{% endblock %}</title>
+<style>
+  :root { --tinta:#1a1a1a; --suave:#666; --linea:#d8d8d8; --fondo:#fafafa;
+          --ok:#0a6b3d; --falla:#a11; --neutro:#8a6d00; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:2rem 1rem; background:var(--fondo); color:var(--tinta);
+         font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:52rem; margin:0 auto; }
+  h1 { font-size:1.45rem; margin:0 0 .3rem; }
+  h2 { font-size:1.05rem; margin:1.8rem 0 .6rem; }
+  .sub { color:var(--suave); margin:0 0 1.8rem; }
+  .tarjeta { background:#fff; border:1px solid var(--linea); border-radius:8px;
+             padding:1.2rem 1.3rem; margin-bottom:1rem; }
+  label { display:block; font-weight:600; margin:0 0 .35rem; }
+  select, input[type=file] { width:100%; padding:.55rem; font:inherit;
+             border:1px solid var(--linea); border-radius:6px; background:#fff; }
+  .campo { margin-bottom:1.1rem; }
+  button { font:inherit; font-weight:600; padding:.6rem 1.4rem; cursor:pointer;
+           background:var(--tinta); color:#fff; border:0; border-radius:6px; }
+  button:disabled { background:var(--suave); cursor:progress; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--linea); }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--suave); }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .cuadra { color:var(--ok); font-weight:600; }
+  .falla  { color:var(--falla); font-weight:600; }
+  .no_verificable { color:var(--neutro); font-weight:600; }
+  .motivo { color:var(--suave); font-size:13px; padding:.1rem .5rem .6rem;
+            border-bottom:1px solid var(--linea); }
+  .descarga { display:inline-block; background:var(--ok); color:#fff;
+              text-decoration:none; font-weight:600; padding:.6rem 1.3rem;
+              border-radius:6px; }
+  .aviso { border-left:4px solid var(--neutro); background:#fffbe9;
+           padding:.8rem 1rem; margin:1rem 0; border-radius:0 6px 6px 0; }
+  .aviso.malo { border-color:var(--falla); background:#fff0f0; }
+  dl { display:grid; grid-template-columns:auto 1fr; gap:.3rem 1rem; margin:0; }
+  dt { color:var(--suave); } dd { margin:0; }
+  code { background:#f0f0f0; padding:.1rem .3rem; border-radius:3px; font-size:13px; }
+  a.volver { color:var(--suave); }
+</style>
+</head>
+<body><main>{% block cuerpo %}{% endblock %}</main></body>
+</html>

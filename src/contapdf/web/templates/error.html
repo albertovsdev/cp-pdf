@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}No se pudo procesar · contapdf{% endblock %}
+{% block cuerpo %}
+<h1>No se pudo procesar</h1>
+<div class="tarjeta">
+  <p><strong>{{ mensaje }}</strong></p>
+  {% if sugerencia %}<p class="sub">{{ sugerencia }}</p>{% endif %}
+  {% if detalle %}
+  <p class="sub" style="margin-bottom:.3rem">Según el propio documento:</p>
+  <ul class="sub" style="margin:0">
+    {% for linea in detalle %}<li><code>{{ linea }}</code></li>{% endfor %}
+  </ul>
+  {% endif %}
+  {% if clave %}<p class="sub"><code>{{ clave }}</code></p>{% endif %}
+</div>
+<p><a class="volver" href="/">← Volver</a></p>
+{% endblock %}
