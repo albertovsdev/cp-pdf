@@ -2,3 +2,5 @@ fixtures/real/
 .venv/
 __pycache__/
 *.pyc
+# Excels generados al correr los ejemplos de USO.md: son datos de clientes.
+salida/
