@@ -1331,6 +1331,105 @@ Tres celdas de la tabla de cobertura cambiaron respecto a la 7g, las tres de
 (3 885 → 3 888, pasa a cuadra) y `cfdi_cruzado` (1 942 → 1 821 evaluados,
 1 780 → 1 768 exactas). Ninguna otra se movió.
 
+### Resultados de la fase 8a (interfaz minima)
+
+#### La medicion que cambio el diseno
+
+`auxiliar-gume.pdf` tarda **3m57s** (medido en aislamiento, i5-1335U con
+SSD). Los 1 576 s que reporte en la primera pasada eran contaminacion por
+correr la suite en paralelo — un factor de ~6.6, no un comportamiento
+cuadratico. La leccion se repite: **una medicion de tiempo con otra cosa
+corriendo no es una medicion**.
+
+| | Documentos | Tiempo |
+|---|---|---|
+| Mediana de los 17 que procesan | 17 | ~3 s |
+| Por encima de 5 s | 7 de 17 | — |
+| Peor caso, `auxiliar-gume` | 886 pags | **3m57s** |
+
+Con ese numero **la pagina no puede ser sincrona**, y ese fue el unico
+cambio de alcance de la fase: un hilo por trabajo, un id devuelto al
+instante y una pagina que se refresca sola. Sigue fuera todo lo demas —
+cola persistente, Redis, Celery, mas de un trabajo a la vez, multi-tenant.
+
+**El xlsx no es problema**: maximo **3.5 MB** (`auxiliar-gume`), mediana
+28 KB. Ninguno pasa de 10 MB, asi que servirlo por HTTP no necesita nada
+especial.
+
+#### Lo que la pagina de estado NO dice
+
+Muestra el tiempo transcurrido y nada mas. No hay porcentaje ni barra
+porque no hay forma de saber cuanto falta, y fabricar esa cifra seria
+inventar un dato — el mismo error que el `0 discrepancias` sin cobertura.
+
+Tampoco dice «leyendo / parseando / validando / escribiendo»:
+`procesar_documento()` es una sola llamada opaca y la capa web no puede
+observar en que etapa va. Afirmar una etapa que no se mide es inventarla.
+Para tenerlas de verdad haria falta que el nucleo aceptara un callback de
+progreso, y el nucleo no se toco en esta fase.
+
+#### H1. Los 563 subtotales «que no corresponden a ninguna seccion»
+
+El mensaje describe el sintoma y sugiere una causa falsa. Medido:
+
+| | |
+|---|---|
+| subtotales | 735, de **732 cuentas distintas** |
+| movimientos | 57 024, de solo **172 cuentas distintas** |
+| subtotales que emparejan | 172 |
+| subtotales huerfanos | **563** |
+
+**No faltan secciones: sobran subtotales de cuentas acumulativas.** Los 563
+huerfanos son cuentas de nivel superior — `1110-000-000`, `1120-000-000`,
+`1120-001-000` — mientras que las que traen movimientos son de detalle:
+`1120-001-003`, `1150-001-003`. Una cuenta acumulativa no tiene movimientos
+propios; su total es la suma de sus hijas.
+
+Es la misma trampa que la balanza, y el docstring de `_subtotales` ya la
+nombra: «sumar los subtotales junto con los movimientos cuenta dos veces».
+Lo que falta es que la regla distinga una cuenta acumulativa de una de
+detalle en vez de saltarsela con un `continue`. **No se arreglo en esta
+fase.** Dato adicional: 3 cuentas traen mas de un subtotal.
+
+#### H2. Los siete fixtures sin parser
+
+Ninguno es regresion — nunca tuvieron parser — y **los siete dan un mensaje
+legible, no una traza**, que es lo que la interfaz necesita:
+
+| Fixture | Tipo | Pags | Que responde |
+|---|---|---|---|
+| `balanza-fd` | balanza | 12 | el layout no parece una balanza; faltan columnas |
+| `balanza-manufacturas` | balanza | 5 | idem |
+| `balanza-proactivity` | balanza | 12 | idem |
+| `auxiliar-manufacturas` | auxiliar | 161 | ninguno de los 60 mapeos propuestos cuadra |
+| `polizas-manufacturas` | polizas | 494 | no se encontro ninguna poliza |
+| `mayor-manufacturas` | mayor | 15 | no se encontro ninguna cuenta |
+| `mayor-fd` | mayor | 6 | no se encontro ninguna cuenta |
+
+De los 27 fixtures: 17 procesan, 7 no tienen parser y 3 son estados de
+cuenta sin tabla de movimientos (`monex`, `multiva`, `scotiabank`), que
+salen con su `ReporteNoEsperado` identificado desde la fase 7d.
+
+#### El hueco que destapo la capa web
+
+**No existe forma de deducir el TIPO de documento desde el PDF.** El
+fingerprint identifica el *formato* (el vocabulario del encabezado), no si
+el documento es una balanza o un auxiliar. El selector se queda sin
+preseleccion y lo elige el humano. Es el mismo tipo de hallazgo que la 7e
+—donde conectar el CLI destapo los dos exportadores que faltaban—: conectar
+capas revela huecos, y taparlos sobre la marcha con un criterio no medido
+es la forma de error que mas ha costado en este proyecto.
+
+#### Borrado de los documentos del cliente
+
+Tres redes, no una: el PDF se borra en cuanto el nucleo termina de leerlo,
+el Excel al descargarse, y **todo lo que lleve mas de 30 minutos se barre**
+al servir cualquier peticion, lo descargue alguien o no. Sin scheduler ni
+proceso aparte. El barrido tambien limpia directorios sueltos que hayan
+sobrevivido a un reinicio del proceso. Son documentos contables de clientes
+de un despacho, y en 8b esto corre en un servidor que tambien sirve
+produccion y que nadie reinicia en semanas.
+
 ### Dos documentos, sin solapamiento
 
 | Archivo | Contiene | Lo mantiene |

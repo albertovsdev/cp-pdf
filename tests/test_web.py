@@ -259,3 +259,26 @@ def test_el_pdf_subido_y_el_xlsx_se_borran(cliente, tmp_path):
         assert c.get(enlace).status_code == 404
     assert list(tmp_path.rglob("*.pdf")) == []
     assert list(tmp_path.rglob("*.xlsx")) == []
+
+
+def test_la_pagina_muestra_el_resumen_de_cobertura_entero(cliente):
+    """Incluido el aviso de circularidad cuando el documento lo tenga.
+
+    Se compara la cadena completa que produce `Cobertura.resumen()`: si la
+    plantilla la recortara, el «OJO: N comprobaciones cayeron sobre saldos
+    recalculados» se perderia justo en los documentos donde importa.
+    """
+    from contapdf.cli import procesar_documento
+
+    pagina = _subir(cliente, "balanza", "balanza").get_data(as_text=True)
+    resultado = procesar_documento("balanza", requires_real_pdf("balanza"))
+    assert resultado.cobertura.resumen() in pagina
+
+
+def test_una_discrepancia_sin_importes_no_finge_cifras(cliente):
+    """`cfdi_cruzado` cruza identidades, no montos: sus dos cifras son 0."""
+    respuesta = _subir(cliente, "edocta", "estado-cuenta")
+    assert respuesta.status_code == 200
+    # El documento cuadra, asi que no hay tabla de revision; lo que se
+    # comprueba es que la plantilla no imprime un 0.00 inventado.
+    assert "0.00   obtenido" not in respuesta.get_data(as_text=True)

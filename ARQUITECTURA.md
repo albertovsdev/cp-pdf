@@ -36,7 +36,10 @@ src/contapdf/
 ├── reintento.py       Relee por OCR lo que la aritmética señala.
 ├── export/excel.py    Datos + cobertura → .xlsx
 ├── pipeline.py        Orquestación de punta a punta.
-└── cli.py             Punto de entrada.
+├── cli.py             Punto de entrada, y la superficie que comparte con web/.
+└── web/               Interfaz HTTP. Habla con el núcleo SOLO por cli.py.
+    ├── app.py           app Flask: subir, estado, descargar
+    └── templates/       HTML servido directo, sin build step
 ```
 
 ### Dependencias que el código respeta
@@ -47,6 +50,7 @@ src/contapdf/
 | `parsers/` no importa ningún módulo de `extract/` | Un parser consume `Document` venga de donde venga, incluido OCR |
 | `ir.py` no importa nada del proyecto | Es la frontera; todo lo demás depende de él |
 | `validate/` importa parsers, no al revés | Un parser nunca decide si su salida es válida |
+| `web/` no importa parsers, reglas, exportadores ni pipeline | Habla por `cli.procesar_documento()`. Si pudiera alcanzarlos, repetiría la orquestación y las dos versiones se separarían en la primera corrección. Un test lee los imports y lo impide. |
 
 La única dirección permitida es
 `ir → cuentas → layout → parsers → validate → export`, con `extract/`
@@ -214,6 +218,47 @@ devuelve un `Layout` cuyos `header` son las etiquetas del banco. Devuelve
 documento (`clave`, `etiqueta` legible, `evidencia` del propio texto y las
 `cuentas` que si se pudieron leer). Quien ya atrapaba `LayoutDesconocido`
 no se entera del cambio.
+
+### `cli.py` — la superficie que comparten la terminal y la web
+
+```python
+TIPOS_DE_DOCUMENTO -> tuple[tuple[str, str], ...]   # (nombre, ayuda)
+
+@dataclass(frozen=True)
+class ResultadoDocumento: tipo, fuente, paginas, estrategia,
+                          motivo_estrategia, cobertura, plantilla,
+                          reutilizada, resumen, datos, destino=None
+                          cuadra -> bool
+
+class DocumentoNoReconocido(ValueError):  .detalle, .clave
+
+procesar_documento(tipo, pdf, destino=None, *, paginas_muestra=3,
+                   tenant_id=None, plantillas=None) -> ResultadoDocumento
+```
+
+`procesar_documento()` devuelve DATOS y no imprime nada; el CLI la envuelve
+para escribir su reporte y la capa web para renderizar el suyo. Traduce
+`LayoutDesconocido` y `ReporteNoEsperado` a `DocumentoNoReconocido`, con
+mensaje legible, para que quien llame no tenga que importar las excepciones
+del núcleo.
+
+### `web/`
+
+```python
+crear_app(*, trabajos: Path | None = None) -> Flask
+```
+
+Rutas: `GET /` (formulario), `POST /procesar` (302 a la página de estado),
+`GET /trabajo/<id>` (estado o resultado), `GET /descargar/<id>`.
+
+**El trabajo corre en un hilo.** `auxiliar-gume` tarda 3m57s y ninguna
+página puede esperar eso, así que la subida devuelve un id al instante y la
+página de estado se refresca sola con el tiempo transcurrido. El registro de
+trabajos es un diccionario en `app.extensions`, nunca un global de módulo.
+
+**Nada se queda en disco**: el PDF se borra al terminar el procesamiento, el
+Excel al descargarse, y un barrido en cada petición borra todo lo que pase
+de 30 minutos.
 
 ### `cuentas.py`
 
