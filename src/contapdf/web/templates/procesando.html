@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Procesando · contapdf{% endblock %}
+{% block cabeza %}<meta http-equiv="refresh" content="3">{% endblock %}
+{% block cuerpo %}
+<h1>Procesando {{ t.archivo }}</h1>
+<p class="sub">{{ t.tipo }}</p>
+
+<div class="tarjeta">
+  <p class="reloj">{{ t.reloj }}</p>
+  <p class="sub" style="margin:0">
+    Tiempo transcurrido. La página se actualiza sola cada 3 segundos; no
+    hace falta recargar ni volver a enviar el documento.
+  </p>
+</div>
+
+<div class="aviso">
+  <strong>No se sabe cuánto falta, y no se va a inventar.</strong>
+  El tiempo depende del documento: una balanza de 9 páginas tarda unos
+  segundos y un auxiliar de 886 tarda cerca de cuatro minutos. Mostrar un
+  porcentaje aquí sería fabricar un dato.
+</div>
+
+<p><a class="volver" href="/">← Procesar otro documento</a></p>
+{% endblock %}

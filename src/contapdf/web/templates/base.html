@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block titulo %}contapdf{% endblock %}</title>
+{% block cabeza %}{% endblock %}
 <style>
   :root { --tinta:#1a1a1a; --suave:#666; --linea:#d8d8d8; --fondo:#fafafa;
           --ok:#0a6b3d; --falla:#a11; --neutro:#8a6d00; }
@@ -42,6 +43,8 @@
   dt { color:var(--suave); } dd { margin:0; }
   code { background:#f0f0f0; padding:.1rem .3rem; border-radius:3px; font-size:13px; }
   a.volver { color:var(--suave); }
+  .reloj { font-size:2.4rem; font-weight:600; margin:0 0 .4rem;
+           font-variant-numeric:tabular-nums; }
 </style>
 </head>
 <body><main>{% block cuerpo %}{% endblock %}</main></body>

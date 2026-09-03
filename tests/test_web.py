@@ -1,8 +1,12 @@
 """La capa web: subir un PDF, procesarlo, descargar el Excel.
 
 Fase 8a. Una interfaz minima sobre el nucleo que YA existe: no agrega
-capacidades de extraccion ni de validacion. Un documento a la vez,
-sincrono, un solo usuario, en la maquina de desarrollo.
+capacidades de extraccion ni de validacion. Un documento a la vez, un solo
+usuario, en la maquina de desarrollo.
+
+El procesamiento corre en un hilo aparte (ver `test_web_trabajos.py`);
+estos tests siguen la pagina de estado hasta el final para comprobar el
+resultado.
 
 Lo que esta fase tiene que dejar claro en pantalla es la diferencia entre
 «fallo el procesamiento» y «el documento no permite verificar N casos».
@@ -14,6 +18,8 @@ revisar.
 from __future__ import annotations
 
 import io
+import re
+import time
 
 import pytest
 from conftest import requires_real_pdf
@@ -30,14 +36,33 @@ def cliente():
 
 
 def _subir(cliente, nombre_fixture, tipo, nombre_archivo=None):
+    """Sube y espera a que el trabajo termine.
+
+    Desde que el procesamiento corre en un hilo, la subida devuelve un 302
+    al instante; estos tests quieren la pagina final, asi que siguen la de
+    estado hasta que deja de refrescarse.
+    """
     ruta = requires_real_pdf(nombre_fixture)
     datos = {
         "tipo": tipo,
         "pdf": (io.BytesIO(ruta.read_bytes()),
                 nombre_archivo or f"{nombre_fixture}.pdf"),
     }
-    return cliente.post("/procesar", data=datos,
-                        content_type="multipart/form-data")
+    respuesta = cliente.post("/procesar", data=datos,
+                             content_type="multipart/form-data")
+    if respuesta.status_code != 302:
+        return respuesta
+    return _esperar(cliente, respuesta.headers["Location"])
+
+
+def _esperar(cliente, url, limite=300):
+    fin = time.monotonic() + limite
+    while time.monotonic() < fin:
+        respuesta = cliente.get(url)
+        if 'http-equiv="refresh"' not in respuesta.get_data(as_text=True):
+            return respuesta
+        time.sleep(0.25)
+    raise AssertionError(f"el trabajo no termino en {limite}s")
 
 
 # --- Criterio 1: los cinco tipos, de punta a punta ----------------------
@@ -227,11 +252,7 @@ def test_el_pdf_subido_y_el_xlsx_se_borran(cliente, tmp_path):
     app = crear_app(trabajos=tmp_path)
     app.config.update(TESTING=True)
     with app.test_client() as c:
-        ruta = requires_real_pdf("balanza")
-        datos = {"tipo": "balanza",
-                 "pdf": (io.BytesIO(ruta.read_bytes()), "balanza.pdf")}
-        pagina = c.post("/procesar", data=datos,
-                        content_type="multipart/form-data").get_data(as_text=True)
+        pagina = _subir(c, "balanza", "balanza").get_data(as_text=True)
         enlace = _enlace_de_descarga(pagina)
         assert c.get(enlace).status_code == 200
         # La descarga es de un solo uso: despues no queda nada en disco.
