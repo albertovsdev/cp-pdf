@@ -39,6 +39,8 @@ src/contapdf/
 ├── cli.py             Punto de entrada, y la superficie que comparte con web/.
 └── web/               Interfaz HTTP. Habla con el núcleo SOLO por cli.py.
     ├── app.py           app Flask: subir, estado, descargar
+    ├── cola.py          cola de trabajos en SQLite, por despacho
+    ├── vista.py         ResultadoDocumento → dict serializable
     └── templates/       HTML servido directo, sin build step
 ```
 
@@ -248,17 +250,99 @@ del núcleo.
 crear_app(*, trabajos: Path | None = None) -> Flask
 ```
 
-Rutas: `GET /` (formulario), `POST /procesar` (302 a la página de estado),
-`GET /trabajo/<id>` (estado o resultado), `GET /descargar/<id>`.
+Rutas, todas colgadas del despacho:
 
-**El trabajo corre en un hilo.** `auxiliar-gume` tarda 3m57s y ninguna
-página puede esperar eso, así que la subida devuelve un id al instante y la
-página de estado se refresca sola con el tiempo transcurrido. El registro de
-trabajos es un diccionario en `app.extensions`, nunca un global de módulo.
+| Ruta | Qué hace |
+|---|---|
+| `GET /` | 302 a `/t/general/` |
+| `GET /t/<despacho>/` | formulario y lista de trabajos del despacho |
+| `POST /t/<despacho>/procesar` | encola y devuelve 302 al instante |
+| `GET /t/<despacho>/trabajo/<id>` | en cola / procesando / resultado / interrumpido |
+| `GET /t/<despacho>/descargar/<id>` | el `.xlsx`, **de un solo uso** |
+
+**El trabajo se encola; lo atiende un worker secuencial.**
+`auxiliar-gume` tarda 3m57s y ninguna página puede esperar eso, así que la
+subida devuelve un id al instante y la página de estado se refresca sola
+con el tiempo transcurrido y, si espera, su puesto en la cola.
+
+**Un solo trabajo a la vez** (PLAN §6): el pico medido del pipeline es
+543 MB y la máquina objetivo tiene 8 GB compartidos con Apache y MySQL.
+`Cola.tomar_siguiente()` no entrega nada mientras haya uno en `procesando`,
+así que el límite lo impone la cola y no una política que alguien deba
+recordar. El worker es un hilo con un `threading.Lock` en
+`app.extensions`: si ya hay uno vivo, la subida no arranca otro; cuando
+vacía la cola, suelta el candado y muere.
+
+**El estado vive en disco, nunca solo en memoria.** SERVIDORSIST se apaga a
+las 21:00. Al abrir la base, lo que quedó en `procesando` pasa a
+`interrumpido` y la página lo dice, en vez de dar un 404 que confunde
+«nunca existió» con «se murió a medias».
 
 **Nada se queda en disco**: el PDF se borra al terminar el procesamiento, el
 Excel al descargarse, y un barrido en cada petición borra todo lo que pase
-de 30 minutos.
+de 30 minutos —incluidos los directorios sin trabajo en la base.
+
+#### `web/cola.py`
+
+```python
+EN_COLA PROCESANDO LISTO CON_DISCREPANCIAS NO_RECONOCIDO ERROR INTERRUMPIDO
+TERMINALES, CON_ENTREGA, EDAD_MAXIMA = 30 * 60
+
+class TenantInvalido(ValueError): ...
+validar_tenant(tenant) -> str
+
+@dataclass(frozen=True)
+class Trabajo: identificador, tenant, tipo, archivo, estado, creado,
+               directorio, xlsx, nombre_xlsx, mensaje, resumen
+               transcurrido -> float ; reloj -> str
+               terminado -> bool   ; entrega -> bool
+
+class Cola:
+    Cola(base: Path, *, raiz: Path | None = None)
+    encolar(*, tenant, tipo, archivo) -> Trabajo
+    marcar_procesando(id) -> None
+    marcar_terminado(id, *, estado, resumen, mensaje="", xlsx=None,
+                     nombre_xlsx="") -> None
+    tomar_siguiente() -> Trabajo | None     # None si hay uno en curso
+    buscar(id, *, tenant) -> Trabajo | None
+    listar(tenant, *, limite=50) -> list[Trabajo]
+    posicion(id) -> int                     # 0 si ya no espera
+    barrer(*, edad=EDAD_MAXIMA) -> int
+    olvidar(id, *, tenant) -> bool
+    envejecer(id, *, segundos) -> None      # solo para pruebas
+    cerrar() -> None
+```
+
+SQLite de la stdlib, no ficheros JSON: la actualización de estado tiene que
+ser transaccional —el worker escribe mientras las peticiones leen— y
+consultar por despacho tiene que ser una operación, no recorrer un
+directorio. Sin Redis ni Celery: §0 pide no sumar dependencias que no hagan
+falta.
+
+**El aislamiento se implementa poniendo el `tenant` en el `WHERE`**, no en
+un `if` posterior. `buscar`, `listar` y `olvidar` no tienen forma de
+devolver algo ajeno. El id de despacho se valida contra
+`^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$` porque se convierte en nombre de
+directorio.
+
+**Lo que esto NO es: una barrera de seguridad.** El despacho llega por la
+ruta, no por un login —esta fase no trae autenticación—, así que quien
+escriba el nombre de otro despacho entra en su área. Lo que sí impide es
+que un id de trabajo sirva fuera del suyo.
+
+#### `web/vista.py`
+
+```python
+como_diccionario(resultado: ResultadoDocumento) -> dict
+```
+
+La cola persiste, así que un resultado tiene que sobrevivir al reinicio: se
+guarda como JSON, no como el objeto. Conserva las dos cifras por regla
+(`evaluados` de `aplicables`), las exactas partidas en impresas y
+recalculadas, el motivo de lo no evaluado y el resumen completo de
+cobertura con su aviso de circularidad. Los importes van como **texto ya
+formateado**, no como `float`: el dinero no pasa por un binario de 64 bits
+ni de camino a una plantilla.
 
 ### `cuentas.py`
 
@@ -524,7 +608,18 @@ más allá del tipo del parámetro.
 
 ## 7. Qué NO hace el sistema
 
-- **No hay capa web, cola ni workers.** El punto de entrada es
+- **No hay autenticación.** El despacho llega por la ruta
+  (`/t/<despacho>/…`), no por un login. Separa los trabajos, las plantillas
+  y las descargas de cada uno, y un id de trabajo no sirve fuera del suyo,
+  pero quien conozca el nombre de otro despacho entra en su área.
+- **El código de salida 2 no distingue por qué.** Lo comparten cinco
+  situaciones (`cli.py:185, 193, 197, 411, 434`) —archivo inexistente,
+  layout desconocido, tabla no encontrada, documento no reconocido, huella
+  desconocida— y argparse lo usa además para errores de uso. Un script no
+  puede separar «este PDF no es una balanza» de «me equivoqué de ruta»; la
+  `clave` que se imprime en la primera línea sí lo dice, pero hay que
+  parsearla. En la cola web los tres finales sí son estados distintos.
+- **El CLI sigue siendo el punto de entrada completo**:
   `python -m contapdf.cli`, con seis comandos: `balanza`, `auxiliar`,
   `polizas`, `estado-cuenta`, `mayor` y `confirmar`. Los cinco primeros
   tienen la misma forma (`<comando> <pdf> [-o] [--tenant] [--plantillas]`),
@@ -537,8 +632,9 @@ más allá del tipo del parámetro.
   para texto perdido, no para texto nunca dibujado.
 - **No decide reglas contables.** Cuando la aritmética no alcanza, entrega
   `no_verificable` con el dato y la pregunta.
-- **No hay concurrencia ni límite de trabajos.** Cada `procesar_*` es una
-  llamada síncrona que reabre el PDF.
+- **El núcleo no tiene concurrencia.** Cada `procesar_*` es una llamada
+  síncrona que reabre el PDF. El límite de un trabajo a la vez lo pone la
+  cola de `web/`, no el núcleo, que sigue sin estado.
 
 ### Qué es imposible hoy sin cambiar contratos
 
@@ -551,3 +647,5 @@ más allá del tipo del parámetro.
 | Procesar sin materializar el documento | `AuxiliarParser`, `PolizasParser`, `MayorParser` y `EstadoCuentaParser` hacen `list(document.open_pages())`. Solo `BalanzaParser` transmite página por página |
 | Reglas de validación por tenant | `ReglasBalanza` se deduce del documento o se pasa a mano; la plantilla la guarda pero `evaluar_*` no la lee del almacén |
 | Cancelar un trabajo a media corrida | No hay puntos de cancelación |
+| Reanudar un trabajo interrumpido donde se quedó | `procesar_documento()` es una llamada opaca sin puntos de control; lo interrumpido se vuelve a subir entero |
+| Saber en qué etapa va un trabajo en curso | Misma razón: la capa web solo puede observar el tiempo transcurrido, y afirmar una etapa que no se mide es inventarla |

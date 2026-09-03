@@ -12,18 +12,28 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
-Estado: fases 0 a 8a completas. El nucleo esta cerrado: 5 parsers, los 5
-salen a Excel, los 5 tienen comando de CLI, y strategy.extraer() enruta
-sola entre pdf_text, pdf_chars y OCR. El parser de estado de cuenta cubre
-6 formatos de 6 bancos sin ramas por banco. Cada regla de validacion
-reporta 'aplicables' (el universo del documento) ademas de 'evaluados':
-ningun conteo se imprime sin su denominador, y el signo de una identidad
-de saldo se deriva de los datos, nunca se cablea, y una comprobacion
-sobre un dato que el sistema derivo se cuenta aparte de una sobre dato
-impreso. Hay una capa web minima (Flask) en src/contapdf/web/ que habla
-con el nucleo solo por cli.procesar_documento(). Corre pytest tests/ antes
-de tocar nada.
-Siguiente: fase 8b (cola, multi-tenant, despliegue en SERVIDORSIST).
+Estado: fases 0 a 8b completas. El nucleo esta cerrado y NO cambio en la
+8b: 5 parsers, los 5 salen a Excel, los 5 tienen comando de CLI, y
+strategy.extraer() enruta sola entre pdf_text, pdf_chars y OCR. El parser
+de estado de cuenta cubre 6 formatos de 6 bancos sin ramas por banco. Cada
+regla de validacion reporta 'aplicables' (el universo del documento)
+ademas de 'evaluados': ningun conteo se imprime sin su denominador, el
+signo de una identidad de saldo se deriva de los datos y nunca se cablea, y
+una comprobacion sobre un dato que el sistema derivo se cuenta aparte de
+una sobre dato impreso. La capa web (Flask) en src/contapdf/web/ habla con
+el nucleo solo por cli.procesar_documento(); tiene cola persistente en
+SQLite (web/cola.py), un worker secuencial —un trabajo a la vez, PLAN §6— y
+separacion por despacho en la ruta (/t/<despacho>/...). Corre pytest tests/
+antes de tocar nada.
+
+OJO con dos cosas abiertas de la 8b (PLAN §2, «Resultados de la fase 8b»):
+  - NO hay autenticacion. El aislamiento por despacho es organizativo, no
+    una barrera de seguridad. Esta esperando decision del orquestador.
+  - M3 quedo a medias. En diario-general faltan 659 304.42 en el debe y
+    SOBRAN 106 873.98 en el haber: no se pierden renglones, se leen mal los
+    importes (22 movimientos traen debe y haber a la vez). Cerrarlo exige
+    que el IR del diario guarde la pagina, que hoy no la tiene: es cambio
+    de contrato y esta esperando decision.
 
 Como trabajamos:
   - Tests primero, siempre. Muestrame el rojo antes de implementar.

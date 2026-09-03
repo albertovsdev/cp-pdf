@@ -1399,6 +1399,13 @@ El mensaje describe el sintoma y sugiere una causa falsa. Medido:
 | subtotales que emparejan | 172 |
 | subtotales huerfanos | **563** |
 
+> **CORREGIDO EN LA 8b (M1).** Este párrafo está mal. Lo deduje de tres
+> ejemplos que resultaron ser los tres primeros en orden numérico:
+> clasificados los 563, **378 son cuentas de detalle** y solo 185
+> acumulativas. La conclusión de fondo —que no falta extracción— sí se
+> sostiene, pero por otra razón: los 378 están en ceros. Ver «Resultados de
+> la fase 8b».
+
 **No faltan secciones: sobran subtotales de cuentas acumulativas.** Los 563
 huerfanos son cuentas de nivel superior — `1110-000-000`, `1120-000-000`,
 `1120-001-000` — mientras que las que traen movimientos son de detalle:
@@ -1449,6 +1456,215 @@ proceso aparte. El barrido tambien limpia directorios sueltos que hayan
 sobrevivido a un reinicio del proceso. Son documentos contables de clientes
 de un despacho, y en 8b esto corre en un servidor que tambien sirve
 produccion y que nadie reinicia en semanas.
+
+### Resultados de la fase 8b (cola, worker y despachos)
+
+#### La premisa del objetivo 5 era falsa, y la culpa fue de mi medición
+
+El prompt pedía darle a `no_reconocido` un código de salida propio porque
+«hoy sale con código 0, igual que un éxito». **No es cierto.** Medido:
+
+| Fixture | Tipo pedido | Código |
+|---|---|---|
+| `balanza` | balanza | **0** (cuadra) |
+| `poliza` | polizas | **1** (con discrepancias) |
+| `edocta-multiva` | estado-cuenta | **2** (no reconocido) |
+| `balanza-fd` | balanza | **2** (no reconocido) |
+
+De dónde salió el 0: mi primera pasada usaba
+`echo "$1 $(basename $2) -> codigo $?"`, y la sustitución de comando
+**resetea `$?` antes de que `echo` lo lea**. Todos salían 0 porque el 0 era
+el de `basename`. Es la tercera vez en el proyecto que una medición
+contaminada por su propio instrumento produce una conclusión falsa —
+después de los 1 576 s de la 8a y de la muestra de 3 subtotales de la H1.
+
+Lo que sí es cierto, en versión más débil: **el 2 no es de
+`no_reconocido`, es un «no se pudo» genérico**. Lo comparten cinco
+situaciones (`cli.py:185, 193, 197, 411, 434`) — el archivo no existe,
+`LayoutDesconocido`, no se encontró tabla, `DocumentoNoReconocido`, huella
+desconocida al confirmar — y encima argparse usa el 2 para errores de uso.
+Un script no puede distinguir «este PDF no es una balanza» de «me
+equivoqué de ruta». **No se cambió**: partir el 2 toca `cli.py`, que es
+superficie compartida, y la fase tenía prohibido tocar el núcleo. Queda
+como pregunta: ¿código propio para `no_reconocido`, o basta con la `clave`
+que ya se imprime en la primera línea?
+
+En la cola, en cambio, los tres finales **sí** están separados desde el
+principio: `listo`, `con_discrepancias` y `no_reconocido` son estados
+distintos, más `error` e `interrumpido`.
+
+#### M1. Los 563 subtotales huérfanos: no hay defecto, y mi diagnóstico de la 8a estaba mal
+
+En la 8a afirmé que los 563 huérfanos «son cuentas de nivel superior».
+Lo deduje de **tres ejemplos** que resultaron ser los tres primeros en
+orden numérico. Clasificados **los 563**:
+
+| | Cuentas | Con importe | En ceros |
+|---|---|---|---|
+| Acumulativas (`XXXX-000-000`, `XXXX-YYY-000`) | 185 | 37 | 148 |
+| **De detalle** | **378** | **0** | **378** |
+
+O sea: **378 de los 563 son cuentas de detalle**, justo lo contrario de lo
+que declaré. Pero la segunda medición cierra el caso:
+
+> **Cuentas de detalle con importe en el subtotal y sin ningún movimiento
+> leído: 0. Importe total no leído por esta vía: 0.00.**
+
+Los 378 son cuentas **sin movimientos en el periodo**: el documento imprime
+su renglón de subtotal en ceros y no hay nada que leer. Los 37 acumulativos
+con importe son la suma de sus hijas, que ya se leyeron por separado —
+sumarlos sería contar dos veces, que es exactamente lo que el `continue` de
+`_subtotales` evita.
+
+**No hay extracción perdida.** Lo que hay que arreglar es el mensaje, que
+dice «no corresponden a ninguna sección» y sugiere una causa que no
+existe. Dos errores míos en la misma H1: concluir desde una muestra parcial,
+y **suponer que un mensaje raro significa un defecto** sin medir el importe
+en juego, que es el único número que decide si algo se perdió.
+
+#### M2. La hoja `Polizas` toma el TOTAL declarado, no la suma de lo leído
+
+Medido con `procesar_polizas()` sobre los dos fixtures de libro diario,
+comparando `Poliza.total_debe/total_haber` —lo que sale a la hoja
+`Polizas`— contra la suma de los movimientos que salen a la hoja
+`Movimientos`:
+
+| | `poliza.pdf` | `diario-general` |
+|---|---|---|
+| pólizas | 1 944 | 5 302 |
+| movimientos | 6 783 | 24 821 |
+| **pólizas donde difieren** | **0** | **100** |
+| el declarado supera lo leído | 0 | 92 |
+| lo leído supera al declarado | 0 | 8 |
+
+**El defecto no está en todos los documentos: está en `diario-general`**, el
+que se extrae con `pdf_chars` y tiene 21.9% de palabras traslapadas. En
+`poliza.pdf` las dos hojas dicen lo mismo hasta el último centavo.
+
+El testigo de la 8a se confirma. Póliza `COMPRA OTROS CONCEPTOS MATRIZ`:
+
+| | debe | haber |
+|---|---|---|
+| Hoja `Polizas` (declarado por el documento) | 64.00 | 64.00 |
+| Suma de la hoja `Movimientos` (leído) | **55.17** | 64.00 |
+
+Y el hallazgo que no esperaba: **esas 100 pólizas son las mismas 100 fallas
+de `partida_doble`** que la tabla de la 7f reporta sobre `diario-general`
+(5 202 exactas de 5 302). PLAN §5.1 las lleva como dos pendientes
+separados —«la hoja y la regla se contradicen» y «las 100 fallas nunca se
+diagnosticaron»— y **son el mismo fenómeno contado dos veces**: la regla
+falla exactamente cuando la hoja y los movimientos discrepan.
+
+**No se arregló.** Cambiar de dónde sale esa columna es tocar el
+exportador, y antes hay que decidir qué debe decir: lo declarado, lo leído,
+o las dos cosas en columnas separadas. Lo que no puede seguir es que el
+Excel se vea correcto justo cuando falta un importe.
+
+#### M3. Dónde se pierden los importes: no son renglones, son importes
+
+La pregunta era si los importes perdidos caen en zonas de traslape.
+**No se puede contestar tal cual**: el IR del diario no guarda la página.
+`Movimiento` es `(poliza_id, orden, cuenta, nombre_cuenta, debe, haber)` y
+`Poliza` tampoco la trae, así que no hay forma de cruzar un importe perdido
+con la geometría de su página sin cambiar el contrato. (El auxiliar sí:
+`FilaAuxiliar` lleva `pagina` y `top`.) **Es un hueco de contrato, y por eso
+paro aquí en vez de agregarle un campo al IR.**
+
+Lo que sí se midió, y descarta la hipótesis de la 7c:
+
+| Medición | `diario-general` |
+|---|---|
+| Renglones que abren cuenta → movimientos producidos | 24 821 → **24 821** |
+| Pólizas sin ningún movimiento | **0** |
+| Declarado − leído, **debe** | **+659 304.42** |
+| Declarado − leído, **haber** | **−106 873.98** |
+
+**No se pierden renglones enteros: se leen mal los importes.** Si faltaran
+renglones, en el haber también faltaría; se lee de MÁS. La forma exacta de
+las 100:
+
+| debe | haber | pólizas |
+|---|---|---|
+| corto | ok | **88** |
+| ok | corto | 6 |
+| corto | **sobra** | 4 |
+| sobra | sobra | 1 |
+| sobra | ok | 1 |
+
+Y el dato que señala el mecanismo: **22 movimientos traen `debe` y `haber`
+distintos de cero a la vez**, cosa que en un libro diario no existe —un
+renglón es cargo o abono, nunca los dos—, y **los 22 caen dentro de las 100
+pólizas fallidas**. Un renglón se está tragando el importe del vecino.
+
+Las fallidas además son pólizas **pequeñas**: mediana de 3 movimientos
+contra 4 del total, máximo 14 contra 114. No es que las pólizas largas se
+desborden.
+
+Hipótesis viva, ya no refutada: **el importe se asigna a la columna
+equivocada o lo absorbe el renglón contiguo**, que es justo lo que produce
+el texto encimado del 21.9% de traslapes. La medición que la cerraría
+—cruzar cada importe perdido con la zona de traslape de su página— necesita
+que el diario conserve la página, y eso es cambiar el contrato del IR.
+**No lo hice: es la pregunta que dejo abierta.**
+
+#### Los tres guiones quedan en el repo
+
+Las mediciones de esta fase están en `scripts/mediciones/`
+(`fase8b_m1_subtotales.py`, `fase8b_m2_declarado_vs_leido.py`,
+`fase8b_m3_forma_de_la_perdida.py`). No son tests: necesitan los PDFs
+reales, que están en `.gitignore`. Se guardan porque en esta misma fase
+estuve a punto de escribir en el PLAN las cifras de `diario-general`
+atribuidas a `poliza.pdf`, de memoria; volver a correr el guion lo
+descubrió. Una cifra que no se puede reproducir no es una medición.
+
+#### Por qué SQLite y no ficheros JSON
+
+Tres razones contra el problema real, no por gusto:
+
+1. **Transaccional.** El worker escribe el estado mientras las peticiones
+   lo leen. Con ficheros habría que inventar bloqueo, y una escritura
+   interrumpida a las 21:00 deja un JSON roto — justo el caso que la fase
+   viene a resolver.
+2. **Consultar por despacho es una operación**, no recorrer un directorio.
+   El aislamiento se implementa poniendo el `tenant` en el `WHERE`, no en
+   un `if` posterior que alguien puede olvidar.
+3. **Viene en la stdlib.** §0 pide no sumar dependencias que no hagan
+   falta, y aquí no hace falta ninguna. Sin Redis ni Celery.
+
+El estado `interrumpido` existe porque SERVIDORSIST se apaga a las 21:00.
+Al abrir la base, todo lo que quedó en `procesando` pasa a `interrumpido`
+con su motivo. Antes eso daba un 404, que confunde «nunca existió» con «se
+murió a medias» — y le dice al usuario que su documento desapareció cuando
+lo que pasó es que el servidor se apagó.
+
+#### Qué significa y qué NO significa el aislamiento por despacho
+
+El despacho llega **por la ruta** (`/t/<despacho>/…`), no por un login:
+esta fase no trae autenticación, y el prompt pedía preguntar antes de
+agregarla. Con eso, lo que se garantiza y lo que no:
+
+| | |
+|---|---|
+| **Sí** | Un id de trabajo **no sirve fuera de su despacho**: el `tenant` va en el `WHERE`, así que adivinar un id ajeno da 404. Es lo que evita que una URL compartida por error entregue el documento de otro cliente. |
+| **Sí** | Cada despacho aprende **sus** plantillas, en su propio directorio. |
+| **Sí** | La lista de trabajos y las descargas solo muestran lo propio. |
+| **No** | **No es una barrera de seguridad.** Quien escriba el nombre de otro despacho en la URL entra en su área. Sin login, el nombre del despacho es el único secreto, y no es un secreto. |
+
+**Esta es la pregunta de la fase**: en una red local acotada donde las 15
+personas del despacho son de confianza, ¿basta con la separación
+organizativa, o hace falta login para que el aislamiento signifique algo?
+No lo agregué porque no lo decido yo — pero mientras no lo haya, el
+aislamiento hay que describirlo al cliente como «cada quien ve lo suyo», no
+como «nadie puede ver lo ajeno».
+
+#### La descarga sigue siendo de un solo uso
+
+Se conservó la decisión de la 8a: en cuanto el Excel sale hacia el
+navegador, el trabajo y su directorio se borran. Sobre la cola eso es
+`Cola.olvidar(id, tenant=…)`, con el `tenant` en el `WHERE` por lo mismo
+que en `buscar`. El barrido de 30 minutos sigue siendo la red de atrás, y
+ahora también limpia los directorios sin trabajo en la base — los que deja
+un proceso que murió antes de registrar.
 
 ### Dos documentos, sin solapamiento
 

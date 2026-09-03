@@ -180,10 +180,24 @@ def crear_app(*, trabajos: Path | None = None) -> Flask:
 
     @app.errorhandler(413)
     def demasiado_grande(_):
-        return _error(_POR_DEFECTO, "El archivo es demasiado grande.",
+        # El 413 salta al leer el cuerpo, antes de que haya `view_args`, asi
+        # que el despacho se saca de la ruta para no mandar al usuario al
+        # area de otro con el enlace de volver.
+        return _error(_tenant_de_la_ruta(request.path),
+                      "El archivo es demasiado grande.",
                       f"El limite son {_MAXIMO // (1024 * 1024)} MB."), 413
 
     return app
+
+
+def _tenant_de_la_ruta(ruta: str) -> str:
+    partes = ruta.strip("/").split("/")
+    if len(partes) >= 2 and partes[0] == "t":
+        try:
+            return validar_tenant(partes[1])
+        except TenantInvalido:
+            pass
+    return _POR_DEFECTO
 
 
 def _arrancar_worker(app: Flask) -> None:
