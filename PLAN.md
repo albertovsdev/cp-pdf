@@ -6,15 +6,14 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **núcleo cerrado, fases 0 a 7h completadas.** Los cinco parsers
-existen (balanza, auxiliar, pólizas, estado de cuenta, libro mayor), los
-cinco salen a Excel, los cinco tienen comando de CLI, toda regla de
-validación declara su denominador, el signo de las identidades de saldo se
-deriva por cuenta y las exactas impresas se distinguen de las recalculadas.
-711 tests verdes + 15 lentos. Cuatro de los cinco tipos aprenden plantilla;
-pólizas sale en 1 por 53 CFDI que el documento no trae, declarados como
-falla a propósito.
-Siguiente: **fase 8a** (interfaz mínima), luego la **8b** (capa web completa).
+Estado: **núcleo cerrado y fase 8a completada.** Cinco parsers, cinco
+exportadores, CLI de seis comandos e interfaz web mínima con procesamiento
+en segundo plano. 765 tests verdes (743 + 22 lentos).
+De los 27 fixtures: 17 procesan, 7 no tienen parser, 3 son estados de cuenta
+sin tabla. Cuatro de los cinco tipos aprenden plantilla; pólizas sale en 1
+por 53 CFDI que el documento no trae, declarados como falla a propósito.
+Siguiente: **8b** (cola persistente y tenants), **8c** (despliegue en
+SERVIDORSIST) y **8d** (residuos del ancla).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -411,6 +410,27 @@ movimiento.
 `exactas_recalculadas`, y `Cobertura.resumen()` las imprime aparte. Un
 `cuadra` cuyas exactas sean mayoritariamente recalculadas no significa que
 el documento esté verificado.
+
+**Un estado que no se mide no se muestra.** La página de progreso de la 8a
+reporta `procesando`, `listo` y `error`, y nada más. No dice «validando» ni
+«escribiendo» porque `procesar_documento()` es una llamada opaca y la capa
+web no puede observar en qué etapa va; tampoco muestra porcentaje, porque no
+hay forma de saber cuánto falta. Muestra el reloj, que sí es un dato. Un
+test falla si aparece cualquier `NN%` en el cuerpo visible.
+
+El prompt de esa fase pedía las dos cosas a la vez —mostrar «validando» y no
+inventar datos— y Claude Code lo detectó al implementarlo. **Una instrucción
+del orquestador que contradice un principio del PLAN se resuelve a favor del
+principio.**
+
+**Las dos salidas del sistema no pueden contradecirse.** En `diario-general`,
+`partida_doble` reporta P00096 con debe 55.17 contra haber 64.00, y la hoja
+`Polizas` del Excel muestra la misma póliza con 64.00 y 64.00 y
+`completa = VERDADERO`. Una de las dos lee un dato que la otra no. Si la hoja
+toma el total declarado por el documento en vez de la suma de los movimientos
+leídos, entonces el Excel se ve correcto justo cuando falta un movimiento, que
+es el único caso donde importa. Un test debe impedir que la hoja y la regla
+discrepen sobre la misma póliza.
 
 ---
 
@@ -1498,9 +1518,10 @@ decisión, no descripción, y se queda aquí.
 | 7f | Cobertura con denominador | `aplicables` en `ResultadoRegla`; diagnóstico de las 4 reglas en falla de auxiliar y pólizas | **hecho** (673 tests + 12 lentos) |
 | 7g | Arreglar lo que midió la 7f | Signo derivado por cuenta, `recalculo` conectado, `cfdi_cruzado` por contención | **hecho** (691 tests + 14 lentos) |
 | 7h | Cerrar pólizas y deshacer la circularidad | Separar exactas impresas de recalculadas; renglones perdidos por el parser; los 101 y los 61 de `cfdi_cruzado` | **hecho** (711 tests + 15 lentos) |
-| 8a | Interfaz mínima | Subir PDF → Excel + cobertura en el navegador, sin cola ni multi-tenant | siguiente |
-| 8b | Capa web completa | Cola, worker, aislamiento por tenant, SERVIDORSIST | |
-| 8c | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
+| 8a | Interfaz mínima | Subida, procesamiento en segundo plano, descarga y cobertura en el navegador | **hecho** (765 tests) |
+| 8b | Cola persistente y tenants | Trabajos que sobreviven un reinicio; aislamiento por despacho | siguiente |
+| 8c | Despliegue en SERVIDORSIST | Primera medición en la máquina objetivo; coexistencia con Apache y MySQL; respaldo | |
+| 8d | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
 generalizar un parser que ya funciona para cubrir una segunda variante real
@@ -1644,11 +1665,65 @@ Registrada a propósito, con la fase en que toca resolverla.
   documentos disponibles no lo distinguen. Se eligió por el precedente del
   libro mayor, no por una medición. **Sin fase; volver a medirlo cuando entre
   un fixture nuevo de auxiliar.**
+- **La hoja del Excel y la regla se contradicen sobre la misma póliza.**
+  En `diario-general`, `partida_doble` reporta P00096 con esperado 55.17 y
+  obtenido 64.00 —le falta el renglón de IVA por 8.83—, mientras la hoja
+  `Polizas` muestra 64.00 / 64.00 y `completa = VERDADERO`. Verificado contra
+  el PDF: la póliza sí trae 55.17 + 8.83 = 64.00. La sospecha es que la hoja
+  toma el `TOTAL POLIZA` declarado en vez de sumar los movimientos leídos,
+  con lo cual **el Excel se ve correcto justo cuando falta un movimiento**.
+  **Fase 8b: medir cuál de las dos lee qué, antes de arreglar.**
+- **Las 100 fallas de `partida_doble` en `diario-general` nunca se
+  diagnosticaron.** Aparecen en la tabla de la 7f (5,202 exactas de 5,302) y
+  ninguna fase las tocó: la 7h diagnosticó las 3 de `poliza.pdf` y cerró la
+  familia, pero `diario-general` tiene 100, más 105 en `totales`. Ese
+  documento se extrae con `pdf_chars` y **el 21.9% de sus palabras se
+  traslapan** —texto encimado, el caso «sobreimpreso» de la taxonomía—, que
+  es la causa candidata. **Fase 8b: medir si los importes perdidos coinciden
+  con las zonas de traslape.**
+- **`no_reconocido` sale con código 0, igual que un éxito.** Un script que
+  llame al CLI no distingue «convertido» de «no lo reconocí». La cola de la
+  8b necesita diferenciar tres estados, no dos. **Fase 8b.**
+- **`cfdi_cruzado` imprime `esperado 0.00 obtenido 0.00`** en sus
+  discrepancias, porque cruza identidades y no importes. El reporte de la 8a
+  dice que se corrigió a «no cuadra el dato, no el importe», pero una corrida
+  posterior del CLI sigue mostrando los ceros. **Verificar si el arreglo
+  llegó al camino del CLI o solo al de la web.**
 - **20 CFDI traen el RFC pegado al tipo** (`'ROTG870907QC5Ingreso'`). No
   afecta al cruce; el campo `tipo` sale sucio. **Sin fase asignada.**
 - **`Bajío`: 1 movimiento con tinta en la columna del saldo que no se leyó.**
   Único caso (b) de M1 en la 7g; los 93 de BBVA son (a), el banco solo
   imprime el saldo al cierre del día. **Sin fase asignada.**
+- **563 de 735 subtotales de `auxiliar-gume` no emparejan con ninguna
+  sección leída.** Medido en la 8a: subtotales de 732 cuentas distintas
+  contra movimientos de solo 172. La explicación propuesta es que sobran
+  subtotales de cuentas acumulativas —las que no tienen movimientos propios
+  porque su total es la suma de sus hijas— pero **está verificada en 3 de
+  563**: 1110-000-000, 1120-000-000 y 1120-001-000. Si alguno de los otros
+  560 resulta ser cuenta de detalle, el parser sí pierde secciones. Misma
+  familia que las cuentas padre huérfanas de la 7f. **Clasificar los 563
+  antes de darlo por explicado.**
+- **`_subtotales` salta las cuentas acumulativas con `continue` en vez de
+  distinguirlas.** Su propio docstring nombra la trampa. Extra: 3 cuentas
+  traen más de un subtotal. **Sin fase; depende de lo anterior.**
+- **El CLI revienta con una traza si el directorio de `-o` no existe.**
+  `FileNotFoundError` desde `zipfile`, siete niveles de traza. En un sistema
+  cuyo argumento es «declara lo que no puedes hacer», es la peor forma de
+  fallar. Solo afecta al CLI; la capa web controla su ruta de salida.
+  **Sin fase asignada.**
+- **Un trabajo perdido por reinicio devuelve 404.** El hilo es `daemon=True`.
+  Un 404 no distingue «nunca existió» de «se murió a medias», y SERVIDORSIST
+  se apaga a las 21:00. **Fase 8b, con la cola persistente.**
+- **Cruce contra los CFDI timbrados: no existe.** `cfdi_cruzado` verifica
+  consistencia interna del PDF —que el folio declarado aparezca en la
+  descripción del asiento—, no contra comprobantes reales. Los XML están en
+  el repo (`fixtures/real/XML R Y E/`) y nunca se han leído. Cruzar póliza
+  contra CFDI timbrado detectaría comprobantes inexistentes, importes que no
+  coinciden y CFDI cancelados aún contabilizados. Lo mismo aplica a cruzar
+  mayor contra balanza: la regla `cruce_balanza` ya existe y sale
+  `no_verificable` porque ningún comando acepta dos documentos a la vez.
+  **Es un producto distinto y más valioso que la conversión. Sin fase;
+  decidir cuándo.**
 - **El enrutamiento CID→OCR corre en el carril normal.** Añade ~21 s a una
   llamada síncrona sin avisar, y esos 21 s se midieron en la máquina de
   desarrollo. El PLAN lo exige en el carril lento con tiempo estimado
