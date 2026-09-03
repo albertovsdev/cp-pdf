@@ -35,7 +35,7 @@ from contapdf.validate.rules import naturaleza_por_cuenta
 _LOG = logging.getLogger(__name__)
 
 
-def _ancla_verificada(movimientos: Sequence[FilaAuxiliar],
+def ancla_de_seccion(movimientos: Sequence[FilaAuxiliar],
                       subtotal: FilaAuxiliar | None,
                       signo: Decimal) -> bool:
     """Si la cadena esta completa y sus dos extremos son comprobables."""
@@ -93,7 +93,7 @@ def recalcular_saldos(auxiliar: Auxiliar) -> Auxiliar:
             # Sin saber de que lado corre el saldo no se puede encadenar.
             continue
         signo = Decimal(-1) if naturaleza == "A" else Decimal(1)
-        if not _ancla_verificada(movimientos, subtotales.get(cuenta), signo):
+        if not ancla_de_seccion(movimientos, subtotales.get(cuenta), signo):
             continue
         corriente = movimientos[0].saldo_inicial_cuenta
         for indice in indices:
@@ -109,3 +109,7 @@ def recalcular_saldos(auxiliar: Auxiliar) -> Auxiliar:
     if recalculadas:
         _LOG.info("saldos recalculados con ancla verificada: %s", recalculadas)
     return replace(auxiliar, filas=tuple(filas))
+
+
+# Nombre viejo, por si algo externo lo usaba. Se retira en la fase 8.
+_ancla_verificada = ancla_de_seccion

@@ -59,9 +59,16 @@ def test_un_numero_que_no_aparece_sigue_fallando():
     assert len(regla.discrepancias) == 1
 
 
-def test_sobre_el_documento_real_pasa_de_1025_fallas_a_162():
+def test_sobre_el_documento_real_pasa_de_1025_fallas_a_53():
+    """La contencion quito 863 falsas alarmas y la fase 7h otras 109.
+
+    En la 7g quedaban 162 con `evaluados=1942`. La 7h dejo de inventar el
+    `documento` de los CFDI sin folio fiscal, asi que 121 salieron del
+    numerador -- el denominador NO se movio -- y quedan 53 fallas reales.
+    """
     libro = procesar_polizas(requires_real_pdf("poliza")).libro
     regla = _regla(libro)
-    assert (regla.aplicables, regla.evaluados) == (1942, 1942)
-    assert len(regla.discrepancias) == 162
-    assert regla.exactas == 1942 - 162
+    assert regla.aplicables == 1942
+    assert regla.evaluados == 1821
+    assert len(regla.discrepancias) == 53
+    assert regla.exactas == 1821 - 53

@@ -14,6 +14,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
 from decimal import Decimal
 
+from contapdf.parsers.auxiliar import RECALCULADO
 from contapdf.parsers.balanza import (
     DERIVADA,
     EXPLICITA,
@@ -66,6 +67,14 @@ class ResultadoRegla:
     # universo: un 5 de 116 y un 116 de 116 se imprimian igual.
     evaluados: int = 0
     exactas: int = 0
+    # De las exactas, cuantas se comprobaron contra un dato IMPRESO y
+    # cuantas contra uno que el propio sistema derivo. Verificar
+    # `saldo = anterior + debe - haber` sobre un saldo generado con esa
+    # formula es una tautologia: no puede fallar, y no prueba nada del
+    # documento. Suman `exactas`; sin particion explicita se asume que
+    # todas son impresas, que es lo que valia hasta la fase 7h.
+    exactas_impresas: int = 0
+    exactas_recalculadas: int = 0
     con_tolerancia: tuple[str, ...] = ()
     discrepancias: tuple[Discrepancia, ...] = ()
     motivo: str = ""
@@ -79,6 +88,13 @@ class ResultadoRegla:
             raise ValueError(
                 f"{self.regla}: 'aplicables' ({self.aplicables}) no puede ser "
                 f"menor que 'evaluados' ({self.evaluados})")
+        partidas = self.exactas_impresas + self.exactas_recalculadas
+        if not partidas and self.exactas:
+            object.__setattr__(self, "exactas_impresas", self.exactas)
+        elif partidas != self.exactas:
+            raise ValueError(
+                f"{self.regla}: 'exactas_impresas' + 'exactas_recalculadas' "
+                f"({partidas}) tiene que sumar 'exactas' ({self.exactas})")
 
     @property
     def comprobaciones(self) -> int:
@@ -91,6 +107,10 @@ class ResultadoRegla:
             return f"{self.regla}: universo sin determinar"
         partes = [f"{self.evaluados} de {self.aplicables} evaluados",
                   f"{self.exactas} exactos"]
+        if self.exactas_recalculadas:
+            partes.append(f"{self.exactas_impresas} contra dato impreso y "
+                          f"{self.exactas_recalculadas} contra saldo "
+                          "recalculado por el sistema")
         if self.con_tolerancia:
             partes.append(f"{len(self.con_tolerancia)} dentro de tolerancia")
         if self.discrepancias:
@@ -135,6 +155,11 @@ class Cobertura:
     def evaluados(self) -> int:
         return sum(r.evaluados for r in self.reglas)
 
+    @property
+    def exactas_recalculadas(self) -> int:
+        """Comprobaciones que cayeron sobre un dato que derivo el sistema."""
+        return sum(r.exactas_recalculadas for r in self.reglas)
+
     def resumen(self) -> str:
         """Nunca un numerador solo: cuantas reglas, y sobre cuantos casos."""
         sin_universo = sum(1 for r in self.reglas if r.aplicables is None)
@@ -146,6 +171,13 @@ class Cobertura:
             texto += (f" ({sin_universo} regla"
                       + ("s" if sin_universo != 1 else "")
                       + " con universo sin determinar)")
+        derivadas = self.exactas_recalculadas
+        if derivadas:
+            # Un cuadra mayoritariamente derivado NO es un documento
+            # verificado, y quien lea el resumen tiene que verlo ahi.
+            texto += (f"; OJO: {derivadas} de esas comprobaciones cayeron "
+                      "sobre saldos recalculados por el sistema, no sobre "
+                      "dato impreso")
         return texto
 
     def resumen_saldos(self) -> str:
@@ -228,7 +260,8 @@ def _resultado(regla: str, aplicables: int, exactas: int,
                con_tolerancia: Sequence[str],
                discrepancias: Sequence[Discrepancia], *,
                evaluados: int | None = None,
-               motivo: str = "") -> ResultadoRegla:
+               motivo: str = "",
+               exactas_recalculadas: int = 0) -> ResultadoRegla:
     """Arma el resultado y deja el hueco a la vista.
 
     'evaluados' se deduce de los veredictos emitidos; cuando es menor que
@@ -246,6 +279,8 @@ def _resultado(regla: str, aplicables: int, exactas: int,
         aplicables=aplicables,
         evaluados=evaluados,
         exactas=exactas,
+        exactas_impresas=exactas - exactas_recalculadas,
+        exactas_recalculadas=exactas_recalculadas,
         con_tolerancia=tuple(con_tolerancia),
         discrepancias=tuple(discrepancias),
         motivo=motivo,
@@ -456,6 +491,7 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
     indeterminados = sum(1 for f in movimientos if not naturalezas.get(f.cuenta))
 
     exactas, rozando, malas = 0, [], []
+    exactas_derivadas = 0
     anterior: Decimal | None = None
     cuenta = ""
     signo = Decimal(1)
@@ -483,6 +519,9 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
         veredicto = _comparar(esperado, fila.saldo, tolerancia)
         if veredicto == "exacto":
             exactas += 1
+            # Si el saldo lo derivo el sistema con esta misma formula, la
+            # comprobacion es una tautologia: se cuenta aparte.
+            exactas_derivadas += fila.saldo_origen == RECALCULADO
         elif veredicto == "tolerancia":
             rozando.append(f"{fila.cuenta} {fila.fecha}")
         else:
@@ -521,7 +560,8 @@ def _saldo_corrido(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
                       "que encadenarse")
     motivo = "; ".join(partes)
     return _resultado("saldo_corrido", len(movimientos), exactas, rozando,
-                      malas, evaluados=comprobadas, motivo=motivo)
+                      malas, evaluados=comprobadas, motivo=motivo,
+                      exactas_recalculadas=exactas_derivadas)
 
 
 def _subtotales(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
@@ -728,8 +768,12 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
     sin_cruzar = len(libro.cfdi) - len(comparables)
     motivo = ""
     if sin_cruzar:
+        sin_folio = sum(1 for c in libro.cfdi if not c.uuid)
         motivo = (f"{sin_cruzar} de {len(libro.cfdi)} CFDI sin numero de "
                   "documento con el que cruzar")
+        if sin_folio:
+            motivo += (f"; {sin_folio} de ellos no traen folio fiscal, o sea "
+                       "son polizas manuales sin comprobante")
     return _resultado("cfdi_cruzado", len(libro.cfdi),
                       len(comparables) - len(malos), (), malos,
                       evaluados=len(comparables), motivo=motivo)
@@ -1123,6 +1167,49 @@ def evaluar_polizas(libro, *,
     ))
 
 
+def _ancla_recalculo(auxiliar, tolerancia: Decimal) -> ResultadoRegla:
+    """Lo unico que de verdad comprueba una seccion recalculada.
+
+    Encadenar un saldo derivado y volver a comprobar la identidad con la
+    que se derivo no prueba nada. Lo que si prueba es que la cadena entera
+    aterrice en el subtotal que el documento declara, y eso es UNA
+    comprobacion por seccion, no una por movimiento.
+    """
+    from contapdf.recalculo import ancla_de_seccion
+
+    secciones = {}
+    subtotales = {}
+    for fila in auxiliar.filas:
+        if fila.es_subtotal:
+            subtotales.setdefault(fila.cuenta, fila)
+        else:
+            secciones.setdefault(fila.cuenta, []).append(fila)
+
+    con_derivados = [c for c, filas in secciones.items()
+                     if any(f.saldo_origen == RECALCULADO for f in filas)]
+    if not con_derivados:
+        return ResultadoRegla(
+            regla="ancla_recalculo", estado=NO_VERIFICABLE, aplicables=0,
+            evaluados=0,
+            motivo="ningun saldo se derivo: no hay ancla que comprobar")
+
+    naturalezas = naturaleza_por_cuenta(auxiliar, tolerancia=tolerancia)
+    exactas, malas = 0, []
+    for cuenta in con_derivados:
+        naturaleza = naturalezas.get(cuenta, "")
+        signo = Decimal(-1) if naturaleza == "A" else Decimal(1)
+        if ancla_de_seccion(secciones[cuenta], subtotales.get(cuenta), signo):
+            exactas += 1
+        else:
+            subtotal = subtotales.get(cuenta)
+            malas.append(Discrepancia(
+                fila=cuenta, indice=-1, regla="ancla_recalculo",
+                esperado=Decimal(0) if subtotal is None else subtotal.debe,
+                obtenido=sum((f.debe for f in secciones[cuenta]
+                              if f.debe is not None), Decimal(0))))
+    return _resultado("ancla_recalculo", len(con_derivados), exactas, (), malas)
+
+
 def evaluar_auxiliar(auxiliar, *,
                      reglas: ReglasBalanza | None = None) -> Cobertura:
     """Corre los checksums del auxiliar y devuelve QUE se pudo comprobar."""
@@ -1133,6 +1220,7 @@ def evaluar_auxiliar(auxiliar, *,
     return Cobertura(saldos=saldos, reglas=(
         _saldo_corrido(auxiliar, reglas.tolerancia),
         _subtotales(auxiliar, reglas.tolerancia),
+        _ancla_recalculo(auxiliar, reglas.tolerancia),
     ))
 
 

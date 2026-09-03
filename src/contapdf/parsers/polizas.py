@@ -231,6 +231,11 @@ class PolizasParser:
         actual: dict | None = None
         orden = 0
         en_cfdi = False
+        # Un movimiento cuyo nombre de cuenta se envuelve deja el numero de
+        # cuenta en un renglon y los importes en otro. Se recuerda el
+        # primero hasta que aparecen los importes; si no aparecen, se
+        # descarta -- no se inventa un movimiento en cero.
+        envuelto: dict | None = None
 
         def cerrar() -> None:
             nonlocal actual
@@ -239,10 +244,11 @@ class PolizasParser:
                 actual = None
 
         def nuevo(**campos) -> None:
-            nonlocal actual, orden, en_cfdi
+            nonlocal actual, orden, en_cfdi, envuelto
             cerrar()
             orden = 0
             en_cfdi = False
+            envuelto = None
             base = dict(poliza_id=f"P{len(polizas) + 1:05d}", tipo="",
                         naturaleza="", fecha="", descripcion="", folio="",
                         total_debe=None, total_haber=None, completa=False)
@@ -277,6 +283,7 @@ class PolizasParser:
                     continue
 
                 if self._es_totales(line):
+                    envuelto = None
                     montos = _montos(line)
                     if actual is not None and len(montos) >= 2:
                         # No se cierra aqui: la tabla de CFDI de la poliza
@@ -287,6 +294,7 @@ class PolizasParser:
                     continue
 
                 if self._es_movimiento(line):
+                    envuelto = None
                     if actual is None:
                         continue
                     orden += 1
@@ -296,6 +304,38 @@ class PolizasParser:
                         poliza_id=actual["poliza_id"], orden=orden,
                         cuenta=line.words[0].text, nombre_cuenta=nombre.strip(),
                         debe=debe, haber=haber))
+                    continue
+
+                # Renglon que abre con numero de cuenta pero sin importes:
+                # el nombre de la cuenta se envolvio y los importes vienen
+                # en uno de los renglones siguientes.
+                if (actual is not None and not en_cfdi and line.words
+                        and _RE_CUENTA.match(line.words[0].text)
+                        and not _montos(line)):
+                    envuelto = {
+                        "cuenta": line.words[0].text,
+                        "nombre": _texto_de_corrida_principal(
+                            line, hasta=line.words[0].x1 + 5).strip(),
+                    }
+                    continue
+
+                if envuelto is not None and not en_cfdi:
+                    montos = _montos(line)
+                    cola = " ".join(w.text for w in line.words
+                                    if not _es_monto(w.text)).strip()
+                    if not montos:
+                        # Sigue siendo nombre: se acumula y se espera.
+                        if cola:
+                            envuelto["nombre"] = f"{envuelto['nombre']} {cola}".strip()
+                        continue
+                    orden += 1
+                    debe, haber = self._debe_haber(line, anclas)
+                    movimientos.append(Movimiento(
+                        poliza_id=actual["poliza_id"], orden=orden,
+                        cuenta=envuelto["cuenta"],
+                        nombre_cuenta=f"{envuelto['nombre']} {cola}".strip(),
+                        debe=debe, haber=haber))
+                    envuelto = None
                     continue
 
                 nombre = (None if en_cfdi
@@ -325,8 +365,14 @@ class PolizasParser:
             uuid = next((t for t in textos if _RE_UUID.match(t)), "")
             rfc = next((t for t in textos if _RE_RFC.match(t)), "")
             resto = [t for t in textos[1:] if t not in (uuid, rfc)]
+            # Sin folio fiscal no hay numero de documento que leer: la fila
+            # es una poliza manual ('fecha | Diario | (Manual)') y tomar
+            # 'resto[0]' inventaba un documento con el texto que hubiera.
+            # Medido: los 101 CFDI sin UUID del fixture son exactamente los
+            # que salian con documento='Diario'.
+            documento = resto[0] if (resto and uuid) else ""
             return CFDI(poliza_id=poliza_id, fecha=textos[0],
-                        documento=resto[0] if resto else "", uuid=uuid,
+                        documento=documento, uuid=uuid,
                         rfc=rfc, tipo=resto[-1] if len(resto) > 1 else "")
 
         # El UUID se parte en dos renglones: la cola no abre fila nueva.
