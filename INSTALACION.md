@@ -7,6 +7,26 @@ Esto **no** es un procedimiento de puesta en producción: no cubre
 autenticación, respaldo ni arranque automático. Esos siguen abiertos; están
 al final, en el checklist.
 
+## Qué de esto está verificado y qué no
+
+Hay que decirlo antes que nada, porque cambia cuánto se puede confiar en
+cada sección. **No hay acceso a SERVIDORSIST desde la sesión de
+desarrollo**: se entra por Escritorio Remoto, no hay SSH, y esta fase no lo
+va a montar.
+
+| Sección | Estado |
+|---|---|
+| §1 dependencias, y que faltaba `pypdfium2` | **Verificado.** Se encontró leyendo `ocr.py` contra `pyproject.toml`, y se corrigió |
+| §3 el guion de medición | **Verificado en Linux**, con los 17 documentos. En Windows, sin ejecutar |
+| §4 uso desde la línea de comandos | **Verificado en Linux** |
+| §2 los pasos de Windows | **SIN VERIFICAR.** Están escritos a partir de la instalación real en Linux y de lo que la máquina objetivo tiene según PLAN §6 |
+| §5 los fallos | Mezcla: el de `pypdfium2` es real y se vivió; los de Tesseract y el puerto son **previsiones**, no cosas que hayan pasado |
+
+Dicho de otro modo: **§2 es la mejor guía que se puede escribir sin haber
+estado en la máquina, no un acta de lo que ocurrió allí.** Al seguirla por
+primera vez conviene anotar lo que se desvíe y corregir este fichero, que
+para eso está.
+
 ---
 
 ## 1. Qué hace falta
@@ -175,8 +195,9 @@ documento revienta, lo escribe y sigue con el resto. Y va volcando a disco
 conforme mide, así que una corrida cortada a la mitad deja lo que llevaba.
 
 **Mientras mide, no correr nada más.** Es el error que invalidó la primera
-medición de la fase 8a: 1 576 s que resultaron ser 237 s cuando se midió
-sola.
+medición de la fase 8a. (Con lo que se supo en la 8c, aquellos 1 576 s no
+eran solo contaminación: incluían la exportación, que entonces era
+cuadrática. Dos errores sumados dieron un número que parecía explicado.)
 
 ---
 
@@ -201,10 +222,11 @@ la primera línea del mensaje sí (pendiente registrado en `ARQUITECTURA.md`
 
 ## 5. Lo que falla y cómo se resuelve
 
-Lo encontrado de verdad, no una lista teórica.
+El primero pasó de verdad. Los otros tres son previsiones razonables sobre
+esa máquina, y están aquí para ahorrar tiempo, no como acta.
 
 **`ModuleNotFoundError: pypdfium2`** al procesar un estado de cuenta
-escaneado. Es la dependencia que faltaba declarar (§1). `pip install
+escaneado. *(Este ocurrió.)* Es la dependencia que faltaba declarar (§1). `pip install
 pypdfium2`.
 
 **`tesseract no esta en el PATH`** en el reporte del guion de medición. El
