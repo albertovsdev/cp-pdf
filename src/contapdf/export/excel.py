@@ -65,10 +65,17 @@ def exportar_balanza(balanza: Balanza, cobertura: Cobertura,
 
     discrepancias = cobertura.discrepancias
     marcadas = {d.indice for d in discrepancias if d.indice >= 0}
+    # El numero de renglon se lleva a mano. Preguntarselo a la hoja
+    # -- `hoja[hoja.max_row]` -- la recorre entera dos veces por renglon
+    # (`max_row`, y `max_column` por dentro de `hoja[n]`), y eso hace el
+    # exportador cuadratico: `auxiliar-gume` tardaba 1 243 s en escribir
+    # 57 759 renglones contra 182 s en leerlos. Ver PLAN, fase 8c.
+    numero = 1
     for indice, fila in enumerate(balanza.filas):
         hoja.append([getattr(fila, campo) for campo in _ENCABEZADOS])
-        renglon = hoja[hoja.max_row]
-        for celda, campo in zip(renglon, _ENCABEZADOS):
+        numero += 1
+        for columna, campo in enumerate(_ENCABEZADOS, start=1):
+            celda = hoja.cell(row=numero, column=columna)
             if campo in _MONTOS:
                 celda.number_format = _FORMATO_MONTO
             if indice in marcadas:
@@ -102,12 +109,15 @@ def _hoja(libro_excel, titulo: str, encabezados, filas, negrita,
     hoja.append(list(encabezados))
     for celda in hoja[1]:
         celda.font = negrita
+    numero = 1
     for fila in filas:
         hoja.append([fila.get(campo) if isinstance(fila, dict)
                      else getattr(fila, campo, None) for campo in encabezados])
-        for celda, campo in zip(hoja[hoja.max_row], encabezados):
+        numero += 1
+        for columna, campo in enumerate(encabezados, start=1):
             if campo in montos:
-                celda.number_format = _FORMATO_MONTO
+                hoja.cell(row=numero,
+                          column=columna).number_format = _FORMATO_MONTO
     hoja.freeze_panes = "A2"
 
 
@@ -161,12 +171,20 @@ def _validacion(libro_excel, cobertura: Cobertura, negrita) -> None:
                         regla.motivo])
     detalle.append([])
     detalle.append(["fila", "regla", "esperado", "obtenido"])
-    for celda in detalle[detalle.max_row]:
-        celda.font = negrita
+    # El ancho se toma UNA vez, fuera del bucle: `detalle[n]` devolvia
+    # celdas hasta `max_column` -- 7, por la tabla de reglas de arriba, no
+    # las 4 de esta -- y esas celdas vacias con formato salen en el XML.
+    # Recortar a 4 cambiaria el fichero producido.
+    numero = detalle.max_row
+    ancho = detalle.max_column
+    for columna in range(1, ancho + 1):
+        detalle.cell(row=numero, column=columna).font = negrita
     for d in cobertura.discrepancias:
         detalle.append([d.fila, d.regla, d.esperado, d.obtenido])
-        for celda in detalle[detalle.max_row][2:]:
-            celda.number_format = _FORMATO_MONTO
+        numero += 1
+        for columna in range(3, ancho + 1):
+            detalle.cell(row=numero,
+                         column=columna).number_format = _FORMATO_MONTO
     for columna, ancho in zip(detalle.iter_cols(min_row=1, max_row=1),
                               (20, 16, 11, 11, 9, 46, 60)):
         detalle.column_dimensions[columna[0].column_letter].width = ancho
