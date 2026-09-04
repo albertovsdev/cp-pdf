@@ -6,6 +6,7 @@ import io
 from decimal import Decimal
 
 import openpyxl
+import pytest
 from conftest import requires_real_pdf
 
 from contapdf.cli import main, reportar
@@ -152,6 +153,7 @@ def test_el_reporte_marca_lo_que_solo_se_apoya_en_vocabulario():
     assert "725" in texto
 
 
+@pytest.mark.lento          # 3 s
 def test_main_sobre_gume_reporta_cobertura_completa(tmp_path):
     pdf = requires_real_pdf("balanza-gume")
     salida = io.StringIO()
@@ -168,6 +170,7 @@ def test_el_reporte_incluye_la_procedencia_de_la_naturaleza():
     assert "naturaleza" in texto.lower()
 
 
+@pytest.mark.lento          # 6 s
 def test_main_con_plantillas_reporta_la_plantilla(tmp_path):
     pdf = requires_real_pdf("balanza-gume")
     salida = io.StringIO()
@@ -184,6 +187,7 @@ def test_main_con_plantillas_reporta_la_plantilla(tmp_path):
     assert "reutiliz" in segunda.getvalue().lower()
 
 
+@pytest.mark.lento          # 3 s
 def test_confirmar_desde_el_cli(tmp_path):
     pdf = requires_real_pdf("balanza-gume")
     main(["balanza", str(pdf), "--tenant", "t", "--plantillas", str(tmp_path)],

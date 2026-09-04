@@ -39,6 +39,7 @@ def test_no_confunde_un_token_sano_con_uno_contaminado(texto):
     assert tokens_contaminados([_w(texto)]) == []
 
 
+@pytest.mark.lento          # 4 s
 def test_reconoce_los_dos_documentos_que_necesitan_extraccion_por_corridas():
     # Dos firmas distintas: Business Pro pega glifos de corridas distintas
     # en una palabra; el diario general imprime una columna ENCIMA de otra
@@ -107,9 +108,15 @@ def test_extraer_deduplica_y_lo_reporta():
 
 
 # --- Criterio 2: los documentos sanos no cambian ------------------------
+# Los cuatro grandes van marcados uno a uno: la propiedad se comprueba
+# igual con los pequenos en cada ciclo, y los grandes antes de entregar.
 @pytest.mark.parametrize("nombre", [
-    "balanza", "balanza-businesspro", "balanza-gume", "poliza",
-    "diario-general", "auxiliar", "auxiliar-gume", "mayor-gume", "edocta",
+    "balanza", "balanza-businesspro", "balanza-gume",
+    pytest.param("poliza", marks=pytest.mark.lento),
+    pytest.param("diario-general", marks=pytest.mark.lento),
+    pytest.param("auxiliar", marks=pytest.mark.lento),
+    pytest.param("auxiliar-gume", marks=pytest.mark.lento),
+    "mayor-gume", "edocta",
 ])
 def test_deduplicar_no_altera_a_los_que_ya_funcionaban(nombre):
     from contapdf.extract import pdf_chars, pdf_text

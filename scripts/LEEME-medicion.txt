@@ -1,0 +1,2 @@
+Correr en SERVIDORSIST:  .venv\Scripts\python scripts\medir_servidorsist.py --rapido
+Si sale bien, repetir sin --rapido y traer de vuelta el .txt que deja. Detalle: INSTALACION.md

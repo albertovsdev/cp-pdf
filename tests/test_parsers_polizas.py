@@ -121,6 +121,7 @@ def test_es_determinista(bloques):
 
 
 # --- Criterio 2: poliza_id identifica POSICION, no poliza ---------------
+@pytest.mark.lento          # 4 s
 def test_poliza_id_cambia_con_el_rango_de_paginas():
     """Documenta que poliza_id NO es estable entre lecturas.
 

@@ -108,6 +108,7 @@ def test_un_despacho_con_nombre_peligroso_se_rechaza(cliente, malo):
 
 
 # --- Criterio 2: uno a la vez, con posicion -----------------------------
+@pytest.mark.lento          # 6 s
 def test_el_segundo_trabajo_espera_y_ve_su_posicion(cliente):
     primero = _subir(cliente, "balanza-gume", "balanza").headers["Location"]
     segundo = _subir(cliente, "balanza", "balanza").headers["Location"]
@@ -165,6 +166,7 @@ def test_un_trabajo_que_nunca_existio_sigue_dando_404(cliente):
 
 
 # --- Criterio 5: los tres finales se distinguen en la cola --------------
+@pytest.mark.lento          # 4 s
 def test_un_documento_que_cuadra_queda_listo(app, cliente):
     url = _subir(cliente, "balanza", "balanza").headers["Location"]
     _esperar(cliente, url)

@@ -28,6 +28,11 @@ from contapdf.validate.rules import (
     evaluar_auxiliar,
 )
 
+# Fase 8c: el fichero entero cuesta 16 s porque vuelve a parsear
+# auxiliar.pdf. La suite rapida no puede pagarlo en cada ciclo; `pytest -m
+# lento` lo corre antes de cada entrega.
+pytestmark = pytest.mark.lento
+
 _CERO = Decimal("0.00")
 
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pytest
 from conftest import requires_real_pdf
 
 from contapdf.pipeline import procesar_mayor
@@ -18,6 +19,7 @@ def test_aprende_su_plantilla_con_huella_propia(tmp_path):
     assert len(almacen.listar("t")) == 1
 
 
+@pytest.mark.lento          # 5 s
 def test_la_huella_no_choca_con_las_de_los_otros_documentos(tmp_path):
     from contapdf.pipeline import procesar_balanza
 
@@ -30,6 +32,7 @@ def test_la_huella_no_choca_con_las_de_los_otros_documentos(tmp_path):
     assert len(almacen.listar("t")) == 2
 
 
+@pytest.mark.lento          # 4 s
 def test_la_segunda_carga_reutiliza(tmp_path):
     almacen = AlmacenPlantillas(tmp_path)
     pdf = requires_real_pdf("mayor-gume")

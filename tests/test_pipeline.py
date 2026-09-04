@@ -10,6 +10,7 @@ from contapdf.templates.store import AlmacenPlantillas
 
 
 # --- Criterio 2: primera carga ------------------------------------------
+@pytest.mark.lento          # 3 s
 def test_primera_carga_de_gume_crea_la_plantilla(tmp_path):
     almacen = AlmacenPlantillas(tmp_path)
     r = procesar_balanza(requires_real_pdf("balanza-gume"),
@@ -20,6 +21,7 @@ def test_primera_carga_de_gume_crea_la_plantilla(tmp_path):
     assert almacen.buscar("despacho-a", r.plantilla.huella) == r.plantilla
 
 
+@pytest.mark.lento          # 3 s
 def test_gume_queda_pendiente_de_confirmacion_por_la_orientacion(tmp_path):
     r = procesar_balanza(requires_real_pdf("balanza-gume"),
                          tenant_id="despacho-a", almacen=AlmacenPlantillas(tmp_path))
@@ -29,6 +31,7 @@ def test_gume_queda_pendiente_de_confirmacion_por_la_orientacion(tmp_path):
     assert r.plantilla.filas_afectadas == 96
 
 
+@pytest.mark.lento          # 3 s
 def test_lo_que_hay_que_confirmar_es_serializable(tmp_path):
     # La UI llega en la fase 8: aqui solo tiene que salir como datos.
     r = procesar_balanza(requires_real_pdf("balanza-gume"),
@@ -48,6 +51,7 @@ def test_la_balanza_original_no_queda_pendiente(tmp_path):
 
 
 # --- Criterio 3: segunda carga ------------------------------------------
+@pytest.mark.lento          # 7 s
 def test_segunda_carga_reutiliza_la_plantilla(tmp_path):
     almacen = AlmacenPlantillas(tmp_path)
     pdf = requires_real_pdf("balanza-gume")
@@ -62,6 +66,7 @@ def test_segunda_carga_reutiliza_la_plantilla(tmp_path):
     assert segunda.cobertura.resumen() == primera.cobertura.resumen()
 
 
+@pytest.mark.lento          # 7 s
 def test_la_segunda_carga_no_vuelve_a_proponer_mapeos(tmp_path, monkeypatch):
     almacen = AlmacenPlantillas(tmp_path)
     pdf = requires_real_pdf("balanza-gume")
@@ -78,6 +83,7 @@ def test_la_segunda_carga_no_vuelve_a_proponer_mapeos(tmp_path, monkeypatch):
     assert len(r.balanza.filas) == 734
 
 
+@pytest.mark.lento          # 7 s
 def test_la_plantilla_de_un_tenant_no_sirve_para_otro(tmp_path):
     almacen = AlmacenPlantillas(tmp_path)
     pdf = requires_real_pdf("balanza-gume")
@@ -94,7 +100,9 @@ def test_sin_almacen_todo_sigue_funcionando(tmp_path):
 
 # --- Criterio 7 ---------------------------------------------------------
 @pytest.mark.parametrize(("nombre", "filas"), [
-    ("balanza", 475), ("balanza-businesspro", 225), ("balanza-gume", 734)])
+    ("balanza", 475), ("balanza-businesspro", 225),
+    # gume cuesta 3.6 s: la propiedad la cubren los otros dos en cada ciclo.
+    pytest.param("balanza-gume", 734, marks=pytest.mark.lento)])
 def test_los_tres_documentos_siguen_igual(tmp_path, nombre, filas):
     almacen = AlmacenPlantillas(tmp_path)
     r = procesar_balanza(requires_real_pdf(nombre), tenant_id="t", almacen=almacen)

@@ -176,6 +176,7 @@ def test_el_total_declarado_que_el_documento_no_imprime():
     assert (regla.aplicables, regla.evaluados) == (2, 0)
 
 
+@pytest.mark.lento          # 27 s
 def test_polizas_incompletas_entran_al_denominador():
     """El PLAN dice que la cobertura las declara, y declarar exige estar
     en el denominador. En este fixture son 0, asi que apl == eval."""
@@ -187,6 +188,7 @@ def test_polizas_incompletas_entran_al_denominador():
     assert regla.evaluados == len(libro.polizas) - incompletas
 
 
+@pytest.mark.lento          # 16 s
 def test_auxiliar_saldo_corrido_sobre_todos_los_movimientos():
     r = procesar_auxiliar(requires_real_pdf("auxiliar"))
     regla = _regla(r.cobertura, "saldo_corrido")
@@ -217,10 +219,17 @@ def test_auxiliar_gume_reporta_sobre_57024_no_sobre_21757():
 
 
 # --- Invariante transversal, sobre los cinco tipos ----------------------
+# `lento` caso por caso y no en la funcion entera: la suite rapida sigue
+# comprobando el denominador sobre estado de cuenta y mayor en cada ciclo,
+# y los tres documentos caros van antes de entregar. Medido en la 8c:
+# poliza 27 s por test, auxiliar 14 s, los tres de balanza 6 s juntos --
+# contra menos de 0.5 s los otros dos casos. Fase 8c.
 _TODOS = (
-    (procesar_balanza, ("balanza", "balanza-businesspro", "balanza-gume")),
-    (procesar_auxiliar, ("auxiliar",)),
-    (procesar_polizas, ("poliza",)),
+    pytest.param(procesar_balanza,
+                 ("balanza", "balanza-businesspro", "balanza-gume"),
+                 marks=pytest.mark.lento),
+    pytest.param(procesar_auxiliar, ("auxiliar",), marks=pytest.mark.lento),
+    pytest.param(procesar_polizas, ("poliza",), marks=pytest.mark.lento),
     (procesar_estado_cuenta, ("edocta", "edocta-bbva", "edocta-julio-banorte")),
     (procesar_mayor, ("mayor-gume",)),
 )
@@ -264,6 +273,7 @@ def test_un_hueco_entre_aplicables_y_evaluados_viene_explicado(procesar, nombres
 
 
 # --- La hoja Validacion de los cinco exportadores -----------------------
+@pytest.mark.lento          # 55 s
 def test_los_cinco_exportadores_llevan_la_columna(tmp_path):
     """Sin denominador en la hoja, el Excel repite la misma mentira."""
     import openpyxl

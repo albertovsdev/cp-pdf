@@ -20,6 +20,11 @@ from conftest import requires_real_pdf
 from contapdf.parsers.auxiliar import IMPRESO, RECALCULADO, Auxiliar, FilaAuxiliar
 from contapdf.pipeline import procesar_auxiliar
 
+# Fase 8c: el fichero entero cuesta 18 s porque vuelve a parsear
+# auxiliar.pdf. La suite rapida no puede pagarlo en cada ciclo; `pytest -m
+# lento` lo corre antes de cada entrega.
+pytestmark = pytest.mark.lento
+
 _CERO = Decimal("0.00")
 
 

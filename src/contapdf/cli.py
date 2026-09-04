@@ -436,6 +436,37 @@ def ejecutar_confirmar(*, tenant_id: str, plantillas: Path, huella: str,
     return 0
 
 
+def _destino_utilizable(destino: Path | None, salida: TextIO) -> bool:
+    """Comprueba el `-o` ANTES de trabajar, no al ir a guardar.
+
+    Antes, un directorio inexistente reventaba dentro de `zipfile` cuando
+    el documento ya estaba procesado: sobre `auxiliar-gume` son 24 minutos
+    tirados por una letra mal escrita. Y una excepcion sin capturar sale
+    con codigo 1, que aqui significa «hay discrepancias», asi que un `-o`
+    equivocado era indistinguible de un documento que no cuadra.
+
+    NO se crea el directorio. Crear lo que nadie pidio esconde el error:
+    con una letra cambiada, el Excel acabaria en un sitio nuevo y el
+    usuario lo buscaria donde creia haberlo escrito.
+    """
+    if destino is None:
+        return True
+    if destino.is_dir():
+        salida.write(f"{destino}: es un directorio, no un archivo.\n"
+                     "  Dale a -o la ruta completa del .xlsx que quieres.\n")
+        return False
+    padre = destino.parent
+    if not padre.exists():
+        salida.write(f"{padre}: el directorio no existe.\n"
+                     "  Crealo primero, o apunta -o a uno que ya exista.\n")
+        return False
+    if not padre.is_dir():
+        salida.write(f"{padre}: no es un directorio.\n"
+                     "  Dale a -o una ruta dentro de un directorio que exista.\n")
+        return False
+    return True
+
+
 def main(argv: Sequence[str] | None = None, *, salida: TextIO | None = None) -> int:
     if salida is None:
         import sys
@@ -465,6 +496,10 @@ def main(argv: Sequence[str] | None = None, *, salida: TextIO | None = None) -> 
     confirmar.add_argument("--por", required=True, help="quien confirma")
 
     args = ap.parse_args(argv)
+    # Antes de nada: si el destino no sirve, no tiene sentido procesar.
+    if getattr(args, "out", None) is not None and not _destino_utilizable(
+            args.out, salida):
+        return 2
     if args.comando == "confirmar":
         return ejecutar_confirmar(tenant_id=args.tenant, plantillas=args.plantillas,
                                   huella=args.huella, por=args.por, salida=salida)

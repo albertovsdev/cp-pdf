@@ -13,11 +13,17 @@ from __future__ import annotations
 
 from decimal import Decimal
 
+import pytest
 from conftest import requires_real_pdf
 
 from contapdf.parsers.polizas import CFDI, LibroDiario, Poliza
 from contapdf.pipeline import procesar_polizas
 from contapdf.validate.rules import CUADRA, FALLA, evaluar_polizas
+
+# Fase 8c: el fichero entero cuesta 28 s porque vuelve a parsear
+# poliza.pdf. La suite rapida no puede pagarlo en cada ciclo; `pytest -m
+# lento` lo corre antes de cada entrega.
+pytestmark = pytest.mark.lento
 
 _CERO = Decimal("0.00")
 

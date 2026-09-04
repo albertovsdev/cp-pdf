@@ -7,7 +7,11 @@ name = "contapdf"
 version = "0.1.0"
 description = "Conversion de PDFs contables a Excel"
 requires-python = ">=3.11"
-dependencies = ["pdfplumber", "openpyxl", "flask"]
+# pypdfium2 lo usa extract/ocr.py para rasterizar la pagina. Faltaba
+# declararlo: en la maquina de desarrollo estaba de antes, asi que
+# nueve fases no lo notaron. En una limpia, `pip install -e .` no lo
+# traia y el OCR fallaba al importar. Detectado en la 8c.
+dependencies = ["pdfplumber", "openpyxl", "flask", "pypdfium2"]
 
 [project.scripts]
 contapdf = "contapdf.cli:main"

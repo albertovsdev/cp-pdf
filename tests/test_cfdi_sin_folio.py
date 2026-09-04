@@ -18,10 +18,16 @@ producia un cruce FALSO POSITIVO, que este arreglo tambien elimina.
 
 from __future__ import annotations
 
+import pytest
 from conftest import requires_real_pdf
 
 from contapdf.pipeline import procesar_polizas
 from contapdf.validate.rules import evaluar_polizas
+
+# Fase 8c: el fichero entero cuesta 153 s porque vuelve a parsear
+# poliza.pdf (968 paginas) cinco veces. La suite rapida no puede pagarlo
+# en cada ciclo; `pytest -m lento` lo corre antes de cada entrega.
+pytestmark = pytest.mark.lento
 
 
 def _regla(cobertura, nombre="cfdi_cruzado"):

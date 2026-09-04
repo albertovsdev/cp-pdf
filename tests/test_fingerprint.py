@@ -22,12 +22,16 @@ def _huella(nombre: str, paginas: list[int]):
 
 
 # --- Criterio 1 ---------------------------------------------------------
+@pytest.mark.lento          # 5 s
 def test_los_tres_fixtures_dan_tres_huellas_distintas():
     valores = {n: _huella(n, [1, 2, 3]).valor for n in _DOCS}
     assert len(set(valores.values())) == 3
 
 
-@pytest.mark.parametrize("nombre", _DOCS)
+@pytest.mark.parametrize("nombre", [
+    "balanza", "balanza-businesspro",
+    # gume cuesta 5.5 s aqui; la propiedad la cubren los otros dos.
+    pytest.param("balanza-gume", marks=pytest.mark.lento)])
 def test_paginas_distintas_del_mismo_documento_dan_la_misma_huella(nombre):
     assert _huella(nombre, [1, 2, 3]).valor == _huella(nombre, [2, 3, 4]).valor
 

@@ -106,6 +106,7 @@ def _enlace_de_descarga(pagina):
 
 
 # --- Criterio 2: la cobertura de la pagina es la del CLI ----------------
+@pytest.mark.lento          # 3 s
 def test_la_cobertura_de_la_pagina_es_la_misma_que_la_del_cli(cliente):
     """Mismo documento, mismas cifras. Si divergen, hay logica duplicada."""
     from contapdf.cli import procesar_documento
@@ -265,6 +266,7 @@ def test_el_pdf_subido_y_el_xlsx_se_borran(tmp_path):
     assert list(tmp_path.rglob("*.xlsx")) == []
 
 
+@pytest.mark.lento          # 3 s
 def test_la_pagina_muestra_el_resumen_de_cobertura_entero(cliente):
     """Incluido el aviso de circularidad cuando el documento lo tenga.
 

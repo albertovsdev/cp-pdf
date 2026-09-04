@@ -1,0 +1,111 @@
+========================================================================
+MEDICION DE LA MAQUINA OBJETIVO -- cp-pdf fase 8c
+========================================================================
+
+fecha            2026-09-04 14:25:59
+maquina          DESKTOP-6FS4RU5
+sistema          Linux-6.18.33.1-microsoft-standard-WSL2-x86_64-with-glibc2.43
+procesador       (sin dato)
+python           3.14.4 (/mnt/c/proyectos/cp-pdf/.venv/bin/python)
+repo             /mnt/c/proyectos/cp-pdf
+RAM              7,785 MB totales, 6,832 MB libres AHORA (antes de medir)
+disco            71.9 GB libres de 474.1 GB
+
+--- dependencias ---
+  pdfplumber   0.11.10      extraccion principal
+  openpyxl     3.1.5        escribir el .xlsx
+  pypdfium2    ?            rasterizar para OCR
+  flask        3.1.3        la capa web (no hace falta para medir)
+  tesseract    OK           tesseract 5.5.0
+
+========================================================================
+M2 y M3 -- tiempo de pared y memoria por documento
+========================================================================
+
+Cada documento se procesa UNA vez, en frio: sin plantilla
+aprendida, que es como lo ve el primer usuario que sube ese
+formato. Una segunda subida del mismo formato cuesta menos.
+
+[1/17] balanza (balanza): 1.4s
+[2/17] balanza-businesspro (balanza): 0.9s
+[3/17] balanza-gume (balanza): 3.1s
+[4/17] poliza (polizas): 27.8s
+[5/17] diario-general (polizas): 1m04s
+[6/17] auxiliar (auxiliar): 15.0s
+[7/17] auxiliar-gume (auxiliar): 3m08s
+[8/17] mayor-gume (mayor): 2.3s
+[9/17] mayor-proactivity (mayor): 1m00s
+[10/17] edocta (estado-cuenta): 0.7s
+[11/17] edocta-inbursa (estado-cuenta): 0.8s
+[12/17] edocta-santander (estado-cuenta): 0.9s
+[13/17] edocta-julio-banorte (estado-cuenta): 1.5s
+[14/17] edocta-abril-santander (estado-cuenta): 1.2s
+[15/17] edocta-bajio (estado-cuenta): 1.4s
+[16/17] edocta-bbva (estado-cuenta): 0.6s
+[17/17] edocta-hsbc (estado-cuenta): 14.7s
+
+--- M2: por documento ---
+El reloj va SIEMPRE partido. Un total unico escondio durante
+nueve fases que exportar costaba siete veces mas que leer.
+
+documento               tipo           pags  leer s  exp s  total s  estrategia  pico MB  libre min MB  xlsx MB
+----------------------  -------------  ----  ------  -----  -------  ----------  -------  ------------  -------
+edocta-bbva             estado-cuenta    11     0.6    0.0      0.6    pdf_text      288          6646     0.02
+edocta                  estado-cuenta     6     0.7    0.0      0.7   pdf_chars      344          6586     0.02
+edocta-inbursa          estado-cuenta     8     0.8    0.0      0.8    pdf_text      330          6600     0.02
+balanza-businesspro     balanza           4     0.9    0.0      0.9   pdf_chars       91          6812     0.02
+edocta-santander        estado-cuenta    10     0.9    0.0      0.9    pdf_text      312          6618     0.01
+edocta-abril-santander  estado-cuenta    13     1.2    0.0      1.2   pdf_chars      293          6639     0.03
+balanza                 balanza           9     1.3    0.0      1.4    pdf_text       87          6811     0.03
+edocta-bajio            estado-cuenta    11     1.4    0.0      1.4    pdf_text      290          6644     0.02
+edocta-julio-banorte    estado-cuenta    16     1.4    0.1      1.5    pdf_text      300          6631     0.06
+mayor-gume              mayor            17     2.2    0.1      2.3    pdf_text      648          6262     0.07
+balanza-gume            balanza          12     3.1    0.1      3.1    pdf_text       97          6805     0.04
+edocta-hsbc             estado-cuenta     4    14.7    0.0     14.7         ocr      323          6419     0.01
+auxiliar                auxiliar        398    14.4    0.6     15.0    pdf_text      340          6558     0.45
+poliza                  polizas         968    26.7    1.1     27.8    pdf_text      157          6755     0.83
+mayor-proactivity       mayor           276    60.5    0.0     60.5    pdf_text      471          6450     0.01
+diario-general          polizas         431    60.7    3.4     64.1   pdf_chars      330          6560     2.34
+auxiliar-gume           auxiliar        886   183.4    5.2    188.5    pdf_text      658          6238     3.55
+
+documentos medidos   17 de 17
+                          total      leer  exportar
+minimo                     0.6s      0.6s      0.0s
+mediana                    1.5s      1.4s      0.0s
+maximo                    3m08s     3m03s      5.2s
+suma                      6m25s     6m14s     10.6s
+
+--- M3: memoria ---
+pico mas alto        658 MB  (auxiliar-gume)
+RAM libre minima     6238 MB mientras corria ese documento
+auxiliar-gume        658 MB de pico, 6238 MB libres en el peor momento
+
+========================================================================
+M4 -- espacio en disco
+========================================================================
+
+--- medido ---
+xlsx generados       17: minimo 0.01 MB, mediana 0.03 MB, maximo 3.55 MB
+PDFs de entrada      mediana 0.49 MB, maximo 7.61 MB
+base de la cola      0.17 MB con 75 trabajos terminados dentro
+
+--- EXTRAPOLADO (no medido: se proyecta lo de arriba) ---
+Supuesto: 75 documentos al dia (PLAN seccion 6:
+15 personas x 5 documentos), con la mezcla de tamanos de los
+fixtures. Es una proyeccion, no una medicion.
+
+xlsx de un dia       2 MB (75 x 0.03 MB de mediana)
+  con el peor caso   266 MB si todos fueran como el mayor
+PDFs subidos         37 MB, pero se borran al terminar cada uno
+base de la cola      0.17 MB al dia, 42 MB al ano si nada se borrara
+
+Lo que de verdad ocupa en un momento dado es MUCHO menor: el
+barrido de 30 minutos borra cada trabajo terminado, y la
+descarga lo borra antes. El pico real es lo que quepa en media
+hora de trabajo, no un dia entero. La cifra de arriba es el
+techo si el barrido no existiera.
+
+========================================================================
+Reporte escrito en: /tmp/claude-1000/-mnt-c-proyectos-cp-pdf/640480dd-3615-4179-95e7-88132d5f00ae/scratchpad/base_final.txt
+Ese es el fichero que hay que traer de vuelta.
+========================================================================

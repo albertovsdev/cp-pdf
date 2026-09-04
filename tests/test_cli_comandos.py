@@ -19,6 +19,23 @@ from conftest import requires_real_pdf
 
 from contapdf.cli import main
 
+#: Los dos documentos grandes: `auxiliar` son 398 paginas y `poliza` 968.
+#: Cuestan entre 16 y 38 s por test, contra menos de 2 s los otros tres.
+_PESADOS = frozenset({"auxiliar", "polizas"})
+
+
+def _casos(entradas):
+    """Marca `lento` los casos cuyo documento es grande.
+
+    Caso por caso y no la funcion entera: asi la suite rapida sigue
+    corriendo los CINCO comandos de punta a punta, con el documento
+    pequeno de cada tipo. Fase 8c.
+    """
+    return [pytest.param(*entrada, marks=pytest.mark.lento)
+            if entrada[0] in _PESADOS else pytest.param(*entrada)
+            for entrada in entradas]
+
+
 # (comando, fixture, hojas del Excel, algo que el reporte tiene que decir)
 _COMANDOS = (
     ("balanza", "balanza", ["Balanza", "Validacion"], "475"),
@@ -33,7 +50,7 @@ _COMANDOS = (
 
 
 # --- Criterio 2 ---------------------------------------------------------
-@pytest.mark.parametrize("comando,fixture,hojas,marca", _COMANDOS)
+@pytest.mark.parametrize("comando,fixture,hojas,marca", _casos(_COMANDOS))
 def test_cada_comando_corre_y_escribe_su_excel(comando, fixture, hojas, marca,
                                                tmp_path):
     pdf = requires_real_pdf(fixture)
@@ -48,7 +65,7 @@ def test_cada_comando_corre_y_escribe_su_excel(comando, fixture, hojas, marca,
     assert marca in salida.getvalue().lower()
 
 
-@pytest.mark.parametrize("comando,fixture,hojas,marca", _COMANDOS)
+@pytest.mark.parametrize("comando,fixture,hojas,marca", _casos(_COMANDOS))
 def test_cada_comando_reporta_su_cobertura(comando, fixture, hojas, marca,
                                            tmp_path):
     """Nunca un resultado sin decir contra que se comprobo (PLAN 2)."""
@@ -61,7 +78,7 @@ def test_cada_comando_reporta_su_cobertura(comando, fixture, hojas, marca,
     assert "extraccion" in texto
 
 
-@pytest.mark.parametrize("comando", [c for c, *_ in _COMANDOS])
+@pytest.mark.parametrize("comando", _casos((c,) for c, *_ in _COMANDOS))
 def test_cada_comando_avisa_si_el_pdf_no_existe(comando, tmp_path):
     salida = io.StringIO()
     codigo = main([comando, str(tmp_path / "no-existe.pdf")], salida=salida)
@@ -69,7 +86,7 @@ def test_cada_comando_avisa_si_el_pdf_no_existe(comando, tmp_path):
     assert "no existe" in salida.getvalue().lower()
 
 
-@pytest.mark.parametrize("comando", [c for c, *_ in _COMANDOS])
+@pytest.mark.parametrize("comando", _casos((c,) for c, *_ in _COMANDOS))
 def test_sin_o_ningun_comando_escribe_excel(comando, tmp_path):
     fixture = next(f for c, f, *_ in _COMANDOS if c == comando)
     salida = io.StringIO()
@@ -77,6 +94,7 @@ def test_sin_o_ningun_comando_escribe_excel(comando, tmp_path):
     assert list(tmp_path.iterdir()) == []
 
 
+@pytest.mark.lento          # 46 s
 def test_los_cinco_aceptan_el_mismo_par_de_banderas(tmp_path):
     """Y solo aprende plantilla el documento cuya aritmetica cuadro.
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pytest
 from conftest import requires_real_pdf
 
 from contapdf.pipeline import procesar_polizas
@@ -9,6 +10,7 @@ from contapdf.templates.store import AlmacenPlantillas
 
 
 # --- Criterio 5 ---------------------------------------------------------
+@pytest.mark.lento          # 4 s
 def test_cada_variante_aprende_su_plantilla_con_huella_distinta(tmp_path):
     almacen = AlmacenPlantillas(tmp_path)
     a = procesar_polizas(requires_real_pdf("poliza"), tenant_id="t",
@@ -21,6 +23,7 @@ def test_cada_variante_aprende_su_plantilla_con_huella_distinta(tmp_path):
     assert len(almacen.listar("t")) == 2
 
 
+@pytest.mark.lento          # 6 s
 def test_la_segunda_carga_reutiliza(tmp_path):
     almacen = AlmacenPlantillas(tmp_path)
     pdf = requires_real_pdf("poliza")
