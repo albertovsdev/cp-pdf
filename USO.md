@@ -55,9 +55,14 @@ confirma manualmente lo que la validación no pudo verificar sola.
 |---|---|
 | `0` | Todas las reglas cuadran. El sistema aprende la plantilla del formato. |
 | `1` | Alguna regla falla. Se genera el Excel igual, pero **no** aprende plantilla. |
+| `2` | Error de uso: el documento no se reconoció, el directorio de `-o` no existe, argumentos mal. |
 
 Que un documento salga en `1` no es un error de la herramienta: es su
 producto. Ver «Cómo leer el reporte» abajo.
+
+El `2` se comprueba **antes** de procesar, no al guardar: si el directorio de
+`-o` no existe, el comando avisa y no trabaja en balde. No lo crea a
+propósito — crear lo que nadie pidió esconde el error.
 
 Para verlo:
 
@@ -87,6 +92,12 @@ empresa ni por banco.
 
 **Balanzas** — `balanza.pdf`, `balanza-businesspro.pdf`, `balanza-gume.pdf`
 
+**Auxiliares** — `auxiliar.pdf`, `auxiliar-gume.pdf`
+
+**Pólizas** — `poliza.pdf`, `diario-general.pdf`
+
+**Libro mayor** — `mayor-gume.pdf`, `mayor-proactivity.pdf`
+
 **Estados de cuenta** — seis formatos verificados:
 
 ```bash
@@ -110,8 +121,15 @@ Tarda ~21 s más que los demás. Es el precio del OCR.
 
 ### Documentos que todavía no tienen parser
 
-`manufacturas`, `proactivity` y `fd` (7 fixtures) nunca tuvieron parser. No
-es una regresión; es alcance pendiente.
+Siete fixtures nunca tuvieron parser: `balanza-fd`, `balanza-manufacturas`,
+`balanza-proactivity`, `auxiliar-manufacturas`, `polizas-manufacturas`,
+`mayor-manufacturas` y `mayor-fd`. No es una regresión; es alcance pendiente.
+Los tres restantes de los 27 son estados de cuenta sin tabla de movimientos
+(`multiva`, `monex`, `scotiabank`): no hay nada que extraer, y el sistema lo
+dice en vez de inventarlo.
+
+Todos ellos salen con `no_reconocido` y código `2`, con el motivo impreso —
+nunca con una traza.
 
 ---
 
@@ -119,13 +137,23 @@ es una regresión; es alcance pendiente.
 
 Máquina de desarrollo (i5-1335U, SSD), sin nada más corriendo:
 
-| Documento | Páginas | Tiempo |
-|---|---|---|
-| Mediana de los 17 que procesan | — | ~3 s |
-| `auxiliar-gume.pdf` | 886 | **3m 57s** |
+El reloj va siempre partido: leer y validar por un lado, exportar por otro.
+Un total único escondió durante nueve fases que el exportador era cuadrático.
 
-Siete de los diecisiete pasan de 5 segundos. Los tiempos en SERVIDORSIST
-(i5-3470 de 2012, HDD) serán peores y **no se han medido**.
+| Documento | Páginas | Leer y validar | Exportar | Total |
+|---|---|---|---|---|
+| Mediana de los 17 que procesan | — | — | — | **1.5 s** |
+| `auxiliar-gume.pdf` | 886 | 183 s | 5 s | **3m 08s** |
+
+Suma de los 17: 6m25s. Pico de memoria: 658 MB.
+
+> Una versión anterior de este documento decía que `auxiliar-gume` tardaba
+> 3m57s. Ese número se midió **sin `-o`**, así que nunca escribía el Excel;
+> el total real con el exportador de entonces era 23m45s. La 8c corrigió el
+> exportador y ahora son 3m08s completos. Ver PLAN.md §1.3.
+
+Los tiempos en SERVIDORSIST (i5-3470 de 2012, HDD) serán peores y **no se
+han medido todavía**: se corren con `scripts/medir_servidorsist.py`.
 
 ---
 
@@ -224,7 +252,7 @@ contapdf balanza fixtures/real/1-Balanza/balanza.pdf -o salida/balanza.xlsx \
 ## Tests
 
 ```bash
-pytest tests/ -q            # los rápidos (los lentos se excluyen solos)
-pytest tests/ -q -m lento   # solo los lentos
+pytest tests/ -q            # 710 rápidos, ~4m26s
+pytest tests/ -q -m lento   # 111 lentos, ~34m
 pytest tests/ -q --lf       # solo los que fallaron la última vez
 ```

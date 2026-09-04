@@ -6,14 +6,22 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fase 8b completada.** Cinco parsers, cinco exportadores, CLI de
-seis comandos, interfaz web con cola persistente en SQLite, worker secuencial
-y aislamiento por despacho. 786 tests verdes + 8 lentos de la web.
+Estado: **fase 8c cerrada en lo que no depende de SERVIDORSIST.** Cinco
+parsers, cinco exportadores, CLI de seis comandos, interfaz web con cola
+persistente en SQLite, worker secuencial y aislamiento por despacho.
+710 tests rápidos (4m26s) + 111 lentos (34m05s).
 De los 27 fixtures: 17 procesan, 7 no tienen parser, 3 son estados de cuenta
 sin tabla. Cuatro de los cinco tipos aprenden plantilla; pólizas sale con
 discrepancias por 53 CFDI que el documento no trae, declarados a propósito.
-Siguiente: **8c** (medición en SERVIDORSIST), **8d** (el diario y el IR) y
-**8e** (residuos del ancla).
+
+**Las tablas de M2, M3 y M4 de §2 tienen la columna de SERVIDORSIST vacía.**
+No hay acceso desde la sesión de Claude Code —se entra por Escritorio
+Remoto, sin SSH—, así que la medición la corre el orquestador con
+`scripts/medir_servidorsist.py`. Todo el dimensionamiento sigue saliendo de
+la máquina de desarrollo.
+
+Siguiente: **8c-bis** (correr la medición en SERVIDORSIST), **8d** (el diario
+y el IR) y **8e** (residuos del ancla).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -410,6 +418,29 @@ movimiento.
 `exactas_recalculadas`, y `Cobertura.resumen()` las imprime aparte. Un
 `cuadra` cuyas exactas sean mayoritariamente recalculadas no significa que
 el documento esté verificado.
+
+**Una medición de tiempo se hace con la invocación completa que usa el
+sistema real.** Los `3m57s` de `auxiliar-gume` que circularon por PLAN.md,
+USO.md y el prompt de la 8a se midieron **sin `-o`**, así que nunca
+escribieron el `.xlsx`; la capa web lo escribe siempre. El total verdadero
+era 23m45s: 182 s de leer y validar contra 1,243 s de exportar. Medir un
+pipeline que nadie ejecuta escondió durante nueve fases que el exportador era
+cuadrático —`hoja[hoja.max_row]` dentro del bucle por renglón, en los cinco
+exportadores—.
+
+De ahí la regla operativa: **el reloj se reporta siempre partido**, leer y
+validar por un lado, exportar por otro. Un número único no permite distinguir
+en qué mitad está el problema, y por eso nadie lo buscó. Este error es del
+orquestador, y es la segunda aparición del mismo patrón que ya está
+registrado: una cifra obtenida en condiciones que no son las del sistema,
+insertada en el PLAN como si lo fueran.
+
+**Un umbral por presupuesto no es un umbral por medición.** El corte de 3 s
+que reparte los tests entre rápidos y lentos se eligió para que la suite baje
+de 5 minutos, no porque los datos muestren un hueco ahí —el hueco natural
+está entre 14.25 s y 6.74 s—. Cuando un número se elige por conveniencia hay
+que decirlo, para que nadie lo cite después como si lo defendieran los datos,
+que es lo que sí ocurre con el umbral de CID.
 
 **Un estado que no se mide no se muestra.** La página de progreso de la 8a
 reporta `procesando`, `listo` y `error`, y nada más. No dice «validando» ni
@@ -2052,7 +2083,8 @@ decisión, no descripción, y se queda aquí.
 | 7h | Cerrar pólizas y deshacer la circularidad | Separar exactas impresas de recalculadas; renglones perdidos por el parser; los 101 y los 61 de `cfdi_cruzado` | **hecho** (711 tests + 15 lentos) |
 | 8a | Interfaz mínima | Subida, procesamiento en segundo plano, descarga y cobertura en el navegador | **hecho** (765 tests) |
 | 8b | Cola persistente y tenants | Trabajos que sobreviven un reinicio; aislamiento por despacho | **hecho** (786 tests + 8 lentos) |
-| 8c | Medición en SERVIDORSIST | Instalar y medir en la máquina objetivo; coexistencia con Apache y MySQL; respaldo; coste de la suite | siguiente |
+| 8c | Preparar la medición | Coste de la suite, exportador cuadrático, arreglo del `-o`, `INSTALACION.md`, guion de medición | **hecho** (710 rápidos + 111 lentos) |
+| 8c-bis | Medición en SERVIDORSIST | Correr `scripts/medir_servidorsist.py` allí y llenar las columnas vacías de M2, M3 y M4 | siguiente |
 | 8d | El diario y el IR | `pagina` en `Movimiento`; declarado y leído en columnas separadas; la segunda mecánica de pérdida de importes | |
 | 8e | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
 
@@ -2179,7 +2211,7 @@ Registrada a propósito, con la fase en que toca resolverla.
   céntimos, así que es redondeo del documento origen. Retiene 9,013 saldos
   sin recalcular.
   No se relaja el ancla eligiendo un número: `±0.01` no alcanza y subirlo a
-  `±0.02` es ajustar el umbral hasta que pase el caso. **Fase 8c: medir la
+  `±0.02` es ajustar el umbral hasta que pase el caso. **Fase 8e: medir la
   distribución completa de residuos sobre las 172 secciones y buscar el hueco,
   como se hizo con el umbral de CID. Sin hueco no hay tolerancia defendible.**
   Y si se admite: una sección anclada con residuo no es igual a una anclada
@@ -2225,11 +2257,28 @@ Registrada a propósito, con la fase en que toca resolverla.
   separación organizativa alcanza, pero **es una decisión del dueño del
   despacho, no técnica**, y hay que preguntársela antes de poner documentos de
   clientes en SERVIDORSIST. **Punto obligatorio del checklist de la 8c.**
-- **La suite «rápida» tarda 22m57s.** Eran ~3 minutos antes de la capa web;
-  los 8 lentos de la web van aparte (3m46s), así que son los 786 rápidos los
-  que se tardan. Multiplica por siete el ciclo de cada fase. **Fase 8c: medir
-  qué tests son los caros y marcar `lento` los que procesen documentos
-  reales.**
+- **El reparto rápido/lento abarató el ciclo y encareció la entrega.** La
+  suite rápida bajó de 23m31s a 4m26s, pero el total partido es 38m31s contra
+  20m03s junto, y al deseleccionar se mueve el coste de los fixtures
+  compartidos: un test pasó de ~1 s a 15.97 s. La causa no se aisló. El
+  umbral de 3 s **es un reparto de presupuesto, no un hallazgo**: el hueco
+  natural de los datos está entre 14.25 s y 6.74 s (2.1x) y cortar ahí deja
+  6m33s. No se lea como el umbral de CID, que sí lo defienden los datos.
+  **Sin fase asignada.**
+- **`mayor-proactivity` tarda 60.5 s con 276 páginas** contra 26.7 s de
+  `poliza` con 968: ocho veces más por página, y no es el exportador. Medido
+  en la 8c, sin diagnosticar. **Sin fase asignada.**
+- **`INSTALACION.md` §2 está sin verificar.** Los pasos de Windows no se han
+  podido ejecutar desde la sesión de desarrollo. El fichero abre con una
+  tabla que declara qué está verificado y qué no. **Se cierra con la
+  8c-bis.**
+- **`pypdfium2` no estaba declarado en `pyproject.toml`.** `ocr.py` lo
+  importa y nueve fases no lo notaron porque estaba instalado de antes en la
+  máquina de desarrollo. En una máquina limpia el OCR falla al importar. Ya
+  declarado; no necesita AVX2, así que no bloquea la instalación en
+  SERVIDORSIST. **Resuelto en la 8c, se registra por el patrón: una
+  dependencia que solo existe en la máquina de quien programa es invisible
+  hasta el primer despliegue.**
 - **`cfdi_cruzado` imprime `esperado 0.00 obtenido 0.00`** en sus
   discrepancias, porque cruza identidades y no importes. El reporte de la 8a
   dice que se corrigió a «no cuadra el dato, no el importe», pero una corrida
