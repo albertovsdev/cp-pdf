@@ -12,9 +12,10 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
-Estado: fases 0 a 8b completas. El nucleo esta cerrado y NO cambio en la
-8b: 5 parsers, los 5 salen a Excel, los 5 tienen comando de CLI, y
-strategy.extraer() enruta sola entre pdf_text, pdf_chars y OCR. El parser
+Estado: fases 0 a 8c completas. El nucleo solo cambio en la 8c para
+arreglar el exportador y el -o; por lo demas esta cerrado: 5 parsers, los
+5 salen a Excel, los 5 tienen comando de CLI, y strategy.extraer() enruta
+sola entre pdf_text, pdf_chars y OCR. El parser
 de estado de cuenta cubre 6 formatos de 6 bancos sin ramas por banco. Cada
 regla de validacion reporta 'aplicables' (el universo del documento)
 ademas de 'evaluados': ningun conteo se imprime sin su denominador, el
@@ -24,7 +25,21 @@ una sobre dato impreso. La capa web (Flask) en src/contapdf/web/ habla con
 el nucleo solo por cli.procesar_documento(); tiene cola persistente en
 SQLite (web/cola.py), un worker secuencial —un trabajo a la vez, PLAN §6— y
 separacion por despacho en la ruta (/t/<despacho>/...). Corre pytest tests/
-antes de tocar nada.
+antes de tocar nada: son ~4m20s y 701 tests. Los 111 que abren documentos
+reales grandes van marcados `lento` y se corren aparte, antes de entregar
+(pytest -m lento, ~33 min). El procedimiento de instalacion esta en
+INSTALACION.md.
+
+OJO: la 8c NO llego a medir SERVIDORSIST. No hay acceso desde la sesion --
+se entra por Escritorio Remoto, sin SSH -- asi que quedo preparado
+scripts/medir_servidorsist.py para que lo corra el orquestador alli. Las
+tablas de M2, M3 y M4 en PLAN §2 tienen la columna de esa maquina VACIA.
+Todo el dimensionamiento sigue saliendo de la maquina de desarrollo.
+
+OJO: el reloj se reporta SIEMPRE partido, leer+validar por un lado y
+exportar por otro. Un total unico escondio nueve fases que el exportador
+era cuadratico, y la cifra de 3m57s que se cito en tres documentos
+media media operacion. Si mides tiempo, parte el reloj.
 
 OJO con dos cosas abiertas de la 8b (PLAN §2, «Resultados de la fase 8b»):
   - NO hay autenticacion. El aislamiento por despacho es organizativo, no

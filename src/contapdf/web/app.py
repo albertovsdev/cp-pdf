@@ -5,7 +5,8 @@ CPU-bound y bloqueante, asi que el async de FastAPI no aportaria nada --
 habria que mandarlo a un hilo igualmente -- y traeria uvicorn y una
 plantilla de terceros. Flask trae Jinja2 y send_file de serie.
 
-**Por que hay cola.** `auxiliar-gume.pdf` tarda 3m57s medidos, y
+**Por que hay cola.** `auxiliar-gume.pdf` tarda 3m08s medidos --
+3m57s antes de la 8c, y sin contar la exportacion, que es de este lado --, y
 SERVIDORSIST se apaga a las 21:00: un trabajo a medias no es una hipotesis.
 El estado vive en SQLite (ver `cola.py`), asi que al arrancar un trabajo
 interrumpido lo dice en vez de dar un 404.

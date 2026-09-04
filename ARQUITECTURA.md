@@ -261,7 +261,9 @@ Rutas, todas colgadas del despacho:
 | `GET /t/<despacho>/descargar/<id>` | el `.xlsx`, **de un solo uso** |
 
 **El trabajo se encola; lo atiende un worker secuencial.**
-`auxiliar-gume` tarda 3m57s y ninguna página puede esperar eso, así que la
+`auxiliar-gume` tarda 3m08s de punta a punta —medido en la 8c, con la
+exportación incluida; los 3m57s que se citaban antes eran sin ella— y
+ninguna página puede esperar eso, así que la
 subida devuelve un id al instante y la página de estado se refresca sola
 con el tiempo transcurrido y, si espera, su puesto en la cola.
 
@@ -612,6 +614,13 @@ más allá del tipo del parámetro.
   (`/t/<despacho>/…`), no por un login. Separa los trabajos, las plantillas
   y las descargas de cada uno, y un id de trabajo no sirve fuera del suyo,
   pero quien conozca el nombre de otro despacho entra en su área.
+- **El `-o` se comprueba antes de procesar, y no crea el directorio.**
+  Si el directorio de destino no existe, el CLI lo dice y sale con 2, sin
+  haber leído el PDF. Antes reventaba con una traza de `zipfile` al ir a
+  guardar —con el documento ya procesado, hasta 24 minutos de trabajo
+  tirados— y salía con código 1, que aquí significa «hay discrepancias».
+  No se crea el directorio a propósito: con una letra cambiada, el Excel
+  acabaría en un sitio nuevo y el usuario lo buscaría donde creía. Fase 8c.
 - **El código de salida 2 no distingue por qué.** Lo comparten cinco
   situaciones (`cli.py:185, 193, 197, 411, 434`) —archivo inexistente,
   layout desconocido, tabla no encontrada, documento no reconocido, huella
@@ -647,5 +656,6 @@ más allá del tipo del parámetro.
 | Procesar sin materializar el documento | `AuxiliarParser`, `PolizasParser`, `MayorParser` y `EstadoCuentaParser` hacen `list(document.open_pages())`. Solo `BalanzaParser` transmite página por página |
 | Reglas de validación por tenant | `ReglasBalanza` se deduce del documento o se pasa a mano; la plantilla la guarda pero `evaluar_*` no la lee del almacén |
 | Cancelar un trabajo a media corrida | No hay puntos de cancelación |
+| Cronometrar por separado la lectura y la exportación desde `procesar_documento()` | Hace las dos cosas en una llamada; `scripts/medir_servidorsist.py` baja a `_tipo_de()` para partir el reloj. Un total único escondió durante nueve fases que exportar costaba siete veces más que leer |
 | Reanudar un trabajo interrumpido donde se quedó | `procesar_documento()` es una llamada opaca sin puntos de control; lo interrumpido se vuelve a subir entero |
 | Saber en qué etapa va un trabajo en curso | Misma razón: la capa web solo puede observar el tiempo transcurrido, y afirmar una etapa que no se mide es inventarla |

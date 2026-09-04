@@ -1,7 +1,8 @@
 """El trabajo corre aparte y la pagina responde de inmediato.
 
 Fase 8a, revisado en la 8b. Medido en aislamiento: `auxiliar-gume.pdf`
-tarda **3m57s**. Ningun navegador ni ningun usuario espera cuatro minutos
+tarda **3m08s** (3m57s cuando se midio en la 8a, y sin contar la
+exportacion). Ningun navegador ni ningun usuario espera tres minutos
 con la pantalla en blanco, asi que la subida no puede procesar de forma
 sincrona.
 

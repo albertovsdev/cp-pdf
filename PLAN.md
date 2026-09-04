@@ -1360,6 +1360,14 @@ Tres celdas de la tabla de cobertura cambiaron respecto a la 7g, las tres de
 
 #### La medicion que cambio el diseno
 
+> **CORREGIDO EN LA 8c.** Los 3m57s miden media operacion: se tomaron con
+> `time contapdf auxiliar <pdf>` **sin `-o`**, asi que nunca escribieron el
+> `.xlsx`, y la capa web lo escribe siempre. El tiempo real de punta a
+> punta era **23m45s** (182 s de lectura + 1 243 s de exportacion), porque
+> el exportador era cuadratico. Arreglado en la 8c: ahora son **188.5 s**.
+> Y los 1 576 s de la primera pasada no eran solo contaminacion --
+> incluian la exportacion. Ver «Resultados de la fase 8c».
+
 `auxiliar-gume.pdf` tarda **3m57s** (medido en aislamiento, i5-1335U con
 SSD). Los 1 576 s que reporte en la primera pasada eran contaminacion por
 correr la suite en paralelo — un factor de ~6.6, no un comportamiento
@@ -1670,6 +1678,309 @@ navegador, el trabajo y su directorio se borran. Sobre la cola eso es
 que en `buscar`. El barrido de 30 minutos sigue siendo la red de atrás, y
 ahora también limpia los directorios sin trabajo en la base — los que deja
 un proceso que murió antes de registrar.
+
+### Resultados de la fase 8c (medir la máquina, e instalar)
+
+#### El hallazgo que se llevó la fase por delante: los 3m57s eran de otra cosa
+
+`auxiliar-gume` no tardaba 3m57s. **Tardaba 23m45s.** La cifra del PLAN se
+midió con `time contapdf auxiliar <pdf>` **sin `-o`**, así que nunca
+escribió el `.xlsx`. La capa web escribe siempre.
+
+Medido, solo y en frío, con el reloj partido:
+
+| `auxiliar-gume`, 886 págs, 57 759 renglones | antes |
+|---|---|
+| leer y validar | 182.3 s |
+| **escribir el .xlsx** | **1 243.0 s (20m43s)** |
+| total real de punta a punta | **23m45s** |
+
+**La causa: el exportador era cuadrático.** `hoja[hoja.max_row]` estaba
+dentro del bucle por renglón, y eso recorre la hoja entera **dos** veces
+por renglón: una en `max_row`, y otra en el `max_column` que `hoja[n]` usa
+por dentro (`__getitem__` → `iter_rows(..., max_col=self.max_column)`).
+Bucle lineal × dos llamadas lineales = cuadrático.
+
+Las tres mediciones que lo establecen, cada una descartando una explicación
+más cómoda:
+
+| Medición | Resultado | Qué descarta |
+|---|---|---|
+| `max_row` sobre hojas de 1 000 a 8 000 renglones | 0.040 s → 0.300 s por cada 1 000 llamadas | Que `max_row` sea O(1) |
+| Exportar 1 000 / 2 000 / 4 000 renglones | 0.35 s → 1.22 s → 4.28 s (**3.5x por duplicación**) | Que sea lineal con constante alta |
+| `auxiliar-gume` la primera vez contra sola y en frío | 1 429 s en las dos | Que fuera bajada de frecuencia por carga sostenida |
+
+Esa tercera importa: la primera corrida puso `auxiliar-gume` al final de 32
+minutos de trabajo continuo, y el PLAN §6 advierte que el i5-1335U es de
+15 W y baja frecuencia. Era la hipótesis cómoda. Repetirlo en frío la mató.
+
+**Estaba en tres bucles y afectaba a los cinco exportadores:** `_hoja` lo
+usan pólizas, mayor, estado de cuenta y auxiliar; `exportar_balanza` tiene
+el suyo; y la hoja `Validacion` la escriben los cinco. Un solo arreglo
+—llevar el número de renglón en una variable y usar `hoja.cell()`, que es
+O(1)— los cubre a los cinco.
+
+Verificado **byte a byte**, comparando cada miembro del zip contra el
+exportador de `HEAD` (fuera `docProps/core.xml`, que lleva la fecha):
+
+| documento | antes | ahora | factor | idéntico |
+|---|---|---|---|---|
+| `balanza` | 0.11 s | 0.04 s | 2.6x | sí |
+| `edocta` | 0.01 s | 0.01 s | 1.0x | sí |
+| `mayor-gume` | 0.25 s | 0.09 s | 2.7x | sí |
+| `auxiliar` | 14.22 s | 0.64 s | **22.1x** | sí |
+| `poliza` | 20.86 s | 1.36 s | **15.3x** | sí |
+
+El ahorro crece con el tamaño, que es lo que predice un término cuadrático.
+
+Dos guardas nuevas en `tests/test_export_escala.py`. La estructural cuenta
+los accesos a `max_row` y `max_column` y exige que **no crezcan** con los
+renglones —exacta, milisegundos, va en la suite rápida—; la de escalado
+mide tiempo y va marcada `lento`, por si un cuadrático vuelve por otra
+puerta. Con el defecto, la estructural daba `[205, 805, 3205]` para 100,
+400 y 1 600 renglones: dos recorridos por renglón, contados.
+
+**La lección es de método, no de openpyxl.** El reloj se reporta desde
+ahora SIEMPRE partido —leer+validar por un lado, exportar por otro— porque
+un total único escondió esto durante nueve fases, y porque el número que
+se citó en tres documentos medía media operación.
+
+#### M1. Coste de la suite
+
+| | tests | tiempo |
+|---|---|---|
+| Antes de la fase | 786 rápidos | **23m31s** |
+| Solo con el exportador arreglado | 788 rápidos | 20m03s |
+| **Después de marcar** | **701 rápidos** | **4m21s** |
+| `pytest -m lento` | 111 | 32m41s |
+
+**5.4x en el ciclo.** El arreglo del exportador puso 3m28s; el resto lo
+puso el marcado, porque el grueso del coste no era exportar sino **volver
+a parsear el mismo documento**: `poliza.pdf` se abre **26 veces** en la
+suite, `auxiliar-gume` 11 y `auxiliar` 10.
+
+Los cuatro ficheros que se llevaban el 67% del tiempo:
+
+| fichero | antes | qué hace |
+|---|---|---|
+| `test_cobertura_aplicables.py` | 332 s | recorre los cinco tipos con el documento grande de cada uno |
+| `test_cli_comandos.py` | 286 s | parametrizado sobre los cinco comandos |
+| `test_cfdi_sin_folio.py` | 179 s | cinco tests, cada uno reparsea `poliza.pdf` |
+| `test_movimiento_envuelto.py` | 141 s | ídem |
+
+**El criterio de marcado, dicho como lo que es.** Ordenados por coste
+medido, el corte natural está entre 14.25 s y 6.74 s —un hueco de 2.1x—,
+pero marcar solo por encima de él deja la suite en 6m33s y **no cumple el
+objetivo de 5 minutos**. El umbral está en 3 s porque es lo que baja de 5
+minutos con margen. Es un reparto de presupuesto, no un hallazgo sobre los
+datos, y se declara así para que nadie lo lea como un umbral defendible
+del tipo del de CID.
+
+Se marcó **caso por caso, no fichero por fichero**, donde el parametrizado
+mezclaba documentos caros y baratos. La suite rápida sigue corriendo los
+cinco comandos de punta a punta y los cinco exportadores; lo que se fue es
+la repetición sobre los documentos grandes. Seis ficheros sí van enteros,
+porque todos sus tests reparsean `poliza.pdf` o `auxiliar.pdf`.
+
+**Dos cosas que la medición destapó y conviene no olvidar:**
+
+1. **El coste de los fixtures compartidos se mueve, no desaparece.** Al
+   deseleccionar tests, `test_el_libro_diario_sale_en_cuatro_hojas` pasó de
+   ~1 s a 15.97 s: ya no encontraba `poliza.pdf` parseado por un fixture de
+   sesión de otro test. Por debajo de ~4 s, lo que queda en la suite rápida
+   es coste de fixture compartido, que marcar no quita: solo lo reubica.
+2. **El total empeoró.** Rápida más lenta son 37m02s contra los 20m03s de
+   correrlo todo junto, porque los fixtures de sesión se construyen dos
+   veces. Se optimizó el ciclo —lo que se corre en cada cambio— a costa de
+   la entrega. **No aislé la causa**; es la explicación que encaja, no una
+   medición.
+
+**Dispersión.** Dos corridas idénticas de la suite rápida dieron 358 s y
+283 s: **27%**. Este disco es `/mnt/c` sobre NTFS bajo WSL2 y la caché de
+páginas pesa. El 4m21s es de una corrida en caliente; en frío hay que
+contar con más.
+
+#### M2, M3 y M4: la línea base, y el hueco de SERVIDORSIST
+
+**No hay acceso a SERVIDORSIST desde la sesión de desarrollo**: se entra
+por Escritorio Remoto, no hay SSH y no se va a montar en esta fase. Lo que
+se hizo fue dejar `scripts/medir_servidorsist.py`, que corre en Windows 10
+con Python 3.12 usando **solo la stdlib más el repo** —la memoria por
+`ctypes` contra `psapi`, no `psutil`— y que corre **igual en las dos
+máquinas**, para que el factor salga del mismo instrumento y no de dos.
+
+##### M2. Tiempo por documento (máquina de desarrollo, i5-1335U con SSD)
+
+Los 17 fixtures que producen Excel, uno a uno, en frío, sin plantilla
+aprendida, con el exportador ya arreglado:
+
+| documento | tipo | págs | leer s | exportar s | total s | estrategia | xlsx MB |
+|---|---|---|---|---|---|---|---|
+| `edocta-bbva` | estado-cuenta | 11 | 0.6 | 0.0 | 0.6 | pdf_text | 0.02 |
+| `edocta` | estado-cuenta | 6 | 0.7 | 0.0 | 0.7 | pdf_chars | 0.02 |
+| `edocta-inbursa` | estado-cuenta | 8 | 0.8 | 0.0 | 0.8 | pdf_text | 0.02 |
+| `balanza-businesspro` | balanza | 4 | 0.9 | 0.0 | 0.9 | pdf_chars | 0.02 |
+| `edocta-santander` | estado-cuenta | 10 | 0.9 | 0.0 | 0.9 | pdf_text | 0.01 |
+| `edocta-abril-santander` | estado-cuenta | 13 | 1.2 | 0.0 | 1.2 | pdf_chars | 0.03 |
+| `balanza` | balanza | 9 | 1.3 | 0.0 | 1.4 | pdf_text | 0.03 |
+| `edocta-bajio` | estado-cuenta | 11 | 1.4 | 0.0 | 1.4 | pdf_text | 0.02 |
+| `edocta-julio-banorte` | estado-cuenta | 16 | 1.4 | 0.1 | 1.5 | pdf_text | 0.06 |
+| `mayor-gume` | mayor | 17 | 2.2 | 0.1 | 2.3 | pdf_text | 0.07 |
+| `balanza-gume` | balanza | 12 | 3.1 | 0.1 | 3.1 | pdf_text | 0.04 |
+| `edocta-hsbc` | estado-cuenta | 4 | 14.7 | 0.0 | **14.7** | **ocr** | 0.01 |
+| `auxiliar` | auxiliar | 398 | 14.4 | 0.6 | 15.0 | pdf_text | 0.45 |
+| `poliza` | polizas | 968 | 26.7 | 1.1 | 27.8 | pdf_text | 0.83 |
+| `mayor-proactivity` | mayor | 276 | 60.5 | 0.0 | 60.5 | pdf_text | 0.01 |
+| `diario-general` | polizas | 431 | 60.7 | 3.4 | 64.1 | pdf_chars | 2.34 |
+| `auxiliar-gume` | auxiliar | 886 | 183.4 | 5.2 | **188.5** | pdf_text | 3.55 |
+
+| | total | leer | exportar |
+|---|---|---|---|
+| mínimo | 0.6 s | 0.6 s | 0.0 s |
+| **mediana** | **1.5 s** | 1.4 s | 0.0 s |
+| máximo | 3m08s | 3m03s | 5.2 s |
+| suma de los 17 | **6m25s** | 6m14s | 10.6 s |
+
+Antes del arreglo, esa misma suma era **32m06s**. Y una anomalía que queda
+apuntada sin diagnosticar: **`mayor-proactivity` tarda 60.5 s con 276
+páginas**, mientras `poliza` tarda 26.7 s con 968. Casi ocho veces más por
+página que el documento más grande del proyecto. No es el exportador —su
+`.xlsx` son 0.01 MB y 0.0 s—, es la lectura.
+
+**El factor contra SERVIDORSIST está PENDIENTE.** La columna existe y está
+vacía; la llena la corrida de `medir_servidorsist.py` en esa máquina.
+
+| documento | desarrollo | SERVIDORSIST | factor |
+|---|---|---|---|
+| mediana de los 17 | 1.5 s | — | — |
+| `auxiliar-gume` | 188.5 s | — | — |
+| `edocta-hsbc` (OCR, sin AVX2 allí) | 14.7 s | — | — |
+| suma de los 17 | 6m25s | — | — |
+
+##### M3. Memoria (máquina de desarrollo)
+
+| | |
+|---|---|
+| pico más alto | **658 MB**, en `auxiliar-gume` |
+| RAM libre mínima mientras corría | 6 238 MB de 7 785 MB |
+
+Coherente con los 543 MB que la 7d midió con otro instrumento; la
+diferencia es que aquí se mide el `WorkingSetSize` del proceso entero,
+incluido el intérprete.
+
+**PENDIENTE en SERVIDORSIST**, que es donde importa: allí hay 8 GB
+compartidos con Apache y MySQL, y el PLAN §6 estima ~4.5 GB ocupados en
+reposo. La pregunta que contesta esa corrida es cuánta RAM libre queda
+mientras `auxiliar-gume` está en curso.
+
+##### M4. Disco (medido en desarrollo, extrapolado a un día)
+
+Medido:
+
+| | |
+|---|---|
+| `.xlsx` generados, 17 | mínimo 0.01 MB, mediana **0.03 MB**, máximo **3.55 MB** |
+| PDFs de entrada | mediana 0.49 MB, máximo 7.61 MB |
+| base de la cola con 75 trabajos terminados | **0.17 MB** |
+
+La base se llenó con resúmenes de cobertura **reales**, no con un
+diccionario de relleno: el resumen es lo que ocupa.
+
+**Extrapolado** —y se dice que es extrapolación— a los 75 documentos al día
+del PLAN §6 (15 personas × 5):
+
+| | |
+|---|---|
+| `.xlsx` de un día, con la mezcla de los fixtures | ~2 MB |
+| si los 75 fueran como el mayor | 266 MB |
+| PDFs subidos en un día | ~37 MB, borrados al terminar cada uno |
+| base de la cola | 0.17 MB al día, ~42 MB al año si nada se borrara |
+
+**Lo que ocupa en un momento dado es mucho menos**: el barrido de 30
+minutos borra cada trabajo terminado y la descarga lo borra antes, así que
+el pico real es lo que quepa en media hora, no un día. Las cifras de
+arriba son el techo si el barrido no existiera. Con eso, **el disco no es
+una restricción**: ni el peor día se acerca a los 466 GB de esa máquina.
+
+#### El `-o` con un directorio inexistente: peor de lo que parecía
+
+No solo reventaba con una traza de siete niveles desde `zipfile`. **Salía
+con código 1**, y en este CLI el 1 significa «hay discrepancias que
+revisar»: para cualquier guion, un `-o` mal escrito era indistinguible de
+un documento que no cuadra.
+
+Y reventaba **al ir a guardar**, con el documento ya procesado. Sobre
+`auxiliar-gume` eso eran 24 minutos tirados por una letra.
+
+Se decidió **avisar y no crear el directorio**, y sobre todo **comprobarlo
+antes de trabajar**:
+
+- Crear lo que nadie pidió esconde el error: con una letra cambiada, el
+  Excel acabaría en un directorio nuevo y el usuario lo buscaría donde
+  creía haberlo escrito.
+- El argumento a favor de crearlo era no perder el trabajo ya hecho, y se
+  cae solo en cuanto la comprobación ocurre antes de empezar.
+- Sale con **código 2**, que es el que este CLI usa para «no se pudo
+  procesar».
+
+```
+$ contapdf balanza balanza.pdf -o /tmp/no-existe/x.xlsx
+/tmp/no-existe: el directorio no existe.
+  Crealo primero, o apunta -o a uno que ya exista.
+$ echo $?
+2
+```
+
+El test que asegura el ORDEN no mide tiempo: manda un fichero que no es un
+PDF y comprueba que el mensaje habla del directorio y no del documento. Si
+la comprobación llegara tarde, hablaría del documento.
+
+#### `pypdfium2` no estaba declarado
+
+`extract/ocr.py` hace `import pypdfium2`, pero no estaba en las
+dependencias de `pyproject.toml`. En la máquina de desarrollo estaba
+instalado de antes, así que **nueve fases no lo notaron**. En una máquina
+limpia, `pip install -e .` no lo trae y el OCR falla al importar el módulo.
+Se declaró. Es el tipo de cosa que solo aparece cuando se instala de cero,
+que es justo lo que esta fase vino a hacer.
+
+`pypdfium2` es un binding de PDFium y no necesita AVX2, así que sirve en el
+i5-3470. No hay ningún otro obstáculo de instalación conocido.
+
+#### Checklist de despliegue: lo que falta antes de que el despacho lo use
+
+Enumerado, no resuelto.
+
+1. **Autenticación.** Cualquiera en la red de la oficina puede subir y
+   descargar cualquier documento; el nombre del despacho es el único
+   separador y no es un secreto. §5.1 lo deja como decisión del dueño del
+   despacho, no técnica. **Es lo primero: los documentos son de clientes de
+   terceros.**
+2. **Respaldo.** Un solo disco mecánico de 2012, sin redundancia. §5.1 lo
+   llama el riesgo más grande del despliegue. Lo medido en la 8c lo acota:
+   el volumen es pequeño —~2 MB de Excel al día, 0.17 MB de base de cola—,
+   así que **el respaldo es barato de hacer**; lo que falta es decidir a
+   dónde y cada cuánto.
+3. **Un trabajo en curso a las 21:00.** La máquina se apaga y el trabajo
+   muere. La cola lo marca `interrumpido` al arrancar y lo dice (8b), pero
+   **no lo reanuda**: hay que volver a subir el documento. Con los números
+   de la 8c eso importa más de lo que parecía: si el factor de SERVIDORSIST
+   es 4x, `auxiliar-gume` allí ronda los 12 minutos, así que **cualquier
+   documento grande subido después de las 20:45 se pierde**. Falta decidir
+   si se avisa en pantalla a partir de cierta hora, si se rechaza, o si no
+   se hace nada.
+4. **Ventana de uso acordada con el personal.** La máquina está encendida
+   de 8:00 a 21:00 y el worker es secuencial. Con la mediana de 1.5 s los
+   75 documentos del día caben de sobra, pero **un solo `auxiliar-gume`
+   bloquea la cola varios minutos** y quien esté detrás espera. Falta
+   acordar si los documentos grandes van a una hora concreta.
+5. **Servidor de producción.** Hoy se arranca el servidor de desarrollo de
+   Flask a mano, en una consola que alguien puede cerrar. Falta decidir
+   entre un servidor WSGI (waitress) y un proxy de Apache — y lo segundo
+   toca la configuración de Apache, que esta fase tenía prohibido tocar.
+6. **Los PDFs de prueba en SERVIDORSIST.** Para medir hay que copiar allí
+   los fixtures reales, que son documentos de clientes. Falta borrarlos
+   cuando la medición termine.
 
 ### Dos documentos, sin solapamiento
 
