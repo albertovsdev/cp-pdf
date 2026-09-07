@@ -277,8 +277,13 @@ def _version_de_tesseract() -> tuple[bool, str]:
     if binario is None:
         return False, "no esta en el PATH"
     try:
+        # La codificacion va declarada: sin ella Windows en espanol
+        # decodifica con cp1252 y el hilo lector muere en silencio, dejando
+        # `stdout` en None. Es la misma causa que tenia el OCR (fase 8d), y
+        # aqui haria que el instrumento reportara una version en blanco.
         completado = subprocess.run([binario, "--version"], capture_output=True,
-                                    text=True, timeout=30)
+                                    text=True, encoding="utf-8",
+                                    errors="replace", timeout=30)
     except Exception as exc:
         return False, f"no se pudo ejecutar: {exc}"
     # El codigo de salida, a una variable ANTES de tocar nada mas. En la 8b
@@ -289,7 +294,8 @@ def _version_de_tesseract() -> tuple[bool, str]:
     if codigo != 0:
         return False, f"salio con codigo {codigo}: {detalle}"
     idiomas = subprocess.run([binario, "--list-langs"], capture_output=True,
-                             text=True, timeout=30)
+                             text=True, encoding="utf-8", errors="replace",
+                             timeout=30)
     codigo_idiomas = idiomas.returncode
     listados = (idiomas.stdout or "").split()
     hay_espanol = "spa" in listados

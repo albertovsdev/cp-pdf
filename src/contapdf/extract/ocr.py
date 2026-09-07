@@ -42,6 +42,16 @@ class TesseractAusente(RuntimeError):
     """No hay binario de Tesseract con el que leer la pagina."""
 
 
+class TesseractSinSalida(RuntimeError):
+    """Tesseract termino bien y no devolvio TSV: no hay nada que interpretar.
+
+    Tiene nombre propio porque su forma anterior era un `AttributeError:
+    'NoneType' object has no attribute 'splitlines'` dos capas mas abajo,
+    en `_tsv_a_palabras`, y ese sintoma se interpreto mal dos veces antes de
+    medir la causa en la maquina objetivo.
+    """
+
+
 def hay_tesseract(*, binario: str = _BINARIO) -> bool:
     """Si se puede hacer OCR. Nunca lanza: quien llama decide que hacer."""
     return shutil.which(binario) is not None
@@ -85,6 +95,37 @@ def _tsv_a_palabras(tsv: str, numero: int, escala: float,
     return palabras
 
 
+def _correr_tesseract(orden: Sequence[str], numero: int) -> str:
+    """Lanza Tesseract y devuelve su TSV, o falla con un error que se entiende.
+
+    La codificacion va DECLARADA. Sin `encoding`, `subprocess` decodifica con
+    el default del sistema: en Linux es UTF-8 y no se nota, pero en un
+    Windows en espanol es cp1252, que no tiene el byte 0x9D -- el de la
+    comilla tipografica U+201D que Tesseract produce en espanol. El hilo
+    lector muere con `UnicodeDecodeError: 'charmap' codec`, `communicate()`
+    devuelve `stdout=None` y el fallo reaparece dos capas mas abajo. Por eso
+    el OCR nunca funciono en SERVIDORSIST.
+
+    `errors='replace'` porque un glifo que no se pueda decodificar es una
+    palabra ilegible, no un documento perdido: la pagina sigue leyendose y el
+    caracter sale marcado.
+    """
+    proceso = subprocess.run(
+        list(orden), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", check=False)
+    if proceso.returncode != 0:
+        raise TesseractAusente(
+            f"tesseract fallo en la pagina {numero}: "
+            f"{(proceso.stderr or '').strip()[:200]}")
+    # Tesseract siempre imprime al menos la fila de encabezado del TSV, asi
+    # que vacio con codigo 0 no es una pagina en blanco: es un fallo.
+    if not proceso.stdout:
+        raise TesseractSinSalida(
+            f"tesseract termino con codigo 0 y no devolvio TSV en la pagina "
+            f"{numero}; sin salida no hay palabras que interpretar")
+    return proceso.stdout
+
+
 def leer_pagina(path: str | Path, numero: int, *, dpi: int = _DPI,
                 idioma: str = _IDIOMA, binario: str = _BINARIO,
                 psm: str = _PSM, confianza_minima: float = _CONFIANZA) -> Page:
@@ -106,15 +147,11 @@ def leer_pagina(path: str | Path, numero: int, *, dpi: int = _DPI,
     with tempfile.TemporaryDirectory() as carpeta:
         destino = Path(carpeta) / f"p{numero}.png"
         imagen.save(destino)
-        proceso = subprocess.run(
+        tsv = _correr_tesseract(
             [binario, str(destino), "stdout", "-l", idioma, "--psm", psm, "tsv"],
-            capture_output=True, text=True, check=False)
-    if proceso.returncode != 0:
-        raise TesseractAusente(
-            f"tesseract fallo en la pagina {numero}: "
-            f"{proceso.stderr.strip()[:200]}")
+            numero)
 
-    palabras = _tsv_a_palabras(proceso.stdout, numero, escala, confianza_minima)
+    palabras = _tsv_a_palabras(tsv, numero, escala, confianza_minima)
     palabras.sort(key=lambda w: (w.top, w.x0))
     return Page(number=numero, width=float(ancho_pt), height=float(alto_pt),
                 words=tuple(palabras), ruling_lines=0)
