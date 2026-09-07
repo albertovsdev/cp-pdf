@@ -58,6 +58,34 @@ def test_sin_aplicables_si_puede_ser_no_verificable():
     assert regla.aplicables is None
 
 
+def test_una_regla_que_no_evaluo_nada_no_puede_cuadrar():
+    """La tercera forma del `0 discrepancias`, y la que sobrevivio a la 7f.
+
+    La 7f prohibio `aplicables is None` con CUADRA, pero no `evaluados == 0`,
+    y por ese hueco `mayor-proactivity` reportaba `saldo_mensual 0 de 48 ->
+    cuadra`. Una regla que no emitio un solo veredicto no ha comprobado
+    nada del documento: es no_verificable con motivo, siempre.
+    """
+    with pytest.raises(ValueError, match="evaluados"):
+        ResultadoRegla(regla="inventada", estado=CUADRA, aplicables=48,
+                       evaluados=0)
+
+
+def test_un_universo_vacio_tampoco_deja_cuadrar():
+    """`aplicables == 0` no es una excusa: sigue sin haberse comprobado nada."""
+    with pytest.raises(ValueError, match="evaluados"):
+        ResultadoRegla(regla="inventada", estado=CUADRA, aplicables=0,
+                       evaluados=0)
+
+
+def test_sin_evaluar_si_puede_ser_no_verificable():
+    regla = ResultadoRegla(regla="inventada", estado=NO_VERIFICABLE,
+                           aplicables=48, evaluados=0,
+                           motivo="ningun mes trajo saldo legible")
+    assert regla.evaluados == 0
+    assert regla.motivo
+
+
 def test_aplicables_nunca_es_menor_que_evaluados():
     with pytest.raises(ValueError, match="aplicables"):
         ResultadoRegla(regla="inventada", estado=CUADRA, aplicables=3,
@@ -245,6 +273,34 @@ def test_ninguna_regla_cuadra_sin_universo(procesar, nombres):
                 assert regla.aplicables >= regla.evaluados, (nombre, regla.regla)
             assert regla.exactas + len(regla.con_tolerancia) \
                 + len(regla.discrepancias) == regla.evaluados, (nombre, regla.regla)
+
+
+@pytest.mark.parametrize("procesar,nombres", _TODOS)
+def test_ninguna_regla_cuadra_sin_haber_evaluado(procesar, nombres):
+    """El invariante del objetivo 1, sobre documentos reales."""
+    for nombre in nombres:
+        for regla in procesar(requires_real_pdf(nombre)).cobertura.reglas:
+            if regla.estado == CUADRA:
+                assert regla.evaluados > 0, (nombre, regla.regla)
+
+
+@pytest.mark.lento          # 60 s: 276 paginas
+def test_mayor_proactivity_no_cuadra_reglas_que_no_evaluo_nada():
+    """El caso que destapo el hueco, con sus cifras medidas.
+
+    `saldo_mensual` y `acumulados` reportaban `0 de 48 -> cuadra` y
+    `0 de 96 -> cuadra`. El universo NO cambia -- los 48 y los 96 siguen
+    contados; lo que cambia es que una regla sin veredictos deja de
+    afirmar que el documento cuadra.
+    """
+    cobertura = procesar_mayor(requires_real_pdf("mayor-proactivity")).cobertura
+    for nombre, aplicables in (("saldo_mensual", 48), ("acumulados", 96)):
+        regla = _regla(cobertura, nombre)
+        assert regla.aplicables == aplicables, nombre
+        assert regla.evaluados == 0, nombre
+        assert regla.estado == NO_VERIFICABLE, nombre
+        assert regla.motivo, nombre
+    assert cobertura.cuadran == 0
 
 
 @pytest.mark.parametrize("procesar,nombres", _TODOS)

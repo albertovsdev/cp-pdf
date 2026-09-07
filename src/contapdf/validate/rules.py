@@ -84,6 +84,10 @@ class ResultadoRegla:
             raise ValueError(
                 f"{self.regla}: no puede cuadrar sin saber sobre cuantos "
                 "casos podia correr; sin 'aplicables' va no_verificable")
+        if self.estado == CUADRA and not self.evaluados:
+            raise ValueError(
+                f"{self.regla}: no puede cuadrar sin haber evaluado un solo "
+                "caso; con 'evaluados' en cero va no_verificable con motivo")
         if self.aplicables is not None and self.aplicables < self.evaluados:
             raise ValueError(
                 f"{self.regla}: 'aplicables' ({self.aplicables}) no puede ser "
@@ -273,6 +277,16 @@ def _resultado(regla: str, aplicables: int, exactas: int,
     if evaluados < aplicables and not motivo:
         motivo = (f"{aplicables - evaluados} de {aplicables} casos no se "
                   "pudieron comprobar")
+    if not evaluados:
+        # Una regla que no emitio un solo veredicto no ha comprobado nada
+        # del documento, tenga o no casos que comprobar. Afirmar que cuadra
+        # es el `0 discrepancias` en su tercera forma: la 7f cerro
+        # `aplicables is None` y por este hueco `mayor-proactivity` seguia
+        # reportando `saldo_mensual 0 de 48 -> cuadra`.
+        return ResultadoRegla(
+            regla=regla, estado=NO_VERIFICABLE, aplicables=aplicables,
+            evaluados=0,
+            motivo=motivo or "el documento no trajo ningun caso de esta regla")
     return ResultadoRegla(
         regla=regla,
         estado=FALLA if discrepancias else CUADRA,
