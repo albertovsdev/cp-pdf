@@ -1,0 +1,837 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cp-pdf — los cinco Excel por dentro</title>
+<style>
+  :root {
+    --tinta: #1a1d21; --tinta-suave: #545b64; --papel: #fbfaf7;
+    --linea: #ddd8cd; --azul: #1b3a5c; --verde: #2c6b3f;
+    --ambar: #8a5a10; --rojo: #9c3226;
+    --mono: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--papel); color: var(--tinta);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 16px; line-height: 1.62;
+  }
+  .doc { max-width: 840px; margin: 0 auto; padding: 48px 28px 120px; }
+
+  h1 { font-size: 2.1rem; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 6px; }
+  .sub { color: var(--tinta-suave); font-size: 1.05rem; margin: 0 0 34px; }
+
+  h2 {
+    font-size: 1.45rem; font-weight: 600; margin: 60px 0 4px;
+    padding-top: 22px; border-top: 2px solid var(--azul); letter-spacing: -0.01em;
+  }
+  h3 { font-size: 1.12rem; font-weight: 600; margin: 34px 0 10px; }
+  h4 { font-size: 0.97rem; font-weight: 600; margin: 24px 0 8px; color: var(--azul); }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  code { font-family: var(--mono); font-size: 0.86em; background: #efece5; padding: 1px 5px; border-radius: 3px; }
+  pre {
+    font-family: var(--mono); font-size: 0.83rem; line-height: 1.6;
+    background: #f2f0ea; border: 1px solid var(--linea); border-left: 3px solid var(--azul);
+    padding: 14px 16px; overflow-x: auto; margin: 0 0 16px; border-radius: 3px;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 0.92rem; }
+  th {
+    text-align: left; font-weight: 600; font-size: 0.78rem; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--tinta-suave); padding: 6px 10px 6px 0;
+    border-bottom: 1.5px solid var(--tinta);
+  }
+  td { padding: 8px 10px 8px 0; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  td:first-child, th:first-child { padding-left: 0; }
+  td.col { font-family: var(--mono); font-size: 0.82rem; white-space: nowrap; color: var(--azul); }
+  table.comp { font-size: 0.85rem; }
+  table.comp td { padding: 7px 8px 7px 0; }
+  table.comp td.col { white-space: normal; }
+
+  .hojas { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .hoja {
+    font-family: var(--mono); font-size: 0.8rem; padding: 5px 11px;
+    background: #fff; border: 1px solid var(--linea); border-bottom: 2.5px solid var(--azul);
+    border-radius: 3px 3px 0 0;
+  }
+
+  .nota, .alerta, .clave { padding: 15px 18px; margin: 0 0 20px; border-radius: 3px; font-size: 0.95rem; }
+  .nota  { background: #eef1f5; border-left: 3px solid var(--azul); }
+  .alerta{ background: #fbf2e6; border-left: 3px solid var(--ambar); }
+  .clave { background: #edf3ee; border-left: 3px solid var(--verde); }
+  .nota p:last-child, .alerta p:last-child, .clave p:last-child { margin-bottom: 0; }
+  .etq { font-weight: 600; }
+
+  .verde { color: var(--verde); font-weight: 600; }
+  .ambar { color: var(--ambar); font-weight: 600; }
+  .rojo  { color: var(--rojo);  font-weight: 600; }
+  .azul  { color: var(--azul);  font-weight: 600; }
+
+  .indice { background: #fff; border: 1px solid var(--linea); padding: 20px 24px; margin: 0 0 44px; border-radius: 4px; font-size: 0.95rem; }
+  .indice ol { margin: 0; padding-left: 20px; }
+  .indice li { margin-bottom: 4px; }
+  .indice a { color: var(--azul); text-decoration: none; }
+  .indice a:hover { text-decoration: underline; }
+</style>
+
+<div class="doc">
+
+<h1>Los cinco Excel por dentro</h1>
+<p class="sub">Qué trae cada hoja, qué significa cada columna, cómo verificar a mano, cómo cruzar entre documentos y dónde caben las mejoras.</p>
+
+<div class="indice">
+  <ol>
+    <li><a href="#idea">La idea que organiza todos los Excel</a></li>
+    <li><a href="#validacion">La hoja Validación, que es igual en los cinco</a></li>
+    <li><a href="#balanza">Balanza de comprobación</a></li>
+    <li><a href="#auxiliar">Auxiliar de cuentas</a></li>
+    <li><a href="#polizas">Pólizas y libro diario</a></li>
+    <li><a href="#edocta">Estado de cuenta bancario</a></li>
+    <li><a href="#mayor">Libro mayor</a></li>
+    <li><a href="#comparativa">Los cinco lado a lado</a></li>
+    <li><a href="#cruces">Cruces entre documentos</a></li>
+    <li><a href="#pregunta">Cuando el sistema pregunta</a></li>
+    <li><a href="#defectos">Defectos visibles hoy</a></li>
+    <li><a href="#mejoras">Dónde caben las mejoras</a></li>
+  </ol>
+</div>
+
+<h2 id="idea">1. La idea que organiza todos los Excel</h2>
+
+<p>La regla es simple y vale para los cinco tipos:</p>
+
+<pre>una hoja por cada tabla que trae el documento
++ una hoja Plana, si hay dos tablas relacionadas
++ una hoja Validacion, siempre, al final</pre>
+
+<p>Un documento con una sola tabla —la balanza, el auxiliar— da dos hojas. Uno con dos o
+tres tablas relacionadas —pólizas, estado de cuenta, mayor— da cuatro o cinco.</p>
+
+<p>La hoja <code>Plana</code> no aporta información nueva: repite el encabezado en cada
+renglón de detalle para que puedas filtrar y hacer tablas dinámicas sin fórmulas de
+búsqueda. Si quieres «cuánto se cargó a la cuenta 209-01 en pólizas de venta durante enero»,
+esa hoja lo resuelve con un filtro.</p>
+
+<div class="clave">
+<p><span class="etq">Lo importante de entender.</span> El Excel de datos no es la salida del
+sistema: es <em>una</em> de dos salidas. La otra es la hoja de validación, que dice qué tan
+confiable es la primera. Cualquier herramienta produce la tabla; lo que distingue a ésta es
+que produce también el juicio sobre la tabla, con su denominador a la vista.</p>
+</div>
+
+<h2 id="validacion">2. La hoja Validación, que es igual en los cinco</h2>
+
+<p>Tiene <strong>dos bloques</strong> separados por una fila en blanco. Conviene verlos como
+dos tablas apiladas.</p>
+
+<h4>Bloque 1 — el resumen, una fila por regla</h4>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">regla</td><td>Qué se comprobó. Cambia según el tipo de documento.</td></tr>
+    <tr><td class="col">estado</td><td><span class="verde">cuadra</span> · <span class="ambar">falla</span> · <span class="azul">no_verificable</span></td></tr>
+    <tr><td class="col">aplicables</td><td><strong>Cuántos casos existían</strong> en el documento. El denominador.</td></tr>
+    <tr><td class="col">evaluados</td><td>Sobre cuántos corrió realmente la regla.</td></tr>
+    <tr><td class="col">exactos</td><td>Cuántos cumplieron sin diferencia.</td></tr>
+    <tr><td class="col">detalle</td><td>El resumen en texto.</td></tr>
+    <tr><td class="col">motivo</td><td>Por qué hay diferencia entre <code>aplicables</code> y <code>evaluados</code>.</td></tr>
+  </tbody>
+</table>
+
+<h4>Bloque 2 — el detalle, una fila por diferencia</h4>
+
+<p>Encabezados <code>fila</code>, <code>regla</code>, <code>esperado</code>,
+<code>obtenido</code>. <strong>Si todo cuadró, está vacío.</strong> En el Excel de pólizas
+trae 53 filas; en los demás ejemplos está vacío.</p>
+
+<h3>Las tres columnas que hay que leer juntas</h3>
+
+<p>Este es el concepto central de todo el sistema, así que vale la pena detenerse.</p>
+
+<p>En la balanza, la regla <code>jerarquia</code> dice <code>aplicables 56</code>,
+<code>evaluados 52</code>, <code>exactos 52</code>. Traducido: había 56 relaciones
+padre-hija en el documento, se pudieron comprobar 52, y las 52 cuadraron. Las otras 4 no se
+comprobaron, y el motivo lo explica.</p>
+
+<p>Un sistema que solo dijera «52 exactas» estaría escondiendo esas cuatro. Y el caso real
+que originó todo esto fue peor: un estado de cuenta de BBVA reportaba
+<code>saldo_corrido: 5 exactas → cuadra</code> sobre un documento de <strong>116
+movimientos</strong>. La regla corrió en el 4% de la tabla y se leía como cobertura
+completa.</p>
+
+<div class="nota">
+<p><span class="etq">Ante la duda, el caso entra al denominador.</span> Es la regla del
+proyecto. Si un caso podría haberse comprobado y no se comprobó, cuenta como aplicable
+aunque eso baje el porcentaje. Elegir la interpretación que lo sube es exactamente cómo un
+sistema empieza a mentir sin que nadie lo note.</p>
+</div>
+
+<h3>Los tres estados</h3>
+
+<table>
+  <thead><tr><th>Estado</th><th>Significa</th></tr></thead>
+  <tbody>
+    <tr><td><span class="verde">cuadra</span></td><td>La identidad se cumple en todos los casos evaluados.</td></tr>
+    <tr><td><span class="ambar">falla</span></td><td>Hay diferencias, y se listan una por una en el bloque 2.</td></tr>
+    <tr><td><span class="azul">no_verificable</span></td><td>El documento no trae el dato necesario. <strong>No es un error</strong>: es el sistema diciendo que no puede probar algo en vez de afirmarlo.</td></tr>
+  </tbody>
+</table>
+
+<h3>Impresos contra recalculados</h3>
+
+<p>Dos columnas más que aparecen en el reporte web y que conviene entender:</p>
+
+<ul>
+  <li><strong>Impreso</strong> — el dato estaba en el PDF y se comprobó contra la tinta del documento.</li>
+  <li><strong>Recalculado</strong> — el dato no estaba y el sistema lo dedujo encadenando.</li>
+</ul>
+
+<p>Un saldo que el sistema calculó con la fórmula <code>anterior + debe − haber</code> no
+puede fallar cuando después se comprueba con esa misma fórmula. Sería como sumar una columna
+y verificarla volviendo a sumarla igual.</p>
+
+<p>Por eso van separados, y el sistema avisa cuando la mayoría de sus comprobaciones cayeron
+sobre datos propios. En el auxiliar grande son 26,032 de 47,965: más de la mitad. Un
+<span class="verde">cuadra</span> con esa composición <strong>no significa que el documento
+esté verificado</strong>.</p>
+
+<h2 id="balanza">3. Balanza de comprobación</h2>
+
+<div class="hojas"><span class="hoja">Balanza</span><span class="hoja">Validacion</span></div>
+
+<p>Es el resumen de todas las cuentas en un periodo: <strong>una fila por cuenta</strong>.
+Una sola tabla, así que dos hojas.</p>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">cuenta</td><td>El código contable. <code>105-01-081</code>. Es la clave de la fila.</td></tr>
+    <tr><td class="col">nivel</td><td>Profundidad en el árbol. <code>105</code> es nivel 1, <code>105-01</code> nivel 2, <code>105-01-081</code> nivel 3.</td></tr>
+    <tr><td class="col">cuenta_padre</td><td>De quién cuelga. Permite comprobar la jerarquía y delata a las huérfanas.</td></tr>
+    <tr><td class="col">naturaleza</td><td><code>D</code> deudora o <code>A</code> acreedora. <strong>Derivada de los datos, no del nombre.</strong></td></tr>
+    <tr><td class="col">nombre</td><td>La descripción tal como viene impresa.</td></tr>
+    <tr><td class="col">saldo_ini_deudor<br>saldo_ini_acreedor</td><td>El saldo inicial en dos columnas. Solo una trae valor.</td></tr>
+    <tr><td class="col">debe · haber</td><td>Los movimientos del periodo.</td></tr>
+    <tr><td class="col">saldo_fin_deudor<br>saldo_fin_acreedor</td><td>El saldo final, con la misma lógica de dos columnas.</td></tr>
+    <tr><td class="col">es_acumulativa</td><td><code>VERDADERO</code> si agrupa a otras cuentas y no tiene movimientos propios.</td></tr>
+  </tbody>
+</table>
+
+<div class="nota">
+<p><span class="etq">Por qué el saldo va en dos columnas.</span> Un saldo deudor de 500 y uno
+acreedor de 500 son cosas opuestas, y un solo número con signo obligaría a decidir qué signo
+significa qué. Separarlo refleja exactamente lo que el documento imprime, sin interpretación.
+La columna <code>naturaleza</code> te dice cuál de las dos esperar.</p>
+</div>
+
+<h4>Verificar un renglón a mano</h4>
+
+<p>Fila de <code>102-01-001</code> (Bancos TPV): saldo inicial 0.00, debe 2,612,917.82,
+haber 2,664,460.18, saldo final deudor <span class="rojo">−51,542.36</span>.</p>
+
+<pre>0.00 + 2,612,917.82 − 2,664,460.18 = −51,542.36  ✓</pre>
+
+<p>Cuadra. Un saldo deudor negativo es una cuenta de banco sobregirada en libros. El sistema
+no opina sobre eso, solo comprueba que la aritmética cierre.
+<strong>Interpretar sigue siendo trabajo del contador</strong>, y esa división es
+deliberada.</p>
+
+<h4>Las cuatro reglas</h4>
+
+<table>
+  <thead><tr><th>Regla</th><th>Qué comprueba</th></tr></thead>
+  <tbody>
+    <tr><td class="col">renglon</td><td>Saldo anterior + cargos − abonos = saldo final, en cada fila, con el signo de su naturaleza.</td></tr>
+    <tr><td class="col">jerarquia</td><td>Que cada cuenta acumulativa sea la suma exacta de sus subcuentas.</td></tr>
+    <tr><td class="col">totales</td><td>Que los totales impresos coincidan con la suma de las filas leídas.</td></tr>
+    <tr><td class="col">partida_doble</td><td>Que la suma de todos los debes iguale la de todos los haberes. Una sola comprobación para el documento.</td></tr>
+  </tbody>
+</table>
+
+<h4>Encontrar las cuentas huérfanas</h4>
+
+<p>El motivo dice: <em>«2 cuentas padre que alguna fila declara no aparecen en el documento:
+100, 200»</em>. Para localizarlas, en una columna vacía de la hoja <code>Balanza</code>:</p>
+
+<pre>=SI(CONTAR.SI(A:A;C2)=0;"HUÉRFANA";"")</pre>
+
+<p>Marca cada fila cuyo <code>cuenta_padre</code> no existe como <code>cuenta</code>. Filtra
+por «HUÉRFANA» y tienes la lista. En este documento salen <code>100-01</code> y
+<code>200-01</code>: sus padres serían Activo y Pasivo, las dos cuentas más altas del
+catálogo, que esta balanza no imprime.</p>
+
+<h2 id="auxiliar">4. Auxiliar de cuentas</h2>
+
+<div class="hojas"><span class="hoja">Auxiliar</span><span class="hoja">Validacion</span></div>
+
+<p>Es el detalle de lo que la balanza resume: <strong>una fila por movimiento</strong>. Por
+eso este documento tiene 6,783 filas donde la balanza tenía 475.</p>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">cuenta<br>nombre_cuenta</td><td>A qué cuenta pertenece. Se repite en todas las filas de la sección.</td></tr>
+    <tr><td class="col">saldo_inicial_cuenta</td><td>Con qué saldo abre esa cuenta. También se repite.</td></tr>
+    <tr><td class="col">folio · fecha</td><td>Folio del movimiento y fecha de la operación.</td></tr>
+    <tr><td class="col">tipo_movimiento</td><td><code>Movimiento</code>, <code>Poliza Manual</code>… El origen del asiento.</td></tr>
+    <tr><td class="col">documento · tercero</td><td>Comprobante y con quién se hizo la operación.</td></tr>
+    <tr><td class="col">concepto</td><td>Descripción libre. Frecuentemente vacía.</td></tr>
+    <tr><td class="col">debe · haber</td><td>El importe. Solo uno trae valor.</td></tr>
+    <tr><td class="col">saldo</td><td><strong>El acumulado después de este movimiento.</strong> Hace posible toda la verificación.</td></tr>
+    <tr><td class="col">es_subtotal</td><td><code>VERDADERO</code> si la fila es un subtotal, no un movimiento.</td></tr>
+    <tr><td class="col">pagina</td><td>En qué página del PDF apareció.</td></tr>
+  </tbody>
+</table>
+
+<h4>El saldo corrido, que es toda la regla</h4>
+
+<pre>saldo de la fila anterior + debe − haber = saldo de esta fila</pre>
+
+<p>De la cuenta <code>101-01</code> (Caja y efectivo):</p>
+
+<pre>fila 2:      0.00 +    500.00 − 0.00 =    500.00  ✓
+fila 3:    500.00 + 24,359.28 − 0.00 = 24,859.28  ✓
+fila 4: 24,859.28 +  1,000.00 − 0.00 = 25,859.28  ✓</pre>
+
+<p>Y sigue así 6,783 veces. Cada eslabón depende del anterior, así que <strong>un solo
+importe mal leído rompe todo lo que viene después</strong>. Esa fragilidad es lo que la
+vuelve una buena prueba: si la cadena entera cierra, es muy improbable que el sistema haya
+leído mal.</p>
+
+<p>Un caso que vale la pena mirar: en las filas de <code>Poliza Manual</code> el saldo se
+hunde hasta −139,900.71 y luego entra un cargo de 351,811.81.</p>
+
+<pre>−139,900.71 + 351,811.81 = 211,911.10  ✓</pre>
+
+<h4>Las otras dos reglas</h4>
+
+<ul>
+  <li><span class="azul">subtotales</span> — compara los subtotales que el documento imprime
+  al cierre de cada sección contra la suma de sus movimientos. En este ejemplo sale
+  <code>0 de 0</code>: <em>«el documento no imprime filas de subtotal»</em>.</li>
+  <li><span class="azul">ancla_recalculo</span> — cuando el PDF no trae los saldos, el
+  sistema los deduce encadenando y comprueba que la cadena <strong>aterrice exactamente en el
+  subtotal declarado</strong>. Aquí sale <code>0 de 0</code>: los 6,783 saldos venían
+  impresos, no hubo nada que recalcular.</li>
+</ul>
+
+<div class="nota">
+<p><span class="etq">Un auxiliar limpio y otro que no lo es.</span> Este documento sale con
+6,783 de 6,783, todos impresos. Pero hay otro de 886 páginas donde el PDF <em>no imprime la
+mayoría de los saldos</em>: ahí el sistema encadena para deducirlos, y
+<code>ancla_recalculo</code> pasa a ser la comprobación real de que el encadenado fue
+correcto. El mismo Excel, dos situaciones muy distintas, y las columnas de impresos y
+recalculados son lo que permite distinguirlas.</p>
+</div>
+
+<h2 id="polizas">5. Pólizas y libro diario</h2>
+
+<div class="hojas"><span class="hoja">Polizas</span><span class="hoja">Movimientos</span><span class="hoja">CFDI</span><span class="hoja">Plana</span><span class="hoja">Validacion</span></div>
+
+<p>Tres tablas relacionadas, cinco hojas. Una póliza es un encabezado con varios movimientos
+colgando y, aparte, sus comprobantes fiscales asociados. La clave que une todo es
+<code>poliza_id</code>.</p>
+
+<h4>Qué es un asiento</h4>
+
+<p>El registro completo de una operación. <strong>Nunca es un solo renglón</strong>: siempre
+al menos dos, y la suma de lo que se carga iguala la suma de lo que se abona. La póliza
+P00001 es una venta con tres renglones:</p>
+
+<pre>401-01     Ventas de combustibles              0.00      432.69
+105-01-081 Nohemí Fuentes Martínez            500.00        0.00
+209-01     IVA trasladado no cobrado            0.00       67.31
+                                            ────────    ────────
+                                              500.00      500.00  ✓</pre>
+
+<p>Se vendió combustible por 500 pesos. Eso significa tres cosas a la vez: la clienta debe
+500, la empresa generó 432.69 de ingreso, y 67.31 son IVA trasladado. Tres renglones, la
+misma operación vista desde tres cuentas.</p>
+
+<h3>Polizas — una fila por póliza</h3>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">poliza_id</td><td><code>P00001</code>. La clave.</td></tr>
+    <tr><td class="col">tipo</td><td>Venta, Compra, Cobro, Diario, Nota…</td></tr>
+    <tr><td class="col">naturaleza</td><td>Ingreso, Egreso, Manual, de Crédito Egreso.</td></tr>
+    <tr><td class="col">fecha</td><td>Fecha de la póliza.</td></tr>
+    <tr><td class="col">descripcion</td><td>Suele traer el folio: <code>18243</code>, <code>FACT. FOLIO: 18251</code>.</td></tr>
+    <tr><td class="col">folio</td><td>Columna aparte, frecuentemente vacía en este formato.</td></tr>
+    <tr><td class="col">total_debe<br>total_haber</td><td>Los totales de la póliza.</td></tr>
+    <tr><td class="col">completa</td><td><code>VERDADERO</code> si trae ambos lados del asiento.</td></tr>
+  </tbody>
+</table>
+
+<h3>Movimientos — una fila por renglón contable</h3>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">poliza_id</td><td>A qué póliza pertenece.</td></tr>
+    <tr><td class="col">orden</td><td>Su posición dentro de la póliza. Reconstruye el asiento como está impreso.</td></tr>
+    <tr><td class="col">cuenta<br>nombre_cuenta</td><td>La cuenta afectada. <strong>Cruza con la columna <code>cuenta</code> de la balanza.</strong></td></tr>
+    <tr><td class="col">debe · haber</td><td>El importe. Solo uno trae valor.</td></tr>
+  </tbody>
+</table>
+
+<div class="nota">
+<p><span class="etq">Que un movimiento cargue un solo lado está medido, no supuesto.</span>
+En el auxiliar se comprobó que <em>ningún</em> renglón trae debe y haber a la vez: 0 de 6,783.
+Esa propiedad permitió deducir la naturaleza de cada cuenta sin ambigüedad. Cuando en un
+libro diario aparecieron 22 movimientos con los dos lados llenos, fue señal de un error de
+lectura, no de un asiento raro.</p>
+</div>
+
+<h3>CFDI — los comprobantes asociados</h3>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">poliza_id · fecha</td><td>A qué póliza pertenece y cuándo.</td></tr>
+    <tr><td class="col">documento</td><td>El folio. <strong>Es el dato que la regla <code>cfdi_cruzado</code> busca en la descripción de la póliza.</strong></td></tr>
+    <tr><td class="col">uuid</td><td>El folio fiscal del SAT. Hoy se extrae pero <strong>no se valida contra nada</strong>.</td></tr>
+    <tr><td class="col">rfc · tipo</td><td>RFC del emisor y tipo: Ingreso, Egreso, <code>(Manual)</code>.</td></tr>
+  </tbody>
+</table>
+
+<p>La fila de <code>P00018</code> es el caso interesante: <code>documento</code>,
+<code>uuid</code> y <code>rfc</code> vacíos, tipo <code>(Manual)</code>. Es una póliza sin
+comprobante, y por eso entra en las 121 que la validación cuenta como aplicables pero no
+evaluadas.</p>
+
+<h4>Las cuatro reglas</h4>
+
+<table>
+  <thead><tr><th>Regla</th><th>Qué comprueba</th></tr></thead>
+  <tbody>
+    <tr><td class="col">partida_doble</td><td>Que el debe iguale al haber, póliza por póliza. 1,944 veces.</td></tr>
+    <tr><td class="col">totales</td><td>Que los totales declarados coincidan con la suma de movimientos.</td></tr>
+    <tr><td class="col">cfdi</td><td>Que la tabla de comprobantes se haya leído completa.</td></tr>
+    <tr><td class="col">cfdi_cruzado</td><td>Que el folio declarado en la póliza aparezca en la descripción de alguno de sus movimientos. <strong>Es consistencia interna del PDF, no validación fiscal.</strong></td></tr>
+  </tbody>
+</table>
+
+<h4>Las 53 que fallan</h4>
+
+<p>El motivo dice: <em>«121 de 1942 CFDI sin número de documento con el que cruzar; 112 de
+ellos no traen folio fiscal, o sea son pólizas manuales sin comprobante»</em>. Las 121 salen
+del numerador —quedan como aplicables no evaluadas— y de las 1,821 restantes, 53 no cruzan.</p>
+
+<p>Y una precisión medida: <strong>esas 53 no son una familia</strong>. Por tipo, Cobro 817
+cruzan contra 13 que fallan, Venta 853 contra 8, Pago 31 contra 40. Hay 1,701 pólizas de
+esos mismos tipos que sí cruzan, así que no se pueden descartar en bloque. Se quedan como
+falla declarada a propósito: 53 renglones son revisables en minutos; un porcentaje inflado
+no.</p>
+
+<h2 id="edocta">6. Estado de cuenta bancario</h2>
+
+<div class="hojas"><span class="hoja">Cuentas</span><span class="hoja">Movimientos</span><span class="hoja">Plana</span><span class="hoja">Validacion</span></div>
+
+<p>Dos tablas relacionadas: los datos de la cuenta y sus movimientos. La clave es
+<code>num_cuenta</code>.</p>
+
+<h3>Cuentas — la carátula</h3>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">banco · rfc</td><td>Institución emisora y su RFC.</td></tr>
+    <tr><td class="col">periodo_ini<br>periodo_fin</td><td>El periodo que cubre.</td></tr>
+    <tr><td class="col">num_cuenta · clabe</td><td>Identificadores. <code>num_cuenta</code> es la clave con los movimientos.</td></tr>
+    <tr><td class="col">producto · moneda</td><td>Tipo de cuenta y divisa. <code>producto</code> aparece vacío aquí: la columna existe porque otros bancos sí lo imprimen.</td></tr>
+    <tr><td class="col">saldo_inicial<br>depositos · retiros<br>saldo_corte</td><td><strong>El resumen que el banco declara.</strong> Los cuatro números que la regla <code>resumen</code> verifica entre sí.</td></tr>
+  </tbody>
+</table>
+
+<h3>Movimientos — el detalle</h3>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">num_cuenta</td><td>A qué cuenta pertenece.</td></tr>
+    <tr><td class="col">dia · fecha</td><td>Día del mes y fecha completa.</td></tr>
+    <tr><td class="col">descripcion</td><td>El concepto del banco: <code>ENVIO SPEI (AFIRMENET) A 012-BBVA…</code></td></tr>
+    <tr><td class="col">referencia</td><td>Referencia de la operación. <strong>Es la llave para conciliar contra el auxiliar.</strong></td></tr>
+    <tr><td class="col">deposito · retiro</td><td>El importe. Solo uno trae valor.</td></tr>
+    <tr><td class="col">saldo</td><td>Acumulado tras el movimiento.</td></tr>
+    <tr><td class="col">pagina</td><td>Página del PDF donde apareció.</td></tr>
+  </tbody>
+</table>
+
+<h4>Verificar el resumen del banco a mano</h4>
+
+<p>La comprobación más fácil de enseñar y la más convincente, porque usa números que
+cualquiera reconoce. De la hoja <code>Cuentas</code>:</p>
+
+<pre>saldo inicial      32,411.67
++ depósitos       118,420.39
+− retiros         118,958.74
+─────────────────────────────
+= saldo al corte   31,873.32   ✓ coincide con saldo_corte</pre>
+
+<p>Eso es la regla <code>resumen</code>. Y la última fila de la hoja <code>Movimientos</code>
+también dice 31,873.32, así que la cadena de 45 movimientos aterriza exactamente donde el
+banco dice. <strong>Dos caminos independientes al mismo número.</strong></p>
+
+<h4>La aritmética de la cobertura</h4>
+
+<p>El encabezado dice «48 de 50 casos evaluados». Sale de sumar la tabla:</p>
+
+<pre>resumen                1 aplicable    1 evaluado
+resumen_movimientos    2 aplicables   2 evaluados
+saldo_corrido         45 aplicables  45 evaluados
+total_declarado        2 aplicables   0 evaluados   ← no_verificable
+                     ────────────   ────────────
+                      50 aplicables  48 evaluados</pre>
+
+<p>Los dos que faltan son <code>total_declarado</code>: <em>«el documento no imprime una fila
+TOTAL con la que cruzar la suma de los saldos por cuenta»</em>. La comprobación era posible
+en principio —por eso cuenta como aplicable— pero este banco no imprime ese dato.</p>
+
+<div class="clave">
+<p><span class="etq">Seis bancos, ningún camino por banco.</span> El parser cubre AFIRME,
+Santander, Banorte, Bajío, Inbursa y BBVA con el mismo código. Hay un test que
+<strong>falla si alguien escribe el nombre de un banco dentro del módulo</strong>. El sistema
+propone hipótesis de qué columna es cuál y prueba cada una contra la aritmética del
+documento: si el mapeo es correcto, la cadena de saldos cuadra. La aritmética decide, no el
+logo. Por eso un banco nuevo probablemente funcione sin tocar código.</p>
+</div>
+
+<h2 id="mayor">7. Libro mayor</h2>
+
+<div class="hojas"><span class="hoja">Cuentas</span><span class="hoja">Meses</span><span class="hoja">Plana</span><span class="hoja">Validacion</span></div>
+
+<p>El mayor es el resumen mensual por cuenta: cuánto se cargó y se abonó cada mes, y cómo
+quedó el saldo. Dos tablas relacionadas, clave <code>cuenta</code>.</p>
+
+<h3>Cuentas — una fila por cuenta</h3>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">cuenta · nombre_cuenta</td><td>Código y descripción.</td></tr>
+    <tr><td class="col">naturaleza</td><td><code>D</code> o <code>A</code>, derivada de los datos.</td></tr>
+    <tr><td class="col">saldo_inicial<br>saldo_final</td><td>Con qué abre y cierra el ejercicio.</td></tr>
+    <tr><td class="col">total_cargos<br>total_abonos</td><td>Los totales del periodo completo.</td></tr>
+  </tbody>
+</table>
+
+<h3>Meses — una fila por mes y cuenta</h3>
+
+<table>
+  <thead><tr><th>Columna</th><th>Qué es</th></tr></thead>
+  <tbody>
+    <tr><td class="col">cuenta</td><td>A qué cuenta pertenece.</td></tr>
+    <tr><td class="col">orden · periodo</td><td>Número de mes y su nombre: <code>1 ENERO</code>, <code>12 DICIEMBRE</code>.</td></tr>
+    <tr><td class="col">cargos · abonos</td><td>Movimiento del mes.</td></tr>
+    <tr><td class="col">saldo</td><td>Saldo al cierre de ese mes.</td></tr>
+    <tr><td class="col">acum_cargos<br>acum_abonos</td><td>Acumulados desde el inicio del ejercicio.</td></tr>
+  </tbody>
+</table>
+
+<h4>Las tres reglas</h4>
+
+<table>
+  <thead><tr><th>Regla</th><th>Qué comprueba</th></tr></thead>
+  <tbody>
+    <tr><td class="col">saldo_mensual</td><td>Que el saldo de cada mes salga del anterior más su movimiento.</td></tr>
+    <tr><td class="col">acumulados</td><td>Que los acumulados sean la suma correcta de los meses anteriores.</td></tr>
+    <tr><td class="col">cruce_balanza</td><td>Que el mayor cuadre contra la balanza del mismo periodo. <strong>Siempre sale no verificable</strong>, y por una razón que vale la pena leer.</td></tr>
+  </tbody>
+</table>
+
+<div class="nota">
+<p><span class="etq">El motivo de <code>cruce_balanza</code> es una declaración de
+alcance.</span> Dice: <em>«no se recibió una balanza con la que cruzar; es una comprobación
+entre documentos y quien orquesta decide cuál corresponde»</em>. La regla existe y está
+escrita. Lo que falta es que un comando pueda recibir dos documentos a la vez. Y el sistema
+no adivina cuál balanza corresponde a este mayor: eso lo decide una persona.</p>
+</div>
+
+<div class="alerta">
+<p><span class="etq">Cuidado con el ejemplo de esta sección.</span> El documento del que
+salen estas capturas, <code>mayor-proactivity.pdf</code>, <strong>no se leyó
+correctamente</strong>: el Excel sale con el nombre de cuenta lleno de números de banco
+pegados, <code>naturaleza</code> vacía, todos los importes en cero y un <code>(ENERO</code>
+con paréntesis suelto. La estructura de columnas es correcta y sirve para estudiar; los datos
+no.</p>
+<p>Peor aún, el reporte dice <span class="verde">cuadra</span> en dos reglas habiendo
+evaluado <strong>cero casos</strong> — <code>saldo_mensual: 0 de 48</code>,
+<code>acumulados: 0 de 96</code>. Una regla que no comprobó nada no puede cuadrar; debería
+decir <code>no_verificable</code>. Es un defecto identificado y pendiente de corregir.
+<strong>Para libro mayor, el documento que sí funciona es <code>mayor-gume</code></strong>,
+con 588 saldos mensuales y 1,176 acumulados verificados.</p>
+</div>
+
+<h2 id="comparativa">8. Los cinco lado a lado</h2>
+
+<table class="comp">
+  <thead><tr><th>Tipo</th><th>Hojas</th><th>Clave</th><th>Granularidad</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="col">Balanza</td>
+      <td><code>Balanza</code> · <code>Validacion</code></td>
+      <td><code>cuenta</code></td>
+      <td>Una fila por cuenta</td>
+    </tr>
+    <tr>
+      <td class="col">Auxiliar</td>
+      <td><code>Auxiliar</code> · <code>Validacion</code></td>
+      <td><code>cuenta</code></td>
+      <td>Una fila por movimiento</td>
+    </tr>
+    <tr>
+      <td class="col">Pólizas</td>
+      <td><code>Polizas</code> · <code>Movimientos</code> · <code>CFDI</code> · <code>Plana</code> · <code>Validacion</code></td>
+      <td><code>poliza_id</code></td>
+      <td>Una fila por renglón de asiento</td>
+    </tr>
+    <tr>
+      <td class="col">Estado de cuenta</td>
+      <td><code>Cuentas</code> · <code>Movimientos</code> · <code>Plana</code> · <code>Validacion</code></td>
+      <td><code>num_cuenta</code></td>
+      <td>Una fila por movimiento bancario</td>
+    </tr>
+    <tr>
+      <td class="col">Libro mayor</td>
+      <td><code>Cuentas</code> · <code>Meses</code> · <code>Plana</code> · <code>Validacion</code></td>
+      <td><code>cuenta</code></td>
+      <td>Una fila por mes y cuenta</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Tres observaciones que solo se ven poniéndolos juntos:</p>
+
+<ul>
+  <li><strong>La clave de cruce cambia según el tipo.</strong> Tres usan <code>cuenta</code>,
+  las pólizas usan <code>poliza_id</code>, el estado de cuenta usa <code>num_cuenta</code>.</li>
+  <li><strong>Solo tres traen columna <code>pagina</code></strong>: auxiliar y estado de
+  cuenta. Las pólizas no, y esa ausencia bloqueó un diagnóstico real cuando aparecieron
+  importes mal leídos en un libro diario.</li>
+  <li><strong>La hoja <code>Plana</code> aparece cuando hay dos tablas relacionadas</strong>,
+  no en los que tienen una sola.</li>
+</ul>
+
+<h2 id="cruces">9. Cruces entre documentos</h2>
+
+<h3>Dentro del mismo Excel</h3>
+
+<h4>Comprobar la partida doble de una póliza</h4>
+
+<pre>=SUMAR.SI(Movimientos!A:A;"P00001";Movimientos!E:E)   → suma del debe
+=SUMAR.SI(Movimientos!A:A;"P00001";Movimientos!F:F)   → suma del haber</pre>
+
+<p>Deben dar lo mismo. Es exactamente lo que hace la regla <code>partida_doble</code>, 1,944
+veces.</p>
+
+<h4>Declarado contra leído — el cruce más valioso</h4>
+
+<pre>=SUMAR.SI(Movimientos!A:A;A2;Movimientos!E:E) - G2</pre>
+
+<p>Donde <code>A2</code> es el <code>poliza_id</code> y <code>G2</code> el
+<code>total_debe</code> de la hoja <code>Polizas</code>. Si alguna fila da distinto de cero,
+el total que la póliza declara no coincide con la suma de sus movimientos leídos.</p>
+
+<div class="alerta">
+<p><span class="etq">Un defecto conocido que puedes ver tú mismo.</span> En
+<code>poliza.pdf</code> ese cruce da cero en las 1,944. Pero en
+<code>diario-general.pdf</code> da distinto de cero en 100 pólizas — y aun así la columna
+<code>completa</code> dice <code>VERDADERO</code>, porque <strong>toma el total impreso en el
+documento, no la suma de lo que el sistema leyó</strong>. Es el peor tipo de error: el Excel
+se ve correcto justo cuando un importe se leyó mal. Está identificado y la corrección
+prevista es separarlo en dos columnas —declarado y leído— y que <code>completa</code> sea
+verdadero solo cuando coincidan. <strong>Mientras tanto, no uses
+<code>diario-general</code> para demostrar nada.</strong></p>
+</div>
+
+<h3>Entre documentos distintos</h3>
+
+<h4>Auxiliar contra balanza</h4>
+
+<p>El auxiliar es el detalle de la balanza. Para cualquier cuenta, los totales deberían
+coincidir:</p>
+
+<pre>=SUMAR.SI(Auxiliar!A:A;"101-01";Auxiliar!J:J)   → total del debe de esa cuenta
+=SUMAR.SI(Auxiliar!A:A;"101-01";Auxiliar!K:K)   → total del haber</pre>
+
+<p>Y esos dos deberían ser los que la balanza muestra en <code>debe</code> y
+<code>haber</code> de la fila <code>101-01</code>. Si no coinciden, o el auxiliar está
+incompleto o hay movimientos que la balanza no refleja.</p>
+
+<h4>Estado de cuenta contra auxiliar — la conciliación bancaria</h4>
+
+<p>La cuenta <code>102-01-002 · Afirme 000144120949</code> de la balanza es exactamente la
+cuenta <code>000144120949</code> del estado de cuenta. Los movimientos del banco deberían
+corresponder con los movimientos contables de esa cuenta.</p>
+
+<p>Eso es la conciliación bancaria, y es trabajo manual en la mayoría de los despachos. Con
+las dos hojas abiertas y la columna <code>referencia</code> como llave, buena parte se puede
+automatizar.</p>
+
+<h4>Pólizas contra balanza</h4>
+
+<p>La columna <code>cuenta</code> de <code>Movimientos</code> cruza directamente con la
+columna <code>cuenta</code> de <code>Balanza</code>. Permite pasar de «esta póliza afecta a
+105-01-081» a «y esa cuenta cerró el mes con este saldo».</p>
+
+<h4>Localizar una fila en el PDF</h4>
+
+<p>Con la columna <code>pagina</code>, cualquier fila del auxiliar o del estado de cuenta se
+verifica contra el original en segundos. Abres el PDF en esa página y comparas. Es la forma
+más rápida de convencer a alguien de que el sistema lee bien.</p>
+
+<h2 id="pregunta">10. Cuando el sistema pregunta</h2>
+
+<p>Algunos reportes terminan con un recuadro que no aparece en los demás:</p>
+
+<p><strong>En el auxiliar:</strong> <em>«Falta confirmar: orientación debe/haber. Invertirla
+cambia la naturaleza de 0 filas.»</em></p>
+
+<p><strong>En el estado de cuenta:</strong> <em>«Falta confirmar: separador de continuación.
+Elegir mal pega o separa palabras dentro de la descripción; no afecta ningún importe, saldo
+ni checksum. El sistema no propone nada porque nada: se midió la varianza del borde derecho y
+la geometría no distingue un documento que parte palabras al envolver de uno que envuelve por
+palabra entera.»</em></p>
+
+<p>Y por eso ambas plantillas dicen <code>aprendida, pendiente de confirmación</code>.</p>
+
+<h3>Qué está pasando ahí</h3>
+
+<p>Hay decisiones que la aritmética no puede resolver. En el auxiliar, invertir la
+orientación de debe y haber produce un documento distinto pero <strong>igualmente
+consistente</strong>: la cadena de saldos cuadra en los dos sentidos, y el checksum no
+distingue. En el estado de cuenta, si una descripción larga se parte entre dos renglones, no
+hay forma geométrica de saber si el corte va con espacio o sin él.</p>
+
+<p>Ante eso el sistema tiene tres opciones y elige la tercera:</p>
+
+<ol>
+  <li>Adivinar y no decir nada. Es lo que hace casi cualquier herramienta.</li>
+  <li>Rechazar el documento. Desperdicia trabajo correcto por una duda pequeña.</li>
+  <li><strong>Entregar el resultado, marcar la plantilla como pendiente y preguntar una
+  vez.</strong> La respuesta se guarda y se aplica a todos los documentos futuros de ese
+  emisor.</li>
+</ol>
+
+<p>Eso es el sexto comando del sistema: <code>confirmar</code>. Y fíjate en el detalle del
+auxiliar: <em>«invertirla cambia la naturaleza de 0 filas»</em>. El sistema no solo pregunta
+— <strong>midió cuánto importa la respuesta</strong>. En ese documento, nada. En otro podría
+cambiar 44 cuentas.</p>
+
+<h3>El aprendizaje de plantillas</h3>
+
+<p>Cuando un documento cuadra completo, el sistema guarda la huella del formato: qué
+columnas, qué estrategia de extracción, qué reglas aplican. El siguiente documento del mismo
+emisor entra sin intervención.</p>
+
+<p><strong>No guarda plantillas de documentos que no cuadraron.</strong> Eso impide que un
+error de lectura se propague a todos los documentos futuros de esa empresa. Por eso
+<code>polizas</code> sale con código 1 y no aprende: hay 53 casos sin verificar.</p>
+
+<div class="clave">
+<p><span class="etq">Esto es lo que conviene destacar en una presentación.</span> Un sistema
+que pregunta una vez, en el momento correcto, con el impacto medido, y que recuerda la
+respuesta, es lo contrario de uno que adivina en silencio. Y es de las pocas cosas del
+proyecto que <strong>solo un contador puede contestar</strong>: la orientación debe/haber de
+un formato no la decide quien programa.</p>
+</div>
+
+<h2 id="defectos">11. Defectos visibles hoy</h2>
+
+<p>Conviene conocerlos antes de que alguien te los señale.</p>
+
+<h4>Una regla que cuadra sin haber evaluado nada</h4>
+
+<p>En <code>mayor-proactivity</code>, <code>saldo_mensual</code> y <code>acumulados</code>
+salen en <span class="verde">cuadra</span> con <code>0 de 48</code> y <code>0 de 96</code>.
+El encabezado incluso dice «0 de 145 casos evaluados; 2 cuadran». Una regla que no comprobó
+nada debería decir <code>no_verificable</code>. Es el defecto más serio de la lista.</p>
+
+<h4>La hoja de pólizas muestra el total declarado</h4>
+
+<p>Descrito arriba. En un libro diario hace que el Excel se vea correcto cuando falta un
+importe.</p>
+
+<h4>El RFC pegado al tipo</h4>
+
+<p>En la hoja <code>CFDI</code>, algunas filas traen <code>CUMA810904GF2Ingreso</code> o
+<code>VEGM660620JM3Ingreso</code>: RFC y tipo unidos. Son 20 casos medidos. No afecta a
+ninguna validación, pero ensucia el dato.</p>
+
+<h4>El «esperado 0.00 / obtenido 0.00»</h4>
+
+<p>En el bloque de detalle de <code>Validacion</code>, las 53 diferencias de
+<code>cfdi_cruzado</code> muestran ceros en ambas columnas. Confunde: parece un problema de
+dinero cuando esa regla compara folios. La página web ya lo dice bien —«no cuadra el dato, no
+el importe»— y el Excel no: la corrección llegó a un camino y no al otro.</p>
+
+<h4>Una póliza repetida en el detalle</h4>
+
+<p><code>P00476</code> aparece dos veces seguidas en la lista de diferencias. Puede ser
+legítimo —dos comprobantes de la misma póliza fallando por separado— o un doble conteo. No
+está verificado.</p>
+
+<h2 id="mejoras">12. Dónde caben las mejoras</h2>
+
+<h4>Cruzar contra los CFDI timbrados</h4>
+
+<p>La hoja <code>CFDI</code> ya extrae el <code>uuid</code>, el <code>rfc</code> y el
+<code>documento</code> de cada comprobante, y nadie los usa: hoy solo se comprueba que el
+folio aparezca dentro de la propia póliza. Con los XML del SAT ese mismo dato permitiría
+detectar comprobantes que no existen, importes que no coinciden con lo contabilizado, y CFDI
+cancelados que siguen en la contabilidad.</p>
+
+<p>Es la mejora con más valor por esfuerzo, porque <strong>la mitad del trabajo ya está
+hecha</strong>: extraer el UUID de un PDF de 968 páginas era la parte difícil.</p>
+
+<h4>Aceptar dos documentos a la vez</h4>
+
+<p>Auxiliar contra balanza, estado de cuenta contra auxiliar, mayor contra balanza: todas son
+comprobaciones que hoy se hacen a mano y que el sistema ya sabría hacer si pudiera recibir
+los dos documentos juntos. En el caso del mayor, la regla <strong>ya está escrita</strong> y
+siempre sale no verificable por esta razón.</p>
+
+<h4>Un asistente de conciliación bancaria</h4>
+
+<p>Dado un estado de cuenta y el auxiliar de esa cuenta contable, emparejar movimientos por
+importe y fecha y listar los que no cruzan. No requiere leer nada nuevo: toda la información
+ya está extraída.</p>
+
+<h4>Declarado contra leído, en todas las hojas</h4>
+
+<p>El caso de <code>total_debe</code> no es exclusivo de pólizas. Siempre que el sistema
+puede mostrar «lo que el documento afirma» o «lo que yo pude leer», mostrar solo lo primero
+esconde los errores. Separarlo en dos columnas es un cambio pequeño con efecto en todos los
+tipos.</p>
+
+<h4>La página en todas las hojas de movimientos</h4>
+
+<p>El auxiliar y el estado de cuenta la traen; las pólizas no. Añadirla desbloquea
+diagnósticos y le da al usuario la misma capacidad de verificar contra el original en los
+cinco tipos.</p>
+
+<h4>Una hoja de resumen ejecutivo</h4>
+
+<p>Hoy hay que abrir <code>Validacion</code> y leer siete columnas para saber si un documento
+está bien. Una hoja inicial con «este documento tiene N renglones, se verificaron M, hay K
+diferencias, están en estas filas» ahorraría ese paso a quien solo quiere el veredicto.</p>
+
+<h4>Recordar la confirmación entre documentos parecidos</h4>
+
+<p>Hoy la plantilla se guarda por emisor. Si un despacho maneja veinte empresas con el mismo
+sistema contable, cada una pregunta por separado aunque la respuesta sea la misma.</p>
+
+<div class="clave">
+<p><span class="etq">Si tienes que resumirlo en una frase.</span> Convierte PDFs contables a
+Excel, verifica la aritmética del documento contra sí misma —530 comprobaciones en una
+balanza pequeña, 57,024 en un auxiliar grande— y declara exactamente qué no pudo verificar y
+por qué. Cualquier conversor produce celdas. Éste produce además el juicio sobre esas
+celdas.</p>
+</div>
+
+</div>

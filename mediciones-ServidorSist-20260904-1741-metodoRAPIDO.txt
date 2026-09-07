@@ -1,0 +1,109 @@
+========================================================================
+MEDICION DE LA MAQUINA OBJETIVO -- cp-pdf fase 8c
+========================================================================
+
+fecha            2026-09-04 17:41:19
+maquina          ServidorSist
+sistema          Windows-10-10.0.19045-SP0
+procesador       Intel64 Family 6 Model 58 Stepping 9, GenuineIntel
+python           3.12.2 (C:\proyectos\cp-pdf\.venv\Scripts\python.exe)
+repo             C:\proyectos\cp-pdf
+RAM              8,078 MB totales, 3,076 MB libres AHORA (antes de medir)
+disco            328.3 GB libres de 464.8 GB
+
+--- dependencias ---
+  pdfplumber   0.11.10      extraccion principal
+  openpyxl     3.1.5        escribir el .xlsx
+  pypdfium2    ?            rasterizar para OCR
+  flask        3.1.3        la capa web (no hace falta para medir)
+  tesseract    OK           tesseract v5.4.0.20240606
+
+========================================================================
+M2 y M3 -- tiempo de pared y memoria por documento
+========================================================================
+
+Cada documento se procesa UNA vez, en frio: sin plantilla
+aprendida, que es como lo ve el primer usuario que sube ese
+formato. Una segunda subida del mismo formato cuesta menos.
+
+MODO RAPIDO: se saltean auxiliar-gume, diario-general.
+
+[1/15] balanza (balanza): 5.0s
+[2/15] balanza-businesspro (balanza): 3.4s
+[3/15] balanza-gume (balanza): 12.2s
+[4/15] poliza (polizas): 1m41s
+[5/15] auxiliar (auxiliar): 51.8s
+[6/15] mayor-gume (mayor): 6.3s
+[7/15] mayor-proactivity (mayor): 3m41s
+[8/15] edocta (estado-cuenta): 1.6s
+[9/15] edocta-inbursa (estado-cuenta): 1.9s
+[10/15] edocta-santander (estado-cuenta): 3.2s
+[11/15] edocta-julio-banorte (estado-cuenta): 5.3s
+[12/15] edocta-abril-santander (estado-cuenta): 3.6s
+[13/15] edocta-bajio (estado-cuenta): 5.0s
+[14/15] edocta-bbva (estado-cuenta): 2.3s
+[15/15] edocta-hsbc (estado-cuenta): 7.0s  ERROR AttributeError: 'NoneType' object has no attribute 'splitlines'
+
+--- M2: por documento ---
+El reloj va SIEMPRE partido. Un total unico escondio durante
+nueve fases que exportar costaba siete veces mas que leer.
+
+documento               tipo           pags  leer s  exp s  total s  estrategia  pico MB  libre min MB  xlsx MB
+----------------------  -------------  ----  ------  -----  -------  ----------  -------  ------------  -------
+edocta                  estado-cuenta     6     1.5    0.1      1.6   pdf_chars        -          3003     0.02
+edocta-inbursa          estado-cuenta     8     1.8    0.1      1.9    pdf_text        -          3065     0.02
+edocta-bbva             estado-cuenta    11     2.1    0.1      2.3    pdf_text        -          3006     0.02
+edocta-santander        estado-cuenta    10     3.2    0.1      3.2    pdf_text        -          3070     0.01
+balanza-businesspro     balanza           4     3.3    0.1      3.4   pdf_chars        -          3016     0.02
+edocta-abril-santander  estado-cuenta    13     3.5    0.1      3.6   pdf_chars        -          3074     0.03
+balanza                 balanza           9     4.8    0.2      5.0    pdf_text        -          3025     0.03
+edocta-bajio            estado-cuenta    11     4.9    0.1      5.0    pdf_text        -          3007     0.02
+edocta-julio-banorte    estado-cuenta    16     5.0    0.4      5.3    pdf_text        -          3070     0.06
+mayor-gume              mayor            17     5.8    0.5      6.3    pdf_text        -          3027     0.07
+balanza-gume            balanza          12    12.0    0.3     12.2    pdf_text        -          3017     0.04
+auxiliar                auxiliar        398    49.5    2.3     51.8    pdf_text        -          3003     0.45
+poliza                  polizas         968    97.1    4.2    101.3    pdf_text        -          2981     0.83
+mayor-proactivity       mayor           276   221.0    0.1    221.0    pdf_text        -          2917     0.01
+
+documentos medidos   14 de 15
+                          total      leer  exportar
+minimo                     1.6s      1.5s      0.1s
+mediana                    5.0s      4.9s      0.1s
+maximo                    3m41s     3m40s      4.2s
+suma                      7m04s     6m55s      8.5s
+
+--- lo que no se pudo medir ---
+  edocta-hsbc              AttributeError: 'NoneType' object has no attribute 'splitlines'
+
+--- M3: memoria ---
+No se pudo leer la memoria en esta plataforma.
+
+========================================================================
+M4 -- espacio en disco
+========================================================================
+
+--- medido ---
+xlsx generados       14: minimo 0.01 MB, mediana 0.03 MB, maximo 0.83 MB
+PDFs de entrada      mediana 0.36 MB, maximo 7.45 MB
+base de la cola      0.17 MB con 75 trabajos terminados dentro
+
+--- EXTRAPOLADO (no medido: se proyecta lo de arriba) ---
+Supuesto: 75 documentos al dia (PLAN seccion 6:
+15 personas x 5 documentos), con la mezcla de tamanos de los
+fixtures. Es una proyeccion, no una medicion.
+
+xlsx de un dia       2 MB (75 x 0.03 MB de mediana)
+  con el peor caso   62 MB si todos fueran como el mayor
+PDFs subidos         27 MB, pero se borran al terminar cada uno
+base de la cola      0.17 MB al dia, 42 MB al ano si nada se borrara
+
+Lo que de verdad ocupa en un momento dado es MUCHO menor: el
+barrido de 30 minutos borra cada trabajo terminado, y la
+descarga lo borra antes. El pico real es lo que quepa en media
+hora de trabajo, no un dia entero. La cifra de arriba es el
+techo si el barrido no existiera.
+
+========================================================================
+Reporte escrito en: C:\proyectos\cp-pdf\mediciones-ServidorSist-20260904-1741.txt
+Ese es el fichero que hay que traer de vuelta.
+========================================================================

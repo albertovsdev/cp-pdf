@@ -1,0 +1,227 @@
+<meta charset="utf-8">
+<title>cp-pdf — hoja de presentación</title>
+<style>
+  @page { size: letter; margin: 12mm 14mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 10.2pt;
+    line-height: 1.52;
+    color: #16181c;
+    background: #fff;
+    orphans: 3;
+    widows: 3;
+  }
+  .hoja { max-width: 188mm; margin: 0 auto; padding: 3mm 0; }
+
+  header { border-bottom: 1.5pt solid #1b3a5c; padding-bottom: 3mm; margin-bottom: 4mm; }
+  h1 { font-size: 16.5pt; font-weight: 600; margin: 0 0 1.5mm; letter-spacing: -0.2pt; text-align: center;}
+  .bajada { font-size: 10.8pt; color: #3f4550; margin: 0; text-align: left; }
+  .estado {
+    float: right; font-size: 8pt; color: #1b3a5c;
+    border: 0.6pt solid #b9c6d4; padding: 1mm 2.5mm; border-radius: 2pt;
+    font-family: system-ui, sans-serif; margin-top: 1.5mm;
+  }
+
+  h2 {
+    font-size: 11.5pt; font-weight: 600; margin: 5.5mm 0 2.2mm;
+    padding-bottom: 1mm; border-bottom: 0.5pt solid #d8d4c9;
+    page-break-after: avoid; break-after: avoid;
+  }
+  h2 + p, h2 + ul, h2 + table, h2 + .cols {
+    page-break-before: avoid; break-before: avoid;
+  }
+  p { margin: 0 0 2.6mm; text-align: justify; hyphens: auto; }
+
+  svg { display: block; width: 100%; height: auto; margin: 2mm 0 3.5mm; }
+
+  .cols { display: flex; gap: 9mm; page-break-inside: avoid; break-inside: avoid; }
+  .cols > div { flex: 1; }
+
+  ul { margin: 0 0 2.6mm; padding-left: 4.5mm; }
+  li { margin-bottom: 1.3mm; text-align: justify; }
+
+  .bloque { page-break-inside: avoid; break-inside: avoid; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 2.6mm; }
+  tr { page-break-inside: avoid; break-inside: avoid; }
+  td { padding: 1.7mm 0; vertical-align: top; border-bottom: 0.4pt solid #e6e3da; text-align: justify; }
+  td:first-child { width: 32mm; font-weight: 600; padding-right: 4mm; text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  .verde { color: #2c6b3f; }
+  .ambar { color: #8a5a10; }
+  .azul  { color: #1b3a5c; }
+
+  .muestra {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 8.8pt; line-height: 1.6;
+    background: #f5f6f8; border: 0.5pt solid #dcdfe4;
+    padding: 3mm 4mm; margin: 0 0 2.6mm; white-space: pre; overflow: hidden;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+
+  .cierre {
+    margin-top: 5mm; padding: 4mm 5mm;
+    background: #f4f6f8; border-left: 2.5pt solid #1b3a5c;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .cierre p:last-child { margin-bottom: 0; }
+  .cierre strong { font-weight: 600; }
+
+  footer {
+    margin-top: 6mm; padding-top: 2mm; border-top: 0.5pt solid #d8d4c9;
+    font-size: 8.0pt; color: #6b7280; font-family: system-ui, sans-serif;
+    text-align: left;
+  }
+</style>
+
+<div class="hoja">
+
+<header>
+  <span class="estado">En desarrollo</span>
+  <h1>Sistema Contable de Conversión de PDF a Excel</h1>
+  <p class="bajada">Convierte documentos contables y declara que pudo comprobar y que no.</p>
+</header>
+
+<p>Convertir un PDF a Excel es la parte fácil, y hay muchas herramientas que lo hacen. El
+problema real es otro: un número mal registrado no se nota hasta que la contabilidad deja de
+cuadrar, esto a veces se detecta semanas después, y para entonces dar con el renglón culpable entre miles
+cuesta más que haber capturado todo a mano. Este sistema convierte el documento y además
+comprueba su aritmética contra sí misma, renglón por renglón, antes de entregar el
+resultado.</p>
+
+<svg viewBox="0 0 660 262" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5b6470" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect x="190" y="6" width="280" height="34" rx="5" fill="#f0eee7" stroke="#c4c0b4" stroke-width="0.6"/>
+  <text x="330" y="27" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12.5" fill="#2b2f36">Entra el PDF y se elige el tipo</text>
+  <line x1="330" y1="40" x2="330" y2="58" stroke="#5b6470" stroke-width="1.2" marker-end="url(#f)"/>
+
+  <rect x="60" y="58" width="540" height="46" rx="6" fill="#eceef4" stroke="#aeb9cb" stroke-width="0.6"/>
+  <text x="330" y="76" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12.5" fill="#1b3a5c">Balanza · Auxiliar · Pólizas · Estado de cuenta · Libro mayor</text>
+  <text x="330" y="93" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#4a5a70">De cualquier empresa y cualquier banco</text>
+  <line x1="330" y1="104" x2="330" y2="122" stroke="#5b6470" stroke-width="1.2" marker-end="url(#f)"/>
+
+  <rect x="130" y="122" width="400" height="46" rx="6" fill="#e8f0ec" stroke="#a9c4b6" stroke-width="0.6"/>
+  <text x="330" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12.5" fill="#1e5340">Lee el documento y revisa las cuentas</text>
+  <text x="330" y="157" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#3d6b58">Miles de comprobaciones por documento</text>
+  <line x1="330" y1="168" x2="330" y2="186" stroke="#5b6470" stroke-width="1.2" marker-end="url(#f)"/>
+
+  <rect x="190" y="186" width="280" height="34" rx="5" fill="#f0eee7" stroke="#c4c0b4" stroke-width="0.6"/>
+  <text x="330" y="207" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12.5" fill="#2b2f36">Devuelve el Excel, cuadre o no</text>
+
+  <path d="M190 203 L120 203 L120 228" fill="none" stroke="#5b6470" stroke-width="1.2" marker-end="url(#f)"/>
+  <path d="M470 203 L540 203 L540 228" fill="none" stroke="#5b6470" stroke-width="1.2" marker-end="url(#f)"/>
+
+  <rect x="10" y="228" width="220" height="30" rx="5" fill="#e9f1ea" stroke="#9dbfa6" stroke-width="0.6"/>
+  <text x="120" y="247" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11.5" fill="#2c6b3f">Cuadró: aprende el formato</text>
+
+  <rect x="430" y="228" width="220" height="30" rx="5" fill="#f8f0df" stroke="#d8bd85" stroke-width="0.6"/>
+  <text x="540" y="247" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11.5" fill="#8a5a10">No cuadró: señala qué revisar</text>
+</svg>
+
+<div class="cols">
+  <div>
+    <h2>¿Qué comprueba?</h2>
+    <ul>
+      <li>Saldo anterior + cargos − abonos, en cada renglón</li>
+      <li>Que cada cuenta acumulativa sea la suma exacta de sus subcuentas</li>
+      <li>Partida doble: que el debe iguale al haber, póliza por póliza</li>
+      <li>Que los totales impresos coincidan con la suma de las filas leídas</li>
+      <li>Que el resumen del banco cuadre con sus propios movimientos</li>
+    </ul>
+  </div>
+  <div>
+    <h2>¿Qué lee?</h2>
+    <ul>
+      <li>Documentos de cientos de páginas y decenas de miles de renglones</li>
+      <li>PDFs escaneados o cuyo texto no se puede seleccionar ni copiar</li>
+      <li>Tablas sin líneas divisorias, deducidas por la posición del texto</li>
+      <li>Seis formatos distintos de estado de cuenta bancario</li>
+      <li>Un banco nuevo no obliga a reprogramar: la estructura se deduce</li>
+    </ul>
+  </div>
+</div>
+
+<div class="bloque">
+<h2>¿Cómo se lee el resultado?</h2>
+
+<p>El Excel trae una hoja por cada tabla del documento y una hoja de validación con el
+detalle de las revisiones. Cada revisión termina en uno de tres estados:</p>
+
+<table>
+  <tr>
+    <td class="verde">Cuadra</td>
+    <td>La operación se cumple en todos los casos revisados.</td>
+  </tr>
+  <tr>
+    <td class="ambar">No cuadra</td>
+    <td>Hay diferencias, y se listan una por una con la cuenta, el importe esperado y el obtenido. No se resume en un total: se señala el renglón.</td>
+  </tr>
+  <tr>
+    <td class="azul">No verificable</td>
+    <td>El documento no trae el dato necesario para comprobarlo. Se declara en lugar de darlo por bueno.</td>
+  </tr>
+</table>
+</div>
+
+<p>Cada revisión indica además <em>sobre cuántos casos corrió</em>, no solo cuántos pasó.
+La diferencia importa: un «5 de 116» y un «116 de 116» significan cosas muy distintas, y un
+sistema que muestre solo el cinco estaría ocultando que apenas revisó el cuatro por ciento
+del documento. Así se ve una salida real sobre una balanza:</p>
+
+<div class="muestra">renglón        cuadra   475 de 475 revisados, 475 exactos
+jerarquía      cuadra    52 de  56 revisados,  52 exactos
+               2 cuentas acumulativas que alguna fila declara
+               no aparecen impresas en el documento
+totales        cuadra     2 de   2 revisados,   2 exactos
+partida doble  cuadra     1 de   1 revisado,    1 exacto</div>
+
+<p>Las cuatro revisiones de jerarquía que faltan no se ocultan tras el «cuadra»: el
+sistema nombra las dos cuentas acumulativas que alguna subcuenta declara como padre y que
+no vienen impresas en el documento, de modo que localizarlas es cuestión de filtrar por
+ellas en la hoja del Excel.</p>
+
+<div class="bloque">
+<h2>¿Qué pasa cuando algo no cuadra?</h2>
+
+<p>El Excel se entrega igual, con las diferencias marcadas. Lo único que cambia es que el
+sistema no guarda ese formato como aprendido. Cuando un documento cuadra completo, la
+estructura de ese emisor queda memorizada y el siguiente documento del mismo contribuyente entra
+sin intervención; cuando no cuadra, no se memoriza, y así un error de lectura no se propaga
+a todos los documentos futuros de esa empresa.</p>
+
+<p>Un documento marcado en rojo no es una falla de la herramienta: es su resultado.
+Cincuenta renglones señalados son revisables en unos minutos. Un archivo que se ve correcto
+pero trae importes mal leídos puede costar horas.</p>
+</div>
+
+<div class="bloque">
+<h2>¿Qué falta todavía?</h2>
+
+<p>Funciona hoy con los cinco tipos de documento y con los formatos que ha sido posible
+probar. Quedan formatos de algunas empresas por cubrir y hay defectos ya identificados y
+documentados. Y falta lo más importante: el sistema todavía no cruza las pólizas contra los
+CFDI timbrados. Hoy comprueba que el documento sea consistente consigo mismo, no contra los
+comprobantes fiscales. Ese cruce es el siguiente paso natural y permitiría detectar
+comprobantes inexistentes, importes que no coinciden y CFDI cancelados que siguen
+contabilizados.</p>
+</div>
+
+<div class="cierre">
+  <p><strong>Dos cosas en las que hace falta el criterio de un contador.</strong></p>
+  <p>La primera es revisar si las operaciones que el sistema comprueba son las correctas:
+  si falta alguna, si sobra alguna, o si alguna está planteada de una forma que no
+  corresponde a cómo se lleva la contabilidad aquí. Eso no lo puede decidir quien programa.</p>
+  <p>La segunda, si lo que hace parece ahorrar trabajo real, es decidir si vale la pena
+  seguir invirtiéndole tiempo y hacia dónde conviene llevarlo.</p>
+</div>
+
+<footer>cp-pdf · documento interno para revisión · no es un producto terminado · Desarrollado por Ing. Saúl Arroyo Guzmán e Ing. Alberto Viveros Santiago</footer>
+
+</div>
