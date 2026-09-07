@@ -89,11 +89,19 @@ def exportar_balanza(balanza: Balanza, cobertura: Cobertura,
     return destino
 
 
+# La columna de totales va PARTIDA en dos: lo que el documento declara y
+# lo que el sistema leyo. Mostrar solo lo declarado hacia que la hoja se
+# viera correcta justo cuando un importe se habia leido mal -- P00096 de
+# `diario-general` salia con 64.00 y 64.00 mientras la regla reportaba
+# 55.17 contra 64.00 (PLAN 1.3, medido en la 8b). Son 100 de 5 302.
 _POLIZA = ("poliza_id", "tipo", "naturaleza", "fecha", "descripcion", "folio",
-           "total_debe", "total_haber", "completa")
+           "total_debe_declarado", "total_debe_leido",
+           "total_haber_declarado", "total_haber_leido", "completa")
 _MOVIMIENTO = ("poliza_id", "orden", "cuenta", "nombre_cuenta", "debe", "haber")
 _CFDI = ("poliza_id", "fecha", "documento", "uuid", "rfc", "tipo")
-_MONTOS_DIARIO = frozenset({"total_debe", "total_haber", "debe", "haber"})
+_MONTOS_DIARIO = frozenset({"total_debe_declarado", "total_debe_leido",
+                            "total_haber_declarado", "total_haber_leido",
+                            "debe", "haber"})
 
 
 def _hoja(libro_excel, titulo: str, encabezados, filas, negrita,
@@ -121,6 +129,31 @@ def _hoja(libro_excel, titulo: str, encabezados, filas, negrita,
     hoja.freeze_panes = "A2"
 
 
+def _filas_de_polizas(libro: LibroDiario) -> dict[str, dict]:
+    """El renglon de cada poliza, con las dos cifras y su veredicto.
+
+    `completa` es VERDADERO solo cuando el documento cerro el bloque dentro
+    de lo leido Y lo que declara coincide con lo que se leyo. Con el
+    declarado ausente -- que es lo que pasa cuando el rango de paginas corta
+    el bloque antes de su renglon de totales -- no hay con que comparar, y
+    no se afirma lo que no se comprobo.
+    """
+    leidos = libro.totales_leidos()
+    filas = {}
+    for poliza in libro.polizas:
+        debe, haber = leidos.get(poliza.poliza_id, (None, None))
+        coinciden = (poliza.total_debe is not None
+                     and poliza.total_haber is not None
+                     and (poliza.total_debe, poliza.total_haber) == (debe, haber))
+        fila = {campo: getattr(poliza, campo, None) for campo in _POLIZA}
+        fila.update(total_debe_declarado=poliza.total_debe,
+                    total_haber_declarado=poliza.total_haber,
+                    total_debe_leido=debe, total_haber_leido=haber,
+                    completa=poliza.completa and coinciden)
+        filas[poliza.poliza_id] = fila
+    return filas
+
+
 def exportar_polizas(libro: LibroDiario, cobertura: Cobertura,
                      destino: Path) -> Path:
     """Tres hojas relacionadas, una plana y la cobertura.
@@ -133,17 +166,17 @@ def exportar_polizas(libro: LibroDiario, cobertura: Cobertura,
     libro_excel.remove(libro_excel.active)
     negrita = Font(bold=True)
 
-    _hoja(libro_excel, "Polizas", _POLIZA, libro.polizas, negrita)
+    por_id = _filas_de_polizas(libro)
+    _hoja(libro_excel, "Polizas", _POLIZA, por_id.values(), negrita)
     _hoja(libro_excel, "Movimientos", _MOVIMIENTO, libro.movimientos, negrita)
     _hoja(libro_excel, "CFDI", _CFDI, libro.cfdi, negrita)
 
-    por_id = {p.poliza_id: p for p in libro.polizas}
     planas = []
     for movimiento in libro.movimientos:
-        poliza = por_id.get(movimiento.poliza_id)
-        fila = {campo: getattr(poliza, campo, None) for campo in _POLIZA}
+        fila = dict(por_id.get(movimiento.poliza_id, {}))
         fila.update({campo: getattr(movimiento, campo)
                      for campo in _MOVIMIENTO if campo != "poliza_id"})
+        fila.setdefault("poliza_id", movimiento.poliza_id)
         planas.append(fila)
     _hoja(libro_excel, "Plana", _POLIZA + _MOVIMIENTO[1:], planas, negrita)
 

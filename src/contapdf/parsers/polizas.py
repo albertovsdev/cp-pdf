@@ -99,6 +99,23 @@ class LibroDiario:
     def __iter__(self) -> Iterator[Poliza]:
         return iter(self.polizas)
 
+    def totales_leidos(self) -> dict[str, tuple[Decimal, Decimal]]:
+        """Lo que el sistema LEYO por poliza: la suma de sus movimientos.
+
+        `Poliza.total_debe`/`total_haber` es lo que el documento DECLARA.
+        Las dos cifras no son la misma: en `diario-general` difieren en 100
+        de 5 302 polizas, y son exactamente las 100 que fallan
+        `partida_doble` (medido en la 8b y otra vez en la 8d). Vive aqui y
+        no en el exportador para que la hoja y la regla no puedan derivarla
+        cada una por su cuenta y separarse en la primera correccion.
+        """
+        totales: dict[str, tuple[Decimal, Decimal]] = {}
+        for movimiento in self.movimientos:
+            debe, haber = totales.get(movimiento.poliza_id, (_CERO, _CERO))
+            totales[movimiento.poliza_id] = (debe + movimiento.debe,
+                                             haber + movimiento.haber)
+        return totales
+
 
 def _es_monto(texto: str) -> bool:
     t = texto.strip()

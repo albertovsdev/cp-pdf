@@ -5,6 +5,7 @@ from __future__ import annotations
 from decimal import Decimal
 
 import openpyxl
+import pytest
 from conftest import synthetic_document
 
 from contapdf.export.excel import exportar_balanza
@@ -182,7 +183,10 @@ def test_el_libro_diario_sale_en_cuatro_hojas(tmp_path):
     assert plana.max_row == len(libro.movimientos) + 1
     encabezados = [c.value for c in plana[1]]
     assert "poliza_id" in encabezados and "cuenta" in encabezados
-    assert "total_debe" in encabezados
+    # Fase 8d: la columna unica `total_debe` se partio en la declarada por
+    # el documento y la leida por el sistema, que no son la misma cifra.
+    assert "total_debe_declarado" in encabezados
+    assert "total_debe_leido" in encabezados
 
 
 def test_las_hojas_exportan_los_campos_con_los_que_se_identifica_la_poliza(tmp_path):
@@ -227,3 +231,141 @@ def test_el_libro_mayor_sale_en_dos_hojas_mas_la_plana(tmp_path):
     assert wb["Plana"].max_row == len(mayor.meses) + 1
     encabezados = [c.value for c in wb["Plana"][1]]
     assert "saldo_inicial" in encabezados and "periodo" in encabezados
+
+
+# --- Fase 8d: la hoja Polizas mostraba el TOTAL declarado ----------------
+# Medido en la 8b: la columna salia de `Poliza.total_debe`, que es lo que el
+# documento IMPRIME, no la suma de los movimientos que el sistema leyo. En
+# `poliza.pdf` las dos cifras coinciden en las 1 944; en `diario-general`
+# difieren en 100, y esas 100 son las mismas que fallan `partida_doble`. O
+# sea: el Excel se veia correcto justo cuando un importe se habia leido mal.
+
+def _libro_de_prueba():
+    from contapdf.parsers.polizas import LibroDiario, Movimiento, Poliza
+
+    def poliza(pid, debe, haber):
+        return Poliza(poliza_id=pid, tipo="Diario", naturaleza="", fecha="",
+                      descripcion="", folio=pid, total_debe=Decimal(debe),
+                      total_haber=Decimal(haber))
+
+    def movimiento(pid, orden, debe, haber):
+        return Movimiento(poliza_id=pid, orden=orden, cuenta="1000-000-000",
+                          nombre_cuenta="CAJA", debe=Decimal(debe),
+                          haber=Decimal(haber))
+
+    return LibroDiario(
+        # P1 coincide; P2 declara 64.00 en el debe y solo se leyeron 55.17,
+        # que es el testigo real de `diario-general`.
+        polizas=(poliza("P00001", "100.00", "100.00"),
+                 poliza("P00002", "64.00", "64.00")),
+        movimientos=(movimiento("P00001", 1, "100.00", "0.00"),
+                     movimiento("P00001", 2, "0.00", "100.00"),
+                     movimiento("P00002", 1, "55.17", "0.00"),
+                     movimiento("P00002", 2, "0.00", "64.00")),
+        cfdi=())
+
+
+def _hoja_polizas(tmp_path, libro):
+    from contapdf.export.excel import exportar_polizas
+    from contapdf.validate.rules import evaluar_polizas
+
+    destino = tmp_path / "polizas.xlsx"
+    exportar_polizas(libro, evaluar_polizas(libro), destino)
+    hoja = openpyxl.load_workbook(destino)["Polizas"]
+    encabezados = [c.value for c in hoja[1]]
+    return encabezados, [dict(zip(encabezados, [c.value for c in fila]))
+                         for fila in hoja.iter_rows(min_row=2)]
+
+
+def test_la_hoja_polizas_trae_declarado_y_leido_en_columnas_separadas(tmp_path):
+    encabezados, _ = _hoja_polizas(tmp_path, _libro_de_prueba())
+    for columna in ("total_debe_declarado", "total_debe_leido",
+                    "total_haber_declarado", "total_haber_leido"):
+        assert columna in encabezados, columna
+
+
+def test_las_dos_cifras_llevan_cada_una_su_valor(tmp_path):
+    _, filas = _hoja_polizas(tmp_path, _libro_de_prueba())
+    mala = next(f for f in filas if f["poliza_id"] == "P00002")
+    # openpyxl devuelve los montos como float al releer la hoja; la
+    # comparacion se hace en Decimal para que sea numerica.
+    def leido(valor):
+        return Decimal(str(valor))
+
+    assert leido(mala["total_debe_declarado"]) == Decimal("64.00")
+    assert leido(mala["total_debe_leido"]) == Decimal("55.17")
+    assert leido(mala["total_haber_declarado"]) == Decimal("64.00")
+    assert leido(mala["total_haber_leido"]) == Decimal("64.00")
+
+
+def test_completa_es_verdadero_solo_cuando_las_dos_cifras_coinciden(tmp_path):
+    _, filas = _hoja_polizas(tmp_path, _libro_de_prueba())
+    por_id = {f["poliza_id"]: f for f in filas}
+    assert por_id["P00001"]["completa"] is True
+    assert por_id["P00002"]["completa"] is False
+
+
+def test_sin_total_declarado_no_se_puede_afirmar_que_coincide(tmp_path):
+    """Una poliza cortada por el borde de lo leido no imprime sus totales.
+
+    Sin la cifra declarada no hay con que comparar, y `completa` no puede
+    decir VERDADERO: no se afirma lo que no se comprobo.
+    """
+    from contapdf.parsers.polizas import LibroDiario, Movimiento, Poliza
+
+    libro = LibroDiario(
+        polizas=(Poliza(poliza_id="P00001", tipo="Diario", naturaleza="",
+                        fecha="", descripcion="", folio="", total_debe=None,
+                        total_haber=None, completa=False),),
+        movimientos=(Movimiento(poliza_id="P00001", orden=1,
+                                cuenta="1000-000-000", nombre_cuenta="CAJA",
+                                debe=Decimal("10.00"), haber=Decimal("0.00")),),
+        cfdi=())
+    _, filas = _hoja_polizas(tmp_path, libro)
+    assert filas[0]["completa"] is False
+    assert filas[0]["total_debe_declarado"] is None
+    assert Decimal(str(filas[0]["total_debe_leido"])) == Decimal("10.00")
+
+
+def test_la_hoja_plana_tambien_lleva_las_dos_cifras(tmp_path):
+    from contapdf.export.excel import exportar_polizas
+    from contapdf.validate.rules import evaluar_polizas
+
+    libro = _libro_de_prueba()
+    destino = tmp_path / "plana.xlsx"
+    exportar_polizas(libro, evaluar_polizas(libro), destino)
+    encabezados = [c.value for c in openpyxl.load_workbook(destino)["Plana"][1]]
+    assert "total_debe_declarado" in encabezados
+    assert "total_debe_leido" in encabezados
+
+
+@pytest.mark.lento          # 64 s: 431 paginas
+def test_la_hoja_y_la_regla_no_pueden_decir_cosas_distintas(tmp_path):
+    """Las dos salidas del sistema sobre la MISMA poliza.
+
+    Cifras medidas en la 8b y vueltas a medir en la 8d: de las 5 302
+    polizas de `diario-general`, 100 tienen el declarado distinto de lo
+    leido y son exactamente las 100 que fallan `partida_doble`. Ninguna de
+    ellas puede salir con `completa = VERDADERO`.
+    """
+    from conftest import requires_real_pdf
+
+    from contapdf.export.excel import exportar_polizas
+    from contapdf.pipeline import procesar_polizas
+
+    resultado = procesar_polizas(requires_real_pdf("diario-general"))
+    destino = tmp_path / "diario.xlsx"
+    exportar_polizas(resultado.libro, resultado.cobertura, destino)
+    _, filas = _hoja_polizas(tmp_path, resultado.libro)
+
+    incompletas = {f["poliza_id"] for f in filas if f["completa"] is False}
+    assert len(filas) == 5302
+    assert len(incompletas) == 100
+
+    regla = next(r for r in resultado.cobertura.reglas
+                 if r.regla == "partida_doble")
+    fallan = {d.fila for d in regla.discrepancias}
+    assert len(fallan) == 100
+    # Lo que este test defiende: la hoja no puede verse correcta donde la
+    # regla encontro un descuadre.
+    assert fallan <= incompletas
