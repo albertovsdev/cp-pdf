@@ -28,6 +28,9 @@ Comprobación:
 contapdf --help
 ```
 
+En Windows, el ejecutable queda en `.venv\Scripts\contapdf` y se invoca por
+esa ruta. `python -m contapdf` tampoco funciona allí.
+
 ---
 
 ## Forma de los comandos
@@ -96,7 +99,9 @@ empresa ni por banco.
 
 **Pólizas** — `poliza.pdf`, `diario-general.pdf`
 
-**Libro mayor** — `mayor-gume.pdf`, `mayor-proactivity.pdf`
+**Libro mayor** — `mayor-gume.pdf`. `mayor-proactivity.pdf` procesa sin
+reventar pero **produce basura**: `nombre_cuenta` con números de banco
+pegados, `naturaleza` vacía, importes en cero. No lo uses.
 
 **Estados de cuenta** — seis formatos verificados:
 
@@ -152,8 +157,30 @@ Suma de los 17: 6m25s. Pico de memoria: 658 MB.
 > el total real con el exportador de entonces era 23m45s. La 8c corrigió el
 > exportador y ahora son 3m08s completos. Ver PLAN.md §1.3.
 
-Los tiempos en SERVIDORSIST (i5-3470 de 2012, HDD) serán peores y **no se
-han medido todavía**: se corren con `scripts/medir_servidorsist.py`.
+### SERVIDORSIST (i5-3470 de 2012, HDD, con Apache y MySQL activos)
+
+Medido con `scripts/medir_servidorsist.py`. **El factor es consistente:
+3.4–3.7× más lento** que la máquina de desarrollo.
+
+| Documento | Desarrollo | SERVIDORSIST | Factor |
+|---|---|---|---|
+| Mediana de los 17 | 1.5 s | 5.2 s | 3.5× |
+| `poliza.pdf` | 26.7 s | 1m39s | 3.7× |
+| `auxiliar-gume.pdf` | 3m08s | **10m40s** | 3.4× |
+| Suma de los 17 | 6m25s | 21m16s | 3.3× |
+
+Ni la memoria ni el disco son restricción: el mínimo de RAM libre durante
+toda la corrida fue 2,809 MB de 8,078 —unos 400 MB de consumo— y quedan
+328 GB de disco.
+
+> **El OCR no funciona en esa máquina.** `edocta-hsbc` revienta con
+> `UnicodeDecodeError: 'charmap' codec`, porque el subproceso de Tesseract se
+> lanza sin especificar la codificación y Windows en español decodifica con
+> cp1252. Es un defecto conocido, pendiente de corregir.
+
+**Consecuencia operativa:** SERVIDORSIST se apaga a las 21:00 y la cola es
+secuencial. Un documento grande subido después de las **20:49** no termina, y
+si alguien sube algo detrás, ese también se pierde aunque tardara segundos.
 
 ---
 
@@ -224,8 +251,25 @@ Una hoja por tabla del documento, más una hoja `Validacion` con la cobertura
 completa: cada regla, su estado, sus dos cifras y el motivo de lo que no se
 pudo evaluar.
 
-Los tipos con tablas relacionadas (pólizas, mayor) llevan además una hoja
-plana con todo junto, para filtrar y hacer tablas dinámicas.
+Los tipos con tablas relacionadas —pólizas, estado de cuenta, mayor— llevan
+además una hoja `Plana` con todo junto, para filtrar y hacer tablas dinámicas
+sin fórmulas de búsqueda.
+
+| Tipo | Hojas | Clave de cruce |
+|---|---|---|
+| Balanza | `Balanza` · `Validacion` | `cuenta` |
+| Auxiliar | `Auxiliar` · `Validacion` | `cuenta` |
+| Pólizas | `Polizas` · `Movimientos` · `CFDI` · `Plana` · `Validacion` | `poliza_id` |
+| Estado de cuenta | `Cuentas` · `Movimientos` · `Plana` · `Validacion` | `num_cuenta` |
+| Libro mayor | `Cuentas` · `Meses` · `Plana` · `Validacion` | `cuenta` |
+
+> **Cuidado con la hoja `Polizas`:** las columnas `total_debe` y
+> `total_haber` traen el total **declarado por el documento**, no la suma de
+> los movimientos leídos, y `completa` se calcula sobre el declarado. En
+> `diario-general.pdf` hay 100 pólizas donde difieren y aun así sale
+> `VERDADERO`. Para comprobarlo:
+> `=SUMAR.SI(Movimientos!A:A;A2;Movimientos!E:E) - G2`.
+> Defecto conocido, pendiente de corregir.
 
 ---
 

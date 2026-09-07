@@ -1,0 +1,112 @@
+========================================================================
+MEDICION DE LA MAQUINA OBJETIVO -- cp-pdf fase 8c
+========================================================================
+
+fecha            2026-09-04 17:57:41
+maquina          ServidorSist
+sistema          Windows-10-10.0.19045-SP0
+procesador       Intel64 Family 6 Model 58 Stepping 9, GenuineIntel
+python           3.12.2 (C:\proyectos\cp-pdf\.venv\Scripts\python.exe)
+repo             C:\proyectos\cp-pdf
+RAM              8,078 MB totales, 3,205 MB libres AHORA (antes de medir)
+disco            328.3 GB libres de 464.8 GB
+
+--- dependencias ---
+  pdfplumber   0.11.10      extraccion principal
+  openpyxl     3.1.5        escribir el .xlsx
+  pypdfium2    ?            rasterizar para OCR
+  flask        3.1.3        la capa web (no hace falta para medir)
+  tesseract    AUSENTE      no esta en el PATH
+  -> sin Tesseract, edocta-hsbc no se puede medir. El resto si.
+
+========================================================================
+M2 y M3 -- tiempo de pared y memoria por documento
+========================================================================
+
+Cada documento se procesa UNA vez, en frio: sin plantilla
+aprendida, que es como lo ve el primer usuario que sube ese
+formato. Una segunda subida del mismo formato cuesta menos.
+
+[1/17] balanza (balanza): 5.0s
+[2/17] balanza-businesspro (balanza): 3.6s
+[3/17] balanza-gume (balanza): 12.5s
+[4/17] poliza (polizas): 1m39s
+[5/17] diario-general (polizas): 3m34s
+[6/17] auxiliar (auxiliar): 51.9s
+[7/17] auxiliar-gume (auxiliar): 10m40s
+[8/17] mayor-gume (mayor): 6.0s
+[9/17] mayor-proactivity (mayor): 3m40s
+[10/17] edocta (estado-cuenta): 1.6s
+[11/17] edocta-inbursa (estado-cuenta): 1.9s
+[12/17] edocta-santander (estado-cuenta): 3.2s
+[13/17] edocta-julio-banorte (estado-cuenta): 5.3s
+[14/17] edocta-abril-santander (estado-cuenta): 3.6s
+[15/17] edocta-bajio (estado-cuenta): 4.7s
+[16/17] edocta-bbva (estado-cuenta): 2.2s
+[17/17] edocta-hsbc (estado-cuenta): SALTADO -- no hay Tesseract
+
+--- M2: por documento ---
+El reloj va SIEMPRE partido. Un total unico escondio durante
+nueve fases que exportar costaba siete veces mas que leer.
+
+documento               tipo           pags  leer s  exp s  total s  estrategia  pico MB  libre min MB  xlsx MB
+----------------------  -------------  ----  ------  -----  -------  ----------  -------  ------------  -------
+edocta                  estado-cuenta     6     1.5    0.1      1.6   pdf_chars        -          3068     0.02
+edocta-inbursa          estado-cuenta     8     1.8    0.1      1.9    pdf_text        -          3195     0.02
+edocta-bbva             estado-cuenta    11     2.1    0.1      2.2    pdf_text        -          3239     0.02
+edocta-santander        estado-cuenta    10     3.1    0.1      3.2    pdf_text        -          3202     0.01
+balanza-businesspro     balanza           4     3.5    0.1      3.6   pdf_chars        -          3054     0.02
+edocta-abril-santander  estado-cuenta    13     3.5    0.1      3.6   pdf_chars        -          3237     0.03
+edocta-bajio            estado-cuenta    11     4.7    0.1      4.7    pdf_text        -          3238     0.02
+balanza                 balanza           9     4.8    0.2      5.0    pdf_text        -          3157     0.03
+edocta-julio-banorte    estado-cuenta    16     5.0    0.4      5.3    pdf_text        -          3192     0.06
+mayor-gume              mayor            17     5.6    0.4      6.0    pdf_text        -          2856     0.07
+balanza-gume            balanza          12    12.2    0.2     12.5    pdf_text        -          3006     0.04
+auxiliar                auxiliar        398    49.5    2.4     51.9    pdf_text        -          2943     0.45
+poliza                  polizas         968    95.0    4.1     99.1    pdf_text        -          3096     0.83
+diario-general          polizas         431   201.2   13.5    214.7   pdf_chars        -          2931     2.34
+mayor-proactivity       mayor           276   220.3    0.1    220.4    pdf_text        -          2829     0.01
+auxiliar-gume           auxiliar        886   621.3   19.3    640.5    pdf_text        -          2809     3.55
+
+documentos medidos   16 de 17
+                          total      leer  exportar
+minimo                     1.6s      1.5s      0.1s
+mediana                    5.2s      4.9s      0.2s
+maximo                   10m40s    10m21s     19.3s
+suma                     21m16s    20m35s     41.1s
+
+--- lo que no se pudo medir ---
+  edocta-hsbc              sin Tesseract
+
+--- M3: memoria ---
+No se pudo leer la memoria en esta plataforma.
+
+========================================================================
+M4 -- espacio en disco
+========================================================================
+
+--- medido ---
+xlsx generados       16: minimo 0.01 MB, mediana 0.03 MB, maximo 3.55 MB
+PDFs de entrada      mediana 0.47 MB, maximo 7.61 MB
+base de la cola      0.17 MB con 75 trabajos terminados dentro
+
+--- EXTRAPOLADO (no medido: se proyecta lo de arriba) ---
+Supuesto: 75 documentos al dia (PLAN seccion 6:
+15 personas x 5 documentos), con la mezcla de tamanos de los
+fixtures. Es una proyeccion, no una medicion.
+
+xlsx de un dia       2 MB (75 x 0.03 MB de mediana)
+  con el peor caso   266 MB si todos fueran como el mayor
+PDFs subidos         35 MB, pero se borran al terminar cada uno
+base de la cola      0.17 MB al dia, 42 MB al ano si nada se borrara
+
+Lo que de verdad ocupa en un momento dado es MUCHO menor: el
+barrido de 30 minutos borra cada trabajo terminado, y la
+descarga lo borra antes. El pico real es lo que quepa en media
+hora de trabajo, no un dia entero. La cifra de arriba es el
+techo si el barrido no existiera.
+
+========================================================================
+Reporte escrito en: C:\proyectos\cp-pdf\mediciones-ServidorSist-20260904-1757.txt
+Ese es el fichero que hay que traer de vuelta.
+========================================================================

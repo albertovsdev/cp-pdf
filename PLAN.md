@@ -14,14 +14,19 @@ De los 27 fixtures: 17 procesan, 7 no tienen parser, 3 son estados de cuenta
 sin tabla. Cuatro de los cinco tipos aprenden plantilla; pólizas sale con
 discrepancias por 53 CFDI que el documento no trae, declarados a propósito.
 
-**Las tablas de M2, M3 y M4 de §2 tienen la columna de SERVIDORSIST vacía.**
-No hay acceso desde la sesión de Claude Code —se entra por Escritorio
-Remoto, sin SSH—, así que la medición la corre el orquestador con
-`scripts/medir_servidorsist.py`. Todo el dimensionamiento sigue saliendo de
-la máquina de desarrollo.
+**La medición en SERVIDORSIST ya se hizo**, corrida por el orquestador por
+Escritorio Remoto (no hay SSH y no se va a montar). Resultados en
+`scripts/mediciones/`: **factor consistente de 3.4–3.7×** contra la máquina
+de desarrollo; `auxiliar-gume` tarda **10m40s** allá contra 3m08s aquí. Ni la
+memoria ni el disco son restricción: durante la corrida el mínimo de RAM
+libre fue 2,809 MB de 8,078 —unos 400 MB de consumo con Apache y MySQL
+activos— y quedan 328 GB de disco. Falta escribir esos números en §2.
 
-Siguiente: **8c-bis** (correr la medición en SERVIDORSIST), **8d** (el diario
-y el IR) y **8e** (residuos del ancla).
+**El OCR nunca ha funcionado en SERVIDORSIST.** `edocta-hsbc` revienta con
+`UnicodeDecodeError: 'charmap' codec`. Ver §5.1.
+
+Siguiente: **8d** (correcciones de correctitud), **8e** (el diario y el IR) y
+**8f** (residuos del ancla).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -376,6 +381,15 @@ documento y sobre cuántos corrió efectivamente. Un `cuadra` con
 no se puede determinar es `None` y la regla se reporta `no_verificable`,
 nunca `cuadra`. **Un porcentaje sin denominador es la misma mentira que el
 `0 discrepancias`.**
+
+**Una regla que no evaluó nada no puede cuadrar.** `evaluados == 0` junto con
+`estado == CUADRA` es una combinación prohibida, igual que
+`aplicables is None` con `CUADRA`. Una regla sin comprobaciones es
+`no_verificable` con motivo, siempre. La fase 7f prohibió la primera
+combinación y no la segunda, y por ese hueco `mayor-proactivity` reporta
+`saldo_mensual 0 de 48 → cuadra` y `acumulados 0 de 96 → cuadra`, con un
+encabezado que dice literalmente «0 de 145 casos evaluados; 2 cuadran».
+Es el `0 discrepancias` de balanza-gume en su tercera forma.
 
 `comprobaciones` se renombró a `evaluados`, porque el nombre viejo
 significaba dos cosas distintas según la regla: en unas era el universo y en
@@ -2084,9 +2098,10 @@ decisión, no descripción, y se queda aquí.
 | 8a | Interfaz mínima | Subida, procesamiento en segundo plano, descarga y cobertura en el navegador | **hecho** (765 tests) |
 | 8b | Cola persistente y tenants | Trabajos que sobreviven un reinicio; aislamiento por despacho | **hecho** (786 tests + 8 lentos) |
 | 8c | Preparar la medición | Coste de la suite, exportador cuadrático, arreglo del `-o`, `INSTALACION.md`, guion de medición | **hecho** (710 rápidos + 111 lentos) |
-| 8c-bis | Medición en SERVIDORSIST | Correr `scripts/medir_servidorsist.py` allí y llenar las columnas vacías de M2, M3 y M4 | siguiente |
-| 8d | El diario y el IR | `pagina` en `Movimiento`; declarado y leído en columnas separadas; la segunda mecánica de pérdida de importes | |
-| 8e | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
+| 8c-bis | Medición en SERVIDORSIST | Correr `scripts/medir_servidorsist.py` allí y llenar las columnas vacías de M2, M3 y M4 | **hecho por el orquestador**; falta escribirlo en §2 |
+| 8d | Correcciones de correctitud | `cuadra` con cero evaluados; `encoding` del OCR en Windows; declarado contra leído en la hoja `Polizas`; `pagina` en `Movimiento` | siguiente |
+| 8e | El diario y el IR | La segunda mecánica de pérdida de importes en `diario-general`; `mayor-proactivity` | |
+| 8f | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
 generalizar un parser que ya funciona para cubrir una segunda variante real
@@ -2211,7 +2226,7 @@ Registrada a propósito, con la fase en que toca resolverla.
   céntimos, así que es redondeo del documento origen. Retiene 9,013 saldos
   sin recalcular.
   No se relaja el ancla eligiendo un número: `±0.01` no alcanza y subirlo a
-  `±0.02` es ajustar el umbral hasta que pase el caso. **Fase 8e: medir la
+  `±0.02` es ajustar el umbral hasta que pase el caso. **Fase 8f: medir la
   distribución completa de residuos sobre las 172 secciones y buscar el hueco,
   como se hizo con el umbral de CID. Sin hueco no hay tolerancia defendible.**
   Y si se admite: una sección anclada con residuo no es igual a una anclada
@@ -2257,6 +2272,42 @@ Registrada a propósito, con la fase en que toca resolverla.
   separación organizativa alcanza, pero **es una decisión del dueño del
   despacho, no técnica**, y hay que preguntársela antes de poner documentos de
   clientes en SERVIDORSIST. **Punto obligatorio del checklist de la 8c.**
+- **Una regla dice `cuadra` habiendo evaluado cero casos.** En
+  `mayor-proactivity`: `saldo_mensual 0 de 48` y `acumulados 0 de 96`, ambas
+  en verde. Debería ser `no_verificable`. **Fase 8d.**
+- **`ocr.py` lanza Tesseract sin `encoding='utf-8'`.** En Linux funciona
+  porque el default ya es UTF-8; en un Windows en español el default es
+  cp1252, el hilo lector muere con `UnicodeDecodeError: 'charmap' codec` y
+  `proceso.stdout` queda en `None`. El `AttributeError: 'NoneType' object has
+  no attribute 'splitlines'` que aparece en la traza es el síntoma dos capas
+  después, y se interpretó mal dos veces antes de la medición en
+  SERVIDORSIST. **El OCR nunca ha funcionado en la máquina objetivo.**
+  Además: la suite corre en WSL, así que **ningún test cubre el
+  comportamiento en Windows**. **Fase 8d.**
+- **`mayor-proactivity` produce basura.** Procesa sin reventar —220 s, 276
+  páginas— pero el Excel sale con `nombre_cuenta` lleno de números de banco
+  pegados, `naturaleza` vacía, todos los importes en cero y un `(ENERO` con
+  paréntesis suelto. Hoy cuenta como uno de «los 17 que procesan» y no
+  debería. **Fase 8e: diagnosticar si es el layout, la estrategia o el
+  parser.**
+- **`jerarquia` reporta 4 relaciones sin evaluar, el motivo nombra 2 cuentas
+  y al filtrar salen 2 filas.** Los tres números no se explican entre sí.
+  **Fase 8d: medir cómo se cuenta ese universo.**
+- **El mensaje de `cfdi_cruzado` se corrigió en la web y no en el Excel.** La
+  página dice «no cuadra el dato, no el importe»; la hoja `Validacion` sigue
+  escribiendo `esperado 0.00 / obtenido 0.00`. Las dos salidas del sistema no
+  pueden decir cosas distintas del mismo caso. **Fase 8d.**
+- **`P00476` aparece dos veces** en el bloque de detalle de `Validacion` de
+  `poliza.pdf`. Puede ser legítimo —dos comprobantes de la misma póliza
+  fallando por separado— o doble conteo. **Fase 8d: medir.**
+- **`INSTALACION.md` §2 se escribió sin haber estado en la máquina y ahora
+  hay desviaciones conocidas.** Dice que el repo va a `C:\contapdf` y que no
+  hay git allí; en la instalación real se instaló git y el repo quedó en
+  `C:\proyectos\cp-pdf`. §4 documenta `python -m contapdf.cli`, que no está
+  verificado en Windows; lo que sí se probó es `.venv\Scripts\contapdf`.
+  Y el instalador de Tesseract por `winget` no ofrece la pantalla de idiomas,
+  así que hay que bajar `spa.traineddata` aparte. **Fase 8d: corregir con lo
+  que ocurrió de verdad.**
 - **El reparto rápido/lento abarató el ciclo y encareció la entrega.** La
   suite rápida bajó de 23m31s a 4m26s, pero el total partido es 38m31s contra
   20m03s junto, y al deseleccionar se mueve el coste de los fixtures
