@@ -97,7 +97,8 @@ def exportar_balanza(balanza: Balanza, cobertura: Cobertura,
 _POLIZA = ("poliza_id", "tipo", "naturaleza", "fecha", "descripcion", "folio",
            "total_debe_declarado", "total_debe_leido",
            "total_haber_declarado", "total_haber_leido", "completa")
-_MOVIMIENTO = ("poliza_id", "orden", "cuenta", "nombre_cuenta", "debe", "haber")
+_MOVIMIENTO = ("poliza_id", "orden", "cuenta", "nombre_cuenta", "debe", "haber",
+               "pagina")
 _CFDI = ("poliza_id", "fecha", "documento", "uuid", "rfc", "tipo")
 _MONTOS_DIARIO = frozenset({"total_debe_declarado", "total_debe_leido",
                             "total_haber_declarado", "total_haber_leido",

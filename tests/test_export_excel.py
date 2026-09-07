@@ -369,3 +369,28 @@ def test_la_hoja_y_la_regla_no_pueden_decir_cosas_distintas(tmp_path):
     # Lo que este test defiende: la hoja no puede verse correcta donde la
     # regla encontro un descuadre.
     assert fallan <= incompletas
+
+
+def test_la_hoja_movimientos_del_diario_trae_la_pagina(tmp_path):
+    """Igual que el auxiliar y el estado de cuenta, que ya la exportan."""
+    from conftest import requires_real_pdf
+
+    from contapdf.export.excel import exportar_polizas
+    from contapdf.extract.strategy import extraer
+    from contapdf.parsers.polizas import PolizasParser
+    from contapdf.validate.rules import evaluar_polizas
+
+    doc, _ = extraer(requires_real_pdf("poliza"), page_numbers=[1, 2])
+    libro = PolizasParser().parse(doc)
+    destino = tmp_path / "pagina.xlsx"
+    exportar_polizas(libro, evaluar_polizas(libro), destino)
+
+    hojas = openpyxl.load_workbook(destino)
+    encabezados = [c.value for c in hojas["Movimientos"][1]]
+    assert "pagina" in encabezados
+    columna = encabezados.index("pagina")
+    valores = {fila[columna].value
+               for fila in hojas["Movimientos"].iter_rows(min_row=2)}
+    assert valores <= {1, 2} and valores
+    # Y tambien en la plana, que es la que el contador filtra.
+    assert "pagina" in [c.value for c in hojas["Plana"][1]]

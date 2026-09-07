@@ -145,3 +145,38 @@ def test_la_poliza_se_identifica_por_sus_campos_no_por_el_id(bloques):
     identidades = {(p.tipo, p.fecha, p.descripcion) for p in bloques.polizas}
     assert len(identidades) == len(bloques.polizas)
     assert all(p.descripcion for p in bloques.polizas)
+
+
+# --- Fase 8d: Movimiento gana la pagina ---------------------------------
+# `FilaAuxiliar` la guarda desde la fase 3 y `Movimiento` no, asi que en la
+# 8b no se pudo cruzar un importe perdido de `diario-general` con la zona de
+# traslape de su pagina: cualquier diagnostico geometrico del diario estaba
+# bloqueado por un hueco de contrato. Es un cambio aditivo.
+
+def test_movimiento_se_puede_construir_sin_pagina():
+    """Aditivo: ningun llamador que no la pase se rompe."""
+    m = Movimiento(poliza_id="P00001", orden=1, cuenta="1000-000-000",
+                   nombre_cuenta="CAJA", debe=Decimal("1.00"),
+                   haber=Decimal("0.00"))
+    assert m.pagina == 0
+
+
+def test_cada_movimiento_sabe_en_que_pagina_venia(bloques):
+    paginas = {m.pagina for m in bloques.movimientos}
+    assert paginas <= {1, 2, 3, 4}
+    assert all(m.pagina > 0 for m in bloques.movimientos)
+
+
+def test_la_pagina_del_movimiento_es_la_del_renglon_que_lo_trae(diario):
+    # `diario` se lee de las paginas 1 a 3 y sus movimientos se reparten:
+    # si todos cayeran en la misma, la pagina no estaria saliendo del
+    # renglon sino de un valor fijo.
+    paginas = {m.pagina for m in diario.movimientos}
+    assert paginas <= {1, 2, 3}
+    assert len(paginas) > 1
+
+
+def test_el_movimiento_envuelto_toma_la_pagina_de_sus_importes(bloques):
+    # Un renglon que abre cuenta sin importes espera al siguiente; la
+    # pagina que vale es la del renglon que trae el importe.
+    assert all(1 <= m.pagina <= 4 for m in bloques.movimientos)

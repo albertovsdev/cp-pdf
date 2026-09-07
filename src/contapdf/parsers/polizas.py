@@ -76,6 +76,13 @@ class Movimiento:
     nombre_cuenta: str
     debe: Decimal
     haber: Decimal
+    # La pagina del renglon que trajo los IMPORTES -- que en un movimiento
+    # envuelto no es la que abrio la cuenta. `FilaAuxiliar` la guarda desde
+    # la fase 3; sin ella no se puede cruzar un importe mal leido con la
+    # zona de traslape de su pagina, y el diagnostico geometrico de
+    # `diario-general` quedaba bloqueado por un hueco de contrato (8b).
+    # Aditiva: 0 cuando el llamador no la pasa.
+    pagina: int = 0
 
 
 @dataclass(frozen=True)
@@ -320,7 +327,7 @@ class PolizasParser:
                     movimientos.append(Movimiento(
                         poliza_id=actual["poliza_id"], orden=orden,
                         cuenta=line.words[0].text, nombre_cuenta=nombre.strip(),
-                        debe=debe, haber=haber))
+                        debe=debe, haber=haber, pagina=page.number))
                     continue
 
                 # Renglon que abre con numero de cuenta pero sin importes:
@@ -351,7 +358,7 @@ class PolizasParser:
                         poliza_id=actual["poliza_id"], orden=orden,
                         cuenta=envuelto["cuenta"],
                         nombre_cuenta=f"{envuelto['nombre']} {cola}".strip(),
-                        debe=debe, haber=haber))
+                        debe=debe, haber=haber, pagina=page.number))
                     envuelto = None
                     continue
 
