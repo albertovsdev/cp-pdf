@@ -6,27 +6,51 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fase 8c cerrada en lo que no depende de SERVIDORSIST.** Cinco
-parsers, cinco exportadores, CLI de seis comandos, interfaz web con cola
-persistente en SQLite, worker secuencial y aislamiento por despacho.
-710 tests rápidos (4m26s) + 111 lentos (34m05s).
-De los 27 fixtures: 17 procesan, 7 no tienen parser, 3 son estados de cuenta
-sin tabla. Cuatro de los cinco tipos aprenden plantilla; pólizas sale con
-discrepancias por 53 CFDI que el documento no trae, declarados a propósito.
+Estado: **fase 8d cerrada.** Cinco parsers, cinco exportadores, CLI de seis
+comandos, interfaz web con cola persistente en SQLite, worker secuencial y
+aislamiento por despacho.
+**731 tests rápidos (4m23s) + 116 lentos (43m08s).** Ese reloj de los lentos
+no es una medición limpia: la corrida no fue en aislamiento.
+De los 27 fixtures: 17 producen Excel, 7 no tienen parser, 3 son estados de
+cuenta sin tabla de movimientos. **`mayor-proactivity` ya no cuenta entre los
+que procesan**: la 8d midió que no es un libro mayor y que su Excel sale
+vacío con cara de resultado (§2, «M1» de la 8d). Los útiles son **16**.
+Cuatro de los cinco tipos aprenden plantilla; pólizas sale con discrepancias
+por **53 CFDI sobre 50 pólizas** cuyo folio no aparece en la descripción del
+asiento, declarados a propósito.
 
-**La medición en SERVIDORSIST ya se hizo**, corrida por el orquestador por
-Escritorio Remoto (no hay SSH y no se va a montar). Resultados en
-`scripts/mediciones/`: **factor consistente de 3.4–3.7×** contra la máquina
-de desarrollo; `auxiliar-gume` tarda **10m40s** allá contra 3m08s aquí. Ni la
-memoria ni el disco son restricción: durante la corrida el mínimo de RAM
-libre fue 2,809 MB de 8,078 —unos 400 MB de consumo con Apache y MySQL
-activos— y quedan 328 GB de disco. Falta escribir esos números en §2.
+**SERVIDORSIST está medido.** La corrida es del orquestador por Escritorio
+Remoto (no hay SSH y no se va a montar); la transcribió Claude Code a §2 en
+la 8d desde
+`scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt`.
 
-**El OCR nunca ha funcionado en SERVIDORSIST.** `edocta-hsbc` revienta con
-`UnicodeDecodeError: 'charmap' codec`. Ver §5.1.
+- **Factor 3.44× sobre los 16 documentos comunes**: 21m16s allá contra 6m11s
+  aquí. Por documento va de 2.29× a 4.03×, pero **los cinco que en desarrollo
+  pasan de 15 s caen todos entre 3.35× y 3.64×**, que es donde el factor
+  importa —son los que bloquean la cola—. Debajo de 4 s el cociente es ruido
+  de reloj. `auxiliar-gume` tarda **10m40s** allá contra 3m08s aquí.
+- **El «3.4–3.7× consistente» que circuló en tres documentos no existe.** El
+  3.7 salía de dividir el total de SERVIDORSIST entre el tiempo de *sólo
+  leer* de desarrollo, y el 3.31 de dividir 16 documentos entre 17. Las dos
+  cifras son del orquestador y las dos comparan cosas distintas.
+- **La memoria no es restricción, pero lo medido es la holgura y no el
+  consumo**: el mínimo de RAM libre durante la corrida entera fue 2,809 MB de
+  8,078, con Apache y MySQL activos. **El pico del proceso allí no se pudo
+  leer.** Los «~400 MB de consumo» que decía antes esta línea eran una resta
+  contra el libre inicial, no una medición.
+- **El disco tampoco**: 328 GB libres contra un techo extrapolado de 266 MB
+  al día.
 
-Siguiente: **8d** (correcciones de correctitud), **8e** (el diario y el IR) y
-**8f** (residuos del ancla).
+**El OCR nunca ha funcionado en SERVIDORSIST y la 8d arregló la causa**:
+`ocr.py` lanzaba Tesseract sin `encoding`, y un Windows en español decodifica
+con cp1252, que no admite los bytes de las comillas tipográficas que Tesseract
+imprime. **El arreglo NO está verificado en la máquina objetivo** —la suite
+corre en WSL— y verificarlo exige volver a correr `medir_servidorsist.py`
+allí con Tesseract en el PATH. Es tarea del orquestador, que es quien tiene
+acceso. Ver §5.1.
+
+Siguiente: **8e** (que las tres salidas digan lo mismo), **8f** (el diario y
+el IR) y **8g** (residuos del ancla).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -1900,7 +1924,7 @@ Tesseract no estaba en el PATH.
 
 | documento | desarrollo | SERVIDORSIST | factor |
 |---|---|---|---|
-| mediana de los **16 comunes** | 1.4 s | 5.2 s | **3.71x** |
+| mediana de los **16 comunes** | 1.45 s | 5.15 s | 3.55x |
 | `auxiliar` | 15.0 s | 51.9 s | 3.46x |
 | `poliza` | 27.8 s | 99.1 s | 3.56x |
 | `diario-general` | 64.1 s | 3m34s | 3.35x |
@@ -1909,7 +1933,22 @@ Tesseract no estaba en el PATH.
 | `edocta-hsbc` (OCR, sin AVX2 allí) | 14.7 s | **no se pudo** | — |
 | suma de los **16 comunes** | 6m11s | **21m16s** | **3.44x** |
 | — de eso, leer y validar | 6m00s | 20m35s | 3.43x |
-| — de eso, exportar | 10.6 s | 41.3 s | 3.90x |
+| — de eso, exportar | 10.6 s | 41.1 s | 3.88x |
+
+> **Dos correcciones del orquestador sobre esta tabla, hechas contra el
+> `.txt` y no de memoria.** La medición es mía y la transcripción es de
+> Claude Code, así que la corrijo yo y lo digo aquí para que nadie la
+> sobrescriba con la versión anterior. (1) La suma de exportar del fichero es
+> **41.1 s**, no 41.3, y el factor **3.88×**, no 3.90. (2) La fila de la
+> mediana decía `1.4 s → 5.2 s = 3.71×`, que es dividir dos cifras redondeadas
+> a un decimal: las medianas exactas de los 16 son **1.45 s** y **5.15 s**, o
+> sea **3.55×**. Esa fila cae además en el régimen que el propio párrafo de
+> abajo declara ruidoso, así que **no debe citarse como el factor**; el factor
+> es el de la suma, 3.44×. El 3.71 es la última descendencia del «3.7» que
+> nunca tuvo una fila medida detrás. (3) El párrafo de abajo abría diciendo
+> «el 3.4–3.7x es de los documentos grandes» y dos renglones después medía que
+> caen entre 3.35x y 3.64x: se cambió el titular para que diga lo que mide su
+> propio cuerpo.
 
 **El factor se calcula sobre los MISMOS documentos, y por eso 3.31 no
 existe.** Dividir los 21m16s de SERVIDORSIST (16 documentos) entre los
@@ -1919,7 +1958,7 @@ sumas, desarrollo son 6m11s y el factor **3.44x**. Es la cuarta vez en el
 proyecto que un instrumento contamina su propia medición, y la primera en
 que la contaminación es aritmética y no de shell.
 
-**El 3.4–3.7x es de los documentos GRANDES, no de todos.** Por documento el
+**El factor estable es 3.35–3.64x, y es el de los documentos GRANDES.** Por documento el
 factor va de **2.29x** (`edocta`, 0.7 s) a **4.03x** (`balanza-gume`,
 3.1 s). Los cinco documentos que en desarrollo pasan de 15 s caen todos
 entre **3.35x y 3.64x**; los de menos de 4 s se dispersan porque un reloj
@@ -2457,10 +2496,20 @@ decisión, no descripción, y se queda aquí.
 | 8a | Interfaz mínima | Subida, procesamiento en segundo plano, descarga y cobertura en el navegador | **hecho** (765 tests) |
 | 8b | Cola persistente y tenants | Trabajos que sobreviven un reinicio; aislamiento por despacho | **hecho** (786 tests + 8 lentos) |
 | 8c | Preparar la medición | Coste de la suite, exportador cuadrático, arreglo del `-o`, `INSTALACION.md`, guion de medición | **hecho** (710 rápidos + 111 lentos) |
-| 8c-bis | Medición en SERVIDORSIST | Correr `scripts/medir_servidorsist.py` allí y llenar las columnas vacías de M2, M3 y M4 | **hecho por el orquestador**; falta escribirlo en §2 |
-| 8d | Correcciones de correctitud | `cuadra` con cero evaluados; `encoding` del OCR en Windows; declarado contra leído en la hoja `Polizas`; `pagina` en `Movimiento` | siguiente |
-| 8e | El diario y el IR | La segunda mecánica de pérdida de importes en `diario-general`; `mayor-proactivity` | |
-| 8f | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
+| 8c-bis | Medición en SERVIDORSIST | Correr `scripts/medir_servidorsist.py` allí y llenar las columnas vacías de M2, M3 y M4 | **hecho** (corrida del orquestador; transcrita a §2 por Claude Code en la 8d) |
+| 8d | Correcciones de correctitud | `cuadra` con cero evaluados; `encoding` del OCR en Windows; declarado contra leído en la hoja `Polizas`; `pagina` en `Movimiento` | **hecho** (731 rápidos + 116 lentos) |
+| 8e | Que las tres salidas digan lo mismo | `saldo_origen` a la hoja `Auxiliar`; declarado contra leído en `mayor` y `estado-cuenta`; que la `Discrepancia` declare si compara importes, para que CLI, Excel y web dejen de deducirlo; `mayor-proactivity` falla limpio; corregir `INSTALACION.md` y `ARQUITECTURA.md` con lo ocurrido | siguiente |
+| 8f | El diario y el IR | La segunda mecánica de pérdida de importes en `diario-general`, ahora que `Movimiento` guarda la página | |
+| 8g | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
+
+> **Renumeración de la 8d en adelante.** Lo que la 8d midió y no arregló —el
+> mismo defecto de «declarado contra leído» en otros tres exportadores, y el
+> `esperado 0.00 / obtenido 0.00` que resultó faltar en dos salidas y no en
+> una— pesa más que el diagnóstico del diario, que además ya está
+> desbloqueado y puede esperar una fase. La antigua 8e se parte: su mitad de
+> `mayor-proactivity` entra en la 8e nueva (el diagnóstico ya lo hizo la 8d;
+> queda hacerlo fallar limpio) y su mitad del diario pasa a la 8f. Los
+> residuos del ancla corren un lugar, a 8g.
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
 generalizar un parser que ya funciona para cubrir una segunda variante real
@@ -2545,155 +2594,145 @@ RESTRICCIONES
 
 ## 5.1 Deuda técnica conocida
 
-Registrada a propósito, con la fase en que toca resolverla.
+Registrada a propósito, con la fase en que toca resolverla. **Una entrada
+sale de aquí cuando se mide que ya no ocurre, no cuando se cierra la fase que
+la tenía asignada.**
 
-- **`headers.py` fusiona `'FOLIO FECHA'` en el auxiliar.** En esas páginas
-  FOLIO no trae datos, así que no genera columna propia y su etiqueta cae
-  en la vecina. Es una lectura honesta del documento, pero el parser de la
-  fase 3 necesita `folio` y `fecha` separados. **Resolver en fase 3.**
-- **`pitch_factor=1.3` en `headers.py`** distingue una etiqueta partida en
-  dos renglones de un título de sección, midiendo si el interlineado es
-  más apretado que el de los datos. Está afinado sobre cuatro documentos.
-  Debe seguir siendo parámetro configurable, nunca constante enterrada.
-- **`headers.py` no maneja encabezados agrupados** (`Acumulados` abarcando
-  dos columnas, en el Libro Mayor). **Resolver en fase 7b.**
-- **La jerarquía necesita el ancho de segmento por nivel** (6/9/12 en
-  GUME, guiones en los otros). Es parámetro del formato. **Fase 4a.**
-- **La detección de la fila de totales no puede depender de que la etiqueta
-  esté al inicio de la celda de nombre.** En GUME el renglón es
-  `734 | Cuentas reportadas | Totales: | ...` y nunca se detectó. **Fase 4a.**
-- **La colocación del saldo sigue apoyada en la convención que se quitó de
-  `naturaleza`.** La hipótesis «positivo → deudora» se **midió y se
-  descartó**: falla en 56 de 236 renglones determinados (24%). Tanto
-  deudoras como acreedoras se imprimen en positivo — en Business Pro, 35 de
-  36 acreedoras derivadas tienen saldo positivo, y de los 6 saldos
-  negativos 3 son A y 3 son D.
-  **El signo no dice la naturaleza de la cuenta; dice que ese saldo va
-  contra su naturaleza.** Es propiedad del saldo, no de la cuenta.
-  Opción honesta pendiente: cuando la forma es `saldo_con_signo`, exportar
-  las columnas con signo **tal como las presenta el documento** y llenar
-  deudor/acreedor solo donde la naturaleza está fundamentada.
-- **`balanza-fd` detecta 4 columnas pero tiene 6 subetiquetas de
-  encabezado agrupado.** Es un problema de detección, no de agrupado.
-  **Resolver en fase 7c.**
-- **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
-  Aplica a todo parser nuevo.
+### Bloqueantes de corrección
+
+Cosas que hacen que el sistema afirme algo que no comprobó. Van primero
+porque son el argumento entero del proyecto.
+
+- **La hoja `Auxiliar` no exporta `saldo_origen`.** En `auxiliar-gume`,
+  **26,032 de 57,759 saldos los derivó el sistema** encadenando (22,713
+  impresos, 9,014 sin saldo) y en el Excel se ven idénticos a los que el
+  documento imprimió. `Cobertura` separa `exactas_impresas` de
+  `exactas_recalculadas` desde la 7h precisamente porque comprobar un saldo
+  derivado con la fórmula que lo derivó es una tautología, y el invariante
+  «un valor derivado declara su procedencia» está en `ARQUITECTURA.md` §4 —
+  pero se rompe justo en la salida que ve el contador. Es la deuda más grave
+  abierta. **Fase 8e.**
+- **`mayor` y `estado-cuenta` muestran el declarado sin lo leído**, el mismo
+  defecto que la 8d cerró en la hoja `Polizas`. Medido en la 8d
+  (`scripts/mediciones/fase8d_m6_declarado_en_los_otros_cuatro.py`): en
+  `mayor`, la hoja `Cuentas` lleva `saldo_final`, `total_cargos` y
+  `total_abonos` leídos del último mes, y **1 de las 49 cuentas de
+  `mayor-gume` ya difiere**; en `estado-cuenta`, `Cuentas` lleva `depositos`,
+  `retiros` y `saldo_corte` del resumen, y hoy no difiere en ninguno de los
+  4 fixtures medidos. `balanza` no lo tiene: no exporta la fila `Totales`.
+  **Fase 8e.**
+- **La `Discrepancia` no declara si compara importes, y por eso dos de las
+  tres salidas mienten.** Las 53 discrepancias de `cfdi_cruzado` en
+  `poliza.pdf` traen `esperado == obtenido == 0`, porque la regla cruza
+  identidades y `Discrepancia.esperado/obtenido` son `Decimal`
+  obligatorios. Medido en la 8d: la web lo resuelve **infiriendo**
+  (`numerica = esperado != obtenido`), y **el CLI y el Excel escriben los
+  ceros**. O sea que el arreglo de la 8a no llegó «a la web y no al Excel»:
+  llegó solo a la web y le faltan los otros dos. Copiar la inferencia a tres
+  sitios no vale —la próxima corrección volvería a llegar a uno—: hace falta
+  que el dato lo declare la `Discrepancia` (`Decimal | None`, o un campo de
+  tipo de comprobación). Cambio de contrato del IR de validación, medido y
+  propuesto en la 8d, no hecho. **Fase 8e.**
+- **`mayor-proactivity` entrega sin haber leído.** Diagnosticado por capas en
+  la 8d: la estrategia es correcta y el layout es síntoma; **la causa es el
+  parser**. El documento no es un libro mayor sino un reporte de movimientos
+  por cuenta, no imprime meses, y los 48 «meses» que el parser cree ver son
+  falsos positivos de `_orden_de`, que compara tras `normalizar()` y
+  `normalizar()` quita la puntuación: `_orden_de('(ENERO') == 1`. Con eso
+  produce 1 cuenta, 48 renglones en cero y una cobertura sobre 145 casos.
+  Sin ese falso positivo daría 0 meses y fallaría limpio. Es el mismo modo de
+  falla que el objetivo 1 de la 8d, un piso más abajo: no una regla que
+  cuadra sin evaluar, sino un parser que entrega sin leer. **Fase 8e: que
+  falle limpio, y sacarlo de «los 17 que procesan».**
+- **El arreglo del OCR en Windows no está verificado en la máquina
+  objetivo.** La 8d encontró y corrigió la causa —`ocr.py` lanzaba Tesseract
+  sin `encoding`, Windows en español decodifica con cp1252 y el byte `0x9D`
+  de las comillas tipográficas no existe ahí; el `AttributeError:
+  'NoneType' object has no attribute 'splitlines'` es el síntoma dos capas
+  después y se interpretó mal dos veces—. Los tests fuerzan la condición
+  (bytes que cp1252 no decodifica, un subproceso real que los emite), pero
+  **la suite corre en WSL y ningún test cubre Windows**. La verificación es
+  volver a correr `scripts/medir_servidorsist.py` en SERVIDORSIST con
+  Tesseract en el PATH y ver `edocta-hsbc` completo. **Tarea del
+  orquestador**, que es quien tiene acceso por Escritorio Remoto.
+- **`INSTALACION.md` y `ARQUITECTURA.md` describen cosas que ya no son
+  ciertas.** `INSTALACION.md` §2 dice que no hay git en la máquina y que el
+  repo va a `C:\contapdf`; en la instalación real se instaló git y quedó en
+  `C:\proyectos\cp-pdf`. §4 documenta `python -m contapdf.cli`, que no está
+  verificado en Windows; lo verificado en las dos plataformas es `contapdf`
+  en Linux y `.venv\Scripts\contapdf` en Windows, y esa es la forma
+  canónica. El instalador de Tesseract por `winget` no ofrece la pantalla de
+  idiomas, así que hay que bajar `spa.traineddata` aparte. `ARQUITECTURA.md`
+  §5 dice que `exportar_estado_cuenta` no existe —existe desde la 7e y su
+  propio §2 lo lista— y cuenta «6 formatos, 5 bancos» cuando §1.2 mide 6
+  bancos. **Fase 8e.**
+- **`mediciones-ServidorSist-20260904-1741-metodoRAPIDO.txt` está en la raíz
+  del repo, no en `scripts/mediciones/`.** Es el único fichero que documenta
+  el fallo del OCR con Tesseract presente (v5.4.0, revienta a los 7.0 s) y el
+  único que respalda «el OCR nunca funcionó allí». Si se pierde, esa
+  afirmación se queda sin evidencia reproducible. **Fase 8e: moverlo.**
+
+### Medidas y sin resolver
+
+- **`diario-general` lee mal los importes; no pierde renglones.** Medido en
+  la 8b: 24,821 renglones producen 24,821 movimientos y no hay pólizas
+  vacías. Faltan 659,304.42 en el debe y **sobran** 106,873.98 en el haber, y
+  22 movimientos traen debe y haber a la vez —imposible en un diario—, los 22
+  dentro de las 100 pólizas que fallan `partida_doble`, que son las mismas
+  100 donde el declarado difiere de lo leído. **La mecánica propuesta —un
+  renglón que se traga el importe del vecino— no explica la magnitud**: eso
+  haría que el haber ganara lo que el debe pierde, y quedan 552,430.44 sin
+  aparecer en ningún lado. Hay al menos dos mecánicas. Se extrae con
+  `pdf_chars` y el 21.9% de sus palabras se traslapan. **Desbloqueado por la
+  8d**, que le dio `pagina` a `Movimiento`: ya se puede cruzar cada importe
+  perdido con la zona de traslape de su página. **Fase 8f: medir la segunda
+  mecánica antes de arreglar.**
 - **La familia A: 2 secciones de `auxiliar-gume` cuya cadena no aterriza.**
-  Medido en la 7h y corrigiendo lo que dijo la 7g: **no falta ningún
-  movimiento**. La suma difiere en 0.01 y 0.02 pesos sobre 37 millones, y el
-  ancla exige igualdad exacta. Un movimiento faltante mueve pesos, no
+  Medido en la 7h, corrigiendo lo que dijo la 7g: **no falta ningún
+  movimiento**. La suma difiere en 0.01 y 0.02 pesos sobre 37 millones y el
+  ancla exige igualdad exacta; un movimiento faltante mueve pesos, no
   céntimos, así que es redondeo del documento origen. Retiene 9,013 saldos
-  sin recalcular.
-  No se relaja el ancla eligiendo un número: `±0.01` no alcanza y subirlo a
-  `±0.02` es ajustar el umbral hasta que pase el caso. **Fase 8f: medir la
-  distribución completa de residuos sobre las 172 secciones y buscar el hueco,
-  como se hizo con el umbral de CID. Sin hueco no hay tolerancia defendible.**
-  Y si se admite: una sección anclada con residuo no es igual a una anclada
-  exacta, la cobertura las separa, y el residuo nunca se distribuye entre los
-  saldos.
-- **53 pólizas fallan `cfdi_cruzado` y se quedan como falla declarada.**
-  Medido en la 7h: no hay criterio no circular que las separe de las que
-  cruzan. Por tipo, Cobro 817 cruzan / 13 fallan, Venta 853 / 8, Pago 31 / 40;
-  1,701 pólizas de esos mismos tipos sí cruzan, así que **no son una familia**.
-  El comando `polizas` sale con código 1 a propósito: 53 renglones marcados en
-  el Excel son revisables por un contador; un porcentaje inflado no. **Sin
-  fase: es el resultado correcto, no deuda.**
+  sin recalcular. No se relaja el ancla eligiendo un número: `±0.01` no
+  alcanza y subirlo a `±0.02` es ajustar el umbral hasta que pase el caso.
+  **Fase 8g: medir la distribución completa de residuos sobre las 172
+  secciones y buscar el hueco, como se hizo con el umbral de CID. Sin hueco
+  no hay tolerancia defendible.** Y si se admite: una sección anclada con
+  residuo no es igual a una anclada exacta, la cobertura las separa, y el
+  residuo nunca se distribuye entre los saldos.
 - **La regla de mayoría para determinar la naturaleza no está probada.**
   Medido en la 7h: el criterio no mueve ni un saldo —unanimidad y mayoría dan
   165 secciones ancladas sin aterrizaje y 168 con él, idénticas—. Los dos
   documentos disponibles no lo distinguen. Se eligió por el precedente del
   libro mayor, no por una medición. **Sin fase; volver a medirlo cuando entre
   un fixture nuevo de auxiliar.**
-- **`diario-general` lee mal los importes; no pierde renglones.** Medido en la
-  8b: 24,821 renglones producen 24,821 movimientos y no hay pólizas vacías,
-  así que no falta ninguna línea. Lo que falla son los importes: faltan
-  659,304.42 en el debe y sobran 106,873.98 en el haber, y hay 22 movimientos
-  con debe y haber simultáneos —imposible en un diario—, los 22 dentro de las
-  100 pólizas que fallan `partida_doble`. Son las mismas 100 de la tabla de la
-  7f, y las mismas 100 donde el declarado difiere de lo leído.
-  **La mecánica propuesta —un renglón que se traga el importe del vecino— no
-  explica la magnitud**: un importe que salta de columna hace que el haber
-  gane lo que el debe pierde, y aquí quedan 552,430.44 sin aparecer en ningún
-  lado. Hay al menos dos mecánicas. El documento se extrae con `pdf_chars` y
-  el 21.9% de sus palabras se traslapan. **Fase 8d: medir la segunda mecánica
-  antes de arreglar.**
-- **La hoja `Polizas` muestra el TOTAL declarado, no la suma leída.** Es lo que
-  hace que P00096 salga con `completa = VERDADERO` mientras la regla reporta
-  55.17 contra 64.00. **Fase 8d: dos columnas separadas y `completa` verdadero
-  solo cuando coinciden.**
-- **`Movimiento` no guarda la página; `FilaAuxiliar` sí.** Sin ella no se puede
-  cruzar un importe perdido con su zona de traslape, así que cualquier
-  diagnóstico geométrico del diario está bloqueado. Cambio aditivo del núcleo.
-  **Fase 8d.**
-- **El sistema no tiene autenticación.** Cualquiera en la red de la oficina
-  puede subir y descargar cualquier documento; el nombre del despacho es el
-  único separador y no es un secreto. En red local con un solo despacho la
-  separación organizativa alcanza, pero **es una decisión del dueño del
-  despacho, no técnica**, y hay que preguntársela antes de poner documentos de
-  clientes en SERVIDORSIST. **Punto obligatorio del checklist de la 8c.**
-- **Una regla dice `cuadra` habiendo evaluado cero casos.** En
-  `mayor-proactivity`: `saldo_mensual 0 de 48` y `acumulados 0 de 96`, ambas
-  en verde. Debería ser `no_verificable`. **Fase 8d.**
-- **`ocr.py` lanza Tesseract sin `encoding='utf-8'`.** En Linux funciona
-  porque el default ya es UTF-8; en un Windows en español el default es
-  cp1252, el hilo lector muere con `UnicodeDecodeError: 'charmap' codec` y
-  `proceso.stdout` queda en `None`. El `AttributeError: 'NoneType' object has
-  no attribute 'splitlines'` que aparece en la traza es el síntoma dos capas
-  después, y se interpretó mal dos veces antes de la medición en
-  SERVIDORSIST. **El OCR nunca ha funcionado en la máquina objetivo.**
-  Además: la suite corre en WSL, así que **ningún test cubre el
-  comportamiento en Windows**. **Fase 8d.**
-- **`mayor-proactivity` produce basura.** Procesa sin reventar —220 s, 276
-  páginas— pero el Excel sale con `nombre_cuenta` lleno de números de banco
-  pegados, `naturaleza` vacía, todos los importes en cero y un `(ENERO` con
-  paréntesis suelto. Hoy cuenta como uno de «los 17 que procesan» y no
-  debería. **Fase 8e: diagnosticar si es el layout, la estrategia o el
-  parser.**
-- **`jerarquia` reporta 4 relaciones sin evaluar, el motivo nombra 2 cuentas
-  y al filtrar salen 2 filas.** Los tres números no se explican entre sí.
-  **Fase 8d: medir cómo se cuenta ese universo.**
-- **El mensaje de `cfdi_cruzado` se corrigió en la web y no en el Excel.** La
-  página dice «no cuadra el dato, no el importe»; la hoja `Validacion` sigue
-  escribiendo `esperado 0.00 / obtenido 0.00`. Las dos salidas del sistema no
-  pueden decir cosas distintas del mismo caso. **Fase 8d.**
-- **`P00476` aparece dos veces** en el bloque de detalle de `Validacion` de
-  `poliza.pdf`. Puede ser legítimo —dos comprobantes de la misma póliza
-  fallando por separado— o doble conteo. **Fase 8d: medir.**
-- **`INSTALACION.md` §2 se escribió sin haber estado en la máquina y ahora
-  hay desviaciones conocidas.** Dice que el repo va a `C:\contapdf` y que no
-  hay git allí; en la instalación real se instaló git y el repo quedó en
-  `C:\proyectos\cp-pdf`. §4 documenta `python -m contapdf.cli`, que no está
-  verificado en Windows; lo que sí se probó es `.venv\Scripts\contapdf`.
-  Y el instalador de Tesseract por `winget` no ofrece la pantalla de idiomas,
-  así que hay que bajar `spa.traineddata` aparte. **Fase 8d: corregir con lo
-  que ocurrió de verdad.**
+- **`mayor-proactivity` tarda 60.5 s con 276 páginas** contra 26.7 s de
+  `poliza` con 968: ocho veces más por página, y no es el exportador. Medido
+  en la 8c. La 8d explicó **qué** produce (nada utilizable) pero no **por
+  qué** cuesta tanto producirlo. **Sin fase asignada.**
+- **La colocación del saldo sigue apoyada en la convención que se quitó de
+  `naturaleza`.** La hipótesis «positivo → deudora» se **midió y se
+  descartó**: falla en 56 de 236 renglones determinados (24%). Tanto
+  deudoras como acreedoras se imprimen en positivo — en Business Pro, 35 de
+  36 acreedoras derivadas tienen saldo positivo, y de los 6 saldos negativos
+  3 son A y 3 son D. **El signo no dice la naturaleza de la cuenta; dice que
+  ese saldo va contra su naturaleza.** Es propiedad del saldo, no de la
+  cuenta. Opción honesta pendiente: cuando la forma es `saldo_con_signo`,
+  exportar las columnas con signo **tal como las presenta el documento** y
+  llenar deudor/acreedor solo donde la naturaleza está fundamentada. **Sin
+  fase asignada.**
+- **El enrutamiento CID→OCR no avisa de lo que cuesta.** Añade ~21 s medidos
+  en desarrollo, y en la máquina objetivo no hay cifra porque el OCR nunca
+  corrió allí. La cola de la 8b quitó la mitad del problema —ya nadie espera
+  en una petición síncrona—, pero sigue sin haber tiempo estimado visible
+  para el carril de OCR. **Sin fase asignada.**
 - **El reparto rápido/lento abarató el ciclo y encareció la entrega.** La
-  suite rápida bajó de 23m31s a 4m26s, pero el total partido es 38m31s contra
-  20m03s junto, y al deseleccionar se mueve el coste de los fixtures
+  suite rápida bajó de 23m31s a ~4m20s, pero el total partido supera al total
+  junto (20m03s), y al deseleccionar se mueve el coste de los fixtures
   compartidos: un test pasó de ~1 s a 15.97 s. La causa no se aisló. El
   umbral de 3 s **es un reparto de presupuesto, no un hallazgo**: el hueco
   natural de los datos está entre 14.25 s y 6.74 s (2.1x) y cortar ahí deja
   6m33s. No se lea como el umbral de CID, que sí lo defienden los datos.
   **Sin fase asignada.**
-- **`mayor-proactivity` tarda 60.5 s con 276 páginas** contra 26.7 s de
-  `poliza` con 968: ocho veces más por página, y no es el exportador. Medido
-  en la 8c, sin diagnosticar. **Sin fase asignada.**
-- **`INSTALACION.md` §2 está sin verificar.** Los pasos de Windows no se han
-  podido ejecutar desde la sesión de desarrollo. El fichero abre con una
-  tabla que declara qué está verificado y qué no. **Se cierra con la
-  8c-bis.**
-- **`pypdfium2` no estaba declarado en `pyproject.toml`.** `ocr.py` lo
-  importa y nueve fases no lo notaron porque estaba instalado de antes en la
-  máquina de desarrollo. En una máquina limpia el OCR falla al importar. Ya
-  declarado; no necesita AVX2, así que no bloquea la instalación en
-  SERVIDORSIST. **Resuelto en la 8c, se registra por el patrón: una
-  dependencia que solo existe en la máquina de quien programa es invisible
-  hasta el primer despliegue.**
-- **`cfdi_cruzado` imprime `esperado 0.00 obtenido 0.00`** en sus
-  discrepancias, porque cruza identidades y no importes. El reporte de la 8a
-  dice que se corrigió a «no cuadra el dato, no el importe», pero una corrida
-  posterior del CLI sigue mostrando los ceros. **Verificar si el arreglo llegó
-  al camino del CLI o solo al de la web.**
 - **20 CFDI traen el RFC pegado al tipo** (`'ROTG870907QC5Ingreso'`). No
   afecta al cruce; el campo `tipo` sale sucio. **Sin fase asignada.**
 - **`Bajío`: 1 movimiento con tinta en la columna del saldo que no se leyó.**
@@ -2703,14 +2742,9 @@ Registrada a propósito, con la fase en que toca resolverla.
   distinguirlas.** Su propio docstring nombra la trampa. Los 563 subtotales
   huérfanos de `auxiliar-gume` quedaron explicados en la 8b y **no son un
   defecto**: 378 son de detalle y 185 acumulativas —lo contrario de lo que la
-  8a declaró desde tres ejemplos—, pero los 378 están en ceros y cuentas de
+  8a declaró desde tres ejemplos—, pero los 378 están en ceros, y cuentas de
   detalle con importe y sin movimientos hay 0, por 0.00 no leídos. Extra: 3
   cuentas traen más de un subtotal. **Sin fase asignada.**
-- **El CLI revienta con una traza si el directorio de `-o` no existe.**
-  `FileNotFoundError` desde `zipfile`, siete niveles de traza. En un sistema
-  cuyo argumento es «declara lo que no puedes hacer», es la peor forma de
-  fallar. Solo afecta al CLI; la capa web controla su ruta de salida.
-  **Sin fase asignada.**
 - **Cruce contra los CFDI timbrados: no existe.** `cfdi_cruzado` verifica
   consistencia interna del PDF —que el folio declarado aparezca en la
   descripción del asiento—, no contra comprobantes reales. Los XML están en
@@ -2721,15 +2755,84 @@ Registrada a propósito, con la fase en que toca resolverla.
   `no_verificable` porque ningún comando acepta dos documentos a la vez.
   **Es un producto distinto y más valioso que la conversión. Sin fase;
   decidir cuándo.**
-- **El enrutamiento CID→OCR corre en el carril normal.** Añade ~21 s a una
-  llamada síncrona sin avisar, y esos 21 s se midieron en la máquina de
-  desarrollo. El PLAN lo exige en el carril lento con tiempo estimado
-  visible. **Resolver en fase 8b.**
-- **Ninguna medición de tiempo se ha hecho en SERVIDORSIST.** Los 0.1 s por
-  página y los 21 s de OCR salen de un i5-1335U con SSD; el destino es un
-  i5-3470 de 2012 sin AVX2 con disco mecánico compartido con Apache y
-  MySQL. La memoria pico (543 MB) sí traslada; el tiempo no. **Medir en la
-  máquina objetivo antes de dimensionar la cola de la fase 8b.**
+
+### Decisiones que no son técnicas
+
+- **El sistema no tiene autenticación.** Cualquiera en la red de la oficina
+  puede subir y descargar cualquier documento; el nombre del despacho es el
+  único separador y no es un secreto. En red local con un solo despacho la
+  separación organizativa alcanza, pero **es una decisión del dueño del
+  despacho, no técnica**, y hay que preguntársela antes de poner documentos
+  de clientes en SERVIDORSIST. Va con el resto del checklist de despliegue en
+  §2, «Resultados de la fase 8c»: respaldo, arranque como servicio, ventana
+  de uso, y qué hacer con un trabajo grande subido después de las 20:49.
+
+### Restricciones permanentes, no deuda
+
+- **Dinero siempre en `Decimal`, nunca `float`.** Verificado por test AST.
+  Aplica a todo parser nuevo.
+- **`pitch_factor=1.3` en `headers.py`** distingue una etiqueta partida en
+  dos renglones de un título de sección, midiendo si el interlineado es más
+  apretado que el de los datos. Está afinado sobre cuatro documentos. Debe
+  seguir siendo parámetro configurable, nunca constante enterrada.
+
+### Cerradas, y por qué se quedan escritas
+
+Ninguna es trabajo pendiente. Se conservan porque el patrón que las produjo
+sí se repite.
+
+- **`pypdfium2` no estaba declarado en `pyproject.toml`.** `ocr.py` lo
+  importa y nueve fases no lo notaron porque estaba instalado de antes en la
+  máquina de desarrollo. Resuelto en la 8c. **El patrón: una dependencia que
+  solo existe en la máquina de quien programa es invisible hasta el primer
+  despliegue.**
+- **El CLI reventaba con una traza de `zipfile` si el directorio de `-o` no
+  existía**, y salía con código 1, que aquí significa «hay discrepancias».
+  Resuelto en la 8c: se comprueba antes de procesar, avisa, sale con 2 y no
+  crea el directorio.
+- **Una regla decía `cuadra` habiendo evaluado cero casos** (`mayor-proactivity`,
+  `saldo_mensual 0 de 48` y `acumulados 0 de 96`). Resuelto en la 8d:
+  `__post_init__` lanza, y `_resultado()` devuelve `no_verificable` con
+  motivo. Barrido de los 27 fixtures: eran 2 reglas en 1 documento, y ninguna
+  otra medición se movió.
+- **`jerarquia` reportaba 4 sin evaluar, el motivo nombraba 2 cuentas y el
+  filtro daba 2 filas.** Medido en la 8d: los tres números son correctos y
+  distintos. 28 padres referidos × 2 campos = 56 aplicables; 26 presentes con
+  hijas × 2 = 52 evaluados; 2 huérfanos × 2 = 4 sin evaluar. El motivo nombra
+  **los padres que faltan** (`100`, `200`) y el filtro encuentra **las hijas
+  que los declaran** (`100-01`, `200-01`). No hay padres presentes sin hijas,
+  así que no hay un segundo hueco.
+- **`P00476` no es un doble conteo.** Medido en la 8d: son dos CFDI distintos
+  de la misma póliza, con UUID distintos, y ninguno cruza. Hay 3 casos así.
+  **Y destapa un error de unidad que estaba en este documento**: no son «53
+  pólizas» las que fallan `cfdi_cruzado`, son **53 CFDI sobre 50 pólizas** —
+  el `aplicables` de la regla es `len(libro.cfdi)`. Corregido aquí y donde
+  aparezca.
+- **Las 53 discrepancias de `cfdi_cruzado` no son deuda, son el resultado
+  correcto.** Medido en la 7h: no hay criterio no circular que las separe de
+  las que cruzan. Por tipo, Cobro 817 cruzan / 13 fallan, Venta 853 / 8, Pago
+  31 / 40; 1,701 pólizas de esos mismos tipos sí cruzan, así que no son una
+  familia. El comando `polizas` sale con código 1 a propósito: 53 renglones
+  marcados que un contador puede revisar valen más que un porcentaje inflado.
+
+### Asignadas a fases ya cerradas: verificar antes de borrar
+
+Estas cinco entradas nombran una fase que ya pasó y probablemente estén
+resueltas, pero **nadie lo ha medido después**, y borrarlas sin comprobar es
+declarar un éxito sin checksum.
+
+- `headers.py` fusiona `'FOLIO FECHA'` en el auxiliar; el parser necesita
+  `folio` y `fecha` separados. **Decía fase 3.**
+- `headers.py` no maneja encabezados agrupados (`Acumulados` abarcando dos
+  columnas, en el Libro Mayor). **Decía fase 7b.**
+- La jerarquía necesita el ancho de segmento por nivel (6/9/12 en GUME,
+  guiones en los otros). **Decía fase 4a.**
+- La detección de la fila de totales no puede depender de que la etiqueta
+  esté al inicio de la celda de nombre (en GUME el renglón es
+  `734 | Cuentas reportadas | Totales: | ...`). **Decía fase 4a.**
+- `balanza-fd` detecta 4 columnas y tiene 6 subetiquetas de encabezado
+  agrupado. **Decía fase 7c**, y §2 de la 7c dice que se resolvió
+  deduplicando, pero la entrada nunca se cerró.
 
 ---
 
@@ -2813,11 +2916,15 @@ antes de implementarse.
   0.55% contra 25 en cero exacto), así que el umbral es defendible; lo que
   falta es dejar escrito qué unidad usa y que la fracción está a mitad del
   hueco, no pegada al borde inferior.
-- **Puerto**: Apache ya ocupa el 80. El servicio Python va en otro puerto o
-  detrás de un proxy de Apache. Decidir antes de la fase 8.
-- **Apagado diario a las 21:00**: la cola debe persistir en disco y los
-  trabajos a medias reanudarse o marcarse como fallidos al arrancar. Nada
-  puede vivir solo en memoria.
+- ~~**Puerto**~~: **decidido en la 8c.** Apache ocupa el 80, así que el
+  servicio Python va en el **8080** (`INSTALACION.md` §2.6). Poner un proxy
+  de Apache delante sigue abierto y toca configuración de Apache.
+- ~~**Apagado diario a las 21:00**~~: **resuelto a medias en la 8b.** La cola
+  persiste en SQLite y lo que quedó en `procesando` pasa a `interrumpido` al
+  arrancar, con su motivo. **No se reanuda**: hay que volver a subir el
+  documento. Con `auxiliar-gume` en 10m40s medidos, cualquier documento
+  grande subido después de las **20:49** se pierde, y falta decidir si se
+  avisa, se rechaza o no se hace nada (checklist de la 8c, punto 3).
 - **Servicio de Windows**: el worker corre como servicio (NSSM o Programador
   de tareas), no como una ventana de consola que alguien puede cerrar.
 - **Respaldo**: un solo disco mecánico de 2012, sin redundancia, con

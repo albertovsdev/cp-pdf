@@ -99,9 +99,14 @@ empresa ni por banco.
 
 **Pólizas** — `poliza.pdf`, `diario-general.pdf`
 
-**Libro mayor** — `mayor-gume.pdf`. `mayor-proactivity.pdf` procesa sin
-reventar pero **produce basura**: `nombre_cuenta` con números de banco
-pegados, `naturaleza` vacía, importes en cero. No lo uses.
+**Libro mayor** — `mayor-gume.pdf`. **`mayor-proactivity.pdf` no lo uses.**
+Procesa sin reventar y produce un Excel vacío con cara de resultado:
+`nombre_cuenta` con el bloque de bancos del encabezado pegado, `naturaleza`
+vacía, importes en cero. La 8d midió por qué: **ese documento no es un libro
+mayor**, es un reporte de movimientos por cuenta, y no imprime meses. Los 48
+«meses» que salen son falsos positivos —`(ENERO` con el paréntesis pegado
+cuenta como enero— y por eso el parser entrega sin haber leído. Está
+pendiente que falle limpio (PLAN §5.1, fase 8e).
 
 **Estados de cuenta** — seis formatos verificados:
 
@@ -147,10 +152,11 @@ Un total único escondió durante nueve fases que el exportador era cuadrático.
 
 | Documento | Páginas | Leer y validar | Exportar | Total |
 |---|---|---|---|---|
-| Mediana de los 17 que procesan | — | — | — | **1.5 s** |
-| `auxiliar-gume.pdf` | 886 | 183 s | 5 s | **3m 08s** |
+| Mediana de los 17 que producen Excel | — | 1.4 s | 0.0 s | **1.5 s** |
+| `auxiliar-gume.pdf` | 886 | 183.4 s | 5.2 s | **3m 08s** |
 
-Suma de los 17: 6m25s. Pico de memoria: 658 MB.
+Suma de los 17: 6m25s (6m14s de leer, 10.6 s de exportar). Pico de memoria
+del proceso: 658 MB, en `auxiliar-gume`.
 
 > Una versión anterior de este documento decía que `auxiliar-gume` tardaba
 > 3m57s. Ese número se midió **sin `-o`**, así que nunca escribía el Excel;
@@ -159,24 +165,50 @@ Suma de los 17: 6m25s. Pico de memoria: 658 MB.
 
 ### SERVIDORSIST (i5-3470 de 2012, HDD, con Apache y MySQL activos)
 
-Medido con `scripts/medir_servidorsist.py`. **El factor es consistente:
-3.4–3.7× más lento** que la máquina de desarrollo.
+Medido con `scripts/medir_servidorsist.py`, el mismo guion en las dos
+máquinas. Fichero:
+`scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt`.
 
-| Documento | Desarrollo | SERVIDORSIST | Factor |
+**Midió 16 de los 17**: en esa sesión Tesseract no estaba en el PATH, así que
+`edocta-hsbc` se saltó. Todas las comparaciones de abajo son sobre esos 16, y
+con el reloj partido en las dos columnas.
+
+| Documento | Desarrollo (leer + exportar = total) | SERVIDORSIST (leer + exportar = total) | Factor |
 |---|---|---|---|
-| Mediana de los 17 | 1.5 s | 5.2 s | 3.5× |
-| `poliza.pdf` | 26.7 s | 1m39s | 3.7× |
-| `auxiliar-gume.pdf` | 3m08s | **10m40s** | 3.4× |
-| Suma de los 17 | 6m25s | 21m16s | 3.3× |
+| `auxiliar` | 14.4 + 0.6 = 15.0 s | 49.5 + 2.4 = 51.9 s | 3.46× |
+| `poliza.pdf` | 26.7 + 1.1 = 27.8 s | 95.0 + 4.1 = 99.1 s | 3.56× |
+| `diario-general` | 60.7 + 3.4 = 64.1 s | 201.2 + 13.5 = 214.7 s | 3.35× |
+| `mayor-proactivity` | 60.5 + 0.0 = 60.5 s | 220.3 + 0.1 = 220.4 s | 3.64× |
+| `auxiliar-gume.pdf` | 183.4 + 5.2 = 188.5 s | 621.3 + 19.3 = **10m40s** | 3.40× |
+| **Suma de los 16** | 6m00s + 10.6 s = **6m11s** | 20m35s + 41.1 s = **21m16s** | **3.44×** |
 
-Ni la memoria ni el disco son restricción: el mínimo de RAM libre durante
-toda la corrida fue 2,809 MB de 8,078 —unos 400 MB de consumo— y quedan
-328 GB de disco.
+**El factor que vale es 3.44×**, el de la suma. Por documento va de 2.29× a
+4.03×, pero esa dispersión es de los documentos chicos: un total de 0.6 s
+medido a un decimal no resuelve un cociente. **Los cinco que pasan de 15 s
+—que son los que bloquean la cola— caen entre 3.35× y 3.64×.**
 
-> **El OCR no funciona en esa máquina.** `edocta-hsbc` revienta con
-> `UnicodeDecodeError: 'charmap' codec`, porque el subproceso de Tesseract se
-> lanza sin especificar la codificación y Windows en español decodifica con
-> cp1252. Es un defecto conocido, pendiente de corregir.
+> Una versión anterior de esta tabla decía «factor consistente 3.4–3.7×».
+> Ninguna fila medida da 3.7: ese número salía de comparar el total de
+> SERVIDORSIST contra el tiempo de **sólo leer** de desarrollo. Y el 3.3×
+> salía de dividir 16 documentos entre 17.
+
+**El disco no es restricción**: 328 GB libres de 464.8 GB, contra un techo de
+266 MB al día si el barrido no existiera.
+
+**La memoria tampoco, pero lo medido es la holgura**: durante la corrida
+entera el mínimo de RAM libre fue 2,809 MB de 8,078, con Apache y MySQL
+activos. El pico del proceso en esa máquina **no se pudo leer** —el
+instrumento no obtuvo el `WorkingSetSize` en Windows— así que los 658 MB de
+pico son de desarrollo y no se han confirmado allí.
+
+> **El OCR nunca ha funcionado en esa máquina, y la causa ya está
+> corregida.** `ocr.py` lanzaba Tesseract sin declarar la codificación, y un
+> Windows en español decodifica con cp1252, que no admite los bytes de las
+> comillas tipográficas que Tesseract imprime; de ahí el
+> `UnicodeDecodeError: 'charmap' codec`. La 8d lo arregló. **El arreglo no
+> está verificado allí**: la suite corre en WSL y ningún test cubre Windows.
+> Confirmarlo es volver a correr el guion en SERVIDORSIST con Tesseract en el
+> PATH.
 
 **Consecuencia operativa:** SERVIDORSIST se apaga a las 21:00 y la cola es
 secuencial. Un documento grande subido después de las **20:49** no termina, y
@@ -263,13 +295,30 @@ sin fórmulas de búsqueda.
 | Estado de cuenta | `Cuentas` · `Movimientos` · `Plana` · `Validacion` | `num_cuenta` |
 | Libro mayor | `Cuentas` · `Meses` · `Plana` · `Validacion` | `cuenta` |
 
-> **Cuidado con la hoja `Polizas`:** las columnas `total_debe` y
-> `total_haber` traen el total **declarado por el documento**, no la suma de
-> los movimientos leídos, y `completa` se calcula sobre el declarado. En
-> `diario-general.pdf` hay 100 pólizas donde difieren y aun así sale
-> `VERDADERO`. Para comprobarlo:
-> `=SUMAR.SI(Movimientos!A:A;A2;Movimientos!E:E) - G2`.
-> Defecto conocido, pendiente de corregir.
+> **La hoja `Polizas` lleva las dos cifras.** `total_debe_declarado` y
+> `total_haber_declarado` son lo que el documento afirma;
+> `total_debe_leido` y `total_haber_leido`, la suma de los movimientos que el
+> sistema leyó. **`completa` es VERDADERO solo si el bloque cerró y las dos
+> coinciden.** En `poliza.pdf` no difiere ninguna; en `diario-general.pdf`
+> difieren 100, que son exactamente las 100 que fallan `partida_doble`.
+> Corregido en la 8d: antes la hoja mostraba solo lo declarado y se veía
+> correcta justo cuando un importe se había leído mal.
+
+> **Cuidado con la hoja `Auxiliar`: no dice qué saldos calculó el sistema.**
+> Cuando el documento no imprime un saldo legible, el sistema lo deriva
+> encadenando y solo lo entrega si la cadena aterriza exacta en el subtotal
+> declarado. Eso es honesto, pero la hoja **no exporta `saldo_origen`**, así
+> que un saldo derivado se ve idéntico a uno impreso. En `auxiliar-gume` son
+> **26,032 de 57,759**. La cobertura sí lo declara —el reporte y la hoja
+> `Validacion` separan las exactas impresas de las recalculadas—, así que
+> mientras esto no se corrija, **la cifra que hay que leer es la de
+> `Validacion`, no la columna de saldo**. Defecto conocido, PLAN §5.1, fase
+> 8e.
+
+> **Cuidado con las hojas `Cuentas` de mayor y de estado de cuenta**: traen
+> el saldo final, los totales y el resumen **declarados por el documento**, no
+> la suma de lo leído — el mismo defecto que la 8d cerró en `Polizas`. En
+> `mayor-gume` ya hay 1 cuenta de 49 donde difieren. Fase 8e.
 
 ---
 
@@ -296,7 +345,10 @@ contapdf balanza fixtures/real/1-Balanza/balanza.pdf -o salida/balanza.xlsx \
 ## Tests
 
 ```bash
-pytest tests/ -q            # 710 rápidos, ~4m26s
-pytest tests/ -q -m lento   # 111 lentos, ~34m
+pytest tests/ -q            # 731 rápidos, ~4m23s
+pytest tests/ -q -m lento   # 116 lentos, ~43m
 pytest tests/ -q --lf       # solo los que fallaron la última vez
 ```
+
+El reloj de los lentos **no** se midió en aislamiento, así que es orden de
+magnitud y no cifra. El de los rápidos sí.
