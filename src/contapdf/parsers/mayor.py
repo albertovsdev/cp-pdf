@@ -118,6 +118,42 @@ def _orden_de(periodo: str) -> int:
     return 0
 
 
+def _sin_un_solo_importe(meses: Sequence[MesMayor]) -> bool:
+    """Si NINGUN renglon de mes del documento trajo una cifra.
+
+    Es la guarda que hace fallar limpio a un documento que no es un libro
+    mayor. `_es_mes` mira si el primer token del renglon es un nombre de
+    mes, y hay documentos que los mencionan dentro de descripciones:
+    `mayor-proactivity` es un reporte de movimientos por cuenta que no
+    imprime meses, y aun asi producia 48 renglones de mes vacios, 1 cuenta y
+    una cobertura sobre 145 casos. Un parser que entrega sin haber leido.
+
+    La guarda es a nivel de DOCUMENTO y sobre el DATO, no sobre la forma: no
+    cuenta meses ni exige que vayan en orden, porque un mayor legitimo leido
+    por un rango de paginas puede empezar en septiembre. Solo afirma lo que
+    se ve -- que no se leyo ni una cifra en todo el documento -- y con un
+    solo importe en cualquier mes no dispara. Medido en la 8e:
+    `mayor-gume` trae 303 de sus 588 meses con importe no nulo ni cero, y
+    `mayor-proactivity` 0 de 48.
+
+    Un cero NO es un importe: un mes en ceros es un mes sin leer, no un mes
+    leido que vale cero. `mayor-gume` tiene 285 asi y pasa igual.
+
+    NO es el arreglo de `_es_mes`, que sigue aceptando un nombre de mes al
+    principio de cualquier renglon. Ese falso positivo se midio en la 8e y
+    se dejo escrito sin tocar: endurecer `_orden_de` para que rechace
+    `'(ENERO'` quita 2 de los 50 candidatos de `mayor-proactivity` y deja
+    48, asi que no arregla nada y cambia una funcion que hoy acierta en los
+    588 renglones del unico mayor bueno.
+    """
+    return bool(meses) and not any(
+        mes.cargos or mes.abonos
+        or (mes.saldo is not None and mes.saldo)
+        or (mes.acum_cargos is not None and mes.acum_cargos)
+        or (mes.acum_abonos is not None and mes.acum_abonos)
+        for mes in meses)
+
+
 class MayorParser:
     """Convierte un Document de Libro Mayor en cuentas y meses."""
 
@@ -271,6 +307,11 @@ class MayorParser:
         cuentas, meses = self._leer(paginas, layout)
         if not cuentas:
             raise LayoutDesconocido("no se encontro ninguna cuenta")
+        if _sin_un_solo_importe(meses):
+            raise LayoutDesconocido(
+                f"se detectaron {len(meses)} renglones de mes y ninguno trae "
+                "cargos, abonos ni saldo; el documento no parece un libro "
+                "mayor")
 
         conocido = mapeo if isinstance(mapeo, Mapeo) else None
         descripcion = conocido or Mapeo(
