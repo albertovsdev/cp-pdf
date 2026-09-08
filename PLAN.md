@@ -1974,10 +1974,12 @@ el checklist de despliegue de la 8c lo lleva como punto 3.
 **El `edocta-hsbc` de SERVIDORSIST sigue sin medirse, y no por falta de
 Tesseract.** Hay una segunda corrida, del mismo día a las 17:41, hecha en
 modo rápido y **con Tesseract v5.4.0 presente**: ahí `edocta-hsbc` no se
-saltó, **reventó a los 7.0 s**. Ese fichero está en la raíz del repo
-(`mediciones-ServidorSist-20260904-1741-metodoRAPIDO.txt`) y no en
-`scripts/mediciones/`, que es donde vive el resto. La causa está
-diagnosticada y arreglada más abajo, en los resultados de la 8d.
+saltó, **reventó a los 7.0 s**. Es el único fichero que respalda «el OCR
+nunca funcionó allí» con Tesseract presente, y por eso vive con el resto en
+`scripts/mediciones/mediciones-ServidorSist-20260904-1741-metodoRAPIDO.txt`
+(estuvo en la raíz del repo hasta la 8e, donde se movió y se le puso un test
+que impide que vuelva a quedarse suelto). La causa está diagnosticada y
+arreglada más abajo, en los resultados de la 8d.
 
 ##### M3. Memoria (máquina de desarrollo)
 
