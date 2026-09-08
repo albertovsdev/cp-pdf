@@ -231,6 +231,29 @@ class EstadoCuenta:
     def movimientos_de(self, num_cuenta: str) -> tuple[MovimientoBancario, ...]:
         return tuple(m for m in self.movimientos if m.num_cuenta == num_cuenta)
 
+    def totales_leidos(self) -> dict[str, tuple[Decimal, Decimal]]:
+        """Lo que el sistema LEYO por cuenta: la suma de sus movimientos.
+
+        `CuentaBancaria.depositos`/`retiros` es lo que el RESUMEN declara.
+        Hoy coinciden en los cuatro formatos medidos, y precisamente por eso
+        la hoja lleva las dos: una cifra que se ve correcta solo cuando
+        nadie la contrasta no esta comprobada. Cuando el documento no
+        desglosa por cuenta, el declarado es `None` y la hoja lo deja vacio
+        en vez de repartir el total (PLAN 1.2).
+
+        `saldo_corte` NO tiene equivalente aqui, por lo mismo que
+        `saldo_final` en el mayor: contrastarlo exige encadenar, y eso ya lo
+        hace `saldo_corrido` con su tolerancia.
+        """
+        totales: dict[str, tuple[Decimal, Decimal]] = {
+            c.num_cuenta: (_CERO, _CERO) for c in self.cuentas}
+        for movimiento in self.movimientos:
+            deposito, retiro = totales.get(movimiento.num_cuenta, (_CERO, _CERO))
+            totales[movimiento.num_cuenta] = (
+                deposito + (movimiento.deposito or _CERO),
+                retiro + (movimiento.retiro or _CERO))
+        return totales
+
 
 # --- Utilidades de texto -------------------------------------------------
 def _es_monto(texto: str) -> bool:

@@ -225,13 +225,39 @@ def _validacion(libro_excel, cobertura: Cobertura, negrita) -> None:
     detalle.freeze_panes = "A2"
 
 
+# Los totales van PARTIDOS en lo que el documento declara y lo que el
+# sistema leyo, igual que en la hoja `Polizas` (8d). `_cerrar` toma
+# `total_cargos`/`total_abonos` del acumulado del ultimo mes -- lo que el
+# mayor imprime -- y la hoja `Meses` trae los movimientos: en `mayor-gume`
+# ya difieren en 1 de 49 cuentas. `saldo_final` NO se parte: su unico
+# contraste posible es una cadena que el sistema deriva, y eso lo comprueban
+# `saldo_mensual` y `acumulados` CON tolerancia; enseñarlo aqui en crudo
+# haria que la hoja marcara 4 diferencias de un centimo que `Validacion`
+# reporta como cuadradas.
 _CUENTA_MAYOR = ("cuenta", "nombre_cuenta", "naturaleza", "saldo_inicial",
-                 "saldo_final", "total_cargos", "total_abonos")
+                 "saldo_final", "total_cargos_declarado", "total_cargos_leido",
+                 "total_abonos_declarado", "total_abonos_leido")
 _MES_MAYOR = ("cuenta", "orden", "periodo", "cargos", "abonos", "saldo",
               "acum_cargos", "acum_abonos")
-_MONTOS_MAYOR = frozenset({"saldo_inicial", "saldo_final", "total_cargos",
-                           "total_abonos", "cargos", "abonos", "saldo",
+_MONTOS_MAYOR = frozenset({"saldo_inicial", "saldo_final",
+                           "total_cargos_declarado", "total_cargos_leido",
+                           "total_abonos_declarado", "total_abonos_leido",
+                           "cargos", "abonos", "saldo",
                            "acum_cargos", "acum_abonos"})
+
+
+def _filas_de_cuentas_mayor(mayor: Mayor) -> dict[str, dict]:
+    """El renglon de cada cuenta, con las dos cifras de cada total."""
+    leidos = mayor.totales_leidos()
+    filas = {}
+    for cuenta in mayor.cuentas:
+        cargos, abonos = leidos.get(cuenta.cuenta, (None, None))
+        fila = {campo: getattr(cuenta, campo, None) for campo in _CUENTA_MAYOR}
+        fila.update(total_cargos_declarado=cuenta.total_cargos,
+                    total_abonos_declarado=cuenta.total_abonos,
+                    total_cargos_leido=cargos, total_abonos_leido=abonos)
+        filas[cuenta.cuenta] = fila
+    return filas
 
 
 def exportar_mayor(mayor: Mayor, cobertura: Cobertura, destino: Path) -> Path:
@@ -240,17 +266,17 @@ def exportar_mayor(mayor: Mayor, cobertura: Cobertura, destino: Path) -> Path:
     libro.remove(libro.active)
     negrita = Font(bold=True)
 
-    _hoja(libro, "Cuentas", _CUENTA_MAYOR, mayor.cuentas, negrita,
+    por_cuenta = _filas_de_cuentas_mayor(mayor)
+    _hoja(libro, "Cuentas", _CUENTA_MAYOR, por_cuenta.values(), negrita,
           _MONTOS_MAYOR)
     _hoja(libro, "Meses", _MES_MAYOR, mayor.meses, negrita, _MONTOS_MAYOR)
 
-    por_cuenta = {c.cuenta: c for c in mayor.cuentas}
     planas = []
     for mes in mayor.meses:
-        cuenta = por_cuenta.get(mes.cuenta)
-        fila = {campo: getattr(cuenta, campo, None) for campo in _CUENTA_MAYOR}
+        fila = dict(por_cuenta.get(mes.cuenta, {}))
         fila.update({campo: getattr(mes, campo) for campo in _MES_MAYOR
                      if campo != "cuenta"})
+        fila.setdefault("cuenta", mes.cuenta)
         planas.append(fila)
     _hoja(libro, "Plana", _CUENTA_MAYOR + _MES_MAYOR[1:], planas, negrita,
           _MONTOS_MAYOR)
@@ -264,12 +290,20 @@ def exportar_mayor(mayor: Mayor, cobertura: Cobertura, destino: Path) -> Path:
 # quinta hoja: son de una a tres filas, repetirla no cuesta nada, y una hoja
 # de dos renglones que nadie abre es peor que una columna repetida.
 _META_EDOCTA = ("banco", "rfc", "periodo_ini", "periodo_fin")
+# Igual que en el mayor: el resumen DECLARA depositos y retiros y los
+# movimientos son lo LEIDO. Hoy coinciden en los cuatro formatos medidos, y
+# por eso mismo van los dos: una cifra que se ve correcta solo cuando nadie
+# la contrasta no esta comprobada. `saldo_corte` no se parte, por la misma
+# razon que `saldo_final`.
 _CUENTA_BANCO = ("num_cuenta", "clabe", "producto", "moneda", "saldo_inicial",
-                 "depositos", "retiros", "saldo_corte")
+                 "depositos_declarado", "depositos_leido",
+                 "retiros_declarado", "retiros_leido", "saldo_corte")
 _MOVIMIENTO_BANCO = ("num_cuenta", "dia", "fecha", "descripcion", "referencia",
                      "deposito", "retiro", "saldo", "pagina")
-_MONTOS_EDOCTA = frozenset({"saldo_inicial", "depositos", "retiros",
-                            "saldo_corte", "deposito", "retiro", "saldo"})
+_MONTOS_EDOCTA = frozenset({"saldo_inicial", "depositos_declarado",
+                            "depositos_leido", "retiros_declarado",
+                            "retiros_leido", "saldo_corte", "deposito",
+                            "retiro", "saldo"})
 
 
 def exportar_estado_cuenta(estado: EstadoCuenta, cobertura: Cobertura,
@@ -286,8 +320,15 @@ def exportar_estado_cuenta(estado: EstadoCuenta, cobertura: Cobertura,
     negrita = Font(bold=True)
 
     meta = {campo: getattr(estado.meta, campo) for campo in _META_EDOCTA}
-    cuentas = [{**meta, **{campo: getattr(c, campo) for campo in _CUENTA_BANCO}}
-               for c in estado.cuentas]
+    leidos = estado.totales_leidos()
+    cuentas = []
+    for c in estado.cuentas:
+        deposito, retiro = leidos.get(c.num_cuenta, (None, None))
+        fila = {**meta,
+                **{campo: getattr(c, campo, None) for campo in _CUENTA_BANCO}}
+        fila.update(depositos_declarado=c.depositos, retiros_declarado=c.retiros,
+                    depositos_leido=deposito, retiros_leido=retiro)
+        cuentas.append(fila)
     _hoja(libro, "Cuentas", _META_EDOCTA + _CUENTA_BANCO, cuentas,
           negrita, _MONTOS_EDOCTA)
     _hoja(libro, "Movimientos", _MOVIMIENTO_BANCO, estado.movimientos,

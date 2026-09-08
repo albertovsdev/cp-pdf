@@ -83,6 +83,27 @@ class Mayor:
     def __iter__(self) -> Iterator[CuentaMayor]:
         return iter(self.cuentas)
 
+    def totales_leidos(self) -> dict[str, tuple[Decimal, Decimal]]:
+        """Lo que el sistema LEYO por cuenta: la suma de cargos y abonos de
+        sus meses.
+
+        `CuentaMayor.total_cargos`/`total_abonos` es lo que el documento
+        DECLARA: `_cerrar` los toma del acumulado del ultimo mes, que el
+        mayor ya imprime. No son la misma cifra -- en `mayor-gume` difieren
+        en 1 de 49 cuentas -- y por eso la hoja lleva las dos. Vive aqui y
+        no en el exportador para que la hoja y las reglas no la deriven cada
+        una por su cuenta y se separen en la primera correccion.
+
+        `saldo_final` NO tiene equivalente aqui: su unico contraste posible
+        es contra una cadena que el sistema deriva, y eso ya lo comprueban
+        `saldo_mensual` y `acumulados`, con su tolerancia.
+        """
+        totales: dict[str, tuple[Decimal, Decimal]] = {}
+        for mes in self.meses:
+            cargos, abonos = totales.get(mes.cuenta, (_CERO, _CERO))
+            totales[mes.cuenta] = (cargos + mes.cargos, abonos + mes.abonos)
+        return totales
+
 
 def _es_monto(texto: str) -> bool:
     t = texto.strip()

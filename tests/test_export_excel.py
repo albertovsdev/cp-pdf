@@ -499,3 +499,153 @@ def test_auxiliar_no_trae_ni_un_saldo_recalculado(tmp_path):
     cuenta = Counter(f["saldo_origen"] for f in filas)
     assert cuenta["impreso"] == 6783
     assert cuenta["recalculado"] == 0
+
+
+# --- Fase 8e: declarado contra leido en mayor y estado-cuenta -----------
+# El mismo defecto que la 8d cerro en la hoja `Polizas`, en dos hojas mas.
+# En `mayor`, la hoja `Cuentas` lleva `total_cargos` y `total_abonos`, que
+# `_cerrar` toma del acumulado del ULTIMO MES -- lo que el documento
+# declara -- mientras la hoja `Meses` trae los movimientos. En
+# `estado-cuenta`, `Cuentas` lleva `depositos` y `retiros` del resumen.
+#
+# `saldo_final` y `saldo_corte` NO se parten: su unico contraste posible es
+# contra una cadena que el sistema deriva, y una columna `_leido` tiene que
+# significar lo mismo en las tres hojas -- lo que se leyo del documento, no
+# lo que el sistema calculo. Quien contrasta esos dos son las reglas
+# `saldo_mensual` y `saldo_corrido`, con su tolerancia; duplicarlas en el
+# exportador y sin tolerancia haria que la hoja `Cuentas` ensenara en crudo
+# 4 diferencias de un centimo que `Validacion` reporta como cuadradas.
+
+def _mayor_de_prueba():
+    from contapdf.parsers.mayor import CuentaMayor, MesMayor, Mayor
+
+    def mes(orden, periodo, cargos, abonos):
+        return MesMayor(cuenta="1000-000-000", orden=orden, periodo=periodo,
+                        cargos=Decimal(cargos), abonos=Decimal(abonos),
+                        saldo=Decimal("0.00"), acum_cargos=None,
+                        acum_abonos=None, pagina=1)
+
+    return Mayor(
+        cuentas=(CuentaMayor(
+            cuenta="1000-000-000", nombre_cuenta="CAJA", naturaleza="D",
+            saldo_inicial=Decimal("0.00"), saldo_final=Decimal("0.00"),
+            # DECLARADO: 30.00 en cargos, pero los meses suman 30.01.
+            total_cargos=Decimal("30.00"), total_abonos=Decimal("5.00"),
+            pagina_inicio=1),),
+        meses=(mes(1, "ENERO", "10.00", "5.00"),
+               mes(2, "FEBRERO", "20.01", "0.00")))
+
+
+def _hoja_de(tmp_path, exportar, datos, cobertura, titulo):
+    destino = tmp_path / f"{titulo}.xlsx"
+    exportar(datos, cobertura, destino)
+    hoja = openpyxl.load_workbook(destino)[titulo]
+    encabezados = [c.value for c in hoja[1]]
+    return encabezados, [dict(zip(encabezados, [c.value for c in f]))
+                         for f in hoja.iter_rows(min_row=2)]
+
+
+def test_la_hoja_cuentas_del_mayor_parte_los_totales(tmp_path):
+    from contapdf.export.excel import exportar_mayor
+    from contapdf.validate.rules import evaluar_mayor
+
+    mayor = _mayor_de_prueba()
+    encabezados, filas = _hoja_de(tmp_path, exportar_mayor, mayor,
+                                  evaluar_mayor(mayor), "Cuentas")
+    for columna in ("total_cargos_declarado", "total_cargos_leido",
+                    "total_abonos_declarado", "total_abonos_leido"):
+        assert columna in encabezados, columna
+    assert Decimal(str(filas[0]["total_cargos_declarado"])) == Decimal("30.00")
+    assert Decimal(str(filas[0]["total_cargos_leido"])) == Decimal("30.01")
+    assert Decimal(str(filas[0]["total_abonos_declarado"])) == Decimal("5.00")
+    assert Decimal(str(filas[0]["total_abonos_leido"])) == Decimal("5.00")
+
+
+def test_el_saldo_final_del_mayor_no_se_parte(tmp_path):
+    """Su unico contraste es una cadena que el sistema deriva, no un dato leido."""
+    from contapdf.export.excel import exportar_mayor
+    from contapdf.validate.rules import evaluar_mayor
+
+    mayor = _mayor_de_prueba()
+    encabezados, _ = _hoja_de(tmp_path, exportar_mayor, mayor,
+                              evaluar_mayor(mayor), "Cuentas")
+    assert "saldo_final" in encabezados
+    assert "saldo_final_leido" not in encabezados
+
+
+def test_la_hoja_plana_del_mayor_lleva_las_dos_cifras(tmp_path):
+    from contapdf.export.excel import exportar_mayor
+    from contapdf.validate.rules import evaluar_mayor
+
+    mayor = _mayor_de_prueba()
+    encabezados, _ = _hoja_de(tmp_path, exportar_mayor, mayor,
+                              evaluar_mayor(mayor), "Plana")
+    assert "total_cargos_declarado" in encabezados
+    assert "total_cargos_leido" in encabezados
+
+
+def test_la_suma_leida_del_mayor_vive_en_el_objeto_de_dominio():
+    """Si la hoja y la regla la derivaran cada una, se separarian."""
+    mayor = _mayor_de_prueba()
+    assert mayor.totales_leidos() == {
+        "1000-000-000": (Decimal("30.01"), Decimal("5.00"))}
+
+
+@pytest.mark.lento          # 2 s de parseo, pero reabre mayor-gume
+def test_mayor_gume_saca_una_cuenta_de_49_con_los_totales_distintos(tmp_path):
+    """Cifra MEDIDA en la 8e: 1 de 49, y la cuenta es nombrable.
+
+    Y lo que amarra las dos salidas: esa cuenta tiene que estar nombrada por
+    alguna regla de `Validacion`. Si la hoja ensenara una diferencia que la
+    cobertura no menciona, seria la contradiccion de la 8d por el otro lado.
+    """
+    from conftest import requires_real_pdf
+
+    from contapdf.export.excel import exportar_mayor
+    from contapdf.pipeline import procesar_mayor
+
+    resultado = procesar_mayor(requires_real_pdf("mayor-gume"))
+    _, filas = _hoja_de(tmp_path, exportar_mayor, resultado.mayor,
+                        resultado.cobertura, "Cuentas")
+    assert len(filas) == 49
+    difieren = [f["cuenta"] for f in filas
+                if f["total_cargos_declarado"] != f["total_cargos_leido"]
+                or f["total_abonos_declarado"] != f["total_abonos_leido"]]
+    assert difieren == ["1190-000-000"]
+
+    nombradas = {c.split()[0] for r in resultado.cobertura.reglas
+                 for c in r.con_tolerancia}
+    nombradas |= {d.fila.split()[0] for d in resultado.cobertura.discrepancias}
+    assert set(difieren) <= nombradas, (
+        "la hoja ensena una diferencia que Validacion no menciona")
+
+
+@pytest.mark.lento          # 4 estados de cuenta
+def test_los_estados_de_cuenta_no_sacan_ninguna_cuenta_distinta(tmp_path):
+    """Medido en la 8d y otra vez en la 8e: 0 de 5 cuentas difieren."""
+    from conftest import requires_real_pdf
+
+    from contapdf.export.excel import exportar_estado_cuenta
+    from contapdf.pipeline import procesar_estado_cuenta
+
+    total = difieren = 0
+    for nombre in ("edocta", "edocta-bbva", "edocta-julio-banorte",
+                   "edocta-bajio"):
+        resultado = procesar_estado_cuenta(requires_real_pdf(nombre))
+        encabezados, filas = _hoja_de(tmp_path, exportar_estado_cuenta,
+                                      resultado.estado, resultado.cobertura,
+                                      "Cuentas")
+        for columna in ("depositos_declarado", "depositos_leido",
+                        "retiros_declarado", "retiros_leido"):
+            assert columna in encabezados, (nombre, columna)
+        assert "saldo_corte" in encabezados and "saldo_corte_leido" not in encabezados
+        total += len(filas)
+        for fila in filas:
+            # Con el declarado ausente no hay nada que comparar: el
+            # documento no desglosa por cuenta y la cifra va vacia.
+            if fila["depositos_declarado"] is None:
+                continue
+            if (fila["depositos_declarado"] != fila["depositos_leido"]
+                    or fila["retiros_declarado"] != fila["retiros_leido"]):
+                difieren += 1
+    assert (total, difieren) == (5, 0)
