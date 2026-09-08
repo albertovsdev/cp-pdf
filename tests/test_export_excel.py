@@ -394,3 +394,108 @@ def test_la_hoja_movimientos_del_diario_trae_la_pagina(tmp_path):
     assert valores <= {1, 2} and valores
     # Y tambien en la plana, que es la que el contador filtra.
     assert "pagina" in [c.value for c in hojas["Plana"][1]]
+
+# --- Fase 8e: la hoja Auxiliar dice que saldos calculo el sistema -------
+# `Cobertura` separa `exactas_impresas` de `exactas_recalculadas` desde la 7h
+# porque comprobar un saldo derivado con la formula que lo derivo es una
+# tautologia, y ARQUITECTURA 4 impone que un valor derivado declare su
+# procedencia. La hoja no lo hacia: en `auxiliar-gume` son 26 032 de 57 759
+# saldos que el sistema encadeno, y en el Excel se veian identicos a los que
+# el documento imprimio. El invariante roto justo en la salida que ve el
+# contador.
+
+def _auxiliar_de_prueba():
+    from contapdf.parsers.auxiliar import (
+        IMPRESO, RECALCULADO, SIN_SALDO, Auxiliar, FilaAuxiliar,
+    )
+
+    def fila(saldo, origen):
+        return FilaAuxiliar(
+            cuenta="1000-000-000", nombre_cuenta="CAJA",
+            saldo_inicial_cuenta=Decimal("0.00"), folio="", fecha="01/01/2025",
+            tipo_movimiento="", documento="", tercero="", concepto="",
+            debe=Decimal("10.00"), haber=Decimal("0.00"),
+            saldo=None if saldo is None else Decimal(saldo),
+            saldo_origen=origen, pagina=1)
+
+    return Auxiliar(filas=(fila("10.00", IMPRESO),
+                           fila("20.00", RECALCULADO),
+                           fila(None, SIN_SALDO)))
+
+
+def _hoja_auxiliar(tmp_path, auxiliar):
+    from contapdf.export.excel import exportar_auxiliar
+    from contapdf.validate.rules import evaluar_auxiliar
+
+    destino = tmp_path / "auxiliar.xlsx"
+    exportar_auxiliar(auxiliar, evaluar_auxiliar(auxiliar), destino)
+    hoja = openpyxl.load_workbook(destino)["Auxiliar"]
+    encabezados = [c.value for c in hoja[1]]
+    return encabezados, [dict(zip(encabezados, [c.value for c in fila]))
+                         for fila in hoja.iter_rows(min_row=2)]
+
+
+def test_la_hoja_auxiliar_trae_la_procedencia_del_saldo(tmp_path):
+    encabezados, _ = _hoja_auxiliar(tmp_path, _auxiliar_de_prueba())
+    assert "saldo_origen" in encabezados
+    # Va pegada al saldo, no al final: la procedencia sin el dato al lado
+    # obliga a cruzar dos columnas lejanas para leer una sola cosa.
+    assert encabezados.index("saldo_origen") == encabezados.index("saldo") + 1
+
+
+def test_cada_saldo_sale_con_el_origen_que_le_corresponde(tmp_path):
+    _, filas = _hoja_auxiliar(tmp_path, _auxiliar_de_prueba())
+    assert [f["saldo_origen"] for f in filas] == ["impreso", "recalculado",
+                                                  "sin_saldo"]
+    # Y el saldo sigue en su columna de siempre, sumable y filtrable: la
+    # procedencia se agrega, no sustituye.
+    assert [f["saldo"] for f in filas] == [10.0, 20.0, None]
+
+
+def test_un_saldo_que_el_sistema_calculo_no_se_ve_igual_que_uno_impreso(tmp_path):
+    """Lo que el objetivo defiende, dicho como lo leeria el contador."""
+    _, filas = _hoja_auxiliar(tmp_path, _auxiliar_de_prueba())
+    impreso = next(f for f in filas if f["saldo_origen"] == "impreso")
+    derivado = next(f for f in filas if f["saldo_origen"] == "recalculado")
+    assert impreso["saldo_origen"] != derivado["saldo_origen"]
+
+
+@pytest.mark.lento          # 188 s: 886 paginas
+def test_auxiliar_gume_declara_sus_26032_saldos_derivados(tmp_path):
+    """Las cifras son MEDICIONES de la 8d, no metas.
+
+    22 713 impresos + 26 032 recalculados + 9 014 sin saldo = 57 759 filas.
+    """
+    from collections import Counter
+
+    from conftest import requires_real_pdf
+
+    from contapdf.pipeline import procesar_auxiliar
+
+    resultado = procesar_auxiliar(requires_real_pdf("auxiliar-gume"))
+    _, filas = _hoja_auxiliar(tmp_path, resultado.auxiliar)
+    cuenta = Counter(f["saldo_origen"] for f in filas)
+    assert cuenta == {"impreso": 22713, "recalculado": 26032,
+                      "sin_saldo": 9014}
+    assert sum(cuenta.values()) == 57759
+    # La cobertura no se mueve: la hoja informa, no revalida.
+    corrido = next(r for r in resultado.cobertura.reglas
+                   if r.regla == "saldo_corrido")
+    assert (corrido.aplicables, corrido.evaluados) == (57024, 47987)
+    assert corrido.exactas_recalculadas == 26032
+
+
+@pytest.mark.lento          # 15 s: 398 paginas
+def test_auxiliar_no_trae_ni_un_saldo_recalculado(tmp_path):
+    """El documento imprime sus 6 783 saldos: no hay nada que derivar."""
+    from collections import Counter
+
+    from conftest import requires_real_pdf
+
+    from contapdf.pipeline import procesar_auxiliar
+
+    resultado = procesar_auxiliar(requires_real_pdf("auxiliar"))
+    _, filas = _hoja_auxiliar(tmp_path, resultado.auxiliar)
+    cuenta = Counter(f["saldo_origen"] for f in filas)
+    assert cuenta["impreso"] == 6783
+    assert cuenta["recalculado"] == 0

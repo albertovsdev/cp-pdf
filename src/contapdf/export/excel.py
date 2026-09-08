@@ -308,10 +308,19 @@ def exportar_estado_cuenta(estado: EstadoCuenta, cobertura: Cobertura,
     return destino
 
 
+# `saldo_origen` va PEGADA a `saldo` y no al final de la hoja: la
+# procedencia lejos del dato obliga a cruzar dos columnas para leer una
+# sola cosa. Es columna propia y no un `saldo` partido en dos —el patron de
+# la hoja `Polizas`— porque alli hay DOS cifras que existen a la vez
+# (declarado y leido) y aqui hay UNA cifra y su procedencia: un saldo es
+# impreso o recalculado, nunca los dos. Partirlo dejaria siempre una
+# columna vacia y rompería a quien suma `saldo`. En `auxiliar-gume` son
+# 26 032 de 57 759 saldos que el sistema encadeno y que hasta la 8e se
+# veian identicos a los impresos (ARQUITECTURA 4).
 _FILA_AUXILIAR = ("cuenta", "nombre_cuenta", "saldo_inicial_cuenta", "folio",
                   "fecha", "tipo_movimiento", "documento", "tercero",
-                  "concepto", "debe", "haber", "saldo", "es_subtotal",
-                  "pagina")
+                  "concepto", "debe", "haber", "saldo", "saldo_origen",
+                  "es_subtotal", "pagina")
 _MONTOS_AUXILIAR = frozenset({"saldo_inicial_cuenta", "debe", "haber", "saldo"})
 
 
