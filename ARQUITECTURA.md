@@ -94,6 +94,9 @@ ocr.extract(path, *, page_numbers=None, dpi=300, idioma="spa",
 ocr.leer_pagina(path, numero, *, ...) -> Page      # unidad del reintento
 ocr.hay_tesseract(*, binario="tesseract") -> bool  # nunca lanza
 
+class ocr.TesseractAusente(RuntimeError)    # no hay binario, o salio != 0
+class ocr.TesseractSinSalida(RuntimeError)  # termino en 0 y no devolvio TSV
+
 @dataclass(frozen=True)
 class strategy.Decision: estrategia, motivo, senales: dict
 
@@ -119,6 +122,15 @@ tokens.separar_fecha_pegada(words) -> tuple[Word, ...]
 `extraer()` es la puerta que usa todo el sistema: elige estrategia, y el
 `Document` que devuelve ya viene deduplicado y con los tokens pegados
 sueltos. Los extractores crudos no normalizan nada.
+
+**Tesseract se lee en UTF-8, declarado.** `_correr_tesseract` fija
+`encoding="utf-8"` y `errors="replace"`: sin declararlo, `subprocess`
+decodifica con el default del sistema, que en un Windows en espanol es
+cp1252, y el byte 0x9D de una comilla tipografica mata el hilo lector.
+`communicate()` no propaga esa excepcion —devuelve `stdout=None`— asi que
+el fallo reaparecia dos capas mas abajo como un `AttributeError` en
+`_tsv_a_palabras`. Una salida vacia o `None` con codigo 0 lanza ahora
+`TesseractSinSalida` nombrando la pagina. Fase 8d.
 
 **Tres señales deciden la estrategia**, cada una con su umbral medido:
 
@@ -220,6 +232,36 @@ devuelve un `Layout` cuyos `header` son las etiquetas del banco. Devuelve
 documento (`clave`, `etiqueta` legible, `evidencia` del propio texto y las
 `cuentas` que si se pudieron leer). Quien ya atrapaba `LayoutDesconocido`
 no se entera del cambio.
+
+### `parsers/polizas.py`
+
+```python
+@dataclass(frozen=True)
+class Poliza:      poliza_id, tipo, naturaleza, fecha, descripcion, folio,
+                   total_debe, total_haber, completa=True
+@dataclass(frozen=True)
+class Movimiento:  poliza_id, orden, cuenta, nombre_cuenta, debe, haber,
+                   pagina=0
+@dataclass(frozen=True)
+class CFDI:        poliza_id, fecha, documento, uuid, rfc, tipo
+@dataclass(frozen=True)
+class LibroDiario: polizas, movimientos, cfdi, forma="", mapeo=None
+                   __iter__ -> Iterator[Poliza]
+                   totales_leidos() -> dict[str, tuple[Decimal, Decimal]]
+```
+
+`Poliza.total_debe`/`total_haber` es lo que el documento DECLARA;
+`totales_leidos()` es lo que el sistema LEYO, sumando los movimientos de
+cada poliza. **No son la misma cifra** y por eso viven separadas: en
+`diario-general` difieren en 100 de 5 302 polizas. La derivacion esta aqui
+y no en el exportador para que la hoja y la regla no la calculen cada una
+por su cuenta.
+
+`Movimiento.pagina` es la pagina del renglon que trajo los IMPORTES, que en
+un movimiento envuelto no es la que abrio la cuenta. Es aditiva (`0` cuando
+no se pasa) y existe para poder cruzar un importe mal leido con la zona de
+traslape de su pagina; sin ella, cualquier diagnostico geometrico del
+diario estaba bloqueado por un hueco de contrato. Fase 8d.
 
 ### `cli.py` — la superficie que comparten la terminal y la web
 
@@ -446,6 +488,21 @@ tabla (`balanza`, `auxiliar`) escriben dos hojas; los que devuelven tablas
 relacionadas (`polizas`, `estado_cuenta`, `mayor`) escriben las
 relacionadas, una plana denormalizada y la validación.
 
+**La hoja `Polizas` lleva las dos cifras, no una.**
+`total_debe_declarado` / `total_haber_declarado` es lo que el documento
+imprime; `total_debe_leido` / `total_haber_leido` es la suma de los
+movimientos, que da `LibroDiario.totales_leidos()`. La columna `completa`
+de la hoja es VERDADERO solo cuando el bloque cerró **y** las dos coinciden
+— con la cifra declarada ausente no hay con qué comparar y sale FALSO.
+Mostrar solo lo declarado hacía que el Excel se viera correcto justo cuando
+un importe se había leído mal: en `diario-general` son 100 de 5 302, las
+mismas 100 que falla `partida_doble`.
+
+**`Poliza.completa` (el dato, no la columna) NO cambió**: sigue
+significando «el bloque cerró dentro de lo leído», que es lo que
+`partida_doble` usa para excluir pólizas cortadas. Redefinirlo habría
+sacado las 100 del denominador y hecho desaparecer las 100 fallas.
+
 Todos los `Resultado*` traen `cobertura`, `estrategia`, `motivo_estrategia`,
 `huella`, `plantilla` y `reutilizada`.
 
@@ -510,6 +567,7 @@ No son convenciones: el código no compila o no corre si se violan.
 |---|---|
 | No se reporta un resultado sin su cobertura | `reportar()` y `exportar_*()` reciben `Cobertura`, no `list[Discrepancia]`. No hay forma de llamarlos con solo las discrepancias. |
 | Una comprobación sobre un dato derivado no cuenta como verificación | `exactas_impresas` y `exactas_recalculadas` suman `exactas` y `__post_init__` lo impone. Comprobar `saldo = anterior + debe − haber` sobre un saldo generado con esa fórmula es una tautología, y `Cobertura.resumen()` lo advierte en voz alta. |
+| Una regla que no evaluó nada no puede cuadrar | `ResultadoRegla.__post_init__` **lanza** si `estado == CUADRA` con `evaluados == 0`, igual que con `aplicables=None`. `_resultado()` devuelve `no_verificable` **con motivo**: una democión automática no sabría por qué no corrió. Es el `0 discrepancias` en su tercera forma; la 7f cerró las dos primeras. |
 | Ningún conteo se imprime sin su denominador | `ResultadoRegla` guarda `aplicables` (el universo de casos del documento) además de `evaluados`. `__post_init__` **lanza** si una regla cuadra con `aplicables=None`, o si `aplicables < evaluados`. `resumen()` y el detalle del CLI siempre escriben «N de M». |
 | El dinero nunca es `float` | `parse_monto()` devuelve `Decimal` y es el único parseador. Un test AST prohíbe llamar a `float()` en los módulos de dinero. |
 | Un dato ilegible no se inventa | Los campos que pueden faltar son `Decimal | None`: `FilaAuxiliar.saldo`, `MovimientoBancario.saldo`, `MesMayor.saldo`, `Poliza.total_debe`. Quien consume tiene que decidir qué hacer con `None`. |
@@ -653,6 +711,7 @@ más allá del tipo del parámetro.
 | Distinguir una continuación partida a la mitad de una partida por palabra | La geometría es idéntica en los dos casos y se midió que no hay discriminador; `separador_continuacion` lo confirma un humano una vez por formato y la plantilla lo guarda |
 | Una cuenta de crédito, donde el saldo corre al revés | `_saldo_corrido_bancario` fija el signo `saldo + depósito − retiro`; una sección de crédito falla la regla y lo declara |
 | Un identificador de póliza estable entre lecturas | `Poliza.poliza_id` es la posición en esa lectura |
+| Que las tres salidas digan lo mismo de una discrepancia sin importes | `Discrepancia.esperado`/`obtenido` son `Decimal` obligatorios, así que una regla que cruza identidades rellena los dos con cero. Solo `web/vista.py` lo deduce (`numerica = esperado != obtenido`); el CLI y el Excel escriben `0.00 / 0.00`. Unificarlo pide que la `Discrepancia` lo declare, no que cada salida lo adivine |
 | Procesar sin materializar el documento | `AuxiliarParser`, `PolizasParser`, `MayorParser` y `EstadoCuentaParser` hacen `list(document.open_pages())`. Solo `BalanzaParser` transmite página por página |
 | Reglas de validación por tenant | `ReglasBalanza` se deduce del documento o se pasa a mano; la plantilla la guarda pero `evaluar_*` no la lee del almacén |
 | Cancelar un trabajo a media corrida | No hay puntos de cancelación |

@@ -1892,15 +1892,53 @@ páginas**, mientras `poliza` tarda 26.7 s con 968. Casi ocho veces más por
 página que el documento más grande del proyecto. No es el exportador —su
 `.xlsx` son 0.01 MB y 0.0 s—, es la lectura.
 
-**El factor contra SERVIDORSIST está PENDIENTE.** La columna existe y está
-vacía; la llena la corrida de `medir_servidorsist.py` en esa máquina.
+**El factor contra SERVIDORSIST, MEDIDO** (fase 8d). La corrió el
+orquestador por Escritorio Remoto con el mismo `medir_servidorsist.py`, y el
+fichero está en `scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt`.
+Midió **16 de los 17**: `edocta-hsbc` quedó fuera porque en esa sesión
+Tesseract no estaba en el PATH.
 
 | documento | desarrollo | SERVIDORSIST | factor |
 |---|---|---|---|
-| mediana de los 17 | 1.5 s | — | — |
-| `auxiliar-gume` | 188.5 s | — | — |
-| `edocta-hsbc` (OCR, sin AVX2 allí) | 14.7 s | — | — |
-| suma de los 17 | 6m25s | — | — |
+| mediana de los **16 comunes** | 1.4 s | 5.2 s | **3.71x** |
+| `auxiliar` | 15.0 s | 51.9 s | 3.46x |
+| `poliza` | 27.8 s | 99.1 s | 3.56x |
+| `diario-general` | 64.1 s | 3m34s | 3.35x |
+| `mayor-proactivity` | 60.5 s | 3m40s | 3.64x |
+| `auxiliar-gume` | 188.5 s | **10m40s** | **3.40x** |
+| `edocta-hsbc` (OCR, sin AVX2 allí) | 14.7 s | **no se pudo** | — |
+| suma de los **16 comunes** | 6m11s | **21m16s** | **3.44x** |
+| — de eso, leer y validar | 6m00s | 20m35s | 3.43x |
+| — de eso, exportar | 10.6 s | 41.3 s | 3.90x |
+
+**El factor se calcula sobre los MISMOS documentos, y por eso 3.31 no
+existe.** Dividir los 21m16s de SERVIDORSIST (16 documentos) entre los
+6m25s de desarrollo (17, con `edocta-hsbc` dentro) da 3.31x, y ese número
+no mide nada: son denominadores distintos. Sacando `edocta-hsbc` de las dos
+sumas, desarrollo son 6m11s y el factor **3.44x**. Es la cuarta vez en el
+proyecto que un instrumento contamina su propia medición, y la primera en
+que la contaminación es aritmética y no de shell.
+
+**El 3.4–3.7x es de los documentos GRANDES, no de todos.** Por documento el
+factor va de **2.29x** (`edocta`, 0.7 s) a **4.03x** (`balanza-gume`,
+3.1 s). Los cinco documentos que en desarrollo pasan de 15 s caen todos
+entre **3.35x y 3.64x**; los de menos de 4 s se dispersan porque un reloj
+de pared de 0.6 s no resuelve la diferencia. Donde el factor importa —los
+documentos que bloquean la cola— es donde es estable.
+
+**Consecuencia operativa, con los números ya medidos.** `auxiliar-gume`
+tarda **10m40s** en la máquina objetivo, no los ~12 minutos que la 8c
+estimó suponiendo 4x. Con la máquina apagándose a las 21:00 y el worker
+secuencial, **un `auxiliar-gume` subido después de las 20:49 no termina**;
+el checklist de despliegue de la 8c lo lleva como punto 3.
+
+**El `edocta-hsbc` de SERVIDORSIST sigue sin medirse, y no por falta de
+Tesseract.** Hay una segunda corrida, del mismo día a las 17:41, hecha en
+modo rápido y **con Tesseract v5.4.0 presente**: ahí `edocta-hsbc` no se
+saltó, **reventó a los 7.0 s**. Ese fichero está en la raíz del repo
+(`mediciones-ServidorSist-20260904-1741-metodoRAPIDO.txt`) y no en
+`scripts/mediciones/`, que es donde vive el resto. La causa está
+diagnosticada y arreglada más abajo, en los resultados de la 8d.
 
 ##### M3. Memoria (máquina de desarrollo)
 
@@ -1913,10 +1951,32 @@ Coherente con los 543 MB que la 7d midió con otro instrumento; la
 diferencia es que aquí se mide el `WorkingSetSize` del proceso entero,
 incluido el intérprete.
 
-**PENDIENTE en SERVIDORSIST**, que es donde importa: allí hay 8 GB
+**MEDIDO en SERVIDORSIST** (fase 8d), que es donde importa: allí hay 8 GB
 compartidos con Apache y MySQL, y el PLAN §6 estima ~4.5 GB ocupados en
-reposo. La pregunta que contesta esa corrida es cuánta RAM libre queda
-mientras `auxiliar-gume` está en curso.
+reposo.
+
+| | desarrollo | SERVIDORSIST |
+|---|---|---|
+| RAM total | 7 785 MB | 8 078 MB |
+| RAM libre antes de empezar | 6 832 MB | 3 205 MB |
+| **RAM libre mínima, durante `auxiliar-gume`** | 6 238 MB | **2 809 MB** |
+| pico del proceso | 658 MB | **no se pudo leer** |
+
+**La memoria no es una restricción.** En el peor momento de la corrida
+entera quedaban 2 809 MB libres, y el documento que lo produce es el más
+grande del proyecto. La caída de RAM libre durante `auxiliar-gume` fue de
+**396 MB** (3 205 → 2 809).
+
+Dos advertencias sobre esas cifras, porque miden cosas distintas:
+
+- **El pico del proceso no se midió en Windows.** El instrumento lee el
+  `WorkingSetSize` por `ctypes` contra `psapi` y en esa corrida devolvió
+  vacío; el fichero lo dice («No se pudo leer la memoria en esta
+  plataforma») en vez de rellenar la columna. Los 658 MB son de desarrollo.
+- **396 MB de caída no son 658 MB de pico.** La RAM libre del sistema y el
+  working set del proceso no son la misma magnitud: el sistema cede caché
+  de páginas mientras el proceso crece. Lo que la corrida establece es la
+  holgura —hay de sobra—, no el consumo del proceso allí.
 
 ##### M4. Disco (medido en desarrollo, extrapolado a un día)
 
@@ -1930,6 +1990,22 @@ Medido:
 
 La base se llenó con resúmenes de cobertura **reales**, no con un
 diccionario de relleno: el resumen es lo que ocupa.
+
+**Lo mismo, medido en SERVIDORSIST** (fase 8d). Coincide hasta el decimal,
+que es lo esperable: un `.xlsx` pesa lo que pesa en cualquier disco.
+
+| | desarrollo | SERVIDORSIST |
+|---|---|---|
+| `.xlsx` generados | 17 | 16 (falta `edocta-hsbc`) |
+| mediana del `.xlsx` | 0.03 MB | **0.03 MB** |
+| máximo | 3.55 MB | **3.55 MB** |
+| PDFs de entrada, mediana | 0.49 MB | 0.47 MB |
+| base de la cola, 75 trabajos | 0.17 MB | **0.17 MB** |
+| **disco libre en la máquina** | 71.9 GB de 474.1 GB | **328.3 GB de 464.8 GB** |
+
+**El disco no es una restricción, ahora medido y no supuesto**: el techo
+extrapolado de un día entero sin barrido son 266 MB, contra 328 GB libres.
+Tres órdenes de magnitud.
 
 **Extrapolado** —y se dice que es extrapolación— a los 75 documentos al día
 del PLAN §6 (15 personas × 5):
@@ -1945,7 +2021,9 @@ del PLAN §6 (15 personas × 5):
 minutos borra cada trabajo terminado y la descarga lo borra antes, así que
 el pico real es lo que quepa en media hora, no un día. Las cifras de
 arriba son el techo si el barrido no existiera. Con eso, **el disco no es
-una restricción**: ni el peor día se acerca a los 466 GB de esa máquina.
+una restricción**: ni el peor día se acerca a los 328 GB libres de esa
+máquina (464.8 GB de disco, medidos en la corrida del 4 de septiembre; los
+«466 GB» que decía esta línea eran de memoria, no de la medición).
 
 #### El `-o` con un directorio inexistente: peor de lo que parecía
 
@@ -2026,6 +2104,287 @@ Enumerado, no resuelto.
 6. **Los PDFs de prueba en SERVIDORSIST.** Para medir hay que copiar allí
    los fixtures reales, que son documentos de clientes. Falta borrarlos
    cuando la medición termine.
+
+### Resultados de la fase 8d (los defectos que destapó comparar salidas)
+
+Cuatro defectos de correctitud, cada uno con su arreglo y su suite verde
+entre uno y otro, más cuatro mediciones que no se arreglaron.
+
+#### Objetivo 1. Una regla que no evaluó nada ya no puede cuadrar
+
+La 7f prohibió `aplicables is None` con `CUADRA` y no `evaluados == 0`, y
+por ese hueco `mayor-proactivity` reportaba `saldo_mensual 0 de 48 → cuadra`
+y `acumulados 0 de 96 → cuadra`, con el encabezado «0 de 145 casos
+evaluados; 2 cuadran».
+
+Lo impide ahora `ResultadoRegla.__post_init__`, que **lanza**, igual que con
+`aplicables`. No es una conversión silenciosa a `no_verificable`: una regla
+sin veredictos tiene que decir POR QUÉ no los tiene, y una democión
+automática no sabe el motivo. `_resultado()` devuelve `no_verificable` con
+el motivo ya escrito.
+
+**Barrido de los 27 fixtures, antes y después**, con
+`scripts/mediciones/fase8d_reglas_sin_evaluar.py`: 17 procesan y 10 salen
+por `LayoutDesconocido` o `ReporteNoEsperado`, que es lo correcto y no
+cambió.
+
+| | antes | después |
+|---|---|---|
+| reglas con `evaluados == 0` | 18 | 18 |
+| de esas, en `CUADRA` | **2** | **0** |
+| documentos afectados | 1 (`mayor-proactivity`) | 0 |
+
+Las otras **16 ya eran `no_verificable`**, así que el hueco era exactamente
+de dos reglas en un documento. **Ninguna otra medición de esta sección se
+movió**: el diff de los resúmenes de los 17 documentos tiene una sola línea,
+la de `mayor-proactivity`, y **ningún conteo cambió** — sigue diciendo 0 de
+145. Lo que cambió es que ya no lo llama cuadrar.
+
+| `mayor-proactivity` | antes | después |
+|---|---|---|
+| resumen | 2 cuadran, 0 fallan, 1 no verificable | **0 cuadran, 0 fallan, 3 no verificables** |
+| casos | 0 de 145 | 0 de 145 |
+
+#### Objetivo 2. El OCR nunca funcionó en Windows, y la causa no era la que se leyó
+
+`ocr.py` lanzaba Tesseract con `text=True` y **sin `encoding`**, así que
+`subprocess` decodificaba con el default del sistema. En Linux ese default
+es UTF-8 y no se nota; en un Windows en español es cp1252.
+
+La cadena completa, ya reproducida en un test:
+
+1. Tesseract en español imprime comillas tipográficas. `”` es U+201D, que
+   en UTF-8 son los bytes `E2 80 9D`.
+2. **El byte 0x9D no existe en cp1252.** Decodificar ahí lanza
+   `UnicodeDecodeError: 'charmap' codec can't decode byte 0x9d`, que es
+   literalmente el error de SERVIDORSIST.
+3. El error ocurre **dentro del hilo lector** de `subprocess`. `communicate()`
+   hace `stdout = stdout[0] if stdout else None` sobre un búfer que quedó
+   vacío, así que devuelve `stdout=None` **sin propagar la excepción**.
+4. `_tsv_a_palabras(None, …)` estalla con `AttributeError: 'NoneType' object
+   has no attribute 'splitlines'`.
+
+Los pasos 3 y 4 no son deducción: están en `subprocess.py` de la stdlib
+—`_readerthread` hace `buffer.append(fh.read())`, y la rama Windows de
+`_communicate` cierra con `stdout = stdout[0] if stdout else None`—, así
+que un búfer que quedó vacío porque el hilo murió sale como `None`.
+
+**El AttributeError es el paso 4 de una cadena de cuatro**, y es lo único
+que aparecía en la traza. Se interpretó mal dos veces. El paso 3 es lo que
+hace invisible la causa: `subprocess` convierte un error de decodificación
+en un `None` silencioso.
+
+Dos cambios: la codificación va **declarada** (`encoding="utf-8"`,
+`errors="replace"` — un glifo ilegible es una palabra sucia, no un documento
+perdido), y una salida vacía o `None` con código 0 lanza `TesseractSinSalida`
+nombrando la página, en vez de reaparecer dos capas más abajo.
+
+**El mismo defecto estaba en el instrumento de medición.**
+`scripts/medir_servidorsist.py` lanza `tesseract --version` y
+`--list-langs` igual, y corre precisamente en Windows: podía reportar una
+versión en blanco o un «falta el idioma spa» falso. Arreglado en la misma
+pieza.
+
+**Ningún test podía cubrir esto, porque la suite corre en WSL.** Los que
+hay ahora fuerzan la CONDICIÓN y no la plataforma: uno comprueba que esos
+bytes UTF-8 **no** se pueden decodificar en cp1252 —la premisa, en código, y
+sin ella los demás no prueban nada—, otro corre un subproceso de verdad que
+los emite y exige que vuelvan íntegros, y dos más simulan `stdout` en `None`
+y en blanco y exigen el error con nombre propio.
+
+**Lo que esto NO verifica.** `edocta-hsbc` sigue procesándose bien aquí
+—4 páginas, 3 movimientos, saldo al corte 5 195.60, código 0, idéntico a lo
+que la 7d midió— pero **eso ya funcionaba antes del arreglo**: en Linux el
+defecto no se manifiesta. **Que `edocta-hsbc` procese en SERVIDORSIST está
+sin verificar y hay que probarlo allí**, volviendo a correr
+`medir_servidorsist.py` con Tesseract en el PATH. Es el único criterio de
+esta fase que no se puede cerrar desde la sesión de desarrollo.
+
+#### Objetivo 3. La hoja `Polizas` llevaba una cifra y la regla otra
+
+Medido otra vez en la 8d antes de tocar nada, y confirmando la 8b:
+
+| | `poliza.pdf` | `diario-general` |
+|---|---|---|
+| pólizas | 1 944 | 5 302 |
+| movimientos | 6 783 | 24 821 |
+| con `completa = False` por bloque cortado | **0** | **0** |
+| sin totales declarados | **0** | **0** |
+| sin ningún movimiento leído | **0** | **0** |
+| **declarado ≠ leído** | **0** | **100** |
+| fallas de `partida_doble` | 0 | 100 |
+| ¿son las mismas 100? | — | **sí, conjuntos idénticos** |
+
+Que las cuatro primeras filas salgan en cero es lo que permitió decidir sin
+suponer: en los dos documentos completos **el único motivo por el que una
+póliza puede no cuadrar es que el importe se leyera mal**.
+
+La hoja lleva ahora `total_debe_declarado`, `total_debe_leido`,
+`total_haber_declarado` y `total_haber_leido`, y `completa` es VERDADERO
+solo cuando el bloque cerró **y** las dos cifras coinciden. Verificado:
+`diario-general` saca **100 pólizas con `completa = FALSO`**, y las 100 de
+`partida_doble` están dentro. Un test lo exige — que la hoja no pueda verse
+correcta donde la regla encontró un descuadre.
+
+Tres decisiones que conviene dejar dichas:
+
+- **`Poliza.completa` NO cambió.** Sigue significando «el bloque cerró
+  dentro de lo leído», que es lo que `partida_doble` usa para excluir
+  pólizas cortadas. Redefinirlo habría sacado las 100 del denominador y
+  **habría hecho desaparecer las 100 fallas**: el defecto se taparía en vez
+  de verse. Lo que cambia es la columna del Excel, que es una salida.
+- **La suma leída vive en `LibroDiario.totales_leidos()`**, no en el
+  exportador. Si la hoja y la regla la derivaran cada una por su cuenta,
+  se separarían en la primera corrección — que es exactamente el defecto
+  que esta pieza viene a cerrar.
+- **Sin cifra declarada, `completa` es FALSO.** No hay con qué comparar, y
+  no se afirma lo que no se comprobó. El caso no existe en ningún fixture
+  completo; sí aparece leyendo rangos de páginas.
+
+**El mismo patrón en los otros cuatro exportadores: medido, no arreglado**
+(`scripts/mediciones/fase8d_m6_declarado_en_los_otros_cuatro.py`).
+
+| exportador | ¿enseña declarado sin lo leído? | ¿difieren hoy? |
+|---|---|---|
+| **mayor** | **sí**: `Cuentas` lleva `saldo_final`, `total_cargos` y `total_abonos`, que se LEEN del último mes, y `Meses` los movimientos | **sí: 1 de 49 cuentas** en `mayor-gume` |
+| **estado de cuenta** | **sí**: `Cuentas` lleva `depositos`, `retiros` y `saldo_corte` del resumen; `Movimientos` los leídos | no en los 4 fixtures medidos (0 de 5 cuentas); 2 sin desglose ya salen en `None` |
+| **auxiliar** | **variante distinta**: la hoja **no exporta `saldo_origen`**, así que un saldo recalculado se ve idéntico a uno impreso | en `auxiliar-gume`, **26 032 de 57 759 saldos son recalculados** (22 713 impresos, 9 014 sin saldo) y la hoja no lo dice |
+| **balanza** | **no**: la fila `Totales` que el documento declara **no se exporta**; la hoja solo lleva `balanza.filas` | declarado y leído coinciden exacto (26 956 489.26 en los dos lados) |
+
+El del **mayor** es el mismo defecto con otro documento y ya tiene un caso
+real. El del **auxiliar** es más grave de lo que parece: `Cobertura` separa
+`exactas_impresas` de `exactas_recalculadas` desde la 7h precisamente
+porque comprobar un saldo derivado con la fórmula que lo derivó es una
+tautología, y el Excel entrega los 26 032 sin marca alguna. **No se
+arreglaron: son otra fase.**
+
+#### Objetivo 4. `Movimiento` gana `pagina`
+
+Aditivo, con `0` por defecto. Lo llena la página del renglón que trae los
+**importes**, que en un movimiento envuelto no es la que abrió la cuenta.
+Sale a las hojas `Movimientos` y `Plana` del Excel de pólizas, igual que en
+el auxiliar y el estado de cuenta. Con esto **deja de estar bloqueado** el
+cruce de un importe mal leído con la zona de traslape de su página, que es
+lo que la 8b no pudo medir y lo que hace falta para la segunda mecánica de
+`diario-general`.
+
+#### M1. `mayor-proactivity` no es un libro mayor
+
+Diagnosticado por capas, que es lo que la pregunta pedía separar:
+
+| capa | veredicto |
+|---|---|
+| **estrategia** | **correcta.** `pdf_text`, con 0 tokens contaminados, 0 palabras traslapadas y 0.0 de fracción CID sobre 652 palabras de muestra. El texto sale legible: `'Libro mayor ene. 2026 PRO ACTIVITY BUSINESS Diarios: EGRESOS, CHEQUES, ACTINVER, S.A. #19342757 - BCO7, …'` |
+| **layout** | **síntoma, no causa.** Detecta 8 columnas y 3 de monto, y le pone a la columna de texto el encabezado `'OSCAR CH.3711 GARCIA BCO4. (CAJA JOSE CHICA MARTINEZ…'` — o sea, etiqueta tomada de datos porque no hay fila de encabezado que tomar |
+| **parser** | **la causa** |
+
+**El documento no es un libro mayor: es un reporte de movimientos por
+cuenta.** Sus renglones son `folio | fecha | concepto | cargo | abono |
+saldo`, la forma de un auxiliar. No imprime meses, y `MayorParser` está
+construido sobre el mes: `_es_mes` mira si el primer token del renglón es
+un nombre de mes. **En las 8 primeras páginas hay 0 renglones así.**
+
+Los 48 «meses» que sí aparecen en las 276 páginas son **falsos positivos de
+`_orden_de`**, que compara con `normalizar()` y `normalizar()` **quita la
+puntuación**: `_orden_de('(ENERO')` devuelve 1. Un `(ENERO` suelto dentro
+de una descripción se convierte en el mes de enero. La prueba está en la
+forma de los 48:
+
+- salen de páginas dispersas (45, 52, 55, 109, 110, 152) y en orden
+  desordenado (5, 2, 5, 9, 1, 1) — un mayor de verdad los da 1..12 seguidos
+  por cuenta;
+- **los 48 traen cargos, abonos y saldo todos en cero o `None`**;
+- el documento entero produce **1 sola cuenta**, contra las 49 que
+  `mayor-gume` produce en 17 páginas;
+- esa única cuenta sale con `naturaleza=''` y `nombre_cuenta='Puebla, PUE
+  BANCOMER #0194515218 - BNK4, BBVA USD #0125318289 - BNK8, CHEQUES GTO -'`,
+  que es el bloque de bancos del encabezado de página, impreso a la derecha
+  (x 549–818) y arrastrado por el renglón que abre la cuenta.
+
+**El `(ENERO` con paréntesis suelto no es un adorno del defecto: es el
+defecto.** Sin ese falso positivo el documento daría 0 meses y el parser
+fallaría limpio; con él produce 48 renglones vacíos, cobertura sobre 145
+casos y un Excel con cara de resultado. **Es el mismo modo de falla que
+esta fase persigue en el objetivo 1**, un piso más abajo: no una regla que
+cuadra sin evaluar, sino un parser que entrega sin haber leído.
+
+Y por eso `mayor-proactivity` **no debe contar como uno de «los 17 que
+procesan»**: 220 s en SERVIDORSIST para no producir nada utilizable.
+
+#### M2. Los tres números de `jerarquia` sí se explican, y el 4 es correcto
+
+| | `balanza` | `balanza-businesspro` |
+|---|---|---|
+| padres distintos referidos por alguna fila | 28 | 24 |
+| **aplicables** (×2, debe y haber) | **56** | **48** |
+| padres presentes en el documento y con hijas | 26 | 23 |
+| **evaluados** (×2) | **52** | **46** |
+| **sin evaluar** | **4** | **2** |
+| padres referidos que NO aparecen | 2 (`100`, `200`) | 1 (`0500-0001-0421`) |
+| padres presentes pero sin hijas | **0** | **0** |
+
+`28 − 26 = 2 = len(huérfanos)`, y `2 × 2 = 4`. **El 4 es correcto** y no hay
+un segundo hueco escondido: no existe ni un padre presente sin hijas, así
+que la única fuente de casos sin evaluar son los huérfanos.
+
+**Y las «2 filas» del filtro también.** `100` y `200` no existen como
+cuenta; lo que sale al filtrar son las filas que las **declaran padre**:
+`100-01` y `200-01`, una cada una. La confusión es de lectura, no del
+conteo: el motivo nombra **las cuentas padre que faltan**, y el filtro
+encuentra **las hijas que las echan de menos**. Son dos cosas distintas con
+el mismo número. La unidad de `aplicables` es la comprobación
+(padre × campo), no la fila.
+
+#### M3. El arreglo de `cfdi_cruzado` llegó a la web y a ningún otro sitio
+
+Las 53 discrepancias de `cfdi_cruzado` en `poliza.pdf` traen **las 53**
+`esperado == obtenido == 0`. Las tres salidas del sistema formatean esa
+misma `Discrepancia` así:
+
+| salida | qué escribe |
+|---|---|
+| web (`vista.py`) | `numerica: False`, `esperado: ''`, `obtenido: ''` |
+| **CLI** (`cli.py:141`) | `! P00041  cfdi_cruzado  esperado 0.00   obtenido 0.00` |
+| **Excel** (`excel.py`, bloque de detalle de `Validacion`) | `esperado=0  obtenido=0` |
+
+O sea: no es que el arreglo llegara solo al camino de la web y le faltara el
+Excel. **Llegó solo a la web, y le faltan los otros dos.**
+
+**Por qué no se puede unificar copiándolo.** Lo que hace `vista.py` es una
+**inferencia**: `numerica = d.esperado != d.obtenido`. Funciona, pero
+deduce desde el valor lo que la regla sabía y no pudo declarar, porque
+`Discrepancia.esperado`/`obtenido` son `Decimal` **obligatorios** y una
+regla que cruza identidades no tiene dónde decir «aquí no hay importe»:
+rellena los dos con cero. Copiar la inferencia a `cli.py` y a `excel.py`
+serían tres sitios deduciendo lo mismo, y la próxima corrección volvería a
+llegar a uno solo.
+
+**Lo que haría falta**: que la `Discrepancia` lo DECLARE en vez de que cada
+salida lo adivine — `esperado`/`obtenido` como `Decimal | None`, con `None`
+significando «esta regla no compara importes», o un campo que diga qué tipo
+de comprobación es. Con eso las tres salidas leen el mismo dato y ninguna
+decide por su cuenta. Es un cambio de contrato del IR de validación, y por
+eso se mide y se deja propuesto, no hecho.
+
+#### M4. `P00476` son dos comprobantes, no un doble conteo
+
+| | |
+|---|---|
+| discrepancias de `poliza.pdf` | 53 |
+| **filas distintas** | **50** |
+| filas que salen más de una vez | **3**: `P00476`, `P01494`, `P01495`, las tres ×2 |
+
+Las dos apariciones de `P00476` vienen las dos de `cfdi_cruzado`, y la
+póliza tiene **dos CFDI distintos** —`000007831684` y `000007795808`, con
+UUID distintos— y **ninguno de los dos** cruza contra su descripción
+(`COBRO POR TASA DE DESCUENTO AFIL.-009378824`). **Son dos comprobantes
+fallando por separado. No hay doble conteo.**
+
+**Pero destapa un error de unidad en §5.1**, que dice «53 pólizas fallan
+`cfdi_cruzado`». No son 53 pólizas: son **53 CFDI sobre 50 pólizas**. La
+regla cuenta CFDI —su `aplicables` es `len(libro.cfdi)`—, así que el 53 es
+correcto y la palabra «pólizas» no. Lo mismo vale para la frase del
+checklist: lo que el contador revisa son 53 renglones de comprobante.
 
 ### Dos documentos, sin solapamiento
 
