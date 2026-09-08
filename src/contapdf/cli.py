@@ -137,6 +137,13 @@ def _cola(cobertura: Cobertura, destino: Path | None, salida: TextIO, *,
             escribir(f"    {'':<20} {'':<15} {regla.motivo}\n")
 
     for d in cobertura.discrepancias:
+        # `compara_importes` lo declara la propia Discrepancia; esta salida
+        # no lo deduce. Antes escribia `esperado 0.00 obtenido 0.00` para
+        # las reglas que cruzan identidades, que es un importe inventado.
+        if not d.compara_importes:
+            escribir(f"    ! {d.fila:<16} {d.regla:<18} "
+                     "no cuadra el dato, no el importe\n")
+            continue
         escribir(f"    ! {d.fila:<16} {d.regla:<18} "
                  f"esperado {_monto(d.esperado):>16}"
                  f"   obtenido {_monto(d.obtenido):>16}\n")

@@ -38,13 +38,45 @@ _CAMPOS_RESUMEN = ("saldo_inicial", "depositos", "retiros", "saldo_corte")
 
 @dataclass(frozen=True)
 class Discrepancia:
-    """Una regla que no se cumplio, con el numero que se esperaba."""
+    """Una regla que no se cumplio, con el numero que se esperaba.
+
+    `esperado` y `obtenido` son `None` cuando la regla cruza IDENTIDADES y
+    no importes -- `cfdi_cruzado` comprueba que el numero de documento del
+    CFDI aparezca en la descripcion de su poliza, y ahi no hay cifra que
+    comparar. Eran `Decimal` obligatorios, asi que esas reglas rellenaban
+    los dos con cero y las salidas escribian `esperado 0.00 / obtenido
+    0.00`: un importe inventado, en el sitio donde el sistema explica por
+    que algo no cuadra.
+
+    Se eligio `None` sobre un campo que dijera el tipo de comprobacion
+    porque `None` hace IMPOSIBLE ese modo de falla: no queda un cero que
+    alguien pueda imprimir. Un campo de tipo lo dejaria ahi --evitable,
+    pero presente-- y la proxima salida que olvidara mirarlo volveria a
+    escribir el cero. Es la diferencia entre un invariante que el tipo
+    impone y una convencion (ARQUITECTURA 4).
+
+    `None` no significa aqui «no se pudo leer el importe»: una discrepancia
+    numerica sin cifra no puede existir, porque sin las dos cifras la regla
+    no habria podido detectarla.
+    """
 
     fila: str  # cuenta afectada, o 'Totales' para las reglas globales
     indice: int  # posicion en balanza.filas; -1 si la regla es del documento
     regla: str
-    esperado: Decimal
-    obtenido: Decimal
+    esperado: Decimal | None
+    obtenido: Decimal | None
+
+    def __post_init__(self) -> None:
+        # Media comparacion no existe: o hay dos cifras o no hay ninguna.
+        if (self.esperado is None) != (self.obtenido is None):
+            raise ValueError(
+                f"{self.regla}: 'esperado' y 'obtenido' van los dos con cifra "
+                "o los dos en None; medio importe no es una comparacion")
+
+    @property
+    def compara_importes(self) -> bool:
+        """Lo que las tres salidas leen. Ninguna lo deduce por su cuenta."""
+        return self.esperado is not None
 
 
 @dataclass(frozen=True)
@@ -741,8 +773,10 @@ def _cfdi_atados(libro) -> ResultadoRegla:
             evaluados=len(libro.cfdi),
             exactas=len(libro.cfdi) - len(huerfanos),
             discrepancias=tuple(
+                # Cruza identidades: que el CFDI apunte a una poliza que
+                # existe. No hay importe que comparar.
                 Discrepancia(fila=c.uuid or c.documento, indice=-1, regla="cfdi",
-                             esperado=Decimal(0), obtenido=Decimal(0))
+                             esperado=None, obtenido=None)
                 for c in huerfanos))
     return _resultado("cfdi", len(libro.cfdi), len(libro.cfdi), (), [])
 
@@ -774,8 +808,10 @@ def _cfdi_cruzado(libro) -> ResultadoRegla:
     # ('FACT. FOLIO: 65501589987'). Comparar con '!=' convertia 863 cruces
     # correctos en fallas inventadas.
     malos = [
+        # Idem: lo que no cuadra es el DATO -- el numero de documento --,
+        # no el importe.
         Discrepancia(fila=c.poliza_id, indice=-1, regla="cfdi_cruzado",
-                     esperado=Decimal(0), obtenido=Decimal(0))
+                     esperado=None, obtenido=None)
         for c in comparables
         if c.documento not in por_id[c.poliza_id].descripcion
     ]

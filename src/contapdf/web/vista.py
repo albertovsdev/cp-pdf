@@ -59,10 +59,11 @@ def _regla(regla) -> dict:
 
 
 def _discrepancia(d) -> dict:
-    # Hay reglas que cruzan identidades y no importes; ahi las dos cifras
-    # vienen en cero y ense~nar «0.00 contra 0.00» haria pensar que el
-    # documento dice cero.
-    numerica = d.esperado != d.obtenido
+    # Hay reglas que cruzan identidades y no importes. Desde la 8e lo
+    # DECLARA la propia Discrepancia y esta vista lo lee; antes lo deducia
+    # aqui (`esperado != obtenido`), y por eso el CLI y el Excel seguian
+    # escribiendo «0.00 contra 0.00»: la inferencia vivia en un solo sitio.
+    numerica = d.compara_importes
     return {
         "fila": d.fila,
         "regla": d.regla,

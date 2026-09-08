@@ -216,6 +216,11 @@ def _validacion(libro_excel, cobertura: Cobertura, negrita) -> None:
     for d in cobertura.discrepancias:
         detalle.append([d.fila, d.regla, d.esperado, d.obtenido])
         numero += 1
+        # Sin importes las dos celdas van VACIAS, y sin formato de monto:
+        # un cero inventado es indistinguible de uno leido (PLAN 2). El
+        # porque lo lleva el `motivo` de la regla, arriba en esta misma hoja.
+        if not d.compara_importes:
+            continue
         for columna in range(3, ancho + 1):
             detalle.cell(row=numero,
                          column=columna).number_format = _FORMATO_MONTO
