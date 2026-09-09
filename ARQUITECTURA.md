@@ -219,7 +219,16 @@ class ReporteNoEsperado(LayoutDesconocido):  .tipo -> TipoDeReporte
 
 detectar_cabecera(paginas) -> Layout | None
 EstadoCuentaParser(paginas_muestra=2, *, separador_continuacion="")
+
+EstadoCuenta.totales_leidos() -> dict[str, tuple[Decimal, Decimal]]
 ```
+
+`CuentaBancaria.depositos`/`retiros` es lo que el RESUMEN declara;
+`totales_leidos()` es la suma de los movimientos de cada cuenta. Hoy
+coinciden en los cuatro formatos medidos, y precisamente por eso la hoja
+lleva las dos: una cifra que se ve correcta solo cuando nadie la contrasta
+no esta comprobada. `saldo_corte` NO tiene equivalente: contrastarlo exige
+encadenar, y eso lo hace `saldo_corrido` con su tolerancia.
 
 Los saldos son de la **cuenta**, no del documento. Un estado de una sola
 cuenta queda con `cuentas` de longitud 1, sin caso especial.
@@ -262,6 +271,28 @@ un movimiento envuelto no es la que abrio la cuenta. Es aditiva (`0` cuando
 no se pasa) y existe para poder cruzar un importe mal leido con la zona de
 traslape de su pagina; sin ella, cualquier diagnostico geometrico del
 diario estaba bloqueado por un hueco de contrato. Fase 8d.
+
+### `parsers/mayor.py`
+
+```python
+@dataclass(frozen=True)
+class CuentaMayor: cuenta, nombre_cuenta, naturaleza, saldo_inicial,
+                   saldo_final, total_cargos, total_abonos, pagina_inicio
+@dataclass(frozen=True)
+class MesMayor:    cuenta, orden, periodo, cargos, abonos, saldo,
+                   acum_cargos, acum_abonos, pagina
+@dataclass(frozen=True)
+class Mayor:       cuentas, meses, forma="", mapeo=None
+                   __iter__ -> Iterator[CuentaMayor]
+                   totales_leidos() -> dict[str, tuple[Decimal, Decimal]]
+
+_sin_un_solo_importe(meses) -> bool     # la guarda; ver 5
+```
+
+`CuentaMayor.total_cargos`/`total_abonos` es lo que el documento DECLARA:
+`_cerrar` los toma del acumulado del ultimo mes, que el mayor ya imprime.
+`totales_leidos()` es la suma de los meses. No son la misma cifra —en
+`mayor-gume` difieren en 1 de 49 cuentas— y por eso la hoja lleva las dos.
 
 ### `cli.py` — la superficie que comparten la terminal y la web
 
@@ -409,7 +440,9 @@ lo imprimen distinto.
 CUADRA = "cuadra"; FALLA = "falla"; NO_VERIFICABLE = "no_verificable"
 
 @dataclass(frozen=True)
-class Discrepancia:   fila, indice, regla, esperado: Decimal, obtenido: Decimal
+class Discrepancia:   fila, indice, regla,
+                      esperado: Decimal | None, obtenido: Decimal | None
+                      compara_importes -> bool
 @dataclass(frozen=True)
 class ResultadoRegla: regla, estado, aplicables: int|None = None,
                       evaluados=0, exactas=0, exactas_impresas=0,
@@ -498,6 +531,34 @@ Mostrar solo lo declarado hacía que el Excel se viera correcto justo cuando
 un importe se había leído mal: en `diario-general` son 100 de 5 302, las
 mismas 100 que falla `partida_doble`.
 
+**Y las hojas `Cuentas` del mayor y del estado de cuenta, igual** (8e).
+En el mayor van `total_cargos_declarado`/`total_cargos_leido` y sus
+equivalentes de abonos: `_cerrar` toma el declarado del acumulado del
+ULTIMO MES —lo que el documento imprime— y la hoja `Meses` trae los
+movimientos; en `mayor-gume` ya difieren en 1 de 49 cuentas
+(`1190-000-000`, por 0.01). En el estado de cuenta van
+`depositos_declarado`/`depositos_leido` y los retiros, contra el resumen.
+Las dos sumas leídas salen de `Mayor.totales_leidos()` y
+`EstadoCuenta.totales_leidos()`, en el objeto de dominio y no en el
+exportador, por lo mismo que en pólizas.
+
+**`saldo_final` y `saldo_corte` NO se parten.** Su único contraste posible
+es contra una cadena que el sistema deriva, y una columna `_leido` tiene
+que significar lo mismo en las tres hojas: lo que se leyó del documento, no
+lo que el sistema calculó. Quien los contrasta son `saldo_mensual` y
+`saldo_corrido`, **con su tolerancia**; duplicar esa comprobación en el
+exportador y sin tolerancia haría que la hoja `Cuentas` enseñara en crudo 4
+diferencias de un céntimo que `Validacion` reporta como cuadradas — las dos
+salidas no pueden contradecirse.
+
+**La hoja `Auxiliar` lleva `saldo_origen`, pegada a `saldo`** (8e).
+`impreso` / `recalculado` / `sin_saldo`: en `auxiliar-gume` son 26,032 de
+57,759 saldos que el sistema encadenó (22,713 impresos, 9,014 sin saldo) y
+que se veían idénticos a los que el documento imprimió. Es columna propia y
+no un `saldo` partido en dos, porque aquí no hay dos cifras coexistiendo
+—como declarado y leído— sino UNA cifra y su procedencia: un saldo es
+impreso o recalculado, nunca los dos.
+
 **`Poliza.completa` (el dato, no la columna) NO cambió**: sigue
 significando «el bloque cerró dentro de lo leído», que es lo que
 `partida_doble` usa para excluir pólizas cortadas. Redefinirlo habría
@@ -571,7 +632,8 @@ No son convenciones: el código no compila o no corre si se violan.
 | Ningún conteo se imprime sin su denominador | `ResultadoRegla` guarda `aplicables` (el universo de casos del documento) además de `evaluados`. `__post_init__` **lanza** si una regla cuadra con `aplicables=None`, o si `aplicables < evaluados`. `resumen()` y el detalle del CLI siempre escriben «N de M». |
 | El dinero nunca es `float` | `parse_monto()` devuelve `Decimal` y es el único parseador. Un test AST prohíbe llamar a `float()` en los módulos de dinero. |
 | Un dato ilegible no se inventa | Los campos que pueden faltar son `Decimal | None`: `FilaAuxiliar.saldo`, `MovimientoBancario.saldo`, `MesMayor.saldo`, `Poliza.total_debe`. Quien consume tiene que decidir qué hacer con `None`. |
-| Un valor derivado declara su procedencia | `FilaBalanza.naturaleza_origen`, `FilaAuxiliar.saldo_origen`, `Mapeo.verificado_por`. |
+| Un valor derivado declara su procedencia | `FilaBalanza.naturaleza_origen`, `FilaAuxiliar.saldo_origen`, `Mapeo.verificado_por`. **Y llega a la salida**: la hoja `Auxiliar` exporta `saldo_origen` desde la 8e; hasta entonces el invariante se cumplía en el dato y se rompía justo en el Excel que ve el contador. `FilaBalanza.naturaleza_origen` sigue sin exportarse — medido, no resuelto. |
+| Una discrepancia no inventa un importe | `Discrepancia.esperado`/`obtenido` son `Decimal \| None`, y `__post_init__` **lanza** si va uno con cifra y el otro sin ella. Las reglas que cruzan identidades (`cfdi`, `cfdi_cruzado`) pasan `None`, y las tres salidas leen `compara_importes` en vez de deducirlo. `None` hace **imposible** el `esperado 0.00 / obtenido 0.00`: no queda un cero que alguien pueda imprimir. |
 | El signo de una identidad de saldo no se cablea | `naturaleza_por_cuenta()` lo deriva de los datos y es el único origen para `_saldo_corrido` y `recalcular_saldos`. Un test de espejo (intercambiar debe y haber) falla si alguien vuelve a fijarlo. |
 | No se aprende un formato que no cuadró | `AlmacenPlantillas.guardar()` lanza `PlantillaRechazada` si `cobertura["fallan"]`. |
 | Un tenant no ve lo de otro | La ruta se deriva del `tenant_id` validado contra `^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$`; `TenantInvalido` bloquea todo lo demás. |
@@ -587,7 +649,7 @@ No son convenciones: el código no compila o no corre si se violan.
 | `BalanzaParser` | Balanza de comprobación | 3 formatos | `Balanza(filas, totales, mapeo)` | `pdf_text`, `pdf_chars` en Business Pro |
 | `AuxiliarParser` | Auxiliar de cuentas | 2 formatos | `Auxiliar(filas, secciones, mapeo)` | `pdf_text` |
 | `PolizasParser` | Libro diario | 2 formatos | `LibroDiario(polizas, movimientos, cfdi)` | `pdf_text`, `pdf_chars` en Diario General |
-| `EstadoCuentaParser` | Estado de cuenta | 6 formatos, 5 bancos | `EstadoCuenta(meta, cuentas, movimientos)` | `pdf_text`, `pdf_chars` segun el documento |
+| `EstadoCuentaParser` | Estado de cuenta | 6 formatos, 6 bancos | `EstadoCuenta(meta, cuentas, movimientos)` | `pdf_text`, `pdf_chars` segun el documento |
 | `MayorParser` | Libro mayor | 1 formato | `Mayor(cuentas, meses)` | `pdf_text` |
 
 Todos exponen la misma forma:
@@ -601,11 +663,29 @@ la detección. `EstadoCuentaParser` recibe además `separador_continuacion`,
 que también sale de la plantilla. Todos lanzan `LayoutDesconocido` (en `parsers/balanza.py`)
 cuando no reconocen el documento.
 
-Los que devuelven tablas relacionadas —`polizas`, `mayor`— exportan además
-una hoja plana denormalizada. Los que devuelven una tabla —`balanza`,
-`auxiliar`— no la necesitan. `estado_cuenta` devuelve dos tablas
-relacionadas (`cuentas` y `movimientos`) pero todavía **no tiene
-`exportar_estado_cuenta`**: solo se alcanza por API.
+**`MayorParser` tiene además una GUARDA para fallar limpio.**
+`_sin_un_solo_importe(meses)` lanza `LayoutDesconocido` cuando ningún
+renglón de mes de todo el documento trajo cargos, abonos, saldo ni
+acumulados. Es a nivel de DOCUMENTO y sobre el DATO, no sobre la forma: no
+cuenta meses ni exige que vayan en orden, porque un mayor legítimo leído
+por un rango de páginas puede empezar en septiembre. Con un solo importe en
+cualquier mes no dispara — `mayor-gume` trae 303 de sus 588 con cifra —, y
+un cero no cuenta como importe: un mes en ceros es un mes sin leer.
+
+**No es el arreglo de `_es_mes`**, que sigue aceptando un nombre de mes al
+principio de cualquier renglón de descripción. `mayor-proactivity` no es un
+libro mayor sino un reporte de movimientos por cuenta que no imprime meses,
+y aun así producía 48 renglones vacíos, 1 cuenta y una cobertura sobre 145
+casos: un parser que entrega sin haber leído. Medido en la 8e: endurecer
+`_orden_de` para que rechace `'(ENERO'` quita 2 de los 50 candidatos y deja
+48, así que no arregla nada y toca una función que hoy acierta en los 588
+renglones del único mayor bueno.
+
+Los que devuelven tablas relacionadas —`polizas`, `mayor`, `estado_cuenta`—
+exportan además una hoja plana denormalizada. Los que devuelven una tabla
+—`balanza`, `auxiliar`— no la necesitan. **Los cinco tienen exportador**:
+`exportar_estado_cuenta` existe desde la fase 7e y §2 de este mismo
+documento lo lista; esta línea decía lo contrario hasta la 8e.
 
 ### Cómo generaliza `EstadoCuentaParser` a seis formatos
 
@@ -687,7 +767,10 @@ más allá del tipo del parámetro.
   `clave` que se imprime en la primera línea sí lo dice, pero hay que
   parsearla. En la cola web los tres finales sí son estados distintos.
 - **El CLI sigue siendo el punto de entrada completo**:
-  `python -m contapdf.cli`, con seis comandos: `balanza`, `auxiliar`,
+  `contapdf` en Linux y `.venv\Scripts\contapdf` en Windows —esa es la
+  forma canónica y la única verificada en las dos plataformas; el
+  `python -m contapdf.cli` que este documento citaba nunca se ha ejecutado
+  en Windows—, con seis comandos: `balanza`, `auxiliar`,
   `polizas`, `estado-cuenta`, `mayor` y `confirmar`. Los cinco primeros
   tienen la misma forma (`<comando> <pdf> [-o] [--tenant] [--plantillas]`),
   el mismo reporte de cobertura y los mismos códigos de salida

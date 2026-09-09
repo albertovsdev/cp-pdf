@@ -2342,12 +2342,31 @@ forma de los 48:
   que es el bloque de bancos del encabezado de página, impreso a la derecha
   (x 549–818) y arrastrado por el renglón que abre la cuenta.
 
-**El `(ENERO` con paréntesis suelto no es un adorno del defecto: es el
-defecto.** Sin ese falso positivo el documento daría 0 meses y el parser
-fallaría limpio; con él produce 48 renglones vacíos, cobertura sobre 145
-casos y un Excel con cara de resultado. **Es el mismo modo de falla que
-esta fase persigue en el objetivo 1**, un piso más abajo: no una regla que
-cuadra sin evaluar, sino un parser que entrega sin haber leído.
+Es el mismo modo de falla que esta fase persigue en el objetivo 1, un piso
+más abajo: no una regla que cuadra sin evaluar, sino **un parser que
+entrega sin haber leído**.
+
+> **CORRECCIÓN (fase 8e): esta sección decía que el `(ENERO` «no es un
+> adorno del defecto: es el defecto», y eso es falso.** Lo escribí en la 8d
+> desde el mecanismo, sin contar los casos. Contados en la 8e
+> (`scripts/mediciones/fase8e_m2_meses_con_puntuacion.py`): de los **50**
+> renglones que `_orden_de` acepta en `mayor-proactivity`, **solo 2 traen
+> puntuación** (`'(ENERO'` y `'(SEPTIEMBRE'`). Los otros **48 traen el
+> nombre del mes LIMPIO** —`DICIEMBRE`, `ENERO`, `FEBRERO`, `MAYO`,
+> `SEPTIEMBRE`— dentro de descripciones. Endurecer `_orden_de` quitaría 2 y
+> dejaría 48: **no arregla nada**. El falso positivo del paréntesis es real
+> y el mecanismo estaba bien descrito; **la magnitud estaba mal**, y con
+> ella la conclusión de qué hay que tocar. Es la tercera vez en el proyecto
+> que un mecanismo correcto se toma por explicación suficiente sin medir
+> cuántos casos cubre — después de los 563 subtotales de la 8a y de la
+> mecánica de `diario-general` en la 8b.
+>
+> De paso queda medido que **endurecer `_orden_de` no es gratis**:
+> `mayor-gume` trae sus **588 de 588** renglones de mes con el nombre
+> limpio, así que hoy no rompería nada, pero es cambiar una función que
+> acierta al 100% en el único mayor bueno para arreglar el 4% de los falsos
+> positivos del malo. Se deja **medido y sin tocar**; lo que se hizo en su
+> lugar es la guarda del objetivo 3 de la 8e.
 
 Y por eso `mayor-proactivity` **no debe contar como uno de «los 17 que
 procesan»**: 220 s en SERVIDORSIST para no producir nada utilizable.
@@ -2426,6 +2445,224 @@ fallando por separado. No hay doble conteo.**
 regla cuenta CFDI —su `aplicables` es `len(libro.cfdi)`—, así que el 53 es
 correcto y la palabra «pólizas» no. Lo mismo vale para la frase del
 checklist: lo que el contador revisa son 53 renglones de comprobante.
+
+### Resultados de la fase 8e (que las tres salidas digan lo mismo)
+
+El hilo es uno solo: el sistema entrega por CLI, Excel y web, y hasta esta
+fase las tres no decían lo mismo del mismo caso. Cinco piezas, cada una con
+su rojo antes de implementar y la suite verde entre una y otra.
+
+#### Objetivo 0. La evidencia del fallo del OCR, donde se la puede encontrar
+
+`mediciones-ServidorSist-20260904-1741-metodoRAPIDO.txt` estaba en la raíz
+del repo. Es el único fichero que documenta el fallo **con Tesseract
+presente** (v5.4.0, `edocta-hsbc` revienta a los 7.0 s), o sea la única
+evidencia reproducible de «el OCR nunca funcionó allí». Movido a
+`scripts/mediciones/`, con un test que falla si vuelve a aparecer un
+`mediciones-*.txt` suelto en la raíz y otro que comprueba que el fichero
+sigue conteniendo la traza — porque lo que respalda la afirmación es el
+contenido, no el nombre.
+
+#### Objetivo 1. La hoja `Auxiliar` dice qué saldos calculó el sistema
+
+`ARQUITECTURA.md` §4 impone que un valor derivado declare su procedencia, y
+`FilaAuxiliar.saldo_origen` lo hacía — pero la hoja no lo exportaba. En
+`auxiliar-gume` eso son **26,032 de 57,759 saldos** que el sistema encadenó
+y que en el Excel se veían idénticos a los impresos. El invariante se
+cumplía en el dato y se rompía justo en la salida que ve el contador.
+
+| `auxiliar-gume` | filas |
+|---|---|
+| `impreso` | **22,713** |
+| `recalculado` | **26,032** |
+| `sin_saldo` | **9,014** |
+| **suma** | **57,759** |
+
+`auxiliar` sale con 6,783 impresos y **0 recalculados**: el documento
+imprime todos sus saldos y no hay nada que derivar. Ninguna cobertura se
+movió — `saldo_corrido` sigue en 47,987 de 57,024 con 26,032 exactas
+recalculadas.
+
+**Por qué columna propia y no un `saldo` partido en dos.** El patrón de la
+hoja `Polizas` —declarado y leído en columnas separadas— no aplica aquí:
+allí hay **dos cifras que existen a la vez** y aquí hay **una cifra y su
+procedencia**. Un saldo es impreso o recalculado, nunca los dos, así que
+partirlo dejaría siempre una columna vacía, representaría una procedencia
+como si fueran dos magnitudes y rompería a quien suma `saldo`. Va **pegada
+a `saldo`** y no al final: la procedencia lejos del dato obliga a cruzar dos
+columnas para leer una sola cosa.
+
+**Lo que sigue roto y no se tocó**: `FilaBalanza.naturaleza_origen` tampoco
+se exporta, y hay un test de la fase 4 que lo exige así («duplica el ancho
+de la hoja y el contador la ignora»). No es lo mismo —una naturaleza
+derivada es una etiqueta, un saldo recalculado es dinero que el sistema
+fabricó— pero es el mismo invariante en otra hoja. Medido, no resuelto.
+
+#### Objetivo 2. Declarado contra leído en `mayor` y `estado-cuenta`
+
+El mismo defecto que la 8d cerró en la hoja `Polizas`, en dos hojas más.
+Medido campo por campo antes de tocar nada
+(`scripts/mediciones/fase8e_m1_declarado_vs_leido_mayor_edocta.py`):
+
+| `mayor-gume`, 49 cuentas | difieren |
+|---|---|
+| `total_cargos` | **1** (`1190-000-000`: declarado 37,398,127.31 contra 37,398,127.32 leído) |
+| `total_abonos` | 0 |
+| `saldo_final` | 4 (`1190`, `1201`, `1215`, `3400`, todas por ±0.01) |
+
+| estados de cuenta | cuentas | difieren |
+|---|---|---|
+| `edocta`, `edocta-bbva`, `edocta-julio-banorte`, `edocta-bajio` | **5** | **0** |
+
+Se partieron `total_cargos`/`total_abonos` y `depositos`/`retiros`, con las
+sumas leídas en `Mayor.totales_leidos()` y `EstadoCuenta.totales_leidos()`
+—en el objeto de dominio, no en el exportador, por lo mismo que en pólizas—.
+
+**`saldo_final` y `saldo_corte` NO se partieron, y la razón importa.** El
+saldo del último mes **ya es** el declarado (`_cerrar` lo toma de ahí), así
+que la única cifra contrastable es una que el sistema encadena. Una columna
+`_leido` tiene que significar lo mismo en las tres hojas —lo que se leyó del
+documento— y un saldo encadenado no es eso. Y sobre todo: **las 4 cuentas
+donde difiere son exactamente las 4 que `saldo_mensual` reporta `dentro de
+tolerancia`** (`1190-000-000 DICIEMBRE`, `1201-000-000 FEBRERO`,
+`1215-000-000 AGOSTO`, `3400-000-000 ENERO`) — verificado, conjuntos
+idénticos. Exportarlo haría que la hoja `Cuentas` enseñara en crudo cuatro
+diferencias de un céntimo que `Validacion` reporta como cuadradas: la
+contradicción entre salidas que esta fase viene a cerrar, reintroducida por
+el otro lado.
+
+**Y la comprobación simétrica, que es la que faltaba hacer.** Si la hoja
+enseña una diferencia que ninguna regla menciona, la contradicción es la
+misma en la otra dirección. Medido: la identidad que sí se exporta —el total
+declarado contra la suma de los meses— **la evalúa `acumulados`**, que
+comprueba `acum[n] == acum[n-1] + movimiento[n]` encadenado desde cero, y
+`1190-000-000` está nombrada en su lista de `con_tolerancia`. Un test lo
+amarra: toda cuenta que la hoja marque como distinta tiene que estar
+nombrada por alguna regla de `Validacion`.
+
+La correspondencia **no es 1:1** como en pólizas (100 = 100): `acumulados`
+roza en 5 renglones de 4 cuentas y solo una tiene el total descuadrado. Lo
+que se exige es la dirección que importa — que la hoja no enseñe nada que la
+cobertura calle —, no la igualdad de los dos conjuntos.
+
+#### Objetivo 3. `mayor-proactivity` falla limpio
+
+```
+$ contapdf mayor fixtures/real/5-Libro-Mayor/mayor-proactivity.pdf
+fixtures/real/5-Libro-Mayor/mayor-proactivity.pdf: no_reconocido
+  no se pudo leer como mayor: se detectaron 48 renglones de mes y ninguno
+  trae cargos, abonos ni saldo; el documento no parece un libro mayor
+$ echo $?
+2
+```
+
+La guarda es `_sin_un_solo_importe(meses)`, a nivel de **documento** y sobre
+el **dato**: si ningún renglón de mes de todo el documento trajo cargos,
+abonos, saldo ni acumulados, no se leyó nada. Con un solo importe en
+cualquier mes no dispara.
+
+| | meses | con importe no nulo ni cero | con acumulado |
+|---|---|---|---|
+| `mayor-gume` | 588 | **303** | 294 |
+| `mayor-proactivity` | 48 | **0** | 0 |
+
+**Un cero no cuenta como importe**: un mes en ceros es un mes sin leer, no
+un mes leído que vale cero. `mayor-gume` tiene 285 así y pasa igual — dato
+que conecta con el hallazgo de §1.3 sobre reglas que corren sobre casos
+vacíos: casi la mitad de sus meses no prueban nada.
+
+**Tres criterios que se descartaron, y por qué.** No se eligió el que
+parecía obvio:
+
+- **Endurecer `_orden_de`** para que rechace `'(ENERO'`: quita 2 de los 50
+  candidatos y deja 48. **No arregla nada** —ver la corrección de M1 de la
+  8d, más arriba— y cambia una función que acierta en los 588 renglones del
+  único mayor bueno sin un caso que lo pida.
+- **Más de 12 meses por cuenta** (`mayor-gume` máx 12, `proactivity` 48):
+  discrimina, pero es un criterio de forma con un solo fixture detrás — el
+  mismo defecto que se está rechazando.
+- **`orden` repetido dentro de una cuenta** (0 contra 43): igual de fuerte,
+  pero no detecta nada que la guarda elegida no detecte ya, y **un mayor
+  legítimo leído por rango de páginas puede empezar en septiembre y repetir
+  meses entre cuentas**.
+
+El elegido no cuenta meses ni exige orden: solo afirma lo que se ve, que no
+se leyó ni una cifra. **No es el arreglo de `_es_mes`**, que sigue aceptando
+un nombre de mes al principio de cualquier renglón de descripción; es una
+guarda para fallar limpio.
+
+`mayor-gume` sigue intacto: 49 cuentas, `saldo_mensual` 588 de 588 y
+`acumulados` 1,176 de 1,176.
+
+#### Objetivo 4. La `Discrepancia` declara si compara importes
+
+Las 53 discrepancias de `cfdi_cruzado` en `poliza.pdf` traían
+`esperado == obtenido == 0` porque la regla cruza identidades y los dos
+campos eran `Decimal` obligatorios: no había dónde decir «aquí no hay
+importe». La web lo resolvía **infiriendo** (`numerica = esperado !=
+obtenido`) y el CLI y el Excel escribían los ceros.
+
+**Medido antes de elegir la forma**
+(`scripts/mediciones/fase8e_m4_quien_toca_discrepancia.py`):
+
+| | sitios |
+|---|---|
+| construyen una `Discrepancia` | **17**, los 17 en `validate/rules.py` (+2 en tests) |
+| de esos, cruzan identidades | **2** (`_cfdi_atados`, `_cfdi_cruzado`) |
+| leen `esperado`/`obtenido` | **3 en el núcleo**: `cli.py`, `export/excel.py`, `web/vista.py` |
+
+Con 3 lectores y 2 constructores a cambiar, el cambio de contrato es
+pequeño. Se eligió **`Decimal | None`** sobre un campo que dijera el tipo de
+comprobación, y la razón es la que separa un invariante de una convención:
+**`None` hace IMPOSIBLE el modo de falla** —no queda un cero que alguien
+pueda imprimir—, mientras que un campo de tipo lo deja ahí, evitable pero
+presente, y la próxima salida que olvide mirarlo vuelve a escribir `0.00`.
+ARQUITECTURA §4 recoge invariantes que impone el tipo, no que se recuerdan.
+
+`None` no significa aquí «no se pudo leer el importe»: una discrepancia
+numérica sin cifra no puede existir, porque sin las dos cifras la regla no
+habría podido detectarla. Y `__post_init__` **lanza** si va un lado con
+cifra y el otro sin ella: media comparación no es un caso, es un error.
+
+Las tres salidas, sobre el mismo caso:
+
+| salida | antes | ahora |
+|---|---|---|
+| CLI | `! P00041  cfdi_cruzado  esperado 0.00   obtenido 0.00` | `! P00041  cfdi_cruzado  no cuadra el dato, no el importe` |
+| Excel | `esperado=0  obtenido=0` | las dos celdas **vacías**, y sin formato de monto |
+| web | `numerica: False`, campos vacíos (lo **deducía**) | igual, pero **leyendo** `compara_importes` |
+
+Y lo que no cambió: las 15 reglas que sí comparan importes siguen
+imprimiendo sus dos cifras con el formato de siempre. Un test lo exige sobre
+`auxiliar-gume`, recorriendo **todas** sus discrepancias numéricas.
+
+**Lo que no se hizo, y se deja dicho**: el Excel deja las celdas vacías,
+pero no dice *por qué* están vacías. El porqué está en el `motivo` de la
+regla, arriba en esa misma hoja. Añadir una columna `nota` al bloque de
+detalle cambiaría la forma de la hoja para dos reglas de diecisiete; queda
+como decisión del orquestador, no como deuda.
+
+#### Objetivo 5. Los dos documentos, con lo que ocurrió
+
+`INSTALACION.md`: la tabla de «qué está verificado» pasa de una previsión a
+un acta —§2 y §3 se **ejecutaron** en SERVIDORSIST—; el repo va a
+`C:\proyectos\cp-pdf` y **sí hay git** en la máquina; el Tesseract de
+`winget` **no ofrece la pantalla de idiomas** y hay que bajar
+`spa.traineddata` aparte; la forma canónica del CLI es `contapdf` /
+`.venv\Scripts\contapdf`, y se dice explícitamente que
+`python -m contapdf.cli` **nunca se ha ejecutado en Windows**. §5 gana el
+fallo del OCR con su cadena de cuatro pasos y la advertencia de que el
+arreglo **sigue sin verificar allí**.
+
+Y una cosa que la corrección destapó: las dos corridas del 4 de septiembre
+—17:41 con Tesseract y 17:57 sin él— **son la misma máquina con dos consolas
+distintas**. El instalador no marca el PATH, y una consola abierta antes no
+lo ve. Por eso la corrida buena midió 16 documentos en vez de 17.
+
+`ARQUITECTURA.md`: §5 decía que `exportar_estado_cuenta` no existe —existe
+desde la 7e y su propio §2 lo lista— y contaba «6 formatos, 5 bancos» cuando
+§1.2 mide 6 bancos. Corregidos los dos, más la guarda del mayor, las firmas
+nuevas de dominio y los dos invariantes que esta fase añade a la tabla de §4.
 
 ### Dos documentos, sin solapamiento
 
