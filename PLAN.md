@@ -2602,12 +2602,12 @@ guarda para fallar limpio.
 `acumulados` 1,176 de 1,176.
 
 **Y esta guarda rompió un test de la 8d, que es exactamente para lo que
-sirven los lentos.** `test_mayor_proactivity_no_cuadra_reglas_que_no_evaluo
-_nada` comprobaba que ese documento saliera con `saldo_mensual` y
-`acumulados` en `no_verificable` — y ahora el parser lo rechaza **antes de
-producir una sola regla**, así que ya no hay cobertura que mirar. La suite
-rápida pasó verde las cinco veces; el fallo apareció en la corrida de
-`pytest -m lento` previa a la entrega, 52 minutos después. Reescrito para
+sirven los lentos.** El de la 8d comprobaba que `mayor-proactivity` saliera
+con `saldo_mensual` y `acumulados` en `no_verificable` — y ahora el parser
+lo rechaza **antes de producir una sola regla**, así que ya no hay cobertura
+que mirar. La suite rápida pasó verde las cinco veces —una por pieza—; el
+fallo apareció en la corrida de `pytest -m lento` previa a la entrega, 52
+minutos después. Reescrito para
 que afirme lo que ahora es cierto: que `procesar_mayor` lanza
 `LayoutDesconocido`. El invariante que defendía no se queda sin guardia —lo
 imponen `__post_init__` y `test_ninguna_regla_cuadra_sin_haber_evaluado`
