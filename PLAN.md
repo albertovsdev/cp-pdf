@@ -2299,6 +2299,13 @@ porque comprobar un saldo derivado con la fórmula que lo derivó es una
 tautología, y el Excel entrega los 26 032 sin marca alguna. **No se
 arreglaron: son otra fase.**
 
+> **Los tres se cerraron en la 8e**, más abajo: la hoja `Auxiliar` exporta
+> `saldo_origen`, y `mayor` y `estado-cuenta` llevan sus totales partidos en
+> declarado y leído. **`balanza` sigue igual**, porque no exporta la fila
+> `Totales` y ahí no hay contradicción posible — pero tampoco exporta
+> `naturaleza_origen`, que es el mismo invariante de procedencia en otra
+> hoja, y eso sigue abierto.
+
 #### Objetivo 4. `Movimiento` gana `pagina`
 
 Aditivo, con `0` por defecto. Lo llena la página del renglón que trae los
@@ -2593,6 +2600,39 @@ guarda para fallar limpio.
 
 `mayor-gume` sigue intacto: 49 cuentas, `saldo_mensual` 588 de 588 y
 `acumulados` 1,176 de 1,176.
+
+**Y esta guarda rompió un test de la 8d, que es exactamente para lo que
+sirven los lentos.** `test_mayor_proactivity_no_cuadra_reglas_que_no_evaluo
+_nada` comprobaba que ese documento saliera con `saldo_mensual` y
+`acumulados` en `no_verificable` — y ahora el parser lo rechaza **antes de
+producir una sola regla**, así que ya no hay cobertura que mirar. La suite
+rápida pasó verde las cinco veces; el fallo apareció en la corrida de
+`pytest -m lento` previa a la entrega, 52 minutos después. Reescrito para
+que afirme lo que ahora es cierto: que `procesar_mayor` lanza
+`LayoutDesconocido`. El invariante que defendía no se queda sin guardia —lo
+imponen `__post_init__` y `test_ninguna_regla_cuadra_sin_haber_evaluado`
+sobre los cinco tipos, y ninguno de los dos depende de este documento—.
+
+Es la primera vez que el reparto rápido/lento cobra su factura en la
+dirección útil: **un test caro fue el único que vio una consecuencia real de
+un cambio**, tres fases después de escribirse. El coste de correrlos aparte
+(§5.1) tiene esto en el otro platillo.
+
+**«Los 17 que producen Excel» son 16.** `mayor-proactivity` contaba entre
+ellos por procesar sin reventar, y ahora sale con código 2. Las tablas de M2
+de la 8c **no se reescriben** —son mediciones de aquel momento y siguen
+siendo ciertas—, pero lo que hay que citar de aquí en adelante es esto:
+
+| | 17 documentos | 16, sin `mayor-proactivity` |
+|---|---|---|
+| suma en desarrollo | 6m25s | **5m25s** |
+| suma en SERVIDORSIST (los comunes) | 21m16s | **17m36s** |
+| factor | 3.44x | **3.40x** |
+
+Quitar el documento que no producía nada utilizable **no mueve el factor**
+—3.44x contra 3.40x, dentro del rango estable de 3.35–3.64x— pero sí quita
+**220 s de cada corrida en la máquina objetivo**, que era el tiempo que se
+gastaba en no leer nada.
 
 #### Objetivo 4. La `Discrepancia` declara si compara importes
 
