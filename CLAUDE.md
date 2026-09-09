@@ -12,8 +12,9 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
-Estado: fases 0 a 8d completas. El nucleo cambio en la 8c (exportador
-cuadratico y el -o) y en la 8d (cuatro correcciones de correctitud); por lo
+Estado: fases 0 a 8e completas. El nucleo cambio en la 8c (exportador
+cuadratico y el -o), en la 8d (cuatro correcciones de correctitud) y en la
+8e (que las tres salidas digan lo mismo); por lo
 demas esta cerrado: 5 parsers, los 5 salen a Excel, los 5 tienen comando de
 CLI, y strategy.extraer() enruta sola entre pdf_text, pdf_chars y OCR. El
 parser de estado de cuenta cubre 6 formatos de 6 bancos sin ramas por banco.
@@ -26,11 +27,11 @@ cuadrar. La capa web (Flask) en src/contapdf/web/ habla con
 el nucleo solo por cli.procesar_documento(); tiene cola persistente en
 SQLite (web/cola.py), un worker secuencial —un trabajo a la vez, PLAN §6— y
 separacion por despacho en la ruta (/t/<despacho>/...). Corre pytest tests/
-antes de tocar nada: son ~4m23s y 731 tests. Los 116 que abren documentos
-reales grandes van marcados `lento` y se corren aparte, antes de entregar
-(pytest -m lento; la ultima corrida dio 43m08s pero no fue en aislamiento,
-asi que ese reloj es orden de magnitud). El procedimiento de instalacion
-esta en INSTALACION.md.
+antes de tocar nada: son 747 tests. Los 124 que abren documentos reales
+grandes van marcados `lento` y se corren aparte, ANTES DE ENTREGAR: en la 8e
+un test lento fue el UNICO que vio una consecuencia real de un cambio, a los
+52 minutos de corrida y con las cinco corridas rapidas en verde. El
+procedimiento de instalacion esta en INSTALACION.md.
 
 SERVIDORSIST YA SE MIDIO y esta escrito en PLAN §2. La corrio el
 orquestador por Escritorio Remoto; desde tu sesion no hay acceso y no se va
@@ -54,13 +55,19 @@ interpreto mal dos veces. PERO el arreglo NO esta verificado en la maquina
 objetivo: la suite corre en WSL y ningun test cubre Windows. Lo verifica el
 orquestador volviendo a correr el guion alli con Tesseract en el PATH.
 
-OJO: mayor-proactivity NO cuenta entre los documentos que procesan. La 8d
-midio que no es un libro mayor sino un reporte de movimientos por cuenta,
-que no imprime meses, y que los 48 «meses» son falsos positivos de
-_orden_de: normalizar() quita la puntuacion, asi que _orden_de('(ENERO')
-devuelve 1. Entrega 1 cuenta, 48 renglones en cero y cobertura sobre 145
-casos: un parser que entrega sin haber leido. Falta que falle limpio
-(fase 8e).
+OJO: los que producen Excel son 16, no 17. mayor-proactivity sale con
+codigo 2 desde la 8e: no es un libro mayor sino un reporte de movimientos
+por cuenta, y no imprime meses. La guarda es de DOCUMENTO —si ningun renglon
+de mes trae cargos, abonos ni saldo, se rechaza—; en mayor-gume 303 de 588
+meses traen importe, asi que hay margen de sobra.
+
+OJO con la magnitud de ese diagnostico, porque la 8d la escribio mal y el
+orquestador la copio a tres documentos: los «meses» falsos NO vienen todos
+del parentesis. Son 2 de 50 los que traen puntuacion —'(ENERO' y
+'(SEPTIEMBRE'—; los otros 48 son nombres de mes limpios dentro de
+descripciones. Endurecer _orden_de habria quitado 2 y dejado 48. _es_mes
+sigue aceptando un nombre de mes al principio de cualquier renglon de
+descripcion: medido y NO arreglado.
 
 OJO: el reloj se reporta SIEMPRE partido, leer+validar por un lado y
 exportar por otro. Un total unico escondio nueve fases que el exportador
@@ -77,16 +84,24 @@ OJO con dos cosas abiertas de la 8b (PLAN §2, «Resultados de la fase 8b»):
     menos dos mecanicas. La 8d desbloqueo la medicion dandole `pagina` a
     `Movimiento`; se cierra en la 8f.
 
-OJO: la hoja Polizas YA lleva declarado y leido en columnas separadas
-(8d), y `completa` es VERDADERO solo si coinciden. Pero el MISMO defecto
-sigue vivo en otros dos exportadores y en una variante peor:
-  - mayor y estado-cuenta: la hoja Cuentas muestra lo declarado sin lo
-    leido. En mayor-gume ya difiere 1 cuenta de 49.
-  - auxiliar: la hoja NO exporta saldo_origen, asi que los 26 032 saldos de
-    57 759 que el sistema RECALCULO en auxiliar-gume se ven identicos a los
-    impresos. Es el invariante «un valor derivado declara su procedencia»
-    roto justo en la salida que ve el contador.
-  Los tres son la fase 8e.
+Las tres salidas dicen lo mismo desde la 8e: la hoja Polizas lleva
+declarado y leido (8d), las hojas Cuentas de mayor y estado-cuenta tambien
+(8e), la hoja Auxiliar declara saldo_origen (8e) y la Discrepancia declara
+si compara importes con Decimal | None, asi que ninguna salida lo deduce.
+QUEDA UN HUECO: balanza no exporta naturaleza_origen.
+
+OJO con dos cosas de los estados de cuenta, vistas en la demostracion y SIN
+MEDIR (fase 8f, mide antes de tocar):
+  - la referencia sale pegada al principio de la descripcion
+    (`9462491DEPOSITO SPEI:...`) cuando el PDF la imprime en su propia
+    columna y MovimientoBancario tiene campo `referencia`.
+  - hay espacios dentro de palabras (`C O MISION CUOTA MENSUAL`). Es un
+    fenomeno DISTINTO del separador de continuacion y no esta descrito en
+    ningun sitio.
+  El separador de continuacion (`MEXICOORDENANTE`) SI esta medido y NO es un
+  defecto: la geometria no distingue quien parte palabras de quien no (7e),
+  asi que es parametro del formato y lo decide el cliente con `confirmar`.
+  No lo toques ni propongas heuristicas.
 
 Como trabajamos:
   - Tests primero, siempre. Muestrame el rojo antes de implementar.

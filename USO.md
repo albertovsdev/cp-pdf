@@ -99,14 +99,20 @@ empresa ni por banco.
 
 **Pólizas** — `poliza.pdf`, `diario-general.pdf`
 
-**Libro mayor** — `mayor-gume.pdf`. **`mayor-proactivity.pdf` no lo uses.**
-Procesa sin reventar y produce un Excel vacío con cara de resultado:
-`nombre_cuenta` con el bloque de bancos del encabezado pegado, `naturaleza`
-vacía, importes en cero. La 8d midió por qué: **ese documento no es un libro
-mayor**, es un reporte de movimientos por cuenta, y no imprime meses. Los 48
-«meses» que salen son falsos positivos —`(ENERO` con el paréntesis pegado
-cuenta como enero— y por eso el parser entrega sin haber leído. Está
-pendiente que falle limpio (PLAN §5.1, fase 8e).
+**Libro mayor** — `mayor-gume.pdf`. **`mayor-proactivity.pdf` sale con
+código 2 y el motivo escrito**, desde la 8e:
+
+```
+se detectaron 48 renglones de mes y ninguno trae cargos, abonos ni saldo;
+el documento no parece un libro mayor
+```
+
+No es un libro mayor: es un reporte de movimientos por cuenta, y no imprime
+meses. Antes de la 8e producía un Excel vacío con cara de resultado
+—`nombre_cuenta` con el bloque de bancos pegado, `naturaleza` vacía,
+importes en cero— y contaba entre los documentos que procesan. **Un reporte
+de movimientos por cuenta no tiene parser todavía**; eso es alcance
+pendiente, no una regresión.
 
 **Estados de cuenta** — seis formatos verificados:
 
@@ -152,11 +158,12 @@ Un total único escondió durante nueve fases que el exportador era cuadrático.
 
 | Documento | Páginas | Leer y validar | Exportar | Total |
 |---|---|---|---|---|
-| Mediana de los 17 que producen Excel | — | 1.4 s | 0.0 s | **1.5 s** |
+| Mediana de los que producen Excel | — | 1.4 s | 0.0 s | **1.5 s** |
 | `auxiliar-gume.pdf` | 886 | 183.4 s | 5.2 s | **3m 08s** |
 
-Suma de los 17: 6m25s (6m14s de leer, 10.6 s de exportar). Pico de memoria
-del proceso: 658 MB, en `auxiliar-gume`.
+**Suma de los 16 que producen Excel: 5m25s.** Eran 17 y 6m25s hasta la 8e,
+cuando `mayor-proactivity` pasó a rechazarse: se dejaba un minuto entero en
+no leer nada. Pico de memoria del proceso: 658 MB, en `auxiliar-gume`.
 
 > Una versión anterior de este documento decía que `auxiliar-gume` tardaba
 > 3m57s. Ese número se midió **sin `-o`**, así que nunca escribía el Excel;
@@ -170,8 +177,9 @@ máquinas. Fichero:
 `scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt`.
 
 **Midió 16 de los 17**: en esa sesión Tesseract no estaba en el PATH, así que
-`edocta-hsbc` se saltó. Todas las comparaciones de abajo son sobre esos 16, y
-con el reloj partido en las dos columnas.
+`edocta-hsbc` se saltó. Y `mayor-proactivity`, que entonces se procesaba, hoy
+se rechaza. **El conjunto comparable son 15 documentos**, y las comparaciones
+de abajo son sobre esos 15, con el reloj partido en las dos columnas.
 
 | Documento | Desarrollo (leer + exportar = total) | SERVIDORSIST (leer + exportar = total) | Factor |
 |---|---|---|---|
@@ -180,9 +188,10 @@ con el reloj partido en las dos columnas.
 | `diario-general` | 60.7 + 3.4 = 64.1 s | 201.2 + 13.5 = 214.7 s | 3.35× |
 | `mayor-proactivity` | 60.5 + 0.0 = 60.5 s | 220.3 + 0.1 = 220.4 s | 3.64× |
 | `auxiliar-gume.pdf` | 183.4 + 5.2 = 188.5 s | 621.3 + 19.3 = **10m40s** | 3.40× |
-| **Suma de los 16** | 6m00s + 10.6 s = **6m11s** | 20m35s + 41.1 s = **21m16s** | **3.44×** |
+| **Suma de los 15 comunes** | **5m10s** | **17m36s** | **3.40×** |
+| *(los 16 de entonces, con `mayor-proactivity`)* | *6m11s* | *21m16s* | *3.44×* |
 
-**El factor que vale es 3.44×**, el de la suma. Por documento va de 2.29× a
+**El factor que vale es 3.40×**, el de la suma sobre los 15 comunes. Por documento va de 2.29× a
 4.03×, pero esa dispersión es de los documentos chicos: un total de 0.6 s
 medido a un decimal no resuelve un cociente. **Los cinco que pasan de 15 s
 —que son los que bloquean la cola— caen entre 3.35× y 3.64×.**
@@ -304,21 +313,21 @@ sin fórmulas de búsqueda.
 > Corregido en la 8d: antes la hoja mostraba solo lo declarado y se veía
 > correcta justo cuando un importe se había leído mal.
 
-> **Cuidado con la hoja `Auxiliar`: no dice qué saldos calculó el sistema.**
-> Cuando el documento no imprime un saldo legible, el sistema lo deriva
-> encadenando y solo lo entrega si la cadena aterriza exacta en el subtotal
-> declarado. Eso es honesto, pero la hoja **no exporta `saldo_origen`**, así
-> que un saldo derivado se ve idéntico a uno impreso. En `auxiliar-gume` son
-> **26,032 de 57,759**. La cobertura sí lo declara —el reporte y la hoja
-> `Validacion` separan las exactas impresas de las recalculadas—, así que
-> mientras esto no se corrija, **la cifra que hay que leer es la de
-> `Validacion`, no la columna de saldo**. Defecto conocido, PLAN §5.1, fase
-> 8e.
+> **La hoja `Auxiliar` dice qué saldos calculó el sistema.** Cuando el
+> documento no imprime un saldo legible, el sistema lo deriva encadenando y
+> solo lo entrega si la cadena aterriza exacta en el subtotal declarado; la
+> columna `saldo_origen` dice cuál es cuál. En `auxiliar-gume`: **22,713
+> impresos, 26,032 recalculados y 9,014 sin saldo**. Un saldo recalculado es
+> coherencia interna, no verificación contra el documento. Añadido en la 8e.
 
-> **Cuidado con las hojas `Cuentas` de mayor y de estado de cuenta**: traen
-> el saldo final, los totales y el resumen **declarados por el documento**, no
-> la suma de lo leído — el mismo defecto que la 8d cerró en `Polizas`. En
-> `mayor-gume` ya hay 1 cuenta de 49 donde difieren. Fase 8e.
+> **Las hojas `Cuentas` de mayor y de estado de cuenta llevan declarado y
+> leído**, como `Polizas`. En `mayor-gume` hay 1 cuenta de 49 donde difieren
+> (`1190-000-000`, por 0.01) y `acumulados` la nombra; en los cuatro estados
+> de cuenta medidos no difiere ninguna. Añadido en la 8e.
+
+> **Cuidado con la hoja `Balanza`: todavía no dice cuándo dedujo la
+> naturaleza.** Es el último sitio donde un valor derivado se ve igual que uno
+> leído. PLAN §5.1, sin fase asignada.
 
 ---
 
@@ -345,10 +354,15 @@ contapdf balanza fixtures/real/1-Balanza/balanza.pdf -o salida/balanza.xlsx \
 ## Tests
 
 ```bash
-pytest tests/ -q            # 731 rápidos, ~4m23s
-pytest tests/ -q -m lento   # 116 lentos, ~43m
+pytest tests/ -q            # 747 rápidos
+pytest tests/ -q -m lento   # 124 lentos, del orden de 45 min
 pytest tests/ -q --lf       # solo los que fallaron la última vez
 ```
 
-El reloj de los lentos **no** se midió en aislamiento, así que es orden de
-magnitud y no cifra. El de los rápidos sí.
+El reloj de los lentos no se ha medido en aislamiento: es orden de magnitud,
+no cifra.
+
+**Los lentos hay que correrlos antes de entregar, no «si da tiempo».** En la
+8e, un cambio dejó obsoleto un test escrito tres fases antes y **el único que
+lo vio fue un test lento**, a los 52 minutos de corrida, con las cinco
+corridas rápidas en verde.

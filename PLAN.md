@@ -6,26 +6,34 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fase 8d cerrada.** Cinco parsers, cinco exportadores, CLI de seis
+Estado: **fase 8e cerrada.** Cinco parsers, cinco exportadores, CLI de seis
 comandos, interfaz web con cola persistente en SQLite, worker secuencial y
 aislamiento por despacho.
-**731 tests rápidos (4m23s) + 116 lentos (43m08s).** Ese reloj de los lentos
-no es una medición limpia: la corrida no fue en aislamiento.
-De los 27 fixtures: 17 producen Excel, 7 no tienen parser, 3 son estados de
-cuenta sin tabla de movimientos. **`mayor-proactivity` ya no cuenta entre los
-que procesan**: la 8d midió que no es un libro mayor y que su Excel sale
-vacío con cara de resultado (§2, «M1» de la 8d). Los útiles son **16**.
-Cuatro de los cinco tipos aprenden plantilla; pólizas sale con discrepancias
-por **53 CFDI sobre 50 pólizas** cuyo folio no aparece en la descripción del
-asiento, declarados a propósito.
+**747 tests rápidos + 124 lentos.**
+De los 27 fixtures: **16 producen Excel**, 7 no tienen parser, 3 son estados
+de cuenta sin tabla de movimientos, y `mayor-proactivity` **sale con código 2
+y motivo escrito** desde la 8e — antes contaba entre los que procesaban
+porque no reventaba. Cuatro de los cinco tipos aprenden plantilla; pólizas
+sale con discrepancias por **53 CFDI sobre 50 pólizas** cuyo folio no aparece
+en la descripción del asiento, declarados a propósito.
+
+**Las tres salidas —CLI, Excel y web— dicen lo mismo del mismo caso desde la
+8e.** La hoja `Auxiliar` declara qué saldos derivó el sistema (26,032 de
+57,759 en `auxiliar-gume`), las hojas `Cuentas` de mayor y estado de cuenta
+llevan declarado y leído, y la `Discrepancia` declara si compara importes en
+vez de que cada salida lo deduzca. Queda un hueco: **`balanza` no exporta
+`naturaleza_origen`** (§5.1).
 
 **SERVIDORSIST está medido.** La corrida es del orquestador por Escritorio
 Remoto (no hay SSH y no se va a montar); la transcribió Claude Code a §2 en
 la 8d desde
 `scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt`.
 
-- **Factor 3.44× sobre los 16 documentos comunes**: 21m16s allá contra 6m11s
-  aquí. Por documento va de 2.29× a 4.03×, pero **los cinco que en desarrollo
+- **Factor 3.40× sobre los 15 documentos comunes**: 17m36s allá contra 5m10s
+  aquí. (La medición original comparó 16 y dio 3.44×; desde la 8e
+  `mayor-proactivity` se rechaza y sale de las dos sumas. Las tablas de §2
+  conservan las cifras de entonces, que siguen siendo ciertas para aquel
+  momento.) Por documento va de 2.29× a 4.03×, pero **los cinco que en desarrollo
   pasan de 15 s caen todos entre 3.35× y 3.64×**, que es donde el factor
   importa —son los que bloquean la cola—. Debajo de 4 s el cociente es ruido
   de reloj. `auxiliar-gume` tarda **10m40s** allá contra 3m08s aquí.
@@ -49,8 +57,8 @@ corre en WSL— y verificarlo exige volver a correr `medir_servidorsist.py`
 allí con Tesseract en el PATH. Es tarea del orquestador, que es quien tiene
 acceso. Ver §5.1.
 
-Siguiente: **8e** (que las tres salidas digan lo mismo), **8f** (el diario y
-el IR) y **8g** (residuos del ancla).
+Siguiente: **8f** (el diario, el IR y el texto de los estados de cuenta) y
+**8g** (residuos del ancla).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -472,6 +480,22 @@ en qué mitad está el problema, y por eso nadie lo buscó. Este error es del
 orquestador, y es la segunda aparición del mismo patrón que ya está
 registrado: una cifra obtenida en condiciones que no son las del sistema,
 insertada en el PLAN como si lo fueran.
+
+**Un mecanismo correcto no es una explicación suficiente: hay que contar los
+casos.** La 8d diagnosticó que `mayor-proactivity` inventa meses porque
+`normalizar()` quita la puntuación y `_orden_de('(ENERO')` devuelve 1, y
+escribió que ese paréntesis suelto «no es un adorno del defecto, es el
+defecto». El mecanismo era cierto. La magnitud, no: la 8e contó y son **2 de
+50**; los otros 48 son nombres de mes limpios dentro de descripciones. Con la
+magnitud mal, la conclusión sobre qué tocar también estaba mal — endurecer
+`_orden_de` habría quitado 2 y dejado 48.
+
+El orquestador copió esa frase a §5.1, a `CLAUDE.md` y a `USO.md` la misma
+tarde, sin que nadie hubiera contado los casos. **Es el mismo error que ya
+está registrado dos veces —citar una cifra que no se midió— y esta vez el
+vehículo fue un mecanismo bien descrito**, que es más convincente que un
+número suelto y por eso pasa más fácil. La regla: un mecanismo se acepta
+cuando viene con su denominador.
 
 **Un umbral por presupuesto no es un umbral por medición.** El corte de 3 s
 que reparte los tests entre rápidos y lentos se eligió para que la suite baje
@@ -2623,11 +2647,20 @@ ellos por procesar sin reventar, y ahora sale con código 2. Las tablas de M2
 de la 8c **no se reescriben** —son mediciones de aquel momento y siguen
 siendo ciertas—, pero lo que hay que citar de aquí en adelante es esto:
 
-| | 17 documentos | 16, sin `mayor-proactivity` |
+| | con `mayor-proactivity` | sin él |
 |---|---|---|
-| suma en desarrollo | 6m25s | **5m25s** |
-| suma en SERVIDORSIST (los comunes) | 21m16s | **17m36s** |
-| factor | 3.44x | **3.40x** |
+| suma en desarrollo, los que producen Excel | 6m25s (17) | **5m25s** (16) |
+| suma en desarrollo, solo los comunes con SERVIDORSIST | 6m11s (16) | **5m10s** (15) |
+| suma en SERVIDORSIST | 21m16s (16) | **17m36s** (15) |
+| factor, sobre los comunes | 3.44x | **3.40x** |
+
+> **Fila añadida por el orquestador.** La tabla original tenía tres filas y
+> el factor no se podía derivar de ellas: dividir 17m36s entre 5m25s da 3.25x,
+> no 3.40x, porque la suma de desarrollo incluía `edocta-hsbc` y la de
+> SERVIDORSIST no. Es la tercera vez que un agregado pierde su denominador al
+> transcribirse —el 3.31x y el 3.71x fueron las dos anteriores—, siempre en la
+> misma dirección: la fila del cociente sobrevive y la fila que lo explica se
+> queda fuera. El conjunto comparable ahora son **15 documentos**.
 
 Quitar el documento que no producía nada utilizable **no mueve el factor**
 —3.44x contra 3.40x, dentro del rango estable de 3.35–3.64x— pero sí quita
@@ -2791,8 +2824,8 @@ decisión, no descripción, y se queda aquí.
 | 8c | Preparar la medición | Coste de la suite, exportador cuadrático, arreglo del `-o`, `INSTALACION.md`, guion de medición | **hecho** (710 rápidos + 111 lentos) |
 | 8c-bis | Medición en SERVIDORSIST | Correr `scripts/medir_servidorsist.py` allí y llenar las columnas vacías de M2, M3 y M4 | **hecho** (corrida del orquestador; transcrita a §2 por Claude Code en la 8d) |
 | 8d | Correcciones de correctitud | `cuadra` con cero evaluados; `encoding` del OCR en Windows; declarado contra leído en la hoja `Polizas`; `pagina` en `Movimiento` | **hecho** (731 rápidos + 116 lentos) |
-| 8e | Que las tres salidas digan lo mismo | `saldo_origen` a la hoja `Auxiliar`; declarado contra leído en `mayor` y `estado-cuenta`; que la `Discrepancia` declare si compara importes, para que CLI, Excel y web dejen de deducirlo; `mayor-proactivity` falla limpio; corregir `INSTALACION.md` y `ARQUITECTURA.md` con lo ocurrido | siguiente |
-| 8f | El diario y el IR | La segunda mecánica de pérdida de importes en `diario-general`, ahora que `Movimiento` guarda la página | |
+| 8e | Que las tres salidas digan lo mismo | `saldo_origen` a la hoja `Auxiliar`; declarado contra leído en `mayor` y `estado-cuenta`; que la `Discrepancia` declare si compara importes, para que CLI, Excel y web dejen de deducirlo; `mayor-proactivity` falla limpio; corregir `INSTALACION.md` y `ARQUITECTURA.md` con lo ocurrido | **hecho** (747 rápidos + 124 lentos) |
+| 8f | El diario, el IR y el texto de los estados de cuenta | La segunda mecánica de pérdida de importes en `diario-general`, ahora que `Movimiento` guarda la página; y medir qué pasa con la `referencia` y los espacios dentro de las palabras en la `descripcion` de Bajío y Santander, visto en la demostración | siguiente |
 | 8g | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
 
 > **Renumeración de la 8d en adelante.** Lo que la 8d midió y no arregló —el
@@ -2896,7 +2929,31 @@ la tenía asignada.**
 Cosas que hacen que el sistema afirme algo que no comprobó. Van primero
 porque son el argumento entero del proyecto.
 
-- **La hoja `Auxiliar` no exporta `saldo_origen`.** En `auxiliar-gume`,
+**Vivas hoy**: `naturaleza_origen` en balanza, la `referencia` y los espacios
+de los estados de cuenta, y la verificación del OCR en SERVIDORSIST. Las
+tachadas las cerró la 8e; se quedan en su sitio, con su texto original
+debajo, porque el patrón que las produjo se repite y moverlas rompe las
+referencias de los prompts anteriores.
+
+- **`balanza` no exporta `naturaleza_origen`.** Es el último hueco del
+  invariante «un valor derivado declara su procedencia» en las salidas: la
+  8e lo cerró en `Auxiliar` con `saldo_origen` y en las hojas `Cuentas` con
+  declarado contra leído, pero la hoja `Balanza` sigue sin decir cuándo la
+  naturaleza de una cuenta la dedujo el sistema en vez de leerla. **Sin fase
+  asignada.**
+- **La `referencia` de los estados de cuenta aparece pegada al principio de
+  la `descripcion`, y hay espacios dentro de palabras.** Visto en la
+  demostración sobre `edocta-bajio` y `edocta-santander`, **no medido**: en la
+  hoja `Movimientos` salen celdas como `9462491DEPÓSITO SPEI:REACTIVOS...`
+  cuando el PDF imprime `NO. REF./DOCTO` en una columna aparte, y otras como
+  `C O MISION CUOTA MENSUAL` con espacios donde la palabra no los lleva.
+  `MovimientoBancario` **sí tiene campo `referencia`** (§1.1), así que hay al
+  menos dos explicaciones posibles y ninguna medida: que el campo esté vacío y
+  el valor se haya quedado en la descripción, o que se rellene y además se
+  duplique. Los espacios dentro de palabras son un fenómeno distinto del
+  separador de continuación y no está descrito en ninguna parte. **Fase 8f,
+  midiendo antes de tocar nada.**
+- ~~**La hoja `Auxiliar` no exporta `saldo_origen`.**~~ **Resuelto en la 8e.** En `auxiliar-gume`,
   **26,032 de 57,759 saldos los derivó el sistema** encadenando (22,713
   impresos, 9,014 sin saldo) y en el Excel se ven idénticos a los que el
   documento imprimió. `Cobertura` separa `exactas_impresas` de
@@ -2905,7 +2962,17 @@ porque son el argumento entero del proyecto.
   «un valor derivado declara su procedencia» está en `ARQUITECTURA.md` §4 —
   pero se rompe justo en la salida que ve el contador. Es la deuda más grave
   abierta. **Fase 8e.**
-- **`mayor` y `estado-cuenta` muestran el declarado sin lo leído**, el mismo
+- ~~**`mayor` y `estado-cuenta` muestran el declarado sin lo leído.**~~
+  **Resuelto en la 8e**, con dos hallazgos que conviene no perder: las 4
+  cuentas donde `saldo_final` difería son exactamente las 4 que
+  `saldo_mensual` ya contaba como «dentro de tolerancia», así que exportar un
+  `saldo_final_leido` habría puesto a la hoja a contradecir a la cobertura; y
+  la correspondencia entre hoja y regla **no es 1:1** como en pólizas
+  —`acumulados` roza en 5 renglones de 4 cuentas y solo una tiene el total
+  descuadrado—, así que lo que el test exige es la dirección que importa:
+  toda cuenta que la hoja marque distinta tiene que estar nombrada por alguna
+  regla. Texto original abajo, por el patrón.
+  <br>Decía: **el mismo defecto que la 8d cerró en la hoja `Polizas`**, el mismo
   defecto que la 8d cerró en la hoja `Polizas`. Medido en la 8d
   (`scripts/mediciones/fase8d_m6_declarado_en_los_otros_cuatro.py`): en
   `mayor`, la hoja `Cuentas` lleva `saldo_final`, `total_cargos` y
@@ -2914,8 +2981,12 @@ porque son el argumento entero del proyecto.
   `retiros` y `saldo_corte` del resumen, y hoy no difiere en ninguno de los
   4 fixtures medidos. `balanza` no lo tiene: no exporta la fila `Totales`.
   **Fase 8e.**
-- **La `Discrepancia` no declara si compara importes, y por eso dos de las
-  tres salidas mienten.** Las 53 discrepancias de `cfdi_cruzado` en
+- ~~**La `Discrepancia` no declara si compara importes.**~~ **Resuelto en la
+  8e** con `Decimal | None`, elegido sobre un campo de tipo porque hace
+  imposible el modo de falla en vez de dejarlo evitable: no queda un cero que
+  imprimir. 17 constructores, 2 de ellos de identidades, y 3 lectores. Texto
+  original abajo.
+  <br>Decía: **por eso dos de las tres salidas mienten.** Las 53 discrepancias de `cfdi_cruzado` en
   `poliza.pdf` traen `esperado == obtenido == 0`, porque la regla cruza
   identidades y `Discrepancia.esperado/obtenido` son `Decimal`
   obligatorios. Medido en la 8d: la web lo resuelve **infiriendo**
@@ -2926,7 +2997,14 @@ porque son el argumento entero del proyecto.
   que el dato lo declare la `Discrepancia` (`Decimal | None`, o un campo de
   tipo de comprobación). Cambio de contrato del IR de validación, medido y
   propuesto en la 8d, no hecho. **Fase 8e.**
-- **`mayor-proactivity` entrega sin haber leído.** Diagnosticado por capas en
+- **No hay parser para un reporte de movimientos por cuenta**, que es lo que
+  resultó ser `mayor-proactivity`. Desde la 8e sale con código 2 y el motivo
+  escrito, que es lo correcto mientras no exista; pero es alcance pendiente,
+  no un documento roto. Y queda **medido y no arreglado**: `_es_mes` sigue
+  aceptando un nombre de mes al principio de cualquier renglón de
+  descripción. La guarda que evita el desastre es de documento —ningún mes
+  con importes— y no arregla la detección. **Sin fase asignada.**
+- ~~**`mayor-proactivity` entrega sin haber leído.**~~ **Resuelto en la 8e.** Diagnosticado por capas en
   la 8d: la estrategia es correcta y el layout es síntoma; **la causa es el
   parser**. El documento no es un libro mayor sino un reporte de movimientos
   por cuenta, no imprime meses, y los 48 «meses» que el parser cree ver son
@@ -2948,8 +3026,13 @@ porque son el argumento entero del proyecto.
   volver a correr `scripts/medir_servidorsist.py` en SERVIDORSIST con
   Tesseract en el PATH y ver `edocta-hsbc` completo. **Tarea del
   orquestador**, que es quien tiene acceso por Escritorio Remoto.
-- **`INSTALACION.md` y `ARQUITECTURA.md` describen cosas que ya no son
-  ciertas.** `INSTALACION.md` §2 dice que no hay git en la máquina y que el
+- ~~**`INSTALACION.md` y `ARQUITECTURA.md` describen cosas que ya no son
+  ciertas.**~~ **Resuelto en la 8e**, y la corrección destapó por qué la
+  medición buena midió 16 y no 17: **las corridas de las 17:41 y las 17:57 son
+  la misma máquina con dos consolas distintas.** El instalador de Tesseract no
+  marca el PATH y una consola abierta antes del cambio no lo ve. Texto
+  original abajo.
+  <br>Decía: `INSTALACION.md` §2 dice que no hay git en la máquina y que el
   repo va a `C:\contapdf`; en la instalación real se instaló git y quedó en
   `C:\proyectos\cp-pdf`. §4 documenta `python -m contapdf.cli`, que no está
   verificado en Windows; lo verificado en las dos plataformas es `contapdf`
@@ -2959,8 +3042,13 @@ porque son el argumento entero del proyecto.
   §5 dice que `exportar_estado_cuenta` no existe —existe desde la 7e y su
   propio §2 lo lista— y cuenta «6 formatos, 5 bancos» cuando §1.2 mide 6
   bancos. **Fase 8e.**
-- **`mediciones-ServidorSist-20260904-1741-metodoRAPIDO.txt` está en la raíz
-  del repo, no en `scripts/mediciones/`.** Es el único fichero que documenta
+- ~~**`mediciones-ServidorSist-20260904-1741-metodoRAPIDO.txt` está en la
+  raíz del repo.**~~ **Resuelto en la 8e**: movido a `scripts/mediciones/`,
+  con un test que falla si vuelve a aparecer un `mediciones-*.txt` suelto en
+  la raíz y otro que comprueba que el fichero sigue conteniendo la traza,
+  porque lo que respalda la afirmación es el contenido y no el nombre. Texto
+  original abajo.
+  <br>Decía: Es el único fichero que documenta
   el fallo del OCR con Tesseract presente (v5.4.0, revienta a los 7.0 s) y el
   único que respalda «el OCR nunca funcionó allí». Si se pierde, esa
   afirmación se queda sin evidencia reproducible. **Fase 8e: moverlo.**
@@ -3026,6 +3114,13 @@ porque son el argumento entero del proyecto.
   natural de los datos está entre 14.25 s y 6.74 s (2.1x) y cortar ahí deja
   6m33s. No se lea como el umbral de CID, que sí lo defienden los datos.
   **Sin fase asignada.**
+  <br>**Contrapeso medido en la 8e**: la guarda de `mayor-proactivity` dejó
+  obsoleto un test de la 8d que esperaba cobertura de ese documento, y **el
+  único que lo vio fue un test lento**, a los 52 minutos de `pytest -m lento`,
+  tres fases después de escribirse. Las cinco corridas rápidas pasaron verdes.
+  El coste de correrlos aparte tiene esto en el otro platillo: separarlos
+  también significa que una consecuencia real puede tardar una fase entera en
+  aparecer.
 - **20 CFDI traen el RFC pegado al tipo** (`'ROTG870907QC5Ingreso'`). No
   afecta al cruce; el campo `tipo` sale sucio. **Sin fase asignada.**
 - **`Bajío`: 1 movimiento con tinta en la columna del saldo que no se leyó.**
@@ -3050,6 +3145,21 @@ porque son el argumento entero del proyecto.
   decidir cuándo.**
 
 ### Decisiones que no son técnicas
+
+- **El separador de continuación de los estados de cuenta.** Cuando una
+  descripción se envuelve en varios renglones, unirlos con `""` o con `" "`
+  cambia el texto y nada más: **no afecta a ningún importe, saldo ni
+  checksum**. Y no se puede deducir: la 7e midió que la geometría **no**
+  distingue un documento que parte palabras a la mitad (`CON` + `CEPTO:`) de
+  uno que envuelve por palabra entera (`CVE` + `RASTREO:`) — en los dos casos
+  el último token llega al margen y el siguiente arranca en el borde
+  izquierdo, y las formas de los tokens son idénticas. Por eso
+  `separador_continuacion` es un **parámetro del formato** con valor por
+  omisión `""`, el medido en el primer formato de la fase 7, y con ese valor
+  **cinco de los seis formatos salen con las palabras pegadas**
+  (`MEXICOORDENANTE`). El sistema no lo inventa: lo declara como "falta
+  confirmar" y espera al comando `confirmar`. **Lo decide quien conoce los
+  documentos, por formato, no el orquestador ni Claude Code.**
 
 - **El sistema no tiene autenticación.** Cualquiera en la red de la oficina
   puede subir y descargar cualquier documento; el nombre del despacho es el
