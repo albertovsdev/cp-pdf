@@ -2704,6 +2704,20 @@ desde la 7e y su propio §2 lo lista— y contaba «6 formatos, 5 bancos» cuand
 §1.2 mide 6 bancos. Corregidos los dos, más la guarda del mayor, las firmas
 nuevas de dominio y los dos invariantes que esta fase añade a la tabla de §4.
 
+#### El coste de la suite al cerrar la fase
+
+| | tests | tiempo |
+|---|---|---|
+| rápidos | **747** (eran 731) | ~4m30s |
+| `pytest -m lento` | **124** (eran 116) | 1h00m23s |
+
+**Ninguno de los dos relojes es una medición limpia**: las corridas de esta
+fase compartieron máquina con ediciones y con otras invocaciones. Se anotan
+como orden de magnitud, no como cifra citable — y la de los lentos sube
+porque los 8 tests nuevos reparsean `auxiliar-gume`, `mayor-proactivity` y
+`diario-general`, que son tres de los cuatro documentos más caros del
+proyecto. Medirlo en aislamiento es trabajo de quien quiera citarlo.
+
 ### Dos documentos, sin solapamiento
 
 | Archivo | Contiene | Lo mantiene |
