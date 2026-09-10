@@ -12,6 +12,11 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
+MEDICIONES.md e INVENTARIO.md NO se leen al arrancar. MEDICIONES.md se abre
+cuando la fase toca algo que ahi se midio, y SIEMPRE antes de citar una cifra
+de una fase cerrada: el indice de §2 no lleva numeros a proposito.
+INVENTARIO.md dice que cubrimos hoy y lo regenera scripts/inventario.py.
+
 Estado: fases 0 a 8f completas. El nucleo cambio en la 8c (exportador
 cuadratico y el -o), en la 8d (cuatro correcciones de correctitud) y en la
 8e (que las tres salidas digan lo mismo); por lo
@@ -33,7 +38,8 @@ un test lento fue el UNICO que vio una consecuencia real de un cambio, a los
 52 minutos de corrida y con las cinco corridas rapidas en verde. El
 procedimiento de instalacion esta en INSTALACION.md.
 
-SERVIDORSIST esta medido y escrito en PLAN §2. Las corridas las hace el
+SERVIDORSIST esta medido: la corrida de la 8c en MEDICIONES.md y la del 9 de
+septiembre en PLAN §2 (fase 8f). Las corridas las hace el
 orquestador por Escritorio Remoto; desde tu sesion no hay acceso y no se va
 a montar SSH. Ficheros en scripts/mediciones/; la buena es la del 9 de
 septiembre, con los 16 documentos que producen Excel.
@@ -80,7 +86,8 @@ exportar por otro. Un total unico escondio nueve fases que el exportador
 era cuadratico, y la cifra de 3m57s que se cito en tres documentos
 media media operacion. Si mides tiempo, parte el reloj.
 
-OJO con dos cosas abiertas de la 8b (PLAN §2, «Resultados de la fase 8b»):
+OJO con dos cosas abiertas de la 8b (MEDICIONES.md, «Resultados de la
+fase 8b»):
   - NO hay autenticacion. El aislamiento por despacho es organizativo, no
     una barrera de seguridad. Esta esperando decision del orquestador.
   - En diario-general faltan 659 304.42 en el debe y SOBRAN 106 873.98 en el
@@ -109,10 +116,11 @@ MEDIR (fase 8f, mide antes de tocar):
   asi que es parametro del formato y lo decide el cliente con `confirmar`.
   No lo toques ni propongas heuristicas.
 
-OJO: existe un INVENTARIO en PLAN §2, generado por scripts/inventario.py y
-regenerable. Dice, una linea por fixture, que cubrimos: 16 producen Excel y
-11 no. Leelo antes de proponer nada sobre cobertura, y regeneralo si tu fase
-cambia lo que un documento produce.
+OJO: el INVENTARIO vive en INVENTARIO.md, lo genera scripts/inventario.py y
+lleva su fecha y su commit para que se vea si caduco. Dice, una linea por
+fixture, que cubrimos: 16 producen Excel y 11 no. Leelo antes de proponer
+nada sobre cobertura, y REGENERALO si tu fase cambia lo que un documento
+produce.
 
 OJO con lo que midio el barrido de la 8f, porque cambia como se leen los
 motivos: de 61 reglas, 20 no cuadran, y de sus 11 motivos distintos SEIS
@@ -128,6 +136,11 @@ del inventario vacias), el banco que si lee viene sucio, y solo 3 de los 16
 formatos dejan plantilla aprendida.
 
 Como trabajamos:
+  - AL CERRAR UNA FASE, los resultados de la fase ANTERIOR se mueven a
+    MEDICIONES.md y en §2 queda su linea de indice, SIN CIFRAS. §2 solo
+    conserva la fase en curso. Aplica desde la 8h. Es mecanica y no lleva
+    criterio A PROPOSITO: decidir que medicion merece quedarse es justo el
+    juicio que queremos evitar, y una regla con juicio se olvida.
   - Tests primero, siempre. Muestrame el rojo antes de implementar.
   - Los numeros del PLAN son mediciones, no metas ajustables. Si tu codigo
     da otra cosa, investiga por que; no ajustes el test.

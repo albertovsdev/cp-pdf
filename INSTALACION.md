@@ -19,7 +19,7 @@ verdad** al instalar y medir allí el 4 de septiembre de 2026.
 |---|---|
 | §1 dependencias, y que faltaba `pypdfium2` | **Verificado.** Se encontró leyendo `ocr.py` contra `pyproject.toml`, se corrigió, y la instalación real en Windows no volvió a tropezar con ello |
 | §2 los pasos de Windows | **EJECUTADOS.** Se instaló y se corrió en SERVIDORSIST. Corregidos aquí con las desviaciones reales: se instaló git y el repo quedó en `C:\proyectos\cp-pdf`, y el Tesseract de `winget` no ofrece la pantalla de idiomas |
-| §3 el guion de medición | **EJECUTADO en las dos plataformas.** En SERVIDORSIST midió 16 de 17 documentos; los números están en PLAN §2 y el reporte en `scripts/mediciones/` |
+| §3 el guion de medición | **EJECUTADO en las dos plataformas.** En SERVIDORSIST midió 16 de 17 documentos; los números están en `MEDICIONES.md` (fase 8c) y en PLAN §2 (fase 8f), y los reportes en `scripts/mediciones/` |
 | §4 uso desde la línea de comandos | **Verificado en las dos**, pero solo en la forma `contapdf` / `.venv\Scripts\contapdf`. El `python -m contapdf.cli` que decía antes **no se ha ejecutado nunca en Windows** |
 | §5 los fallos | Ya no son previsiones: los de Tesseract ocurrieron. Y se suma uno que nadie previó — **el OCR nunca funcionó en esa máquina** |
 
@@ -320,8 +320,8 @@ reales grandes van marcados `lento` y se corren aparte, antes de entregar:
 
 ## 6. Lo que esta fase NO dejó resuelto
 
-Está en el checklist de despliegue del PLAN, §2, «Resultados de la fase
-8c». Resumido: no hay autenticación, no hay respaldo, no hay arranque como
+Está en el checklist de despliegue de `MEDICIONES.md`, «Resultados de la
+fase 8c». Resumido: no hay autenticación, no hay respaldo, no hay arranque como
 servicio, y un trabajo en curso a las 21:00 se pierde cuando la máquina se
 apaga. Ninguno es un problema de instalación; los cuatro son decisiones
 que hay que tomar antes de que el despacho use esto a diario.

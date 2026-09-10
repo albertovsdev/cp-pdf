@@ -52,7 +52,7 @@ el PLAN cita, y una cifra que no se puede reproducir no es una medición.
 
 | guion | qué produce |
 |---|---|
-| `scripts/inventario.py` | El **inventario de cobertura**: una línea por fixture, en dos tablas —los que producen Excel y los que no—. **Caduca cada fase**: se vuelve a correr y se vuelve a pegar en PLAN §2. `--markdown` lo deja pegable |
+| `scripts/inventario.py` | El **inventario de cobertura**: una línea por fixture, en dos tablas —los que producen Excel y los que no—. **Escribe `INVENTARIO.md`**, con su fecha y su commit, para que se vea si caducó. `--stdout` lo imprime en vez de escribirlo |
 | `scripts/medir_servidorsist.py` | Tiempo, memoria y disco por documento, con el reloj partido. Corre igual en las dos máquinas, para que el factor salga del mismo instrumento |
 | `scripts/dump_layout.py` | La anonimización: de un PDF real a su versión enmascarada de `fixtures/layouts/`. **No se toca** |
 | `scripts/mediciones/*.py` | Una medición concreta de una fase, con su nombre. Necesitan los PDFs reales |

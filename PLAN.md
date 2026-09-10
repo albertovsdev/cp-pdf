@@ -1321,7 +1321,8 @@ Dos cosas que no debe tocar Claude Code:
 
 - `scripts/dump_layout.py` — ya cumplió su función y es la herramienta de
   privacidad. Si se refactoriza y se rompe el enmascarado, se nota tarde.
-- Los números de la sección 2 — son mediciones, no metas ajustables.
+- Los números de la sección 2 y de `MEDICIONES.md` — son mediciones, no
+  metas ajustables.
 
 ### Prompt de la fase 1
 
@@ -1655,7 +1656,8 @@ produjo se repite y moverlas rompe las referencias de los prompts anteriores.
   separación organizativa alcanza, pero **es una decisión del dueño del
   despacho, no técnica**, y hay que preguntársela antes de poner documentos
   de clientes en SERVIDORSIST. Va con el resto del checklist de despliegue en
-  §2, «Resultados de la fase 8c»: respaldo, arranque como servicio, ventana
+  `MEDICIONES.md`, «Resultados de la fase 8c»: respaldo, arranque como
+  servicio, ventana
   de uso, y qué hacer con un trabajo grande subido después de las 20:49.
 
 ### Restricciones permanentes, no deuda
@@ -1722,7 +1724,8 @@ declarar un éxito sin checksum.
   esté al inicio de la celda de nombre (en GUME el renglón es
   `734 | Cuentas reportadas | Totales: | ...`). **Decía fase 4a.**
 - `balanza-fd` detecta 4 columnas y tiene 6 subetiquetas de encabezado
-  agrupado. **Decía fase 7c**, y §2 de la 7c dice que se resolvió
+  agrupado. **Decía fase 7c**, y `MEDICIONES.md`, en la 7c, dice que se
+  resolvió
   deduplicando, pero la entrada nunca se cerró.
 
 ---
