@@ -2751,6 +2751,245 @@ porque los 8 tests nuevos reparsean `auxiliar-gume`, `mayor-proactivity` y
 `diario-general`, que son tres de los cuatro documentos más caros del
 proyecto. Medirlo en aislamiento es trabajo de quien quiera citarlo.
 
+### Resultados de la fase 8f (qué cubrimos, y por qué no cuadra lo que no cuadra)
+
+**Esta fase no arregló nada.** Mide, clasifica y reporta. Los defectos que
+encontró están al final, sin fase asignada y sin numerar.
+
+#### El factor, por fin con la misma versión en las dos máquinas — y por qué no admite decimales
+
+La corrida del 9 de septiembre en SERVIDORSIST cierra dos cosas que venían
+de la 8d y la 8e:
+
+| | resultado |
+|---|---|
+| `edocta-hsbc` | **COMPLETO**: 4 págs, 48.7 s leer + 0.1 exportar, estrategia `ocr`, `.xlsx` escrito |
+| `mayor-proactivity` | `LayoutDesconocido` con el mensaje entero, y no produce Excel |
+
+**El arreglo del `encoding` de la 8d queda VERIFICADO en la máquina
+objetivo**, que era el último bloqueante abierto de aquella fase; y la
+guarda de la 8e también. Y una cifra nueva: **el OCR allí cuesta 48.8 s, no
+los ~21 s de desarrollo** — 2.8x, en el rango del resto.
+
+Hasta hoy las dos columnas del factor eran de **versiones distintas**: la de
+desarrollo se midió en la 8c y el código cambió en la 8d y la 8e. Los
+`.xlsx` crecieron —`diario-general` 2.34 → 2.68 MB, `auxiliar-gume` 3.55 →
+3.75, `poliza` 0.83 → 0.92— así que la columna de exportar comparaba dos
+versiones y no dos máquinas. Se volvió a medir en desarrollo con el código
+de hoy:
+
+| los 16 documentos comunes | dev (10 sep) | SERVIDORSIST (9 sep) | factor |
+|---|---|---|---|
+| suma total | 6m55s | **18m49s** | **2.72x** |
+| — leer y validar | 6m42s | 18m01s | 2.69x |
+| — exportar | 12.9 s | 47.4 s | 3.67x |
+| `auxiliar-gume` | 251.8 s | **654.4 s** | 2.60x |
+| `edocta-hsbc` (OCR) | 17.3 s | 48.8 s | 2.82x |
+| mediana | 1.6 s | 5.3 s | 3.31x |
+
+**Y ahí es donde el número se cae.** Repetida la misma medición en
+desarrollo, minutos después y sin cambiar una línea, la suma dio **373.5 s
+contra 415.8 s**: un 11% entre dos corridas consecutivas. `poliza` solo se
+movió un **26%** (41.9 s contra 33.3 s). Con el otro denominador, el mismo
+numerador da **3.02x**.
+
+| denominador | factor |
+|---|---|
+| dev 10 sep, primera corrida | 2.72x |
+| dev 10 sep, repetida | **3.02x** |
+| media de las dos | 2.86x |
+| dev 4 sep (código de la 8c) | 3.48x |
+
+**El ruido no es simétrico, y eso es el hallazgo.** Sobre los 15 documentos
+que las dos corridas de SERVIDORSIST comparten, esa máquina varió **+2.4%**
+entre septiembre 4 y septiembre 9 (1 055.8 s → 1 080.7 s). La máquina de
+desarrollo varía **10–26%** entre corridas consecutivas. El denominador es
+el que hace ruido, no el numerador — coherente con lo que la 8c ya había
+medido en la suite (358 s contra 283 s, 27%) y con la causa que apuntó:
+`/mnt/c` sobre NTFS bajo WSL2, donde la caché de páginas pesa.
+
+De ahí lo que hay que citar: **el factor es «unas tres veces», entre 2.7x y
+3.0x con la misma versión de código, y no admite dos decimales.** El 3.44x
+que este documento publicaba no era falso: era una división cuyo
+denominador tenía ±28% de dispersión sin que nadie lo supiera. **Se ha
+discutido al segundo decimal un número cuyo primer decimal no está
+determinado.**
+
+**Lo que el cambio de código sí costó, medido donde el ruido es del 2.4%.**
+Entre la versión de la 8c y la de la 8e, SERVIDORSIST midió **+1.8% en leer
+y +14.8% en exportar** sobre los mismos 15 documentos. La lectura no se
+tocó; la exportación subió porque la 8d y la 8e le añadieron columnas
+—declarado y leído, `saldo_origen`, `pagina`— y los ficheros engordaron. Es
+la explicación que encaja y la única máquina con ruido bajo la respalda. **La
+subida del 28% en desarrollo NO es del código**: si lo fuera, SERVIDORSIST
+la habría visto también.
+
+#### M3 y M4 de la corrida del 9 de septiembre
+
+| | 4 sep | 9 sep |
+|---|---|---|
+| RAM libre antes de medir | 3 205 MB | 3 376 MB |
+| **RAM libre mínima, durante `auxiliar-gume`** | 2 809 MB | **2 978 MB** |
+| pico del proceso | no se pudo leer | no se pudo leer |
+| disco libre | 328.3 GB de 464.8 | **327.1 GB de 464.8** |
+| `.xlsx`: mediana / máximo | 0.03 / 3.55 MB | 0.03 / **3.75 MB** |
+| base de la cola, 75 trabajos | 0.17 MB | 0.17 MB |
+
+Sigue sin ser restricción, con más holgura que en la corrida anterior. El
+pico del proceso **sigue sin poder leerse en Windows**: lo medido allí es la
+holgura del sistema, no el consumo.
+
+#### El inventario de cobertura
+
+Lo produce `scripts/inventario.py`, que se vuelve a correr y se vuelve a
+pegar aquí: **caduca cada fase**. `COBERTURA` son los casos **evaluados de
+los aplicables** del documento entero, nunca un porcentaje; `REGLAS` es
+cuadran/fallan/no_verificables; `COD` es el código de salida del CLI.
+
+**De 27 fixtures, 16 producen Excel y 11 no.**
+
+##### Tabla A — los 16 que producen Excel
+
+| FIXTURE | TIPO | EMISOR | PAG | EXTRACCION | COBERTURA | REGLAS | PLANTILLA | COD |
+|---|---|---|---|---|---|---|---|---|
+| auxiliar | auxiliar | — | 398 | pdf_text | 6783 de 6783 | 1/0/2 | pendiente | 0 |
+| auxiliar-gume | auxiliar | — | 886 | pdf_text | 48355 de 58518 | 2/1/0 | no | 1 |
+| balanza | balanza | — | 9 | pdf_text | 530 de 534 | 4/0/0 | aprendida | 0 |
+| balanza-businesspro | balanza | — | 4 | pdf_chars | 273 de 276 | 3/0/1 | aprendida | 0 |
+| balanza-gume | balanza | — | 12 | pdf_text | 863 de 863 | 4/0/0 | pendiente | 0 |
+| edocta | estado-cuenta | BANCA AFIRME, S. A., INSTITUCIÓN DE B… | 6 | pdf_chars | 48 de 50 | 3/0/1 | pendiente | 0 |
+| edocta-abril-santander | estado-cuenta | BANCO SANTANDER MEXICO, S.A., INSTITU… | 13 | pdf_chars | 115 de 115 | 4/0/0 | pendiente | 0 |
+| edocta-bajio | estado-cuenta | KARLDOR SA DE CV BANCO DEL BAJIO S.A.… | 11 | pdf_text | 68 de 72 | 3/0/1 | pendiente | 0 |
+| edocta-bbva | estado-cuenta | BBVA MEXICO, S.A., INSTITUCION DE BAN… | 11 | pdf_text | 8 de 121 | 3/0/1 | pendiente | 0 |
+| edocta-hsbc | estado-cuenta | Emitido por: HSBC México S.A. Institu… | 4 | ocr | 6 de 8 | 3/0/1 | pendiente | 0 |
+| edocta-inbursa | estado-cuenta | BANCO INBURSA, S.A. INSTITUCION DE BA… | 8 | pdf_text | 47 de 49 | 3/0/1 | pendiente | 0 |
+| edocta-julio-banorte | estado-cuenta | Banco Mercantil del Norte S.A. Instit… | 16 | pdf_text | 285 de 291 | 2/0/2 | pendiente | 0 |
+| edocta-santander | estado-cuenta | BANCO SANTANDER (MEXICO) S.A., INSTIT… | 10 | pdf_text | 16 de 25 | 1/1/2 | no | 1 |
+| mayor-gume | mayor | — | 17 | pdf_text | 1764 de 1813 | 2/0/1 | aprendida | 0 |
+| diario-general | polizas | — | 431 | pdf_chars | 15906 de 15906 | 0/2/2 | no | 1 |
+| poliza | polizas | — | 968 | pdf_text | 9595 de 9716 | 3/1/0 | no | 1 |
+
+##### Tabla B — los 11 que no
+
+| FIXTURE | TIPO ESPERADO | MOTIVO DEL RECHAZO |
+|---|---|---|
+| auxiliar-manufacturas | auxiliar | no se pudo leer como auxiliar: ninguno de los 60 mapeos propuestos hace cuadrar el saldo corrido |
+| balanza-fd | balanza | no se pudo leer como balanza: el layout no parece una balanza; faltan las columnas: cuenta, nombre, saldo_inicial, saldo_final |
+| balanza-manufacturas | balanza | no se pudo leer como balanza: el layout no parece una balanza; faltan las columnas: cuenta, nombre, saldo_inicial, saldo_final |
+| balanza-proactivity | balanza | no se pudo leer como balanza: el layout no parece una balanza; faltan las columnas: cuenta, nombre, saldo_inicial, debe, haber, saldo_final |
+| edocta-monex | estado-cuenta | el documento no trae tabla de movimientos porque la cuenta no tuvo ninguno: su resumen declara depositos y retiros en cero |
+| edocta-multiva | estado-cuenta | el documento no trae tabla de movimientos porque la cuenta no tuvo ninguno: su resumen declara depositos y retiros en cero |
+| edocta-scotiabank | estado-cuenta | el documento no trae tabla de movimientos porque la cuenta no tuvo ninguno: su resumen declara depositos y retiros en cero |
+| mayor-fd | mayor | no se pudo leer como mayor: no se encontro ninguna cuenta |
+| mayor-manufacturas | mayor | no se pudo leer como mayor: no se encontro ninguna cuenta |
+| mayor-proactivity | mayor | no se pudo leer como mayor: se detectaron 48 renglones de mes y ninguno trae cargos, abonos ni saldo; el documento no parece un libro mayor |
+| polizas-manufacturas | polizas | no se pudo leer como polizas: no se encontro ninguna poliza |
+
+**Tres cosas que el inventario destapa por el hecho de existir:**
+
+1. **El sistema no sabe de quién es un documento contable.** La columna
+   `EMISOR` sale vacía en los 7 fixtures de balanza, auxiliar, mayor y
+   pólizas: **ningún parser contable lee la empresa**. Solo los estados de
+   cuenta lo traen, por `MetaEstadoCuenta.banco`. El guion tiene prohibido
+   deducirlo del nombre del fichero, y un test lo impone.
+2. **Y el `banco` que sí lee viene sucio.** Arrastra el domicilio
+   (`…Banorte, Av. Revolución No. 3000, Colonia La Primavera C.P.64830…`),
+   la etiqueta (`Emitido por: HSBC México…`) y, en Bajío, **el titular de la
+   cuenta delante del banco** (`KARLDOR SA DE CV BANCO DEL BAJIO S.A.…`). El
+   inventario lo recorta para que la tabla se lea; el dato sigue sucio.
+3. **Solo 3 de 16 formatos quedan aprendidos.** Nueve salen `pendiente` de
+   confirmación y cuatro no dejan plantilla, porque `AlmacenPlantillas.
+   guardar()` rechaza lo que no cuadró. O sea que **la promesa de «la
+   segunda vez entra sin intervención» hoy se cumple en 3 de 16**.
+
+#### Por qué no cuadra lo que no cuadra
+
+De las **61 reglas** que corren sobre los 27 fixtures, **20 no cuadran**, y
+dan **11 motivos distintos**. La regla de esta fase: *el motivo que imprime
+el sistema es una hipótesis, no un hallazgo*. Cada uno se fue a comprobar
+contra el documento.
+
+| | casos | qué significa |
+|---|---|---|
+| **A** — no_verificable y el documento no trae el dato | **9** | correcto |
+| **B** — no_verificable pero el dato SÍ está | **6** | **defecto** |
+| **C** — falla y el documento descuadra de verdad | **3** | correcto |
+| **D** — falla porque leímos mal | **2** | **defecto** |
+
+Las dos calibraciones caen donde debían: `poliza` con sus 53 CFDI sobre 50
+pólizas es **C**, y los 552 430.42 de `diario-general` son **D**.
+
+##### Los 11 motivos, con su etiqueta
+
+| # | motivo del sistema | casos | etiqueta | contra qué se miró | cajón |
+|---|---|---|---|---|---|
+| M01 | «el documento no imprime una fila TOTAL con la que cruzar la suma de los saldos por cuenta» | 5 | **CONFIRMADO** en `edocta`, `edocta-bbva`, `edocta-hsbc` | los únicos «total» del documento son «ganancia anual total» y «total de comisiones», sin fila de saldos (p1 y p6 / p1 y p10 / p4) | A |
+| M01 | ídem | | **REFUTADO** en `edocta-inbursa` | **p5 imprime `TOTALES` con cinco importes** | **B** |
+| M01 | ídem | | **REFUTADO** en `edocta-bajio` | **p9 imprime `SALDO TOTAL`, y su importe COINCIDE con el `saldo_corte` que el parser leyó** | **B** |
+| M02 | *(sin motivo)* | 3 | ver C y D | las tres son `falla`, y una regla que falla no lleva motivo: el detalle son sus discrepancias | C, D |
+| M03 | «el documento no trae tabla de CFDI» | 2 | **CONFIRMADO** | ni `cfdi`, ni `uuid`, ni `folio fiscal`, ni `rfc`, ni `comprobante` aparecen en las 431 páginas | A |
+| M04 | «ninguna cuenta declara depósitos y retiros propios; con dos o más cuentas el total del documento no se reparte» | 2 | **REFUTADO** | en `edocta-julio-banorte` p1, `+ TOTAL DE DEPÓSITOS` y `- TOTAL DE RETIROS` traen **dos importes cada uno, uno por cuenta**; en `edocta-santander` p1 el resumen trae un bloque por producto | **B** |
+| M05 | «ninguna de las N cuenta(s) trae el resumen completo; falta: …» | 2 | **REFUTADO** | mismo sitio: `SALDO INICIAL DEL PERIODO` con tres importes en Banorte, y `saldo inicial` por producto en Santander p1 y p3 | **B** |
+| M06 | «N de N CFDI sin número de documento con el que cruzar…» | 1 | **CONFIRMADO** | medido en la 7h: no hay criterio no circular que separe los 53 de los que cruzan | C |
+| M07 | «N de N subtotales no corresponden a ninguna sección leída» | 1 | **CONFIRMADO** con matiz | medido en la 8b: los 563 huérfanos existen, pero **0.00 pesos no leídos**; el mensaje sugiere una causa que no hay | C |
+| M08 | «el documento no imprime filas de subtotal» | 1 | **CONFIRMADO** | `subtotal` no aparece, y los `total` de p3, p8, p14… son **`TOTAL WINE`, un tercero**, no una fila de subtotal | A |
+| M09 | «el documento no la declara: su fila de totales no cuadra debe contra haber» | 1 | **CONFIRMADO** | el parser sí lee la fila `SUMAS:` de p4, y **debe − haber = 802 416.67** sobre cifras de 8 dígitos | A |
+| M10 | «ningún saldo se derivó: no hay ancla que comprobar» | 1 | **CONFIRMADO** | se deriva de M08: sin subtotales impresos no hay ancla que verificar | A |
+| M11 | «no se recibió una balanza con la que cruzar…» | 1 | **CONFIRMADO** | correcto por diseño: ningún comando acepta dos documentos a la vez | A |
+
+##### Y los 11 que no producen Excel
+
+| motivo | documentos | comprobación | veredicto |
+|---|---|---|---|
+| «no trae tabla de movimientos porque la cuenta no tuvo ninguno» | `edocta-monex`, `edocta-multiva`, `edocta-scotiabank` | verificado en la 7d contra el propio resumen: depósitos 0.00 y retiros 0.00 | **A** — correcto |
+| «el layout no parece una balanza», «no se encontró ninguna cuenta», «ninguno de los 60 mapeos…», «no se encontró ninguna póliza» | `balanza-fd`, `balanza-manufacturas`, `balanza-proactivity`, `mayor-fd`, `mayor-manufacturas`, `auxiliar-manufacturas`, `polizas-manufacturas` | **los 7 SÍ son de su tipo**: los siete traen la palabra que los nombra en su página 1, y los contables sus encabezados —`cargos`/`abonos` en las balanzas, `enero`/`febrero`/`acumulado` en los mayores, `concepto`/`movimiento` en el auxiliar, `diario` en las pólizas— | **B** — defecto, a nivel de documento entero |
+| «se detectaron 48 renglones de mes y ninguno trae cargos, abonos ni saldo» | `mayor-proactivity` | el documento **no es un libro mayor** sino un reporte de movimientos por cuenta (8d) | **alcance pendiente**, no defecto: no existe parser para ese tipo |
+
+#### Los defectos, ordenados por lo que le cuestan al contador
+
+Solo cajones B y D. El orden es por consecuencia, no por dificultad: **un
+dato leído mal que se ve correcto pesa más que uno que no se lee y se
+declara**, y un documento del que no sale nada pesa más que una comprobación
+que no corre.
+
+**1. `diario-general` lee mal los importes.** Cajón **D**.
+
+| | |
+|---|---|
+| reglas | `partida_doble` **100 de 5 302** pólizas, `totales` **105 de 10 604** |
+| dinero | faltan 659 304.42 en el debe, **sobran** 106 873.98 en el haber; **552 430.42 sin aparecer en ningún lado** |
+| por qué pesa lo que pesa | es el único caso donde el Excel se veía correcto con el importe mal leído; la 8d lo hizo visible partiendo declarado y leído, pero **el importe sigue mal** |
+| qué tendría que cambiar | el **parser de pólizas** (`parsers/polizas.py`), en el reparto de importes por anclas: 22 movimientos traen debe y haber a la vez, imposible en un diario. Se extrae con `pdf_chars` y el 21.9% de sus palabras se traslapan. `Movimiento.pagina` (8d) ya permite cruzar cada importe perdido con la zona de traslape de su página |
+
+**2. Siete documentos que son de su tipo y no se leen.** Cajón **B**.
+
+| | |
+|---|---|
+| documentos | 3 balanzas (`fd`, `manufacturas`, `proactivity`), 2 mayores (`fd`, `manufacturas`), 1 auxiliar (`manufacturas`), 1 de pólizas (`manufacturas`) |
+| coste | **el documento entero**: el contador no obtiene nada y lo captura a mano |
+| qué tendría que cambiar | la **detección de layout** (`parsers/base.detectar_layout` y el `RE_CUENTA` de cada parser). §1.2 ya tiene medida al menos una causa: Proactivity numera `101.01.01` con punto y `balanza-fd` usa `000-000-100-000` de cuatro grupos, formas que el reconocedor de cuentas no acepta, así que la columna de cuenta desaparece y con ella la tabla |
+| lo que lo hace menos grave que el 1 | **se declara**: salen con código 2 y su motivo. El sistema no finge haberlos leído |
+
+**3. Seis comprobaciones que el documento permite y no corren.** Cajón **B**.
+
+| | |
+|---|---|
+| casos | `edocta-inbursa` y `edocta-bajio` en `total_declarado` (0 de 2 cada uno); `edocta-julio-banorte` y `edocta-santander` en `resumen` (0 de 2 y 0 de 3) y en `resumen_movimientos` (0 de 4 y 0 de 6) |
+| coste | el Excel sale, pero **con menos verificación de la que el documento permite**. `resumen_movimientos` es precisamente la regla que prueba que se leyeron TODOS los movimientos (§1.2): el resumen puede cuadrar consigo mismo y faltar media tabla |
+| qué tendría que cambiar | el **parser de estados de cuenta** (`parsers/estado_cuenta.py`): `_CAMPOS_CUENTAS` para reconocer la fila `TOTALES` de Inbursa y el `SALDO TOTAL` de Bajío, y el reparto por columnas del bloque de resumen para leer **un importe por cuenta** cuando el documento imprime varios en el mismo renglón |
+| lo que lo hace el menos grave | se declara `no_verificable` con motivo — pero **el motivo dice que el documento no trae el dato, y el documento sí lo trae**. Esa es la parte que hay que corregir aunque no se toque el parser |
+
+**Y dos defectos de forma que no entran en ningún cajón porque no son
+reglas:**
+
+- El campo `MetaEstadoCuenta.banco` **arrastra domicilio, etiqueta y —en
+  Bajío— el titular de la cuenta**. Sale a la hoja `Cuentas` del Excel tal
+  cual. No afecta a ninguna comprobación; sí a lo que el contador lee.
+- `scripts/medir_servidorsist.py` **escribe su reporte en la raíz del
+  repo**, no en `scripts/mediciones/`. Lo destapó el test que la 8e dejó
+  puesto, que falló en esta fase las dos veces que se corrió la medición.
+  El test hace su trabajo; el guion obliga a moverlo a mano cada vez.
+
 ### Dos documentos, sin solapamiento
 
 | Archivo | Contiene | Lo mantiene |

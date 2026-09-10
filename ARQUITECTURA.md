@@ -44,6 +44,31 @@ src/contapdf/
     └── templates/       HTML servido directo, sin build step
 ```
 
+### Fuera del núcleo: las herramientas de `scripts/`
+
+No forman parte de `src/contapdf/` y no tienen que cumplir §0 del PLAN: son
+guiones de una corrida. Se documentan aquí porque producen los números que
+el PLAN cita, y una cifra que no se puede reproducir no es una medición.
+
+| guion | qué produce |
+|---|---|
+| `scripts/inventario.py` | El **inventario de cobertura**: una línea por fixture, en dos tablas —los que producen Excel y los que no—. **Caduca cada fase**: se vuelve a correr y se vuelve a pegar en PLAN §2. `--markdown` lo deja pegable |
+| `scripts/medir_servidorsist.py` | Tiempo, memoria y disco por documento, con el reloj partido. Corre igual en las dos máquinas, para que el factor salga del mismo instrumento |
+| `scripts/dump_layout.py` | La anonimización: de un PDF real a su versión enmascarada de `fixtures/layouts/`. **No se toca** |
+| `scripts/mediciones/*.py` | Una medición concreta de una fase, con su nombre. Necesitan los PDFs reales |
+
+`inventario.py` tiene tres reglas que un test impone, porque son el
+argumento del proyecto en miniatura:
+
+- **la columna `COBERTURA` lleva siempre las dos cifras** —evaluados de
+  aplicables—, nunca un porcentaje: un «95%» sin denominador es el `5/5` de
+  BBVA otra vez;
+- **el emisor sale del documento o va vacío**, nunca del nombre del fichero.
+  Hoy solo los estados de cuenta lo traen (`MetaEstadoCuenta.banco`); ningún
+  parser contable lee la empresa, y esa columna vacía es en sí un hallazgo;
+- **el código de salida sale de `cli.codigo_de_salida()`**, no de una copia
+  de su criterio.
+
 ### Dependencias que el código respeta
 
 | Regla | Por qué importa operativamente |
