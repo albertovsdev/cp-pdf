@@ -2782,7 +2782,7 @@ de hoy:
 |---|---|---|---|
 | suma total | 6m55s | **18m49s** | **2.72x** |
 | — leer y validar | 6m42s | 18m01s | 2.69x |
-| — exportar | 12.9 s | 47.4 s | 3.67x |
+| — exportar | 13.0 s | 47.6 s | 3.66x |
 | `auxiliar-gume` | 251.8 s | **654.4 s** | 2.60x |
 | `edocta-hsbc` (OCR) | 17.3 s | 48.8 s | 2.82x |
 | mediana | 1.6 s | 5.3 s | 3.31x |
@@ -2802,7 +2802,10 @@ numerador da **3.02x**.
 
 **El ruido no es simétrico, y eso es el hallazgo.** Sobre los 15 documentos
 que las dos corridas de SERVIDORSIST comparten, esa máquina varió **+2.4%**
-entre septiembre 4 y septiembre 9 (1 055.8 s → 1 080.7 s). La máquina de
+entre septiembre 4 y septiembre 9 (1 055.8 s → 1 080.7 s; el orquestador
+calculó 1 055.6 y 1 080.2 sobre lo mismo, y la diferencia es de sumar
+valores ya redondeados a un decimal — cambia el 2.3% por el 2.4%, y nada
+más). La máquina de
 desarrollo varía **10–26%** entre corridas consecutivas. El denominador es
 el que hace ruido, no el numerador — coherente con lo que la 8c ya había
 medido en la suite (358 s contra 283 s, 27%) y con la causa que apuntó:
