@@ -6,16 +6,34 @@ validación aritmética.
 **Regla de oro:** ningún parser se escribe sin un fixture que lo pruebe
 primero. Fixture → test que falla → parser → test que pasa.
 
-Estado: **fase 8e cerrada.** Cinco parsers, cinco exportadores, CLI de seis
+Estado: **fase 8f cerrada.** Cinco parsers, cinco exportadores, CLI de seis
 comandos, interfaz web con cola persistente en SQLite, worker secuencial y
 aislamiento por despacho.
-**747 tests rápidos + 124 lentos.**
+**762 tests rápidos + 125 lentos.**
 De los 27 fixtures: **16 producen Excel**, 7 no tienen parser, 3 son estados
 de cuenta sin tabla de movimientos, y `mayor-proactivity` **sale con código 2
 y motivo escrito** desde la 8e — antes contaba entre los que procesaban
-porque no reventaba. Cuatro de los cinco tipos aprenden plantilla; pólizas
-sale con discrepancias por **53 CFDI sobre 50 pólizas** cuyo folio no aparece
-en la descripción del asiento, declarados a propósito.
+porque no reventaba. Pólizas sale con discrepancias por **53 CFDI
+sobre 50 pólizas** cuyo folio no aparece en la descripción del asiento,
+declarados a propósito.
+
+**Existe un inventario, en §2, generado por `scripts/inventario.py` y
+regenerable.** Una línea por fixture: qué produce, con qué estrategia, con
+qué cobertura y si deja plantilla. Tres cosas salieron a la luz solo por
+escribirlo: el sistema **no lee el emisor de ningún documento contable** (7
+columnas vacías), el banco que sí lee viene sucio, y **solo 3 de los 16
+formatos dejan plantilla aprendida** — no es un defecto del aprendizaje, es
+la consecuencia de no aprender de lo que no cuadra, pero desmiente la frase
+«la segunda vez entra sin intervención» tal como estaba escrita en `USO.md`.
+
+**El barrido de la 8f clasificó lo que no cuadra**, y es el trabajo que
+ordena las fases siguientes. De 61 reglas, 20 no cuadran, con 11 motivos
+distintos; se fue al documento a comprobar cada motivo y **seis resultaron
+REFUTADOS**: el dato sí estaba y el sistema decía que no. A nivel de
+documento, los **7 fixtures «sin parser» son todos de su tipo**, así que no
+son alcance pendiente sino documentos que no sabemos leer. Los dos
+denominadores no se mezclan: 20 casos sobre 61 reglas por un lado, 7
+documentos sobre 27 fixtures por el otro.
 
 **Las tres salidas —CLI, Excel y web— dicen lo mismo del mismo caso desde la
 8e.** La hoja `Auxiliar` declara qué saldos derivó el sistema (26,032 de
@@ -24,41 +42,48 @@ llevan declarado y leído, y la `Discrepancia` declara si compara importes en
 vez de que cada salida lo deduzca. Queda un hueco: **`balanza` no exporta
 `naturaleza_origen`** (§5.1).
 
-**SERVIDORSIST está medido.** La corrida es del orquestador por Escritorio
-Remoto (no hay SSH y no se va a montar); la transcribió Claude Code a §2 en
-la 8d desde
-`scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt`.
+**SERVIDORSIST está medido, y la 8f midió también el instrumento.** Las
+corridas son del orquestador por Escritorio Remoto (no hay SSH y no se va a
+montar); están en `scripts/mediciones/` y la buena es la del **9 de
+septiembre**, con Tesseract en el PATH y los 16 documentos que producen
+Excel.
 
-- **Factor 3.40× sobre los 15 documentos comunes**: 17m36s allá contra 5m10s
-  aquí. (La medición original comparó 16 y dio 3.44×; desde la 8e
-  `mayor-proactivity` se rechaza y sale de las dos sumas. Las tablas de §2
-  conservan las cifras de entonces, que siguen siendo ciertas para aquel
-  momento.) Por documento va de 2.29× a 4.03×, pero **los cinco que en desarrollo
-  pasan de 15 s caen todos entre 3.35× y 3.64×**, que es donde el factor
-  importa —son los que bloquean la cola—. Debajo de 4 s el cociente es ruido
-  de reloj. `auxiliar-gume` tarda **10m40s** allá contra 3m08s aquí.
-- **El «3.4–3.7× consistente» que circuló en tres documentos no existe.** El
-  3.7 salía de dividir el total de SERVIDORSIST entre el tiempo de *sólo
-  leer* de desarrollo, y el 3.31 de dividir 16 documentos entre 17. Las dos
-  cifras son del orquestador y las dos comparan cosas distintas.
+- **El factor es «unas tres veces», entre 2.7× y 3.0×, y no admite
+  decimales.** No porque la medición saliera mal: porque **el denominador
+  tiene ±28% de ruido y nadie lo había repetido nunca**. Dos corridas
+  consecutivas en la máquina de desarrollo, sin tocar una línea, dieron
+  373.5 s y 415.8 s —un 11%—, y `poliza` sola se movió un 26%. SERVIDORSIST,
+  en cambio, varía **2.4%** entre corridas separadas por cinco días. El ruido
+  está entero en el denominador.
+- **Y por eso mueren, de una vez, el 3.4–3.7×, el 3.31×, el 3.44×, el 3.40×
+  y el 3.48×.** Cada uno corrigió al anterior en un decimal; los cinco eran
+  divisiones sobre un denominador que nadie había medido dos veces. Las
+  cifras siguen en las tablas de §2 porque son ciertas para su momento, pero
+  **la que se cita es «unas tres veces»**.
+- **Los tiempos absolutos de SERVIDORSIST sí son firmes**, y de ahí sale todo
+  lo operativo: `auxiliar-gume` 10m54s, `diario-general` 3m40s, `poliza`
+  1m43s, `edocta-hsbc` por OCR 48.8s, suma de los 16 **18m49s**.
+- **Separar código de máquina, con el instrumento estable**: donde el ruido
+  es del 2.4%, el cambio de la 8c a la 8e costó **+1.8% en leer y +14.8% en
+  exportar** — la lectura no se tocó y la exportación subió por las columnas
+  nuevas. El +28% de desarrollo no es del código: si lo fuera, SERVIDORSIST
+  lo habría visto.
 - **La memoria no es restricción, pero lo medido es la holgura y no el
-  consumo**: el mínimo de RAM libre durante la corrida entera fue 2,809 MB de
-  8,078, con Apache y MySQL activos. **El pico del proceso allí no se pudo
-  leer.** Los «~400 MB de consumo» que decía antes esta línea eran una resta
-  contra el libre inicial, no una medición.
-- **El disco tampoco**: 328 GB libres contra un techo extrapolado de 266 MB
+  consumo**: mínimo de 2,978 MB libres de 8,078 durante la corrida, con
+  Apache y MySQL activos. **El pico del proceso allí no se puede leer**: el
+  instrumento no obtiene el `WorkingSetSize` en Windows.
+- **El disco tampoco**: 327 GB libres contra un techo extrapolado de 281 MB
   al día.
 
-**El OCR nunca ha funcionado en SERVIDORSIST y la 8d arregló la causa**:
-`ocr.py` lanzaba Tesseract sin `encoding`, y un Windows en español decodifica
-con cp1252, que no admite los bytes de las comillas tipográficas que Tesseract
-imprime. **El arreglo NO está verificado en la máquina objetivo** —la suite
-corre en WSL— y verificarlo exige volver a correr `medir_servidorsist.py`
-allí con Tesseract en el PATH. Es tarea del orquestador, que es quien tiene
-acceso. Ver §5.1.
+**El OCR funciona en SERVIDORSIST y está verificado allí.** La 8d encontró la
+causa —`ocr.py` lanzaba Tesseract sin `encoding` y un Windows en español
+decodifica con cp1252, que no admite los bytes de las comillas tipográficas
+que Tesseract imprime— y el 9 de septiembre `edocta-hsbc` completó por OCR
+con su `.xlsx` escrito. **Cuesta 48.8 s allí contra ~15 s aquí.** Aun así
+ningún test cubre Windows: la suite corre en WSL.
 
-Siguiente: **8f** (el diario, el IR y el texto de los estados de cuenta) y
-**8g** (residuos del ancla).
+Siguiente: **8g** (los seis motivos refutados), **8h** (el diario) y **9**
+(los siete formatos, el emisor y el modo diagnóstico).
 
 > Esta línea se quedó desactualizada desde la fase 2 mientras la tabla de
 > §4 sí se mantenía. Actualízala junto con la tabla, no en vez de.
@@ -496,6 +521,22 @@ está registrado dos veces —citar una cifra que no se midió— y esta vez el
 vehículo fue un mecanismo bien descrito**, que es más convincente que un
 número suelto y por eso pasa más fácil. La regla: un mecanismo se acepta
 cuando viene con su denominador.
+
+**Un cociente no vale más que su denominador, y un denominador que nadie
+repitió no vale nada.** Durante cinco fases se citó el factor contra
+SERVIDORSIST con dos decimales, y cada corrección afinaba la anterior:
+3.4–3.7×, luego 3.31×, luego 3.44×, luego 3.40×, luego 3.48×. La 8f repitió
+por primera vez la medición del **denominador** —la máquina de desarrollo—
+minutos después y sin tocar código: **11% de diferencia en la suma, 26% en un
+documento**. El numerador, SERVIDORSIST, varía 2.4%. O sea que se estuvo
+discutiendo el segundo decimal de un número cuyo primer decimal no está
+determinado.
+
+Dos de esas correcciones son del orquestador y las dos son del mismo tipo:
+arreglar la aritmética de la división sin preguntar nunca cuánto vale cada
+lado. **La regla: antes de publicar un cociente, medir dos veces el
+denominador.** Y si el instrumento es un portátil con turbo y gestión
+térmica, decirlo, porque no es un instrumento estable.
 
 **Un umbral por presupuesto no es un umbral por medición.** El corte de 3 s
 que reparte los tests entre rápidos y lentos se eligió para que la suite baje
@@ -3074,17 +3115,25 @@ decisión, no descripción, y se queda aquí.
 | 8c-bis | Medición en SERVIDORSIST | Correr `scripts/medir_servidorsist.py` allí y llenar las columnas vacías de M2, M3 y M4 | **hecho** (corrida del orquestador; transcrita a §2 por Claude Code en la 8d) |
 | 8d | Correcciones de correctitud | `cuadra` con cero evaluados; `encoding` del OCR en Windows; declarado contra leído en la hoja `Polizas`; `pagina` en `Movimiento` | **hecho** (731 rápidos + 116 lentos) |
 | 8e | Que las tres salidas digan lo mismo | `saldo_origen` a la hoja `Auxiliar`; declarado contra leído en `mayor` y `estado-cuenta`; que la `Discrepancia` declare si compara importes, para que CLI, Excel y web dejen de deducirlo; `mayor-proactivity` falla limpio; corregir `INSTALACION.md` y `ARQUITECTURA.md` con lo ocurrido | **hecho** (747 rápidos + 124 lentos) |
-| 8f | El diario, el IR y el texto de los estados de cuenta | La segunda mecánica de pérdida de importes en `diario-general`, ahora que `Movimiento` guarda la página; y medir qué pasa con la `referencia` y los espacios dentro de las palabras en la `descripcion` de Bajío y Santander, visto en la demostración | siguiente |
-| 8g | Residuos del ancla | Medir la distribución de residuos de aterrizaje y decidir si hay tolerancia defendible | |
+| 8f | Inventario y barrido | Qué cubrimos, una línea por fixture; y por qué no cuadra lo que no cuadra, clasificado en cuatro cajones con el motivo comprobado contra el documento | **hecho** (762 rápidos + 125 lentos) |
+| 8g | Los seis motivos refutados | Que el parser de estados de cuenta lea los totales y los resúmenes que el documento sí imprime; `MetaEstadoCuenta.banco` sin domicilio ni titular; `medir_servidorsist.py` deja de escribir en la raíz | siguiente |
+| 8h | El diario | La segunda mecánica de pérdida de importes en `diario-general`. **Se ha pospuesto tres veces; no se pospone más** | |
+| 9 | Cobertura de formatos | Los 7 fixtures que sí son de su tipo y no se leen; leer el emisor; modo diagnóstico que convierta cada rechazo en una petición concreta de documento | |
+| 10 | Cruce contra comprobantes | CFDI timbrados de `fixtures/real/XML R Y E/`, y mayor contra balanza | |
 
-> **Renumeración de la 8d en adelante.** Lo que la 8d midió y no arregló —el
-> mismo defecto de «declarado contra leído» en otros tres exportadores, y el
-> `esperado 0.00 / obtenido 0.00` que resultó faltar en dos salidas y no en
-> una— pesa más que el diagnóstico del diario, que además ya está
-> desbloqueado y puede esperar una fase. La antigua 8e se parte: su mitad de
-> `mayor-proactivity` entra en la 8e nueva (el diagnóstico ya lo hizo la 8d;
-> queda hacerlo fallar limpio) y su mitad del diario pasa a la 8f. Los
-> residuos del ancla corren un lugar, a 8g.
+> **Sin fase todavía**: los residuos del ancla (la antigua 8g), la
+> `referencia` pegada y los espacios dentro de las palabras de los estados de
+> cuenta, y `naturaleza_origen` en balanza. El barrido de la 8f los dejó
+> compitiendo por prioridad con lo que encontró, que es para lo que se hizo.
+
+> **Por qué la 8g va antes que el diario.** La 8f midió que seis motivos son
+> **falsos sobre el documento**: el sistema imprime «el documento no trae el
+> dato» y el dato está impreso, a veces en la misma cifra que el parser ya
+> había leído. Eso no es dejar de verificar; es afirmar algo sobre el PDF que
+> no es cierto, y es más grave que no leer un documento —que el sistema
+> declara— aunque moleste menos. Además está todo localizado en un parser,
+> con la página y la evidencia ya escritas en §2: es la fase más barata de
+> las tres.
 
 La fase 3 es la balanza variante y no el auxiliar **a propósito**:
 generalizar un parser que ya funciona para cubrir una segunda variante real
@@ -3178,11 +3227,47 @@ la tenía asignada.**
 Cosas que hacen que el sistema afirme algo que no comprobó. Van primero
 porque son el argumento entero del proyecto.
 
-**Vivas hoy**: `naturaleza_origen` en balanza, la `referencia` y los espacios
-de los estados de cuenta, y la verificación del OCR en SERVIDORSIST. Las
-tachadas las cerró la 8e; se quedan en su sitio, con su texto original
-debajo, porque el patrón que las produjo se repite y moverlas rompe las
-referencias de los prompts anteriores.
+**Vivas hoy**: los seis motivos refutados, los siete documentos que no
+sabemos leer, `naturaleza_origen` en balanza, y la `referencia` y los
+espacios de los estados de cuenta. Las tachadas las cerraron la 8e y la 8f;
+se quedan en su sitio, con su texto original debajo, porque el patrón que las
+produjo se repite y moverlas rompe las referencias de los prompts anteriores.
+
+- **Seis motivos afirman algo falso sobre el documento.** Medido en la 8f
+  yendo al PDF, motivo por motivo: `edocta-inbursa` imprime `TOTALES` con
+  cinco importes en la p5; `edocta-bajio` imprime `SALDO TOTAL` en la p9 **y
+  su importe coincide con el `saldo_corte` que el parser ya había leído**;
+  `edocta-julio-banorte` trae `+ TOTAL DE DEPÓSITOS` y `- TOTAL DE RETIROS`
+  con un importe por cuenta, de modo que el motivo «el total del documento no
+  se reparte» describe un problema que no existe; y `edocta-santander` trae
+  el resumen en un bloque por producto. **Un motivo es una frase sobre el
+  PDF, y lo estaba emitiendo el parser sobre sí mismo.** Es el defecto más
+  grave abierto: no deja de verificar, afirma. **Fase 8g.**
+- **Siete documentos que sí son de su tipo y no sabemos leer.** `balanza-fd`,
+  `balanza-manufacturas`, `balanza-proactivity`, `mayor-fd`,
+  `mayor-manufacturas`, `auxiliar-manufacturas` y `polizas-manufacturas`.
+  Hasta la 8f figuraban como «alcance pendiente»; la 8f fue a mirar y **los
+  siete traen en su página 1 la palabra que los nombra y sus encabezados
+  contables**. Así que no es alcance: es cajón B a nivel de documento entero.
+  Denominador propio: 7 de 27 fixtures, que no se suma a los 20 casos sobre
+  61 reglas del barrido. **Fase 9.**
+- **El sistema no lee el emisor de ningún documento contable.** Siete
+  columnas del inventario vacías. Para un despacho con varias empresas
+  cliente, el emisor es lo que separa las plantillas; hoy esa separación es
+  el `--tenant` que teclea quien sube el documento. Y el único emisor que sí
+  se lee, el banco de los estados de cuenta, **viene sucio**: con domicilio,
+  con la etiqueta pegada, y en Bajío con el titular delante. **Fase 9 el
+  emisor; el banco sucio, fase 8g, que es una línea del mismo parser.**
+- **`medir_servidorsist.py` escribe su `.txt` en la raíz del repo.** Lo
+  destapó el test que la 8e dejó puesto para impedir exactamente eso, y falló
+  las dos veces que se corrió la medición. **Fase 8g.**
+- **Solo 3 de los 16 formatos dejan plantilla aprendida.** No es un defecto:
+  es la consecuencia directa de no aprender de documentos que no cuadran, que
+  es la regla que impide propagar un error a todos los documentos futuros de
+  un cliente. Pero **desmiente la promesa tal como estaba escrita** —«la
+  segunda vez entra sin intervención»— y hay que decirlo antes de prometerlo
+  a un contador. Corregido en `USO.md`. **Sin fase: se arregla solo según
+  bajen los defectos.**
 
 - **`balanza` no exporta `naturaleza_origen`.** Es el último hueco del
   invariante «un valor derivado declara su procedencia» en las salidas: la

@@ -156,6 +156,13 @@ Máquina de desarrollo (i5-1335U, SSD), sin nada más corriendo:
 El reloj va siempre partido: leer y validar por un lado, exportar por otro.
 Un total único escondió durante nueve fases que el exportador era cuadrático.
 
+> **Estas cifras son indicativas, no mediciones firmes.** La 8f corrió la
+> misma medición dos veces seguidas en esta máquina, sin tocar una línea de
+> código, y la suma salió **11% distinta**; `poliza` sola se movió un **26%**.
+> Un portátil con turbo y gestión térmica no es un instrumento estable. Úsalas
+> para ver órdenes de magnitud —qué documento es caro y cuál no— y nunca para
+> comparar al segundo decimal.
+
 | Documento | Páginas | Leer y validar | Exportar | Total |
 |---|---|---|---|---|
 | Mediana de los que producen Excel | — | 1.4 s | 0.0 s | **1.5 s** |
@@ -173,55 +180,55 @@ no leer nada. Pico de memoria del proceso: 658 MB, en `auxiliar-gume`.
 ### SERVIDORSIST (i5-3470 de 2012, HDD, con Apache y MySQL activos)
 
 Medido con `scripts/medir_servidorsist.py`, el mismo guion en las dos
-máquinas. Fichero:
-`scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt`.
+máquinas. Ficheros en `scripts/mediciones/`; la corrida buena es la del **9 de
+septiembre**, con Tesseract en el PATH y los 16 documentos que producen Excel.
 
-**Midió 16 de los 17**: en esa sesión Tesseract no estaba en el PATH, así que
-`edocta-hsbc` se saltó. Y `mayor-proactivity`, que entonces se procesaba, hoy
-se rechaza. **El conjunto comparable son 15 documentos**, y las comparaciones
-de abajo son sobre esos 15, con el reloj partido en las dos columnas.
+**Los tiempos absolutos de esta máquina son firmes.** Dos corridas separadas
+por cinco días quedaron a **2.4%** una de otra:
 
-| Documento | Desarrollo (leer + exportar = total) | SERVIDORSIST (leer + exportar = total) | Factor |
-|---|---|---|---|
-| `auxiliar` | 14.4 + 0.6 = 15.0 s | 49.5 + 2.4 = 51.9 s | 3.46× |
-| `poliza.pdf` | 26.7 + 1.1 = 27.8 s | 95.0 + 4.1 = 99.1 s | 3.56× |
-| `diario-general` | 60.7 + 3.4 = 64.1 s | 201.2 + 13.5 = 214.7 s | 3.35× |
-| `mayor-proactivity` | 60.5 + 0.0 = 60.5 s | 220.3 + 0.1 = 220.4 s | 3.64× |
-| `auxiliar-gume.pdf` | 183.4 + 5.2 = 188.5 s | 621.3 + 19.3 = **10m40s** | 3.40× |
-| **Suma de los 15 comunes** | **5m10s** | **17m36s** | **3.40×** |
-| *(los 16 de entonces, con `mayor-proactivity`)* | *6m11s* | *21m16s* | *3.44×* |
+| Documento | Páginas | Leer y validar | Exportar | Total |
+|---|---|---|---|---|
+| Mediana de los 16 | — | 5.1 s | 0.2 s | **5.3 s** |
+| `edocta-hsbc` (OCR) | 4 | 48.7 s | 0.1 s | **48.8 s** |
+| `auxiliar` | 398 | 50.5 s | 2.4 s | **52.9 s** |
+| `poliza.pdf` | 968 | 97.7 s | 5.2 s | **1m 43s** |
+| `diario-general` | 431 | 203.1 s | 16.5 s | **3m 40s** |
+| `auxiliar-gume.pdf` | 886 | 633.5 s | 20.8 s | **10m 54s** |
+| **Suma de los 16** | — | 18m01s | 47.6 s | **18m49s** |
 
-**El factor que vale es 3.40×**, el de la suma sobre los 15 comunes. Por documento va de 2.29× a
-4.03×, pero esa dispersión es de los documentos chicos: un total de 0.6 s
-medido a un decimal no resuelve un cociente. **Los cinco que pasan de 15 s
-—que son los que bloquean la cola— caen entre 3.35× y 3.64×.**
+**El factor contra desarrollo es «unas tres veces», y no admite decimales.**
+Está entre **2.7× y 3.0×** según con cuál de las dos corridas de desarrollo se
+divida. No es que la medición saliera mal: **el denominador tiene ±28% de
+ruido y nadie lo sabía**. SERVIDORSIST varía un 2.4% entre corridas; el
+portátil de desarrollo, entre un 11% y un 26%. Se estuvo discutiendo el
+segundo decimal de un número cuyo primer decimal no está determinado.
 
-> Una versión anterior de esta tabla decía «factor consistente 3.4–3.7×».
-> Ninguna fila medida da 3.7: ese número salía de comparar el total de
-> SERVIDORSIST contra el tiempo de **sólo leer** de desarrollo. Y el 3.3×
-> salía de dividir 16 documentos entre 17.
+> Versiones anteriores de esta tabla dijeron «3.4–3.7× consistente», luego
+> 3.44×, luego 3.40×, y cada corrección afinaba un decimal. Las tres eran
+> divisiones sobre un denominador ruidoso. **Lo citable es «unas tres veces
+> más lento».**
 
-**El disco no es restricción**: 328 GB libres de 464.8 GB, contra un techo de
-266 MB al día si el barrido no existiera.
+**El OCR funciona en esa máquina desde la 8d, y está verificado allí**:
+`edocta-hsbc` completó por OCR el 9 de septiembre, con su `.xlsx` escrito.
+Antes reventaba con `UnicodeDecodeError: 'charmap' codec` porque `ocr.py`
+lanzaba Tesseract sin declarar la codificación y Windows en español decodifica
+con cp1252. **Cuesta 48.8 s allí contra ~15 s aquí**: es el documento más caro
+por página del proyecto.
 
-**La memoria tampoco, pero lo medido es la holgura**: durante la corrida
-entera el mínimo de RAM libre fue 2,809 MB de 8,078, con Apache y MySQL
-activos. El pico del proceso en esa máquina **no se pudo leer** —el
-instrumento no obtuvo el `WorkingSetSize` en Windows— así que los 658 MB de
-pico son de desarrollo y no se han confirmado allí.
+**El disco no es restricción**: 327 GB libres de 464.8 GB, contra un techo de
+281 MB al día si el barrido no existiera.
 
-> **El OCR nunca ha funcionado en esa máquina, y la causa ya está
-> corregida.** `ocr.py` lanzaba Tesseract sin declarar la codificación, y un
-> Windows en español decodifica con cp1252, que no admite los bytes de las
-> comillas tipográficas que Tesseract imprime; de ahí el
-> `UnicodeDecodeError: 'charmap' codec`. La 8d lo arregló. **El arreglo no
-> está verificado allí**: la suite corre en WSL y ningún test cubre Windows.
-> Confirmarlo es volver a correr el guion en SERVIDORSIST con Tesseract en el
-> PATH.
+**La memoria tampoco, pero lo medido es la holgura**: el mínimo de RAM libre
+durante la corrida fue 2,978 MB de 8,078, con Apache y MySQL activos. El pico
+del proceso allí **no se pudo leer** —el instrumento no obtiene el
+`WorkingSetSize` en Windows—, así que los 658 MB de pico son de desarrollo y
+no se han confirmado en la máquina objetivo.
 
 **Consecuencia operativa:** SERVIDORSIST se apaga a las 21:00 y la cola es
-secuencial. Un documento grande subido después de las **20:49** no termina, y
-si alguien sube algo detrás, ese también se pierde aunque tardara segundos.
+secuencial. Con `auxiliar-gume` en 10m54s, un documento grande subido después
+de las **20:49** no termina, y si alguien sube algo detrás, ese también se
+pierde aunque tardara segundos. Esta cuenta sí es fiable: sale de los tiempos
+de SERVIDORSIST, que son los estables.
 
 ---
 
@@ -335,11 +342,17 @@ sin fórmulas de búsqueda.
 
 Cuando un documento cuadra completo, el sistema guarda la plantilla del
 formato: qué columnas, qué estrategia de extracción, qué reglas aplican. La
-siguiente vez que llegue un documento del mismo emisor entra sin
+siguiente vez que llegue un documento del mismo formato entra sin
 intervención.
 
 **No guarda plantillas de documentos que no cuadraron.** Eso es lo que evita
 que un error se propague a todos los documentos futuros de ese cliente.
+
+> **Y por eso hoy aprende poco: 3 de los 16 formatos.** Lo midió el inventario
+> de la 8f. No es un defecto del aprendizaje — es la consecuencia directa de
+> la regla de arriba: mientras un formato tenga una regla que falla o que no
+> se puede verificar, no deja plantilla. Conviene saberlo antes de prometer
+> que «la segunda vez entra solo», porque hoy eso se cumple en 3 de 16.
 
 Consecuencia práctica: correr el mismo documento dos veces no da el mismo
 camino, porque la segunda vez ya hay plantilla. Para una corrida limpia:
@@ -354,8 +367,8 @@ contapdf balanza fixtures/real/1-Balanza/balanza.pdf -o salida/balanza.xlsx \
 ## Tests
 
 ```bash
-pytest tests/ -q            # 747 rápidos
-pytest tests/ -q -m lento   # 124 lentos, del orden de 45 min
+pytest tests/ -q            # 762 rápidos
+pytest tests/ -q -m lento   # 125 lentos, del orden de 45 min
 pytest tests/ -q --lf       # solo los que fallaron la última vez
 ```
 

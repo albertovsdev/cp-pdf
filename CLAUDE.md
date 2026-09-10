@@ -12,7 +12,7 @@ Dos documentos, sin solapamiento. LEE LOS DOS antes de escribir una linea:
                     cambiar contratos.
 Si se contradicen, PLAN.md manda en el porque y ARQUITECTURA.md en el que.
 
-Estado: fases 0 a 8e completas. El nucleo cambio en la 8c (exportador
+Estado: fases 0 a 8f completas. El nucleo cambio en la 8c (exportador
 cuadratico y el -o), en la 8d (cuatro correcciones de correctitud) y en la
 8e (que las tres salidas digan lo mismo); por lo
 demas esta cerrado: 5 parsers, los 5 salen a Excel, los 5 tienen comando de
@@ -27,33 +27,39 @@ cuadrar. La capa web (Flask) en src/contapdf/web/ habla con
 el nucleo solo por cli.procesar_documento(); tiene cola persistente en
 SQLite (web/cola.py), un worker secuencial —un trabajo a la vez, PLAN §6— y
 separacion por despacho en la ruta (/t/<despacho>/...). Corre pytest tests/
-antes de tocar nada: son 747 tests. Los 124 que abren documentos reales
+antes de tocar nada: son 762 tests. Los 125 que abren documentos reales
 grandes van marcados `lento` y se corren aparte, ANTES DE ENTREGAR: en la 8e
 un test lento fue el UNICO que vio una consecuencia real de un cambio, a los
 52 minutos de corrida y con las cinco corridas rapidas en verde. El
 procedimiento de instalacion esta en INSTALACION.md.
 
-SERVIDORSIST YA SE MIDIO y esta escrito en PLAN §2. La corrio el
+SERVIDORSIST esta medido y escrito en PLAN §2. Las corridas las hace el
 orquestador por Escritorio Remoto; desde tu sesion no hay acceso y no se va
-a montar SSH. El fichero es
-scripts/mediciones/mediciones-ServidorSist-20260904-1757.txt.
-Factor 3.44x sobre los 16 documentos comunes (alli se saltó edocta-hsbc por
-falta de Tesseract): auxiliar-gume tarda 10m40s alli contra 3m08s aqui. Por
-documento va de 2.29x a 4.03x, pero los cinco que pasan de 15 s caen entre
-3.35x y 3.64x. NO cites «3.4-3.7x consistente»: ese rango no lo sostiene
-ninguna fila medida. Ni la memoria ni el disco son restriccion (minimo
-2 809 MB libres de 8 078 durante la corrida, 328 GB de disco), pero OJO: lo
-medido alli es la HOLGURA, no el consumo — el pico del proceso no se pudo
-leer en Windows.
+a montar SSH. Ficheros en scripts/mediciones/; la buena es la del 9 de
+septiembre, con los 16 documentos que producen Excel.
 
-OJO: el OCR NUNCA ha funcionado en SERVIDORSIST. La causa se encontro y se
-corrigio en la 8d: ocr.py lanzaba Tesseract sin encoding, Windows en español
-decodifica con cp1252 y el byte 0x9D de las comillas tipograficas no existe
-ahi; el AttributeError: 'NoneType' object has no attribute 'splitlines' que
-sale en la traza es el SINTOMA dos capas despues, no la causa, y se
-interpreto mal dos veces. PERO el arreglo NO esta verificado en la maquina
-objetivo: la suite corre en WSL y ningun test cubre Windows. Lo verifica el
-orquestador volviendo a correr el guion alli con Tesseract en el PATH.
+OJO CON EL FACTOR: es «unas tres veces», entre 2.7x y 3.0x, y NO ADMITE
+DECIMALES. La 8f midio que el denominador —esta maquina de desarrollo— tiene
+±28% de ruido: dos corridas consecutivas sin tocar codigo dieron 373.5 s y
+415.8 s, y poliza sola se movio un 26%. SERVIDORSIST solo varia 2.4% entre
+corridas. Durante cuatro fases se cito 3.4-3.7x, luego 3.44x, luego 3.40x,
+afinando decimales de una division cuyo denominador nadie habia repetido. NO
+vuelvas a publicar un factor con dos decimales, y si mides tiempo en esta
+maquina, REPITE la medicion antes de concluir.
+
+Lo que si es firme son los tiempos ABSOLUTOS de SERVIDORSIST: auxiliar-gume
+10m54s, poliza 1m43s, diario-general 3m40s, edocta-hsbc por OCR 48.8s, suma
+18m49s. De ahi sale el corte de las 20:49 antes del apagado de las 21:00.
+Ni la memoria ni el disco son restriccion (minimo 2 978 MB libres de 8 078,
+327 GB de disco), pero lo medido alli es la HOLGURA, no el consumo: el pico
+del proceso no se puede leer en Windows.
+
+El OCR YA FUNCIONA en SERVIDORSIST y esta VERIFICADO alli (9 de septiembre,
+edocta-hsbc completo por OCR con su xlsx). La causa era de la 8d: ocr.py
+lanzaba Tesseract sin encoding, Windows en español decodifica con cp1252 y
+el byte 0x9D de las comillas tipograficas no existe ahi; el AttributeError:
+'NoneType' object has no attribute 'splitlines' era el SINTOMA dos capas
+despues. Aun asi ningun test cubre Windows: la suite corre en WSL.
 
 OJO: los que producen Excel son 16, no 17. mayor-proactivity sale con
 codigo 2 desde la 8e: no es un libro mayor sino un reporte de movimientos
@@ -102,6 +108,24 @@ MEDIR (fase 8f, mide antes de tocar):
   defecto: la geometria no distingue quien parte palabras de quien no (7e),
   asi que es parametro del formato y lo decide el cliente con `confirmar`.
   No lo toques ni propongas heuristicas.
+
+OJO: existe un INVENTARIO en PLAN §2, generado por scripts/inventario.py y
+regenerable. Dice, una linea por fixture, que cubrimos: 16 producen Excel y
+11 no. Leelo antes de proponer nada sobre cobertura, y regeneralo si tu fase
+cambia lo que un documento produce.
+
+OJO con lo que midio el barrido de la 8f, porque cambia como se leen los
+motivos: de 61 reglas, 20 no cuadran, y de sus 11 motivos distintos SEIS
+resultaron REFUTADOS al ir al documento. El dato SI estaba y el sistema decia
+que no. Inbursa imprime TOTALES en la p5, Bajio imprime SALDO TOTAL en la p9
+—y coincide con el saldo_corte que el parser leyo—, Banorte trae los totales
+ya desglosados por cuenta. EL MOTIVO QUE IMPRIME UNA REGLA ES UNA HIPOTESIS
+DEL PARSER, NO UN HALLAZGO SOBRE EL DOCUMENTO. Antes de escribir «el
+documento no trae el dato», ve al documento.
+
+Ademas: el sistema NO lee el emisor de ningun documento contable (7 columnas
+del inventario vacias), el banco que si lee viene sucio, y solo 3 de los 16
+formatos dejan plantilla aprendida.
 
 Como trabajamos:
   - Tests primero, siempre. Muestrame el rojo antes de implementar.
