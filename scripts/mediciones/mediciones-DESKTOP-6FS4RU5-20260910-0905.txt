@@ -1,0 +1,113 @@
+========================================================================
+MEDICION DE LA MAQUINA OBJETIVO -- cp-pdf fase 8c
+========================================================================
+
+fecha            2026-09-10 09:05:17
+maquina          DESKTOP-6FS4RU5
+sistema          Linux-6.18.33.1-microsoft-standard-WSL2-x86_64-with-glibc2.43
+procesador       (sin dato)
+python           3.14.4 (/mnt/c/proyectos/cp-pdf/.venv/bin/python)
+repo             /mnt/c/proyectos/cp-pdf
+RAM              7,785 MB totales, 6,634 MB libres AHORA (antes de medir)
+disco            64.8 GB libres de 474.1 GB
+
+--- dependencias ---
+  pdfplumber   0.11.10      extraccion principal
+  openpyxl     3.1.5        escribir el .xlsx
+  pypdfium2    ?            rasterizar para OCR
+  flask        3.1.3        la capa web (no hace falta para medir)
+  tesseract    OK           tesseract 5.5.0
+
+========================================================================
+M2 y M3 -- tiempo de pared y memoria por documento
+========================================================================
+
+Cada documento se procesa UNA vez, en frio: sin plantilla
+aprendida, que es como lo ve el primer usuario que sube ese
+formato. Una segunda subida del mismo formato cuesta menos.
+
+[1/17] balanza (balanza): 1.6s
+[2/17] balanza-businesspro (balanza): 1.1s
+[3/17] balanza-gume (balanza): 3.4s
+[4/17] poliza (polizas): 41.9s
+[5/17] diario-general (polizas): 1m11s
+[6/17] auxiliar (auxiliar): 17.1s
+[7/17] auxiliar-gume (auxiliar): 4m11s
+[8/17] mayor-gume (mayor): 1.9s
+[9/17] mayor-proactivity (mayor): 1m03s  ERROR LayoutDesconocido: se detectaron 48 renglones de mes y ninguno trae cargos, abonos ni saldo; el documento no parece un libro mayor
+[10/17] edocta (estado-cuenta): 0.7s
+[11/17] edocta-inbursa (estado-cuenta): 0.7s
+[12/17] edocta-santander (estado-cuenta): 1.1s
+[13/17] edocta-julio-banorte (estado-cuenta): 1.6s
+[14/17] edocta-abril-santander (estado-cuenta): 1.3s
+[15/17] edocta-bajio (estado-cuenta): 1.7s
+[16/17] edocta-bbva (estado-cuenta): 0.8s
+[17/17] edocta-hsbc (estado-cuenta): 17.3s
+
+--- M2: por documento ---
+El reloj va SIEMPRE partido. Un total unico escondio durante
+nueve fases que exportar costaba siete veces mas que leer.
+
+documento               tipo           pags  leer s  exp s  total s  estrategia  pico MB  libre min MB  xlsx MB
+----------------------  -------------  ----  ------  -----  -------  ----------  -------  ------------  -------
+edocta                  estado-cuenta     6     0.7    0.0      0.7   pdf_chars      439          6260     0.02
+edocta-inbursa          estado-cuenta     8     0.7    0.0      0.7    pdf_text      421          6278     0.02
+edocta-bbva             estado-cuenta    11     0.8    0.0      0.8    pdf_text      371          6324     0.03
+balanza-businesspro     balanza           4     1.0    0.0      1.1   pdf_chars       91          6584     0.02
+edocta-santander        estado-cuenta    10     1.1    0.0      1.1    pdf_text      416          6284     0.01
+edocta-abril-santander  estado-cuenta    13     1.2    0.0      1.3   pdf_chars      376          6319     0.03
+balanza                 balanza           9     1.5    0.1      1.6    pdf_text       87          6585     0.03
+edocta-julio-banorte    estado-cuenta    16     1.5    0.1      1.6    pdf_text      398          6300     0.06
+edocta-bajio            estado-cuenta    11     1.6    0.0      1.7    pdf_text      374          6322     0.02
+mayor-gume              mayor            17     1.8    0.1      1.9    pdf_text      680          5971     0.07
+balanza-gume            balanza          12     3.4    0.1      3.4    pdf_text       97          6584     0.04
+auxiliar                auxiliar        398    16.5    0.6     17.1    pdf_text      339          6298     0.48
+edocta-hsbc             estado-cuenta     4    17.3    0.0     17.3         ocr      362          6151     0.01
+poliza                  polizas         968    40.5    1.4     41.9    pdf_text      172          6518     0.92
+diario-general          polizas         431    67.2    4.6     71.8   pdf_chars      338          6299     2.68
+auxiliar-gume           auxiliar        886   245.9    5.9    251.8    pdf_text      687          5936     3.75
+
+documentos medidos   16 de 17
+                          total      leer  exportar
+minimo                     0.7s      0.7s      0.0s
+mediana                    1.6s      1.6s      0.0s
+maximo                    4m11s     4m05s      5.9s
+suma                      6m55s     6m42s     13.0s
+
+--- lo que no se pudo medir ---
+  mayor-proactivity        LayoutDesconocido: se detectaron 48 renglones de mes y ninguno trae cargos, abonos ni saldo; el documento no parece un libro mayor
+
+--- M3: memoria ---
+pico mas alto        687 MB  (auxiliar-gume)
+RAM libre minima     5936 MB mientras corria ese documento
+auxiliar-gume        687 MB de pico, 5936 MB libres en el peor momento
+
+========================================================================
+M4 -- espacio en disco
+========================================================================
+
+--- medido ---
+xlsx generados       16: minimo 0.01 MB, mediana 0.03 MB, maximo 3.75 MB
+PDFs de entrada      mediana 0.47 MB, maximo 7.61 MB
+base de la cola      0.17 MB con 75 trabajos terminados dentro
+
+--- EXTRAPOLADO (no medido: se proyecta lo de arriba) ---
+Supuesto: 75 documentos al dia (PLAN seccion 6:
+15 personas x 5 documentos), con la mezcla de tamanos de los
+fixtures. Es una proyeccion, no una medicion.
+
+xlsx de un dia       2 MB (75 x 0.03 MB de mediana)
+  con el peor caso   281 MB si todos fueran como el mayor
+PDFs subidos         35 MB, pero se borran al terminar cada uno
+base de la cola      0.17 MB al dia, 42 MB al ano si nada se borrara
+
+Lo que de verdad ocupa en un momento dado es MUCHO menor: el
+barrido de 30 minutos borra cada trabajo terminado, y la
+descarga lo borra antes. El pico real es lo que quepa en media
+hora de trabajo, no un dia entero. La cifra de arriba es el
+techo si el barrido no existiera.
+
+========================================================================
+Reporte escrito en: /mnt/c/proyectos/cp-pdf/mediciones-DESKTOP-6FS4RU5-20260910-0905.txt
+Ese es el fichero que hay que traer de vuelta.
+========================================================================
