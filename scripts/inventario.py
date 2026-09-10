@@ -4,8 +4,13 @@ Una linea por fixture, para poder pedirle al despacho documentos concretos
 de los formatos que faltan. **Caduca cada fase**: se vuelve a correr y se
 vuelve a pegar en PLAN 2.
 
-    .venv/bin/python scripts/inventario.py            las dos tablas
-    .venv/bin/python scripts/inventario.py --markdown para pegar en el PLAN
+    .venv/bin/python scripts/inventario.py             escribe INVENTARIO.md
+    .venv/bin/python scripts/inventario.py --stdout    lo imprime
+
+ESCRIBE `INVENTARIO.md`, no imprime para copiar y pegar: un artefacto
+generado viviendo dentro de un documento escrito a mano se queda obsoleto en
+la primera fase que nadie lo regenere, y eso es lo que le paso mientras vivio
+en PLAN 2.
 
 Necesita los PDFs reales de `fixtures/real/`, que estan en `.gitignore` por
 llevar datos de clientes. Los que falten salen declarados, no inventados.
@@ -19,9 +24,11 @@ del inventario.
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
 import tempfile
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -212,10 +219,93 @@ def inventariar(nombres: Iterable[str], rutas: dict[str, Path], *,
     return producen, rechazados, ausentes
 
 
+def _commit() -> str:
+    """El commit con el que se generó. Sin él no se sabe si caducó."""
+    try:
+        hecho = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                               cwd=RAIZ, capture_output=True, text=True,
+                               timeout=10)
+    except OSError:
+        return "(sin git)"
+    return hecho.stdout.strip() or "(sin git)"
+
+
+def documento(producen: Sequence[FilaInventario],
+              rechazados: Sequence[FilaRechazo],
+              ausentes: Sequence[FilaRechazo], *,
+              generado: str, commit: str) -> str:
+    """El texto entero de INVENTARIO.md.
+
+    Se le enseña al despacho, así que se lee solo: qué cubrimos, qué no, de
+    cuándo es y cómo se rehace.
+    """
+    partes = [
+        "# Inventario de cobertura",
+        "",
+        "Qué documentos cubre el sistema hoy, uno por línea. **Es un fichero",
+        "generado**: no se edita a mano, se regenera.",
+        "",
+        f"    generado : {generado}",
+        f"    commit   : {commit}",
+        f"    fixtures : {len(producen) + len(rechazados) + len(ausentes)}",
+        "",
+        "```",
+        ".venv/bin/python scripts/inventario.py",
+        "```",
+        "",
+        "**Caduca en cuanto una fase cambia lo que un documento produce.** Si la",
+        "fecha de arriba es vieja, esto no dice lo que el sistema hace hoy: hay",
+        "que volver a correr el guion.",
+        "",
+        "`COBERTURA` son los casos **evaluados** de los **aplicables** que el",
+        "documento entero contiene, y van siempre las dos cifras: un porcentaje",
+        "sin denominador es la misma mentira que un «0 discrepancias».",
+        "`REGLAS` es cuadran/fallan/no_verificables. `COD` es el código de salida",
+        "del CLI: 0 cuadra, 1 hay discrepancias que revisar, 2 no se pudo",
+        "procesar. `EMISOR` sale **del documento**, nunca del nombre del fichero;",
+        "va vacío cuando el sistema no lo lee.",
+        "",
+        "---",
+        "",
+        f"## Producen Excel ({len(producen)})",
+        "",
+        tabla(_COLUMNAS_A, [_celdas_a(f) for f in producen], markdown=True),
+        "",
+        f"## No producen Excel ({len(rechazados)})",
+        "",
+        "El motivo es el que imprime el sistema. **Es una hipótesis del parser,",
+        "no un hallazgo sobre el documento**: dice que no encontró el dato, no",
+        "que el documento no lo tenga.",
+        "",
+        tabla(_COLUMNAS_B, [_celdas_b(f) for f in rechazados], markdown=True),
+    ]
+    if ausentes:
+        partes += [
+            "",
+            f"## No se pudieron medir ({len(ausentes)})",
+            "",
+            tabla(_COLUMNAS_B, [_celdas_b(f) for f in ausentes], markdown=True),
+        ]
+    return "\n".join(partes) + "\n"
+
+
+def escribir(destino: Path, producen: Sequence[FilaInventario],
+             rechazados: Sequence[FilaRechazo],
+             ausentes: Sequence[FilaRechazo], *,
+             generado: str, commit: str) -> Path:
+    destino.write_text(documento(producen, rechazados, ausentes,
+                                 generado=generado, commit=commit),
+                       encoding="utf-8")
+    return destino
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     analizador = argparse.ArgumentParser(description=__doc__)
-    analizador.add_argument("--markdown", action="store_true",
-                            help="tablas en Markdown, para pegar en PLAN 2")
+    analizador.add_argument("-o", "--salida", type=Path,
+                            default=RAIZ / "INVENTARIO.md",
+                            help="dónde escribirlo (por defecto INVENTARIO.md)")
+    analizador.add_argument("--stdout", action="store_true",
+                            help="imprimirlo en vez de escribirlo")
     analizador.add_argument("fixtures", nargs="*",
                             help="por defecto, los 27")
     opciones = analizador.parse_args(argv)
@@ -227,24 +317,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         producen, rechazados, ausentes = inventariar(
             nombres, REAL_PDFS, plantillas=Path(almacen))
 
-    print(f"INVENTARIO DE COBERTURA -- {len(nombres)} fixtures")
-    print()
-    print(f"TABLA A -- producen Excel ({len(producen)})")
-    print("COBERTURA son los casos EVALUADOS de los APLICABLES del documento")
-    print("entero; REGLAS es cuadran/fallan/no_verificables.")
-    print()
-    print(tabla(_COLUMNAS_A, [_celdas_a(f) for f in producen],
-                markdown=opciones.markdown))
-    print()
-    print(f"TABLA B -- NO producen Excel ({len(rechazados)})")
-    print()
-    print(tabla(_COLUMNAS_B, [_celdas_b(f) for f in rechazados],
-                markdown=opciones.markdown))
-    if ausentes:
-        print()
-        print(f"NO MEDIDOS ({len(ausentes)})")
-        print(tabla(_COLUMNAS_B, [_celdas_b(f) for f in ausentes],
-                    markdown=opciones.markdown))
+    texto = documento(producen, rechazados, ausentes,
+                      generado=datetime.now().strftime("%Y-%m-%d %H:%M"),
+                      commit=_commit())
+    if opciones.stdout:
+        print(texto, end="")
+        return 0
+    opciones.salida.write_text(texto, encoding="utf-8")
+    print(f"escrito {opciones.salida}: {len(producen)} producen Excel, "
+          f"{len(rechazados)} no"
+          + (f", {len(ausentes)} sin medir" if ausentes else ""))
     return 0
 
 

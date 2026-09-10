@@ -211,3 +211,67 @@ def test_un_emisor_corto_no_se_toca():
 
     assert emisor_corto("AFIRME") == "AFIRME"
     assert emisor_corto("  AFIRME   GRUPO  ") == "AFIRME GRUPO"
+
+
+# --- Fase 8g: el inventario se ESCRIBE, no se copia y pega -------------
+# Vivía dentro de PLAN.md §2, que es un documento escrito a mano: un
+# artefacto generado ahí dentro se queda obsoleto en la primera fase que
+# nadie lo regenere. Ahora el guion escribe INVENTARIO.md, y el PLAN solo
+# dice dónde vive y con qué comando se rehace.
+
+def _fila(fixture="balanza", tipo="balanza", emisor="", codigo=0):
+    return FilaInventario(
+        fixture=fixture, tipo=tipo, emisor=emisor, paginas=9,
+        extraccion="pdf_text", evaluados=530, aplicables=534, cuadran=4,
+        fallan=0, no_verificables=0, plantilla="aprendida", codigo=codigo)
+
+
+def test_el_documento_se_lee_solo():
+    """Es el fichero que se le enseña al despacho."""
+    from inventario import documento
+
+    texto = documento([_fila()], [FilaRechazo("mayor-fd", "mayor", "no cuadra")],
+                      [], generado="2026-09-11 10:00", commit="abc1234")
+    assert texto.startswith("# Inventario de cobertura")
+    # Las dos tablas, con su título y su conteo.
+    assert "1 producen Excel" in texto or "producen Excel (1)" in texto
+    assert "balanza" in texto and "mayor-fd" in texto
+    # Y de cuándo es, que es lo que dice si ha caducado.
+    assert "2026-09-11 10:00" in texto
+    assert "abc1234" in texto
+    # Y cómo se regenera, para que nadie lo edite a mano.
+    assert "scripts/inventario.py" in texto
+
+
+def test_el_documento_explica_la_columna_que_no_puede_mentir():
+    from inventario import documento
+
+    texto = documento([_fila()], [], [], generado="x", commit="y")
+    assert "evaluados" in texto.lower() and "aplicables" in texto.lower()
+
+
+def test_los_que_no_se_pudieron_medir_salen_declarados():
+    from inventario import documento
+
+    texto = documento([], [], [FilaRechazo("balanza", "balanza", "no está el PDF")],
+                      generado="x", commit="y")
+    assert "no está el PDF" in texto
+    assert "balanza" in texto
+
+
+def test_escribir_deja_el_fichero_en_disco(tmp_path):
+    from inventario import escribir
+
+    destino = tmp_path / "INVENTARIO.md"
+    devuelto = escribir(destino, [_fila()], [], [], generado="x", commit="y")
+    assert devuelto == destino
+    assert destino.exists()
+    assert destino.read_text(encoding="utf-8").startswith("# Inventario")
+
+
+def test_el_plan_ya_no_lleva_las_tablas_del_inventario():
+    """Un artefacto generado dentro de un documento a mano caduca solo."""
+    plan = (Path(__file__).resolve().parent.parent / "PLAN.md").read_text(
+        encoding="utf-8")
+    assert "| FIXTURE | TIPO | EMISOR |" not in plan
+    assert "INVENTARIO.md" in plan

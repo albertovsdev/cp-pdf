@@ -92,10 +92,43 @@ def test_cada_fase_movida_ya_no_esta_en_el_plan(fase, ahora):
 
 
 # --- Lo que se queda: intacto -----------------------------------------
-@pytest.mark.parametrize("titulo", SE_QUEDAN)
+@pytest.mark.parametrize("titulo", [t for t in SE_QUEDAN
+                                   if not t.startswith("### Resultados de la fase 8f")])
 def test_lo_que_no_se_movio_sigue_igual_en_el_plan(titulo, antes, ahora):
     bloque = next(b for t, b in _bloques(antes).items() if t.startswith(titulo))
     assert bloque in ahora, f"«{titulo}» cambió al mover lo demás"
+
+
+# El bloque de la 8f es el UNICO que se quedo y cambio, porque le salio el
+# inventario a su propio fichero. El cambio esta acotado: todo lo de antes
+# del inventario y todo lo de despues siguen intactos, y las filas de las
+# tablas viven ahora en INVENTARIO.md.
+_INVENTARIO_DESDE = "#### El inventario de cobertura"
+_INVENTARIO_HASTA = "**Tres cosas que el inventario destapa por el hecho de existir:**"
+
+
+def test_la_8f_solo_cambio_en_el_trozo_del_inventario(antes, ahora):
+    bloque = next(b for t, b in _bloques(antes).items()
+                  if t.startswith("### Resultados de la fase 8f"))
+    i, j = bloque.index(_INVENTARIO_DESDE), bloque.index(_INVENTARIO_HASTA)
+    assert bloque[:i] in ahora, "cambió algo ANTES del inventario"
+    assert bloque[j:] in ahora, "cambió algo DESPUÉS del inventario"
+
+
+def test_las_tablas_del_inventario_siguen_existiendo_y_no_en_el_plan(antes):
+    """Las filas se regeneran, así que se comprueban una por una."""
+    inventario = (RAIZ / "INVENTARIO.md").read_text(encoding="utf-8")
+    bloque = next(b for t, b in _bloques(antes).items()
+                  if t.startswith("### Resultados de la fase 8f"))
+    trozo = bloque[bloque.index(_INVENTARIO_DESDE):bloque.index(_INVENTARIO_HASTA)]
+    filas = [ln for ln in trozo.splitlines()
+             if ln.startswith("| ") and " | " in ln
+             and not ln.startswith("| FIXTURE") and "---" not in ln]
+    assert len(filas) == 27, f"la referencia traía {len(filas)} filas, no 27"
+    for fila in filas:
+        assert fila in inventario, f"fila perdida al mover el inventario: {fila[:60]}"
+    plan = (RAIZ / "PLAN.md").read_text(encoding="utf-8")
+    assert "| FIXTURE | TIPO | EMISOR |" not in plan
 
 
 def test_el_preambulo_de_la_seccion_2_solo_cambio_de_titulo(antes, ahora):
@@ -122,6 +155,11 @@ def test_ni_un_caracter_se_perdio_en_el_traslado(antes, ahora, mediciones):
     bloques_antes = _bloques(antes)
     encontrados = 0
     for titulo, bloque in bloques_antes.items():
+        if titulo.startswith("### Resultados de la fase 8f"):
+            # Cubierto por los dos tests de arriba: su trozo de inventario
+            # se fue a INVENTARIO.md y el resto sigue en §2.
+            encontrados += len(bloque)
+            continue
         donde = mediciones if any(
             titulo.startswith(f"### Resultados de la fase {f} ")
             for f in MOVIDAS) else ahora
