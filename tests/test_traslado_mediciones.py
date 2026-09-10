@@ -194,8 +194,7 @@ def test_las_once_fases_estan_indexadas(ahora):
 
 
 def test_la_fase_en_curso_se_queda_entera_en_el_plan(ahora):
-    assert "### Resultados de la fase 8f" in ahora
-    assert "MEDICIONES.md" not in _bloques(ahora)["### Resultados de la fase 8f "
-                                                  "(qué cubrimos, y por qué no "
-                                                  "cuadra lo que no cuadra)"] \
-        or True  # la 8f puede citar el fichero; lo que importa es que esté
+    """§2 conserva la fase viva, y solo esa."""
+    titulos = [t for t in _bloques(ahora) if t.startswith("### Resultados de la fase")]
+    assert titulos == ["### Resultados de la fase 8f (qué cubrimos, y por qué "
+                       "no cuadra lo que no cuadra)"], titulos
