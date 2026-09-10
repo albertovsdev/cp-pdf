@@ -2982,6 +2982,13 @@ que no corre.
 | qué tendría que cambiar | el **parser de estados de cuenta** (`parsers/estado_cuenta.py`): `_CAMPOS_CUENTAS` para reconocer la fila `TOTALES` de Inbursa y el `SALDO TOTAL` de Bajío, y el reparto por columnas del bloque de resumen para leer **un importe por cuenta** cuando el documento imprime varios en el mismo renglón |
 | lo que lo hace el menos grave | se declara `no_verificable` con motivo — pero **el motivo dice que el documento no trae el dato, y el documento sí lo trae**. Esa es la parte que hay que corregir aunque no se toque el parser |
 
+**Coste de la suite al cerrar la fase**: **762 rápidos** (eran 747) en
+~4m25s y **125 lentos** (eran 124) en 1h16m05s. El test nuevo del inventario
+es el que sube el lento: abre los 27 documentos de una pasada. Como en la
+8e, ninguno de los dos relojes es una medición limpia —la máquina de esta
+fase resultó tener 10–26% de dispersión, que es precisamente lo que se midió
+arriba—.
+
 **Y dos defectos de forma que no entran en ningún cajón porque no son
 reglas:**
 
