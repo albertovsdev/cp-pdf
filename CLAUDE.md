@@ -17,7 +17,7 @@ cuando la fase toca algo que ahi se midio, y SIEMPRE antes de citar una cifra
 de una fase cerrada: el indice de §2 no lleva numeros a proposito.
 INVENTARIO.md dice que cubrimos hoy y lo regenera scripts/inventario.py.
 
-Estado: fases 0 a 8f completas. El nucleo cambio en la 8c (exportador
+Estado: fases 0 a 8f-bis completas. El nucleo cambio en la 8c (exportador
 cuadratico y el -o), en la 8d (cuatro correcciones de correctitud) y en la
 8e (que las tres salidas digan lo mismo); por lo
 demas esta cerrado: 5 parsers, los 5 salen a Excel, los 5 tienen comando de
@@ -32,7 +32,7 @@ cuadrar. La capa web (Flask) en src/contapdf/web/ habla con
 el nucleo solo por cli.procesar_documento(); tiene cola persistente en
 SQLite (web/cola.py), un worker secuencial —un trabajo a la vez, PLAN §6— y
 separacion por despacho en la ruta (/t/<despacho>/...). Corre pytest tests/
-antes de tocar nada: son 762 tests. Los 125 que abren documentos reales
+antes de tocar nada: son 804 tests. Los 125 que abren documentos reales
 grandes van marcados `lento` y se corren aparte, ANTES DE ENTREGAR: en la 8e
 un test lento fue el UNICO que vio una consecuencia real de un cambio, a los
 52 minutos de corrida y con las cinco corridas rapidas en verde. El
@@ -95,7 +95,7 @@ fase 8b»):
     traen debe y haber a la vez). La mecanica propuesta NO explica la
     magnitud: quedan 552 430.44 sin aparecer en ningun lado, asi que hay al
     menos dos mecanicas. La 8d desbloqueo la medicion dandole `pagina` a
-    `Movimiento`; se cierra en la 8f.
+    `Movimiento`; se cierra en la 8h, y lleva tres fases pospuesta.
 
 Las tres salidas dicen lo mismo desde la 8e: la hoja Polizas lleva
 declarado y leido (8d), las hojas Cuentas de mayor y estado-cuenta tambien
@@ -104,7 +104,9 @@ si compara importes con Decimal | None, asi que ninguna salida lo deduce.
 QUEDA UN HUECO: balanza no exporta naturaleza_origen.
 
 OJO con dos cosas de los estados de cuenta, vistas en la demostracion y SIN
-MEDIR (fase 8f, mide antes de tocar):
+MEDIR. NO tienen fase asignada: la 8f las dejo compitiendo por prioridad con
+lo que encontro el barrido, y el barrido encontro cosas peores. Si una fase
+te lleva por ahi, MIDE antes de tocar:
   - la referencia sale pegada al principio de la descripcion
     (`9462491DEPOSITO SPEI:...`) cuando el PDF la imprime en su propia
     columna y MovimientoBancario tiene campo `referencia`.

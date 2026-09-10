@@ -9,7 +9,7 @@ primero. Fixture → test que falla → parser → test que pasa.
 Estado: **fase 8f cerrada.** Cinco parsers, cinco exportadores, CLI de seis
 comandos, interfaz web con cola persistente en SQLite, worker secuencial y
 aislamiento por despacho.
-**762 tests rápidos + 125 lentos.**
+**804 tests rápidos (4m09s) + 125 lentos.**
 De los 27 fixtures: **16 producen Excel**, 7 no tienen parser, 3 son estados
 de cuenta sin tabla de movimientos, y `mayor-proactivity` **sale con código 2
 y motivo escrito** desde la 8e — antes contaba entre los que procesaban
@@ -17,8 +17,21 @@ porque no reventaba. Pólizas sale con discrepancias por **53 CFDI
 sobre 50 pólizas** cuyo folio no aparece en la descripción del asiento,
 declarados a propósito.
 
-**Existe un inventario, en §2, generado por `scripts/inventario.py` y
-regenerable.** Una línea por fixture: qué produce, con qué estrategia, con
+**Este documento ya no lo contiene todo.** Desde la 8f-bis el proyecto tiene
+cuatro documentos y no dos:
+
+| | Qué lleva | Quién escribe | Cuándo se lee |
+|---|---|---|---|
+| `PLAN.md` | el porqué: contratos, principios, fases, deuda, y la fase en curso | orquestador, salvo §2 | siempre |
+| `ARQUITECTURA.md` | el qué: módulos, firmas, invariantes | Claude Code | siempre |
+| `MEDICIONES.md` | los resultados de las fases cerradas, tal cual se midieron | Claude Code | al tocar lo que ahí se midió, y **siempre antes de citar una cifra** |
+| `INVENTARIO.md` | qué documentos cubre el sistema hoy | `scripts/inventario.py` | al hablar de cobertura |
+
+El índice de §2 **no lleva ni una cifra**, a propósito: si un número se
+pudiera citar desde el índice, volvería el error más repetido del proyecto.
+
+**El inventario está en `INVENTARIO.md`, lo genera `scripts/inventario.py` y
+lleva su fecha y su commit.** Una línea por fixture: qué produce, con qué estrategia, con
 qué cobertura y si deja plantilla. Tres cosas salieron a la luz solo por
 escribirlo: el sistema **no lee el emisor de ningún documento contable** (7
 columnas vacías), el banco que sí lee viene sucio, y **solo 3 de los 16
@@ -1270,6 +1283,7 @@ decisión, no descripción, y se queda aquí.
 | 8d | Correcciones de correctitud | `cuadra` con cero evaluados; `encoding` del OCR en Windows; declarado contra leído en la hoja `Polizas`; `pagina` en `Movimiento` | **hecho** (731 rápidos + 116 lentos) |
 | 8e | Que las tres salidas digan lo mismo | `saldo_origen` a la hoja `Auxiliar`; declarado contra leído en `mayor` y `estado-cuenta`; que la `Discrepancia` declare si compara importes, para que CLI, Excel y web dejen de deducirlo; `mayor-proactivity` falla limpio; corregir `INSTALACION.md` y `ARQUITECTURA.md` con lo ocurrido | **hecho** (747 rápidos + 124 lentos) |
 | 8f | Inventario y barrido | Qué cubrimos, una línea por fixture; y por qué no cuadra lo que no cuadra, clasificado en cuatro cajones con el motivo comprobado contra el documento | **hecho** (762 rápidos + 125 lentos) |
+| 8f-bis | Partir la documentación | `MEDICIONES.md` con las fases cerradas y `INVENTARIO.md` generado; índice sin cifras en §2; el test que prueba que el traslado no perdió nada | **hecho** (804 rápidos + 125 lentos) |
 | 8g | Los seis motivos refutados | Que el parser de estados de cuenta lea los totales y los resúmenes que el documento sí imprime; `MetaEstadoCuenta.banco` sin domicilio ni titular; `medir_servidorsist.py` deja de escribir en la raíz | siguiente |
 | 8h | El diario | La segunda mecánica de pérdida de importes en `diario-general`. **Se ha pospuesto tres veces; no se pospone más** | |
 | 9 | Cobertura de formatos | Los 7 fixtures que sí son de su tipo y no se leen; leer el emisor; modo diagnóstico que convierta cada rechazo en una petición concreta de documento | |
@@ -1322,7 +1336,11 @@ Dos cosas que no debe tocar Claude Code:
 - `scripts/dump_layout.py` — ya cumplió su función y es la herramienta de
   privacidad. Si se refactoriza y se rompe el enmascarado, se nota tarde.
 - Los números de la sección 2 y de `MEDICIONES.md` — son mediciones, no
-  metas ajustables.
+  metas ajustables. Y `MEDICIONES.md` **no se corrige al vuelo**: si una
+  cifra movida resultó estar mal, se anota en el reporte y se decide aparte.
+  Corregir mientras se mueve hace imposible saber qué cambió.
+- `INVENTARIO.md` a mano — lo escribe `scripts/inventario.py`. Editarlo es
+  garantizar que mienta en la siguiente regeneración.
 
 ### Prompt de la fase 1
 

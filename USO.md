@@ -1,8 +1,10 @@
 # USO.md — cómo se corre cp-pdf
 
 Operación del sistema desde la línea de comandos. El *por qué* de las
-decisiones vive en `PLAN.md`; el *qué* de los módulos, en `ARQUITECTURA.md`.
-Aquí solo está el *cómo se usa*.
+decisiones vive en `PLAN.md`; el *qué* de los módulos, en `ARQUITECTURA.md`;
+las mediciones de las fases cerradas, en `MEDICIONES.md`; y **qué documentos
+cubre el sistema hoy, en `INVENTARIO.md`**, que se regenera con
+`python scripts/inventario.py`. Aquí solo está el *cómo se usa*.
 
 ---
 
@@ -137,7 +139,13 @@ Tarda ~21 s más que los demás. Es el precio del OCR.
 
 ### Documentos que todavía no tienen parser
 
-Siete fixtures nunca tuvieron parser: `balanza-fd`, `balanza-manufacturas`,
+> **El inventario completo, con sus dos tablas y el motivo exacto de cada
+> rechazo, está en `INVENTARIO.md`.** Lo de aquí abajo es el resumen; si no
+> coinciden, manda el inventario, que lo genera un guion.
+
+La 8f fue a mirarlos y **los siete son de su tipo**: traen en la página 1 la
+palabra que los nombra y sus encabezados contables. Así que no es alcance
+pendiente, es cobertura que falta. Son: `balanza-fd`, `balanza-manufacturas`,
 `balanza-proactivity`, `auxiliar-manufacturas`, `polizas-manufacturas`,
 `mayor-manufacturas` y `mayor-fd`. No es una regresión; es alcance pendiente.
 Los tres restantes de los 27 son estados de cuenta sin tabla de movimientos
@@ -367,8 +375,8 @@ contapdf balanza fixtures/real/1-Balanza/balanza.pdf -o salida/balanza.xlsx \
 ## Tests
 
 ```bash
-pytest tests/ -q            # 762 rápidos
-pytest tests/ -q -m lento   # 125 lentos, del orden de 45 min
+pytest tests/ -q            # 804 rápidos, ~4m09s
+pytest tests/ -q -m lento   # 125 lentos, ~1h03m
 pytest tests/ -q --lf       # solo los que fallaron la última vez
 ```
 
